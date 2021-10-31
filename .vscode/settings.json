@@ -3,9 +3,13 @@
         "dotnettools",
         "formulahendry",
         "hbenl",
+        "Intelli",
         "ionide",
+        "MADR",
         "paket",
         "Ubictionary",
-        "vimscript"
-    ]
+        "vimscript",
+        "yzhang"
+    ],
+    "FSharp.dotnetRoot": "/usr/share/dotnet"
 }

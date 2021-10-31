@@ -1,0 +1,7 @@
+FSharp.Core
+Serilog
+Serilog.Extensions.Logging
+Serilog.Sinks.Console
+Microsoft.Extensions.Logging
+Serilog.Sinks.File
+OmniSharp.Extensions.LanguageServer

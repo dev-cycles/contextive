@@ -1,0 +1,11 @@
+source https://api.nuget.org/v3/index.json
+
+storage: none
+framework: net5.0
+nuget FSharp.Core
+nuget OmniSharp.Extensions.LanguageServer
+nuget Serilog
+nuget Serilog.Extensions.Logging
+nuget Serilog.Sinks.Console
+nuget Serilog.Sinks.File
+nuget MediatR 8.1.0

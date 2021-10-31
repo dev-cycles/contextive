@@ -1,0 +1,82 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                "${workspaceRoot}/src/Ubictionary.LanguageServer/Ubictionary.LanguageServer.fsproj",
+                // Ask dotnet build to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/src/Ubictionary.LanguageServer"
+            },
+            "group": "build",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build tests",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                "${workspaceRoot}/src/Ubictionary.LanguageServer.Tests/Ubictionary.LanguageServer.Tests.fsproj",
+                // Ask dotnet build to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/src/Ubictionary.LanguageServer.Tests"
+            },
+            "group": "build",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "run tests",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "test",
+                "${workspaceRoot}/src/Ubictionary.LanguageServer.Tests/Ubictionary.LanguageServer.Tests.fsproj",
+                // Ask dotnet build to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/src/Ubictionary.LanguageServer.Tests"
+            },
+            "group": "test",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "debug tests",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "test",
+                "${workspaceRoot}/src/Ubictionary.LanguageServer.Tests/Ubictionary.LanguageServer.Tests.fsproj",
+                // Ask dotnet build to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/src/Ubictionary.LanguageServer.Tests",
+                "env": {
+                    "VSTEST_HOST_DEBUG": "1"
+                }
+            },
+            "group": "test",
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
