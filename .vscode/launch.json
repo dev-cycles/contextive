@@ -5,16 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Attach",
+            "name": "Debug Tests",
             "type": "coreclr",
-            "request": "attach"
+            "request": "launch",
+            "preLaunchTask": "build tests",
+            "program": "${workspaceFolder}/src/Ubictionary.LanguageServer.Tests/bin/Debug/net6.0/Ubictionary.LanguageServer.Tests.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
         },
         {
-            "name": ".NET Core Launch (console)",
+            "name": "Debug Language Server",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Ubictionary.LanguageServer/bin/Debug/net5.0/Ubictionary.LanguageServer",
+            "program": "${workspaceFolder}/src/Ubictionary.LanguageServer/bin/Debug/net6.0/Ubictionary.LanguageServer",
             "args": [ ],
             "cwd": "${workspaceFolder}/src/Ubictionary.LanguageServer",
             "stopAtEntry": false,

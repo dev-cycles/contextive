@@ -1,6 +1,6 @@
 module Ubictionary.LanguageServer.Program
 
-open Ubictionary.LanguageServer.LanguageServer
+open Ubictionary.LanguageServer.Server
 open Serilog
 open System
 

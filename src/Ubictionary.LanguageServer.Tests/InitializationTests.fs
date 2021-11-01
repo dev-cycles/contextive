@@ -7,7 +7,6 @@ let initTestClient = async {
     return! testClient.Initialize() |> Async.AwaitTask
 }
 
-
 [<Tests>]
 let initializationTests =
     testList "Initialization Tests" [

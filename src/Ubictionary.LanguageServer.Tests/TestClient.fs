@@ -3,7 +3,7 @@ namespace Ubictionary.LanguageServer.Tests
 open System.IO.Pipelines
 open OmniSharp.Extensions.LanguageProtocol.Testing
 open OmniSharp.Extensions.JsonRpc.Testing
-open Ubictionary.LanguageServer.LanguageServer
+open Ubictionary.LanguageServer.Server
 
 type TestClient() =
     inherit LanguageServerTestBase(JsonRpcTestOptions())

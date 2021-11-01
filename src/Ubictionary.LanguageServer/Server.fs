@@ -1,4 +1,4 @@
-module Ubictionary.LanguageServer.LanguageServer
+module Ubictionary.LanguageServer.Server
 
 open System.Threading.Tasks
 open OmniSharp.Extensions.LanguageServer.Server
