@@ -14,3 +14,4 @@ bld/
 .ionide
 .paket
 log*.txt
+TestResults*.xml
