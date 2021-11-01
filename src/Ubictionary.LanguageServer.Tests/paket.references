@@ -1,1 +1,5 @@
 FSharp.Core
+OmniSharp.Extensions.LanguageProtocol.Testing
+Expecto
+Unquote
+YoloDev.Expecto.TestSdk

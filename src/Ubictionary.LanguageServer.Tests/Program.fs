@@ -1,1 +1,9 @@
-module Program = let [<EntryPoint>] main _ = 0
+module Ubictionary.LanguageServer.Tests.Program
+
+open Expecto
+open Ubictionary.LanguageServer.Program
+
+[<EntryPoint>]
+let main argv =
+    setupLogging
+    runTestsInAssemblyWithCLIArgs [] argv

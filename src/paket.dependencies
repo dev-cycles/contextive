@@ -1,11 +1,15 @@
 source https://api.nuget.org/v3/index.json
 
 storage: none
-framework: net5.0
+framework: net6.0
+nuget Expecto
 nuget FSharp.Core
+nuget OmniSharp.Extensions.LanguageProtocol.Testing
 nuget OmniSharp.Extensions.LanguageServer
 nuget Serilog
 nuget Serilog.Extensions.Logging
 nuget Serilog.Sinks.Console
 nuget Serilog.Sinks.File
 nuget MediatR 8.1.0
+nuget Unquote
+nuget YoloDev.Expecto.TestSdk

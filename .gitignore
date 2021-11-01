@@ -13,3 +13,4 @@ bld/
 .fake
 .ionide
 .paket
+log*.txt
