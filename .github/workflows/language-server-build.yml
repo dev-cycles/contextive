@@ -1,4 +1,4 @@
-name: Ubictionary Language Server Build nad Test
+name: Ubictionary Language Server Build and Test
 on: [push]
 jobs:
   build-and-test:
