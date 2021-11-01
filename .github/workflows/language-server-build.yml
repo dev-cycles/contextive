@@ -18,6 +18,7 @@ jobs:
         uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
+          include-prerelease: true
       - name: Display dotnet version
         run: dotnet --version
       - name: Build and Test Language Server
