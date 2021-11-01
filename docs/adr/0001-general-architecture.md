@@ -1,10 +1,12 @@
 # General Architecture 
 
-# Use of Language Server Protocol
-
 * Status: accepted
 * Deciders: Chris Simon
 * Date: 2021-10-23
+
+## Decision Summary
+
+Use a common Language Server following the [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) to ensure effective re-use across multiple IDEs.
 
 ## Context and Problem Statement
 
@@ -28,7 +30,7 @@ This decision record captures the thinking around how best to ensure this as the
 
 ## Decision Outcome
 
-Chosen option: "Common Language Server", because it is *probably* the option that will allow Ubictionary to be useful in more IDEs with less effort.
+Chosen option: "Common Language Server" using the "Language Server Protocol", because it is *probably* the option that will allow Ubictionary to be useful in more IDEs with less effort.
 
 ### Positive Consequences
 

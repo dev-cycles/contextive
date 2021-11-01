@@ -1,10 +1,12 @@
 # Language & Framework Selection 
 
-# F# for Language Server and Initial Extensions
-
 * Status: proposed
 * Deciders: Chris Simon
 * Date: 2021-10-23
+
+## Decision Summary
+
+Use F# for the Language Server, F#/Fable for the VSCode extension & F# for the Visual Studio 2019/2022 extension.
 
 ## Context and Problem Statement
 
