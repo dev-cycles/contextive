@@ -21,6 +21,11 @@ jobs:
           include-prerelease: true
       - name: Display dotnet version
         run: dotnet --version
+      - name: Install paket
+        run: dotnet tool install paket --global
+      - name: Restore paket dependencies
+        run: paket restore
+        working-directory: ./src
       - name: Build and Test Language Server
         run: |
           dotnet run --project ./src/Ubictionary.LanguageServer.Tests/Ubictionary.LanguageServer.Tests.fsproj -- --nunit-summary TestResults-${{ matrix.dotnet-version }}.xml
