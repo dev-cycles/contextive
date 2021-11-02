@@ -38,6 +38,20 @@
             },
             "group": "build",
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch tests",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "watch",
+                "run"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/src/Ubictionary.LanguageServer.Tests"
+            },
+            "group": "test",
+            "problemMatcher": "$msCompile"
         }
     ]
 }

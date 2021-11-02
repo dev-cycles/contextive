@@ -3,8 +3,8 @@ FROM mcr.microsoft.com/vscode/devcontainers/dotnet:0-6.0-focal
 # Install other dotnet versions (required for adr tool and dotnet suggest)
 RUN curl -sSL https://dot.net/v1/dotnet-install.sh > /tmp/dotnet-install.sh \
     && chmod u+x /tmp/dotnet-install.sh
-RUN sudo bash -s -- --install-dir /usr/share/dotnet --channel 3.1 --runtime dotnet
-RUN sudo bash -s -- --install-dir /usr/share/dotnet --channel 3.1 --runtime dotnet
+RUN sudo /tmp/dotnet-install.sh --install-dir /usr/share/dotnet --channel 5.0 --runtime dotnet
+RUN sudo /tmp/dotnet-install.sh --install-dir /usr/share/dotnet --channel 3.1 --runtime dotnet
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="lts/*"
