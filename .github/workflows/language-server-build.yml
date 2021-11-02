@@ -28,7 +28,7 @@ jobs:
         working-directory: ./src
       - name: Build and Test Language Server
         run: |
-          dotnet run --project ./src/Ubictionary.LanguageServer.Tests/Ubictionary.LanguageServer.Tests.fsproj -- --nunit-summary TestResults-${{ matrix.dotnet-version }}.xml
+          dotnet run --project ./src/Ubictionary.LanguageServer.Tests/Ubictionary.LanguageServer.Tests.fsproj -- --fail-on-focused-tests --nunit-summary TestResults-${{ matrix.dotnet-version }}.xml
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v2
         with:
