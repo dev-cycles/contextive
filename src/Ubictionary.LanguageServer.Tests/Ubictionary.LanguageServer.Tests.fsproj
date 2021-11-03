@@ -6,6 +6,7 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationSection.fs" />
     <Compile Include="ConditionAwaiter.fs" />
     <Compile Include="TestClient.fs" />
     <Compile Include="InitializationTests.fs" />
