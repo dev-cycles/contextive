@@ -12,9 +12,10 @@ open Serilog
 open System.IO
 
 let configSection = "ubictionary"
+let pathKey = "ubictionary_path"
 
 let getConfig section key (config:IConfiguration) =
-    config.GetSection("ubictionary").Item("ubictionary_path")
+    config.GetSection(section).Item(key)
 
 let private requestConfig (s:ILanguageServer) _cancellationToken =
     async {
@@ -22,7 +23,7 @@ let private requestConfig (s:ILanguageServer) _cancellationToken =
         let! config =
             s.Configuration.GetConfiguration(ConfigurationItem(Section = configSection))
             |> Async.AwaitTask
-        let path = config |> getConfig configSection "ubictionary_path"
+        let path = config |> getConfig configSection pathKey
         Log.Logger.Information $"Got path {path}"
         s.Window.LogInfo $"Loading ubictionary from {path}"
     } |> Async.StartAsTask :> Task
