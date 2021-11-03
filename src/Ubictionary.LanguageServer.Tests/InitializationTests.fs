@@ -41,16 +41,6 @@ let private handleConfigurationRequest section configValues =
             Task.FromResult(null)
     Func<ConfigurationParams, Task<Container<JToken>>>(handler)
 
-type WaitForCondition = 
-    {
-        ReplyChannel: AsyncReplyChannel<string>
-        Message: string
-    }
-
-type Command =
-    | Received of String
-    | WaitFor of WaitForCondition
-
 [<Tests>]
 let initializationTests =
     testList "Initialization Tests" [
@@ -71,21 +61,10 @@ let initializationTests =
 
             let configHandler = handleConfigurationRequest "ubictionary" (Map [("ubictionary_path", pathValue)])
 
-            let logAwaiter = MailboxProcessor.Start(fun inbox -> 
-                let rec loop (conditions: WaitForCondition list) = async {
-                    let! (msg: Command) = inbox.Receive()
-                    let newState =
-                        match msg with
-                        | Received msg ->
-                            conditions |> Seq.iter (fun c -> if msg.Contains(c.Message) then c.ReplyChannel.Reply(msg))
-                            conditions
-                        | WaitFor waitFor -> waitFor :: conditions
-                    return! loop newState
-                }
-                loop [])
+            let logAwaiter = ConditionAwaiter.create()
 
             let logHandler (l:LogMessageParams) =
-                Received (l.Message) |> logAwaiter.Post
+                l.Message |> ConditionAwaiter.received logAwaiter 
                 Serilog.Log.Logger.Information("Received Log Message: {l}", l)
                 Task.CompletedTask 
 
@@ -97,7 +76,8 @@ let initializationTests =
             use! client = clientOptionsBuilder |> initTestClientWithConfig
             test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
             test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
-            let! reply = logAwaiter.PostAndTryAsyncReply((fun r -> (WaitFor ({ReplyChannel=r; Message="Loading ubictionary"}))), 2000)
+            let logCondition = fun (m:string) -> m.Contains("Loading ubictionary")
+            let! reply = ConditionAwaiter.waitFor logAwaiter logCondition 1500
             test <@ match reply with
                     | Some replyMsg -> replyMsg.Contains(pathValue)
                     | None -> false @>
