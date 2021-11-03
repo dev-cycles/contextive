@@ -8,7 +8,7 @@ let setupLogging =
     Log.Logger <- LoggerConfiguration()
         .MinimumLevel.Verbose()
         .Enrich.FromLogContext()
-        .WriteTo.File("log.txt")
+        .WriteTo.File("log.txt", rollingInterval = RollingInterval.Day)
         .CreateLogger();
 
 let private startWithConsole = 
