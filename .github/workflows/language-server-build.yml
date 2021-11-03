@@ -1,4 +1,4 @@
-name: Ubictionary Language Server Build and Test
+name: Ubictionary Build and Test
 on: [push]
 jobs:
   build-and-test:
@@ -28,12 +28,18 @@ jobs:
         working-directory: ./src
       - name: Build and Test Language Server
         run: |
-          dotnet run --project ./src/Ubictionary.LanguageServer.Tests/Ubictionary.LanguageServer.Tests.fsproj -- --fail-on-focused-tests --nunit-summary TestResults-${{ matrix.dotnet-version }}.xml
+          dotnet test ./src/Ubictionary.LanguageServer.Tests/Ubictionary.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults-${{ matrix.dotnet-version }}.xml"
       - name: Upload dotnet test results
         uses: actions/upload-artifact@v2
         with:
           name: dotnet-results-${{ matrix.dotnet-version }}
-          path: TestResults-${{ matrix.dotnet-version }}.xml
-        # Use always() to always run this step to publish test results when there are test failures
-        if: ${{ always() }}
+          path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
+        if: always()
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Unit Tests                 
+          path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
+          reporter: dotnet-trx 
       - run: echo "🍏 This job's status is ${{ job.status }}."
