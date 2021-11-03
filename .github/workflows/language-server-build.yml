@@ -33,13 +33,13 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: dotnet-results-${{ matrix.dotnet-version }}
-          path: **/TestResults-${{ matrix.dotnet-version }}.xml
+          path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
         if: always()
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Unit Tests                 
-          path: **/TestResults-${{ matrix.dotnet-version }}.xml
+          path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
           reporter: dotnet-trx 
       - run: echo "🍏 This job's status is ${{ job.status }}."
