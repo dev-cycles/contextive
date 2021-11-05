@@ -1,4 +1,4 @@
-# Build results
+# .NET (FSharp)
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -13,5 +13,11 @@ bld/
 .fake
 .ionide
 .paket
+paket-files/
+# Logging
 log*.txt
 TestResults*.xml
+# Npm
+node_modules
+# Fable
+fable_modules

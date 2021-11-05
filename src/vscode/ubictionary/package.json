@@ -1,0 +1,46 @@
+{
+	"name": "ubictionary",
+	"displayName": "Ubictionary",
+	"description": "Supports the project-wide use of a Ubiquitous Language for software projects following Domain Driven Design.",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.62.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+        "*"
+	],
+	"main": "./dist/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "ubictionary.helloWorld",
+				"title": "Hello World"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run package",
+		"compile": "fable src && webpack",
+		"watch": "fable watch src --runWatch webpack",
+		"package": "fable src && webpack --mode production --devtool hidden-source-map",
+		"compile-tests": "# tsc -p . --outDir out # TODO: switch to fable",
+		"watch-tests": "# tsc -p . -w --outDir out # TODO: switch to fable",
+		"pretest": "npm run compile-tests && npm run compile && npm run lint",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.61.0",
+		"@types/glob": "^7.1.4",
+		"@types/mocha": "^9.0.0",
+		"@types/node": "14.x",
+		"eslint": "^8.1.0",
+		"glob": "^7.1.7",
+		"mocha": "^9.1.3",
+		"webpack": "^5.52.1",
+		"webpack-cli": "^4.8.0",
+		"@vscode/test-electron": "^1.6.2"
+	}
+}

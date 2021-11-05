@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
+        "amodio",
+        "dbaeumer",
         "dorny",
         "dotnettools",
         "formulahendry",
@@ -12,5 +14,16 @@
         "vimscript",
         "yzhang"
     ],
-    "FSharp.dotnetRoot": "/usr/share/dotnet"
+    "FSharp.dotnetRoot": "/usr/share/dotnet",
+    "vsCodeExtensionPath": "/src/vscode/ubictionary",
+    "languageServerPath": "/src/Ubictionary.LanguageServer",
+    "languageServerTestsPath": "/src/Ubictionary.LanguageServer",
+    "files.exclude": {
+        "out": false, // set this to true to hide the "out" folder with the compiled JS files
+        "dist": false // set this to true to hide the "dist" folder with the compiled JS files
+    },
+    "search.exclude": {
+        "out": true, // set this to false to include "out" folder in search results
+        "dist": true // set this to false to include "dist" folder in search results
+    }
 }

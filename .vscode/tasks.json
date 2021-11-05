@@ -27,14 +27,14 @@
             "type": "shell",
             "args": [
                 "build",
-                "${workspaceRoot}/src/Ubictionary.LanguageServer.Tests/Ubictionary.LanguageServer.Tests.fsproj",
+                "${workspaceRoot}${config:languageServerTestsPath}/Ubictionary.LanguageServer.Tests.fsproj",
                 // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
                 // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/src/Ubictionary.LanguageServer.Tests"
+                "cwd": "${workspaceFolder}${config:languageServerTestsPath}"
             },
             "group": "build",
             "problemMatcher": "$msCompile"
@@ -48,10 +48,48 @@
                 "run"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/src/Ubictionary.LanguageServer.Tests"
+                "cwd": "${workspaceFolder}${config:languageServerTestsPath}"
             },
             "group": "test",
             "problemMatcher": "$msCompile"
-        }
+        },
+        {
+            "label": "watch-build vsCode extension",
+			"type": "npm",
+			"script": "watch",
+			"problemMatcher": [ ],
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never",
+				"group": "watchers"
+			},
+			"group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}${config:vsCodeExtensionPath}"
+            },
+		},
+		{
+            "label": "watch-build vsCode extension tests",
+			"type": "npm",
+			"script": "watch-tests",
+			"problemMatcher": [],
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never",
+				"group": "watchers"
+			},
+			"group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}${config:vsCodeExtensionPath}"
+            },
+		},
+		{
+			"label": "tasks: watch vsCode extension tests",
+			"dependsOn": [
+				"npm: watch",
+				"npm: watch-tests"
+			],
+			"problemMatcher": []
+		}
     ]
 }

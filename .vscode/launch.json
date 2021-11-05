@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Tests",
+            "name": "Debug Language Server Tests",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build tests",
-            "program": "${workspaceFolder}/src/Ubictionary.LanguageServer.Tests/bin/Debug/net6.0/Ubictionary.LanguageServer.Tests.dll",
+            "program": "${workspaceFolder}${config:languageServerTestsPath}/bin/Debug/net6.0/Ubictionary.LanguageServer.Tests.dll",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}${config:languageServerTestsPath}",
             "stopAtEntry": false,
             "console": "integratedTerminal"
         },
@@ -20,12 +20,37 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Ubictionary.LanguageServer/bin/Debug/net6.0/Ubictionary.LanguageServer",
+            "program": "${workspaceFolder}${config:languageServerPath}/bin/Debug/net6.0/Ubictionary.LanguageServer",
             "args": [ ],
-            "cwd": "${workspaceFolder}/src/Ubictionary.LanguageServer",
+            "cwd": "${workspaceFolder}${config:languageServerPath}",
             "stopAtEntry": false,
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Run VsCode Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}${config:vsCodeExtensionPath}"
+            ],
+            "outFiles": [
+                "${workspaceFolder}${config:vsCodeExtensionPath}/dist/**/*.js"
+            ]
+            //"preLaunchTask": "${defaultBuildTask}"
+        },
+        {
+            "name": "VsCode Extension Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}${config:vsCodeExtensionPath}",
+                "--extensionTestsPath=${workspaceFolder}${config:vsCodeExtensionPath}/out/test/suite/index"
+            ],
+            "outFiles": [
+                "${workspaceFolder}${config:vsCodeExtensionPath}/out/**/*.js",
+                "${workspaceFolder}${config:vsCodeExtensionPath}/dist/**/*.js"
+            ],
+            "preLaunchTask": "tasks: watch-tests"
         }
-
     ]
 }

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\paket-files\ionide\ionide-vscode-helpers\src\Fable.Import.VSCode.fs">
+      <Paket>True</Paket>
+      <Link>paket-files/Fable.Import.VSCode.fs</Link>
+    </Compile>
+    <Compile Include="PromiseUtils.fs" />
+    <Compile Include="Extension.fs" />
+  </ItemGroup>
+  <Import Project="..\..\..\.paket\Paket.Restore.targets" />
+</Project>

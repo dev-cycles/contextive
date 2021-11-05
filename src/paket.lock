@@ -5,6 +5,14 @@ NUGET
     Expecto (9.0.4)
       FSharp.Core (>= 4.6)
       Mono.Cecil (>= 0.11.3)
+    Fable.Core (3.4)
+      FSharp.Core (>= 4.7.2)
+    Fable.Node (1.2)
+      Fable.Core (>= 3.1.2)
+      FSharp.Core (>= 5.0)
+    Fable.Promise (3.1.2)
+      Fable.Core (>= 3.1.5)
+      FSharp.Core (>= 4.7.2)
     FSharp.Core (6.0.1)
     MediatR (8.1)
     Microsoft.Bcl.AsyncInterfaces (5.0)
@@ -163,3 +171,7 @@ NUGET
       Expecto (>= 9.0 < 10.0)
       FSharp.Core (>= 4.6)
       System.Collections.Immutable (>= 1.5)
+GITHUB
+  remote: ionide/ionide-vscode-helpers
+    src/Fable.Import.VSCode.fs (16eceef34bcee50f441f6727eed94c8bb9a136f5)
+    src/Helpers.fs (16eceef34bcee50f441f6727eed94c8bb9a136f5)
