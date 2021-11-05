@@ -1,2 +1,3 @@
 # Fable build outputs
 **/*.js
+**/*.js.map
