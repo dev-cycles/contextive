@@ -3,6 +3,8 @@ source https://api.nuget.org/v3/index.json
 storage: none
 framework: net6.0
 nuget Expecto
+nuget Fable.Electron
+nuget Fable.Mocha
 nuget FSharp.Core
 nuget OmniSharp.Extensions.LanguageProtocol.Testing
 nuget OmniSharp.Extensions.LanguageServer

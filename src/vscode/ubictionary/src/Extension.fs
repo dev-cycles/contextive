@@ -3,7 +3,9 @@
 open Fable.Core.JsInterop
 open Fable.Import.VSCode.Vscode
 
-module extension =
+module Extension =
+    let testFn x = x * 2
+
     let activate (context: ExtensionContext) = promise {
         printf $"Extension is activated from {context.extensionPath} :)"
         window.showInformationMessage($"Extension is activated from {context.extensionPath} :)") |> ignore

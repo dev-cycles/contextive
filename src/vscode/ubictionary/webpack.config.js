@@ -29,7 +29,10 @@ const extensionConfig = {
   },
   module: {
     rules: [
-      
+      {
+        test: /.json$/,
+        use: 'json-loader'
+      }
     ]
   },
   devtool: 'eval',
