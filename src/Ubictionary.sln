@@ -9,6 +9,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Ubictionary.LanguageServer.
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Ubictionary.VsCodeExtension", "vscode\ubictionary\src\Ubictionary.VsCodeExtension.fsproj", "{8DA034DE-6B86-4843-9616-767DD40369B7}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Ubictionary.VsCodeExtension.Tests", "vscode\ubictionary\test\Ubictionary.VsCodeExtension.Tests.fsproj", "{E85D0AAB-2EC0-4EFA-A569-43FDEC19AE58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{8DA034DE-6B86-4843-9616-767DD40369B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DA034DE-6B86-4843-9616-767DD40369B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DA034DE-6B86-4843-9616-767DD40369B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E85D0AAB-2EC0-4EFA-A569-43FDEC19AE58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E85D0AAB-2EC0-4EFA-A569-43FDEC19AE58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E85D0AAB-2EC0-4EFA-A569-43FDEC19AE58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E85D0AAB-2EC0-4EFA-A569-43FDEC19AE58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

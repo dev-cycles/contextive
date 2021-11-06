@@ -1,7 +1,8 @@
 name: Ubictionary Build and Test
 on: [push]
 jobs:
-  build-and-test:
+  language-server:
+    name: 'Language Server'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -39,7 +40,63 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Unit Tests                 
+          name: Language Server Tests
           path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
           reporter: dotnet-trx 
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+  vscode-extension:
+    name: 'VsCode Extension'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: ['6.0.x']
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+          include-prerelease: true
+      - name: Display dotnet version
+        run: dotnet --version
+      - name: Install Fable
+        run: dotnet tool install fable --global
+      - name: Install paket
+        run: dotnet tool install paket --global
+      - name: Restore paket dependencies
+        run: paket restore
+        working-directory: ./src
+      - name: Restore npm dependencies
+        run: npm install
+        working-directory: ./src/vscode/ubictionary
+      - name: Start xvfb
+        run: |
+          /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          echo ">>> Started xvfb"
+      - name: Build and Test VsCode Extension
+        run: npm test
+        working-directory: ./src/vscode/ubictionary
+        env:
+          DISPLAY: ":99.0"
+          DOTNET_VERSION: ${{ matrix.dotnet-version }}
+      - name: Upload vsCode Extension Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: vscode-extension-results-${{ matrix.dotnet-version }}
+          path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
+        if: always()
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: VsCode Extension Tests
+          path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
+          reporter: java-junit
+      - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: echo "🍏 This job's status is ${{ job.status }}."

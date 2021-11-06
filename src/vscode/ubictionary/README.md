@@ -4,9 +4,9 @@ Ubictionary is a Visual Studio Code extension to help you use a Domain Driven De
 
 ## Features
 
-[ ] Manage your Ubictionary (add, delete, update terms)
-[ ] Auto-complete from your Ubictionary
-[ ] Hover to show definitions from your Ubictionary
+* [ ] Manage your Ubictionary (add, delete, update terms)
+* [ ] Auto-complete from your Ubictionary
+* [ ] Hover to show definitions from your Ubictionary
 
 ## Requirements
 
