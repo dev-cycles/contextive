@@ -29,7 +29,7 @@
 		"compile-tests": "fable test && webpack -c webpack.test.config.js",
 		"watch-tests": "fable watch test --runWatch webpack -c webpack.test.config.js",
 		"pretest": "npm run compile-tests",
-		"test": "npm run pretest && node ./out/runTest.js"
+		"test": "node ./out/runTest.js"
 	},
 	"devDependencies": {
 		"@sinonjs/fake-timers": "^7.1.2",

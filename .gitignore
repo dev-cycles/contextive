@@ -21,3 +21,5 @@ TestResults*.xml
 node_modules
 # Fable
 fable_modules
+# VSCode Testing
+.vscode-test

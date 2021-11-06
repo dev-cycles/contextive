@@ -15,7 +15,8 @@ const extensionConfig = {
 
   entry: {
     "extension.test": './test/Extension.test.fs.js', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
-    index: './test/index.js' // the Mocha test runner 📖 -> https://code.visualstudio.com/api/working-with-extensions/testing-extension
+    index: './test/index.js', // the Mocha test runner 📖 -> https://code.visualstudio.com/api/working-with-extensions/testing-extension
+    runTest: './test/runTest.js' // the VSCode test runner that downloads and launches VsCode 📖 -> https://code.visualstudio.com/api/working-with-extensions/testing-extension
   },
   output: {
     // the bundle is stored in the 'out' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
