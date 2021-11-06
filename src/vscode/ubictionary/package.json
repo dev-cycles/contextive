@@ -26,10 +26,10 @@
 		"compile": "fable src && webpack",
 		"watch": "fable watch src --runWatch webpack",
 		"package": "fable src && webpack --mode production --devtool hidden-source-map",
-		"compile-tests": "fable test && webpack -o out --entry ./test/index.js",
-		"watch-tests": "fable watch test --runWatch webpack -o out",
+		"compile-tests": "fable test && webpack -c webpack.test.config.js",
+		"watch-tests": "fable watch test --runWatch webpack -c webpack.test.config.js",
 		"pretest": "npm run compile-tests",
-		"test": "npm run pretest && node ./out/test/runTest.js"
+		"test": "npm run pretest && node ./out/runTest.js"
 	},
 	"devDependencies": {
 		"@sinonjs/fake-timers": "^7.1.2",
@@ -37,11 +37,10 @@
 		"@vscode/test-electron": "^1.6.2",
 		"glob": "^7.1.7",
 		"jest": "^27.3.1",
-		"json-loader": "^0.5.7",
 		"mocha": "^8.3.2",
-		"prettier": "^2.4.1",
 		"webpack": "^5.52.1",
-		"webpack-cli": "^4.8.0"
+		"webpack-cli": "^4.8.0",
+		"webpack-node-externals": "^3.0.0"
 	},
 	"dependencies": {
 		"react": "^17.0.2"

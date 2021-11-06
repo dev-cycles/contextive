@@ -35,8 +35,8 @@
             ],
             "outFiles": [
                 "${workspaceFolder}${config:vsCodeExtensionPath}/dist/**/*.js"
-            ]
-            //"preLaunchTask": "${defaultBuildTask}"
+            ],
+            "preLaunchTask": "build vsCode extension"
         },
         {
             "name": "VsCode Extension Tests",
@@ -44,13 +44,13 @@
             "request": "launch",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}${config:vsCodeExtensionPath}",
-                "--extensionTestsPath=${workspaceFolder}${config:vsCodeExtensionPath}/out/extension.js"
+                "--extensionTestsPath=${workspaceFolder}${config:vsCodeExtensionPath}/out/index"
             ],
             "outFiles": [
                 "${workspaceFolder}${config:vsCodeExtensionPath}/out/**/*.js",
                 "${workspaceFolder}${config:vsCodeExtensionPath}/dist/**/*.js"
-            ]
-            //"preLaunchTask": "tasks: watch-build vsCode extension tests"
+            ],
+            "preLaunchTask": "vsCode extension tests"
         }
     ]
 }

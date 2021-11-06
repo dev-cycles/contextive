@@ -9,14 +9,14 @@
             "type": "shell",
             "args": [
                 "build",
-                "${workspaceRoot}/src/Ubictionary.LanguageServer/Ubictionary.LanguageServer.fsproj",
+                "${workspaceRoot}${config:languageServerPath}/Ubictionary.LanguageServer.fsproj",
                 // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
                 // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/src/Ubictionary.LanguageServer"
+                "cwd": "${workspaceFolder}${config:languageServerPath}"
             },
             "group": "build",
             "problemMatcher": "$msCompile"
@@ -54,14 +54,14 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "watch-build vsCode extension",
+            "label": "build vsCode extension",
 			"type": "npm",
-			"script": "watch",
-			"problemMatcher": [ ],
+			"script": "compile",
+			"problemMatcher": "$fable-webpack",
 			"isBackground": true,
 			"presentation": {
 				"reveal": "never",
-				"group": "watchers"
+				"group": "builders"
 			},
 			"group": "build",
             "options": {
@@ -69,14 +69,14 @@
             },
 		},
 		{
-            "label": "watch-build vsCode extension tests",
+            "label": "build vsCode extension tests",
 			"type": "npm",
-			"script": "watch-tests",
-			"problemMatcher": [],
+			"script": "compile-tests",
+			"problemMatcher": "$fable-webpack",
 			"isBackground": true,
 			"presentation": {
 				"reveal": "never",
-				"group": "watchers"
+				"group": "builders"
 			},
 			"group": "build",
             "options": {
@@ -84,10 +84,10 @@
             },
 		},
 		{
-			"label": "tasks: watch vsCode extension tests",
+			"label": "vsCode extension tests",
 			"dependsOn": [
-				"npm: watch",
-				"npm: watch-tests"
+				"build vsCode extension",
+				"build vsCode extension tests"
 			],
 			"problemMatcher": []
 		}

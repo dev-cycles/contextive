@@ -6,7 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extension.test.fs" />
-    <Compile Include="Index.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Ubictionary.VsCodeExtension.fsproj" />

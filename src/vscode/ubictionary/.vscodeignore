@@ -6,5 +6,6 @@ src/**
 .gitignore
 .yarnrc
 webpack.config.js
+webpack.config.test.js
 vsc-extension-quickstart.md
 **/*.map
