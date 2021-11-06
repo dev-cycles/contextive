@@ -84,4 +84,18 @@ jobs:
         working-directory: ./src/vscode/ubictionary
         env:
           DISPLAY: ":99.0"
+      - name: Upload vsCode Extension test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: vscode-extension-results-${{ matrix.dotnet-version }}
+          path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
+        if: always()
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: VsCode Extension Unit Tests
+          path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
+          reporter: java-junit
+      - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: echo "🍏 This job's status is ${{ job.status }}."

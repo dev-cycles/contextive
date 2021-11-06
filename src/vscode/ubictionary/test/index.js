@@ -3,13 +3,19 @@ const Mocha = require('mocha');
 const glob = require('glob');
 
 function run() {
+	const testsRoot = __dirname;
+
 	// Create the mocha test
 	const mocha = new Mocha({
 		ui: 'bdd', // Fable.Mocha uses `describe`, so we need to use the `bdd` API. See https://mochajs.org/#interfaces
 		color: true
+	})
+	.reporter('mocha-multi-reporters', {
+		reporterEnabled: "spec, mocha-junit-reporter",
+		mochaJunitReporterReporterOptions: {
+			mochaFile: path.resolve(testsRoot, '../TestResults.xml')
+		}
 	});
-
-	const testsRoot = __dirname;
 
 	return new Promise((c, e) => {
 		glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {

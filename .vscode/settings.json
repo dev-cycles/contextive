@@ -13,6 +13,7 @@
         "sinonjs",
         "Ubictionary",
         "vimscript",
+        "xvfb",
         "yzhang"
     ],
     "FSharp.dotnetRoot": "/usr/share/dotnet",
