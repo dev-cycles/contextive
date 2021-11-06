@@ -28,7 +28,7 @@
 		"package": "fable src && webpack --mode production --devtool hidden-source-map",
 		"compile-tests": "fable test && webpack -c webpack.test.config.js",
 		"watch-tests": "fable watch test --runWatch webpack -c webpack.test.config.js",
-		"pretest": "npm run compile-tests",
+		"pretest": "npm run compile && npm run compile-tests",
 		"test": "node ./out/runTest.js"
 	},
 	"devDependencies": {
