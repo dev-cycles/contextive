@@ -40,7 +40,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Language Server Unit Tests
+          name: Language Server Tests
           path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
           reporter: dotnet-trx 
       - run: echo "🍏 This job's status is ${{ job.status }}."

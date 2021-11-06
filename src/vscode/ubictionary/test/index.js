@@ -13,7 +13,7 @@ function run() {
 	.reporter('mocha-multi-reporters', {
 		reporterEnabled: "spec, mocha-junit-reporter",
 		mochaJunitReporterReporterOptions: {
-			mochaFile: path.resolve(testsRoot, `../TestResults-${process.env.DOTNET_VERSION}.xml`)
+			mochaFile: path.resolve(testsRoot, `../TestResults/TestResults-${process.env.DOTNET_VERSION}.xml`)
 		}
 	});
 
