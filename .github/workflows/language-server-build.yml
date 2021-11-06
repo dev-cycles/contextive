@@ -40,7 +40,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Unit Tests                 
+          name: Language Server Unit Tests
           path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
           reporter: dotnet-trx 
       - run: echo "🍏 This job's status is ${{ job.status }}."
@@ -75,7 +75,13 @@ jobs:
       - name: Restore npm dependencies
         run: npm install
         working-directory: ./src/vscode/ubictionary
+      - name: Start xvfb
+        run: |
+          /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          echo ">>> Started xvfb"
       - name: Build and Test VsCode Extension
         run: npm test
         working-directory: ./src/vscode/ubictionary
+        env:
+          DISPLAY: ":99.0"
       - run: echo "🍏 This job's status is ${{ job.status }}."
