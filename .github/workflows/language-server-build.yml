@@ -1,51 +1,8 @@
-name: Ubictionary Build and Test
+name: Ubictionary
 on: [push]
 jobs:
-  language-server:
-    name: 'Language Server'
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dotnet-version: ['6.0.x']
-    steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: ${{ matrix.dotnet-version }}
-          include-prerelease: true
-      - name: Display dotnet version
-        run: dotnet --version
-      - name: Install paket
-        run: dotnet tool install paket --global
-      - name: Restore paket dependencies
-        run: paket restore
-        working-directory: ./src
-      - name: Build and Test Language Server
-        run: |
-          dotnet test ./src/Ubictionary.LanguageServer.Tests/Ubictionary.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults-${{ matrix.dotnet-version }}.xml"
-      - name: Upload dotnet test results
-        uses: actions/upload-artifact@v2
-        with:
-          name: dotnet-results-${{ matrix.dotnet-version }}
-          path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
-        if: always()
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: always()
-        with:
-          name: Language Server Tests
-          path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
-          reporter: dotnet-trx 
-      - run: echo "🍏 This job's status is ${{ job.status }}."
-  vscode-extension:
-    name: 'VsCode Extension'
+  build-and-test:
+    name: 'Build and Test'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -72,9 +29,26 @@ jobs:
       - name: Restore paket dependencies
         run: paket restore
         working-directory: ./src
+      - name: Build and Test Language Server
+        run: |
+          dotnet test ./src/Ubictionary.LanguageServer.Tests/Ubictionary.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults-${{ matrix.dotnet-version }}.xml"
+      - name: Upload Language Server Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: language-server-results-${{ matrix.dotnet-version }}
+          path: "src/Ubictionary.LanguageServer.Tests/TestResults/TestResults/TestResults-${{ matrix.dotnet-version }}.xml"
+        if: always()
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Language Server Tests
+          path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
+          reporter: dotnet-trx 
       - name: Restore npm dependencies
         run: npm install
         working-directory: ./src/vscode/ubictionary
+      - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Start xvfb
         run: |
           /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
@@ -96,7 +70,6 @@ jobs:
         if: always()
         with:
           name: VsCode Extension Tests
-          path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
+          path: "src/vscode/**/TestResults-${{ matrix.dotnet-version }}.xml"
           reporter: java-junit
-      - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: echo "🍏 This job's status is ${{ job.status }}."
