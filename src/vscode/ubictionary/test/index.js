@@ -8,7 +8,8 @@ function run() {
 	// Create the mocha test
 	const mocha = new Mocha({
 		ui: 'bdd', // Fable.Mocha uses `describe`, so we need to use the `bdd` API. See https://mochajs.org/#interfaces
-		color: true
+		color: true,
+		timeout: 5000
 	})
 	.reporter('mocha-multi-reporters', {
 		reporterEnabled: "spec, mocha-junit-reporter",

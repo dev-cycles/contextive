@@ -57,8 +57,8 @@
             "label": "build vsCode extension",
 			"type": "npm",
 			"script": "compile",
-			"problemMatcher": "$fable-webpack",
-			"isBackground": true,
+			"problemMatcher": "$msCompile",
+			"isBackground": false,
 			"presentation": {
 				"reveal": "never",
 				"group": "builders"
@@ -72,8 +72,8 @@
             "label": "build vsCode extension tests",
 			"type": "npm",
 			"script": "compile-tests",
-			"problemMatcher": "$fable-webpack",
-			"isBackground": true,
+			"isBackground": false,
+			"problemMatcher": "$msCompile",
 			"presentation": {
 				"reveal": "never",
 				"group": "builders"
@@ -88,8 +88,7 @@
 			"dependsOn": [
 				"build vsCode extension",
 				"build vsCode extension tests"
-			],
-			"problemMatcher": []
+			]
 		}
     ]
 }

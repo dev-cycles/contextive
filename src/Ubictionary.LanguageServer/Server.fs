@@ -12,7 +12,7 @@ open Serilog
 open System.IO
 
 let configSection = "ubictionary"
-let pathKey = "ubictionary_path"
+let pathKey = "path"
 
 let getConfig section key (config:IConfiguration) =
     config.GetSection(section).Item(key)

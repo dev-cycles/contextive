@@ -45,7 +45,7 @@ let initializationTests =
         testAsync "Server requests ubictionary file location configuration" {
             let pathValue = Guid.NewGuid().ToString()
 
-            let configHandler = handleConfigurationRequest "ubictionary" (Map [("ubictionary_path", pathValue)])
+            let configHandler = handleConfigurationRequest "ubictionary" (Map [("path", pathValue)])
 
             let logAwaiter = ConditionAwaiter.create()
             let logHandler (l:LogMessageParams) =
