@@ -1,4 +1,4 @@
-namespace Ubictionary.LanguageServer.Tests
+module Ubictionary.LanguageServer.Tests.TestClient
 
 open System
 open System.IO.Pipelines
@@ -7,7 +7,7 @@ open OmniSharp.Extensions.LanguageServer.Client
 open OmniSharp.Extensions.JsonRpc.Testing
 open Ubictionary.LanguageServer.Server
 
-type TestClient() =
+type private TestClient() =
     inherit LanguageServerTestBase(JsonRpcTestOptions())
 
     override _.SetupServer() =
@@ -22,3 +22,13 @@ type TestClient() =
         match clientOptsBuilder with
             | Some f -> base.InitializeClient(Action<LanguageClientOptions>(f))
             | None -> base.InitializeClient(null)
+
+let initTestClient = async {
+    let testClient = new TestClient()
+    return! testClient.Initialize(None) |> Async.AwaitTask
+}
+
+let initTestClientWithConfig clientConfigBuilder = async {
+    let testClient = new TestClient()
+    return! testClient.Initialize(Some clientConfigBuilder) |> Async.AwaitTask
+}

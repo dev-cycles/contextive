@@ -8,24 +8,8 @@ open OmniSharp.Extensions.JsonRpc
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client
 open OmniSharp.Extensions.LanguageServer.Client
-
-let private initTestClient = async {
-    let testClient = new TestClient()
-    return! testClient.Initialize(None) |> Async.AwaitTask
-}
-
-let private initTestClientWithConfig clientConfigBuilder = async {
-    let testClient = new TestClient()
-    return! testClient.Initialize(Some clientConfigBuilder) |> Async.AwaitTask
-}
-
-let private handleConfigurationRequest section configValues =
-    let configSectionResult = ConfigurationSection.fromMap configValues
-    fun c ->
-        if ConfigurationSection.includesSection section c then
-            Task.FromResult(configSectionResult)
-        else
-            Task.FromResult(null)
+open TestClient
+open ConfigurationSection
 
 [<Tests>]
 let initializationTests =

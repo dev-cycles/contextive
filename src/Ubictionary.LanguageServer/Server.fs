@@ -28,7 +28,7 @@ let private requestConfig (s:ILanguageServer) _cancellationToken =
         s.Window.LogInfo $"Loading ubictionary from {path}"
     } |> Async.StartAsTask :> Task
 
-let configureServer (input: Stream) (output: Stream) (opts:LanguageServerOptions) =
+let private configureServer (input: Stream) (output: Stream) (opts:LanguageServerOptions) =
     opts
         .WithInput(input)
         .WithOutput(output)
