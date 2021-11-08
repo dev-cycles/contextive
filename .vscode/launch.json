@@ -5,10 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Attach to Language Server",
+            "type": "coreclr",
+            "request": "attach"
+        },
+        {
             "name": "Debug Language Server Tests",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build tests",
+            "preLaunchTask": "build: Language Server Tests",
             "program": "${workspaceFolder}${config:languageServerTestsPath}/bin/Debug/net6.0/Ubictionary.LanguageServer.Tests.dll",
             "args": [],
             "cwd": "${workspaceFolder}${config:languageServerTestsPath}",
@@ -19,7 +24,7 @@
             "name": "Debug Language Server",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "build: Language Server",
             "program": "${workspaceFolder}${config:languageServerPath}/bin/Debug/net6.0/Ubictionary.LanguageServer",
             "args": [ ],
             "cwd": "${workspaceFolder}${config:languageServerPath}",
@@ -27,16 +32,17 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Run VsCode Extension",
+            "name": "Launch VsCode Extension",
             "type": "extensionHost",
             "request": "launch",
             "args": [
-                "--extensionDevelopmentPath=${workspaceFolder}${config:vsCodeExtensionPath}"
+                "--extensionDevelopmentPath=${workspaceFolder}${config:vsCodeExtensionPath}",
+                "${workspaceRoot}/src/vscode/ubictionary/test/fixtures/simple_workspace"
             ],
             "outFiles": [
                 "${workspaceFolder}${config:vsCodeExtensionPath}/dist/**/*.js"
             ],
-            "preLaunchTask": "build vsCode extension"
+            "preLaunchTask": "build: VsCode Extension"
         },
         {
             "name": "VsCode Extension Tests",
@@ -50,7 +56,13 @@
                 "${workspaceFolder}${config:vsCodeExtensionPath}/out/**/*.js",
                 "${workspaceFolder}${config:vsCodeExtensionPath}/dist/**/*.js"
             ],
-            "preLaunchTask": "vsCode extension tests"
+            "preLaunchTask": "build: VsCode Extension Tests"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Extension Client + Language Server",
+            "configurations": ["Launch VsCode Extension", "Attach to Language Server"]
         }
     ]
 }

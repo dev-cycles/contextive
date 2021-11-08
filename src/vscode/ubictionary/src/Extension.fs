@@ -22,12 +22,11 @@ module Extension =
         x.args <- argsArray ["run"]
         x.options <- executableOptions(fun x -> 
             x.cwd <- serverPath
-            x.shell <- Some true
         )
     )
           
     let private clientOptions = languageClientOptions(fun x ->
-            x.documentSelector <- documentSelectorList []
+            x.documentSelector <- documentSelectorList ["plaintext"; "markdown"]
         )
 
     let private client =
