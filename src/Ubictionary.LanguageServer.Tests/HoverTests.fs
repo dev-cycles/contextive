@@ -18,6 +18,9 @@ let hoverTests =
 
             let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
 
-            test <@ hover.Contents.HasMarkedStrings @>
+            printfn "MarkedStrings: %A" hover.Contents.MarkedStrings
+            printfn "MarkupContent: %A" hover.Contents.MarkupContent
+
+            test <@ hover.Contents.HasMarkupContent @>
         }
     ]
