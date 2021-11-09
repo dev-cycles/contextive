@@ -4,7 +4,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "build: Language Server",
             "command": "dotnet",
             "type": "shell",
             "args": [
@@ -22,7 +22,7 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "build tests",
+            "label": "build: Language Server Tests",
             "command": "dotnet",
             "type": "shell",
             "args": [
@@ -40,7 +40,7 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "watch tests",
+            "label": "watch: Language Server Tests",
             "command": "dotnet",
             "type": "shell",
             "args": [
@@ -54,41 +54,41 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "build vsCode extension",
-			"type": "npm",
-			"script": "compile",
-			"problemMatcher": "$msCompile",
-			"isBackground": false,
-			"presentation": {
-				"reveal": "never",
-				"group": "builders"
-			},
-			"group": "build",
+            "label": "build: VsCode Extension",
+            "type": "npm",
+            "script": "compile",
+            "problemMatcher": "$msCompile",
+            "isBackground": false,
+            "presentation": {
+                "reveal": "never",
+                "group": "builders"
+            },
+            "group": "build",
             "options": {
                 "cwd": "${workspaceFolder}${config:vsCodeExtensionPath}"
             },
-		},
-		{
-            "label": "build vsCode extension tests",
-			"type": "npm",
-			"script": "compile-tests",
-			"isBackground": false,
-			"problemMatcher": "$msCompile",
-			"presentation": {
-				"reveal": "never",
-				"group": "builders"
-			},
-			"group": "build",
+        },
+        {
+            "label": "build: VsCode Extension Tests",
+            "type": "npm",
+            "script": "compile-tests",
+            "isBackground": false,
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "never",
+                "group": "builders"
+            },
+            "group": "build",
             "options": {
                 "cwd": "${workspaceFolder}${config:vsCodeExtensionPath}"
             },
-		},
-		{
-			"label": "vsCode extension tests",
-			"dependsOn": [
-				"build vsCode extension",
-				"build vsCode extension tests"
-			]
-		}
+        },
+        {
+            "label": "build: All",
+            "dependsOn": [
+                "build: VsCode Extension",
+                "build: Language Server"
+            ]
+        }
     ]
 }

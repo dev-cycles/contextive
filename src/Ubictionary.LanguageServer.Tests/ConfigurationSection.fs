@@ -3,8 +3,9 @@ module Ubictionary.LanguageServer.Tests.ConfigurationSection
 open Newtonsoft.Json.Linq
 open System.Collections.Generic
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
+open System.Threading.Tasks
 
-let fromMap values =
+let private fromMap values =
     let results = new List<JToken>()
     let configValue = JObject()
     results.Add(configValue)
@@ -12,5 +13,13 @@ let fromMap values =
         configValue.[k] <- JValue(v))
     Container(results)
 
-let includesSection section (configRequest:ConfigurationParams) =
+let private includesSection section (configRequest:ConfigurationParams) =
     configRequest.Items |> Seq.map (fun ci -> ci.Section) |> Seq.contains section
+
+let handleConfigurationRequest section configValues =
+    let configSectionResult = fromMap configValues
+    fun c ->
+        if includesSection section c then
+            Task.FromResult(configSectionResult)
+        else
+            Task.FromResult(null)
