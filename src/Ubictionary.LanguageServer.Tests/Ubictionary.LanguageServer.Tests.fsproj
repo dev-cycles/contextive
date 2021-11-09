@@ -9,6 +9,7 @@
     <Compile Include="ConfigurationSection.fs" />
     <Compile Include="ConditionAwaiter.fs" />
     <Compile Include="TestClient.fs" />
+    <Compile Include="CompletionTests.fs" />
     <Compile Include="HoverTests.fs" />
     <Compile Include="InitializationTests.fs" />
     <Compile Include="Program.fs" />

@@ -38,6 +38,8 @@ let private configureServer (input: Stream) (output: Stream) (opts:LanguageServe
         // .WithServices(fun s -> s.AddLogging(fun b -> b.SetMinimumLevel(LogLevel.Trace) |> ignore) |> ignore)
         .WithServerInfo(ServerInfo(Name = "Ubictionary"))
         .OnHover(Hover.handler, Hover.registrationOptions)
+        .OnCompletion(Completion.handler, Completion.registrationOptions)
+        
         |> ignore
      
 
