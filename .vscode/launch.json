@@ -21,7 +21,6 @@
             "name": "Attach to Language Server",
             "type": "coreclr",
             "request": "attach",
-            
         },
         {
             "name": "Language Server Tests",

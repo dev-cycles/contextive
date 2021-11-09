@@ -4,9 +4,10 @@ open System
 open System.Threading.Tasks
 open Expecto
 open Swensen.Unquote
-open OmniSharp.Extensions.JsonRpc
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
+open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open OmniSharp.Extensions.LanguageServer.Protocol.Client
+open OmniSharp.Extensions.LanguageServer.Protocol.Window
 open OmniSharp.Extensions.LanguageServer.Client
 open TestClient
 open ConfigurationSection
@@ -37,9 +38,9 @@ let initializationTests =
                 Task.CompletedTask 
 
             let clientOptionsBuilder (b:LanguageClientOptions) = 
-                b.OnRequest("workspace/configuration", configHandler, JsonRpcHandlerOptions())
-                    .OnNotification("window/logMessage", logHandler, JsonRpcHandlerOptions())
-                    .WithCapability(Capabilities.DidChangeConfigurationCapability())
+                b.WithCapability(Capabilities.DidChangeConfigurationCapability())
+                    .OnConfiguration(configHandler)
+                    .OnLogMessage(logHandler)
                 |> ignore
 
             use! client = clientOptionsBuilder |> initTestClientWithConfig
