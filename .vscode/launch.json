@@ -5,33 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach to Language Server",
-            "type": "coreclr",
-            "request": "attach"
-        },
-        {
-            "name": "Debug Language Server Tests",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build: Language Server Tests",
-            "program": "${workspaceFolder}${config:languageServerTestsPath}/bin/Debug/net6.0/Ubictionary.LanguageServer.Tests.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}${config:languageServerTestsPath}",
-            "stopAtEntry": false,
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "Debug Language Server",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build: Language Server",
-            "program": "${workspaceFolder}${config:languageServerPath}/bin/Debug/net6.0/Ubictionary.LanguageServer",
-            "args": [ ],
-            "cwd": "${workspaceFolder}${config:languageServerPath}",
-            "stopAtEntry": false,
-            "console": "integratedTerminal"
-        },
-        {
             "name": "Launch VsCode Extension",
             "type": "extensionHost",
             "request": "launch",
@@ -43,6 +16,23 @@
                 "${workspaceFolder}${config:vsCodeExtensionPath}/dist/**/*.js"
             ],
             "preLaunchTask": "build: VsCode Extension"
+        },
+        {
+            "name": "Attach to Language Server",
+            "type": "coreclr",
+            "request": "attach",
+            
+        },
+        {
+            "name": "Language Server Tests",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build: Language Server Tests",
+            "program": "${workspaceFolder}${config:languageServerTestsPath}/bin/Debug/net6.0/Ubictionary.LanguageServer.Tests.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}${config:languageServerTestsPath}",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
         },
         {
             "name": "VsCode Extension Tests",
@@ -61,7 +51,7 @@
     ],
     "compounds": [
         {
-            "name": "Extension Client + Language Server",
+            "name": "Launch Extension + Language Server",
             "configurations": ["Launch VsCode Extension", "Attach to Language Server"]
         }
     ]

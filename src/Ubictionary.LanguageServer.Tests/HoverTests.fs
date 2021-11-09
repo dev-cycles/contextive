@@ -1,26 +1,21 @@
 module Ubictionary.LanguageServer.Tests.HoverTests
 
 open Expecto
-open System.Threading.Tasks
 open Swensen.Unquote
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
-open OmniSharp.Extensions.LanguageServer.Client
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open TestClient
 
 [<Tests>]
 let hoverTests =
     testList "Hover Tests" [
-        testAsync "Server response to hover request" {
+        testAsync "Given no ubictionary and no document sync, server response to hover request with empty result" {
             use! client = initTestClient
 
             let hoverParams = HoverParams()
 
             let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
 
-            printfn "MarkedStrings: %A" hover.Contents.MarkedStrings
-            printfn "MarkupContent: %A" hover.Contents.MarkupContent
-
-            test <@ hover.Contents.HasMarkupContent @>
+            test <@ not hover.Contents.HasMarkupContent @>
         }
     ]
