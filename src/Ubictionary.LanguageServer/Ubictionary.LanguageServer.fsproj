@@ -6,6 +6,7 @@
     <WarnOn>3390;$(WarnOn)</WarnOn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Definitions.fs" />
     <Compile Include="Completion.fs" />
     <Compile Include="Hover.fs" />
     <Compile Include="Server.fs" />
