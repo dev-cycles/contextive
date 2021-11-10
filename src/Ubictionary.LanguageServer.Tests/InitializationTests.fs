@@ -30,26 +30,17 @@ let initializationTests =
         testAsync "Server requests ubictionary file location configuration" {
             let pathValue = Guid.NewGuid().ToString()
 
-            let configHandler = handleConfigurationRequest "ubictionary" (Map [("path", pathValue)])
-
             let logAwaiter = ConditionAwaiter.create()
-            let logHandler (l:LogMessageParams) =
-                l.Message |> ConditionAwaiter.received logAwaiter 
-                Task.CompletedTask 
 
-            let clientOptionsBuilder (b:LanguageClientOptions) = 
-                b.WithCapability(Capabilities.DidChangeConfigurationCapability())
-                    .OnConfiguration(configHandler)
-                    .OnLogMessage(logHandler)
-                |> ignore
+            let logHandler = setupLogHandler logAwaiter
 
-            use! client = clientOptionsBuilder |> initTestClientWithConfig
+            use! client = (Map [("path", pathValue)]) |> initTestClientWithConfig logHandler id
+
+            let! reply = waitForConfigLoaded logAwaiter
 
             test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
             test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
             
-            let logCondition = fun (m:string) -> m.Contains("Loading ubictionary")
-            let! reply = ConditionAwaiter.waitFor logAwaiter logCondition 1500
             test <@ match reply with
                     | Some replyMsg -> replyMsg.Contains(pathValue)
                     | None -> false @>
