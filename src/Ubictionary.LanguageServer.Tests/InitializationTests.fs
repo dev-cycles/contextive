@@ -21,17 +21,18 @@ let initializationTests =
         }
 
         testAsync "Server requests ubictionary file location configuration" {
+            let pathValue = Guid.NewGuid().ToString()
             let config = {
                 WorkspaceFolderPath = ""
-                ConfigurationSettings = Map [("path", Guid.NewGuid().ToString())]
+                ConfigurationSettings = Map [("path", pathValue)]
             }
 
-            use! client = TestClient(config) |> init
+            let! (client, reply) = TestClient(config) |> initWithReply
 
             test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
             test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
             
-            //test <@ client. = pathValue @>
+            test <@ (defaultArg reply "").Contains(pathValue) @>
         }
 
     ]
