@@ -36,9 +36,6 @@ let loadUbictionary path =
     let yml = tryReadFile path
     match Deserialize yml with
     | [Success r] -> Some r.Data
-    | [Error e] ->
-        printfn "%A" e
-        None
     | _ -> None
 
 let clear () =
