@@ -16,7 +16,7 @@ let private fromMap values =
 let private includesSection section (configRequest:ConfigurationParams) =
     configRequest.Items |> Seq.map (fun ci -> ci.Section) |> Seq.contains section
 
-let handleConfigurationRequest section configValues =
+let createHandler section configValues =
     let configSectionResult = fromMap configValues
     fun c ->
         if includesSection section c then

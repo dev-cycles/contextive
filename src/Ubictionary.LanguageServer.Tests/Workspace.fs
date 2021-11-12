@@ -7,7 +7,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open OmniSharp.Extensions.LanguageServer.Client
 
-let private createHandler path =
+let createHandler path =
     fun (p:WorkspaceFolderParams) ->
         Task.FromResult(Container(WorkspaceFolder(Uri = DocumentUri.FromFileSystemPath(
             Path.Combine(Directory.GetCurrentDirectory(),path)

@@ -10,7 +10,7 @@ open TestClient
 let hoverTests =
     testList "Hover Tests" [
         testAsync "Given no ubictionary and no document sync, server response to hover request with empty result" {
-            use! client = Simple |> init
+            use! client = SimpleTestClient |> init
 
             let hoverParams = HoverParams()
 

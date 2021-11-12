@@ -11,7 +11,7 @@ open TestClient
 let completionTests =
     testList "Completion Tests" [
         testAsync "Given no ubictionary respond with empty completion list " {
-            use! client = Simple |> init
+            use! client = SimpleTestClient |> init
 
             let completionParams = CompletionParams()
 
@@ -21,15 +21,14 @@ let completionTests =
         }
 
         testAsync "Given ubictionary, respond with valid completion list " {
-            let workspacePath = Path.Combine("fixtures", "simple_ubictionary")
+            let config = {
+                WorkspaceFolderPath = Path.Combine("fixtures", "simple_ubictionary")
+                ConfigurationSettings = Map [("path", "definitions.yml")]
+            }
 
-            let workspaceOptionsBuilder = Workspace.createOptionsBuilder workspacePath
-
-            use! client = ConfigAndWait(workspaceOptionsBuilder, Map [("path", "definitions.yml")]) |> init
+            use! client = TestClient(config) |> init
            
-            let completionParams = CompletionParams()
-
-            let! result = client.TextDocument.RequestCompletion(completionParams).AsTask() |> Async.AwaitTask
+            let! result = client.TextDocument.RequestCompletion(CompletionParams()).AsTask() |> Async.AwaitTask
 
             let completionLabels = result.Items |> Seq.map (fun x -> x.Label)
 

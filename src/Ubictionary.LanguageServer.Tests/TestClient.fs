@@ -14,11 +14,15 @@ open Ubictionary.LanguageServer.Server
 
 type ClientOptionsBuilder = LanguageClientOptions -> LanguageClientOptions
 type LogHandler = LogMessageParams -> Task
+
+type TestClientConfig = {
+    WorkspaceFolderPath: string
+    ConfigurationSettings: Map<string, String>
+}
+
 type InitializationOptions =
-    | Simple
-    | Options of ClientOptionsBuilder
-    | ConfigAndWait of ClientOptionsBuilder * Map<string, string>
-    | Config of Map<string, string> * LogHandler
+    | SimpleTestClient
+    | TestClient of TestClientConfig
 
 type private TestClient() =
     inherit LanguageServerTestBase(JsonRpcTestOptions())
@@ -33,52 +37,51 @@ type private TestClient() =
 
     member _.Initialize clientOptsBuilder =
         match clientOptsBuilder with
-            | Options b -> base.InitializeClient(Action<LanguageClientOptions>(b >> ignore))
+            | Some b -> base.InitializeClient(Action<LanguageClientOptions>(b >> ignore))
             | _ -> base.InitializeClient(null)
 
-let private initWithOptions initOptionsBuilder = async {
+let private createTestClient clientOptsBuilder = async {
     let testClient = new TestClient()
-    return! testClient.Initialize(initOptionsBuilder) |> Async.AwaitTask
+    
+    return! testClient.Initialize(clientOptsBuilder) |> Async.AwaitTask
 }
 
-let private initWithConfig (logHandler:LogHandler) (clientOptionsBuilder:ClientOptionsBuilder) config  = async {
-    let configHandler = ConfigurationSection.handleConfigurationRequest "ubictionary" config
-
-    let standardClientOptionsBuilder (b:LanguageClientOptions) = 
-        (b |> clientOptionsBuilder)
-            .EnableWorkspaceFolders()
-            .WithCapability(Capabilities.DidChangeConfigurationCapability())
-            .OnConfiguration(configHandler)
-            .OnLogMessage(logHandler)
-            |> ignore
-        b
-
-    return! Options(standardClientOptionsBuilder) |> initWithOptions
-}
-
-let setupLogHandler logAwaiter:LogHandler =
+let private setupLogHandler logAwaiter:LogHandler =
     fun (l:LogMessageParams) ->
         l.Message |> ConditionAwaiter.received logAwaiter 
         Task.CompletedTask
 
-let waitForConfigLoaded logAwaiter = async {
+let private  waitForConfigLoaded logAwaiter = async {
     let logCondition = fun (m:string) -> m.Contains("Loading ubictionary")
 
     return! ConditionAwaiter.waitFor logAwaiter logCondition 1500
 }
 
-let private initWithConfigAndWait clientOptionsBuilder config = async {
+let private initAndWaitForConfigLoaded testClientConfig = async {
     let logAwaiter = ConditionAwaiter.create()
+
     let logHandler = logAwaiter |> setupLogHandler 
-    let! client = initWithConfig logHandler clientOptionsBuilder config
-    do! waitForConfigLoaded logAwaiter |> Async.Ignore
+    let configHandler = ConfigurationSection.createHandler "ubictionary" testClientConfig.ConfigurationSettings
+    let workspaceHandler = Workspace.createHandler testClientConfig.WorkspaceFolderPath
+
+    let clientOptionsBuilder (b:LanguageClientOptions) = 
+        b.EnableWorkspaceFolders()
+            .WithCapability(Capabilities.DidChangeConfigurationCapability())
+            .OnConfiguration(configHandler)
+            .OnLogMessage(logHandler)
+            .OnWorkspaceFolders(workspaceHandler)
+    
+    let! client = Some clientOptionsBuilder |> createTestClient
+
+    let! reply = waitForConfigLoaded logAwaiter
+
+    // TODO Work out how to return the path
+    //client.DefinitionPath <- reply.Value
+
     return client
 }
 
 let init initOptions =
     match initOptions with
-    | Simple | Options(_) -> initWithOptions initOptions
-    | ConfigAndWait(builder, config) -> initWithConfigAndWait builder config
-    | Config(config, logHandler) -> initWithConfig logHandler id config
-    
-    
+    | SimpleTestClient -> createTestClient None
+    | TestClient(testClientConfig) -> initAndWaitForConfigLoaded testClientConfig
