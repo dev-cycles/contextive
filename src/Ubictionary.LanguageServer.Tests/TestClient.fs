@@ -12,6 +12,14 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open OmniSharp.Extensions.JsonRpc.Testing
 open Ubictionary.LanguageServer.Server
 
+type ClientOptionsBuilder = LanguageClientOptions -> LanguageClientOptions
+type LogHandler = LogMessageParams -> Task
+type InitializationOptions =
+    | Simple
+    | Options of ClientOptionsBuilder
+    | ConfigAndWait of ClientOptionsBuilder * Map<string, string>
+    | Config of Map<string, string> * LogHandler
+
 type private TestClient() =
     inherit LanguageServerTestBase(JsonRpcTestOptions())
 
@@ -25,28 +33,15 @@ type private TestClient() =
 
     member _.Initialize clientOptsBuilder =
         match clientOptsBuilder with
-            | Some f -> base.InitializeClient(Action<LanguageClientOptions>(f))
-            | None -> base.InitializeClient(null)
+            | Options b -> base.InitializeClient(Action<LanguageClientOptions>(b >> ignore))
+            | _ -> base.InitializeClient(null)
 
-let initTestClient = async {
+let private initWithOptions initOptionsBuilder = async {
     let testClient = new TestClient()
-    return! testClient.Initialize(None) |> Async.AwaitTask
+    return! testClient.Initialize(initOptionsBuilder) |> Async.AwaitTask
 }
 
-let initTestClientWithOptions clientOptionsBuilder = async {
-    let testClient = new TestClient()
-    return! testClient.Initialize(Some clientOptionsBuilder) |> Async.AwaitTask
-}
-
-type LogHandler = LogMessageParams -> Task
-type ClientOptionsBuilder = LanguageClientOptions -> LanguageClientOptions
-
-let setupLogHandler logAwaiter:LogHandler =
-    fun (l:LogMessageParams) ->
-        l.Message |> ConditionAwaiter.received logAwaiter 
-        Task.CompletedTask
-    
-let initTestClientWithConfig (logHandler:LogHandler) (clientOptionsBuilder:ClientOptionsBuilder) config  = async {
+let private initWithConfig (logHandler:LogHandler) (clientOptionsBuilder:ClientOptionsBuilder) config  = async {
     let configHandler = ConfigurationSection.handleConfigurationRequest "ubictionary" config
 
     let standardClientOptionsBuilder (b:LanguageClientOptions) = 
@@ -55,10 +50,16 @@ let initTestClientWithConfig (logHandler:LogHandler) (clientOptionsBuilder:Clien
             .WithCapability(Capabilities.DidChangeConfigurationCapability())
             .OnConfiguration(configHandler)
             .OnLogMessage(logHandler)
-        |> ignore
+            |> ignore
+        b
 
-    return! standardClientOptionsBuilder |> initTestClientWithOptions
+    return! Options(standardClientOptionsBuilder) |> initWithOptions
 }
+
+let setupLogHandler logAwaiter:LogHandler =
+    fun (l:LogMessageParams) ->
+        l.Message |> ConditionAwaiter.received logAwaiter 
+        Task.CompletedTask
 
 let waitForConfigLoaded logAwaiter = async {
     let logCondition = fun (m:string) -> m.Contains("Loading ubictionary")
@@ -66,12 +67,18 @@ let waitForConfigLoaded logAwaiter = async {
     return! ConditionAwaiter.waitFor logAwaiter logCondition 1500
 }
 
-let initTestClientWithConfigAndWait clientOptionsBuilder config = async {
+let private initWithConfigAndWait clientOptionsBuilder config = async {
     let logAwaiter = ConditionAwaiter.create()
     let logHandler = logAwaiter |> setupLogHandler 
-    let! client = initTestClientWithConfig logHandler clientOptionsBuilder config
+    let! client = initWithConfig logHandler clientOptionsBuilder config
     do! waitForConfigLoaded logAwaiter |> Async.Ignore
     return client
 }
 
+let init initOptions =
+    match initOptions with
+    | Simple | Options(_) -> initWithOptions initOptions
+    | ConfigAndWait(builder, config) -> initWithConfigAndWait builder config
+    | Config(config, logHandler) -> initWithConfig logHandler id config
+    
     

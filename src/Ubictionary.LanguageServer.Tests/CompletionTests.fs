@@ -11,7 +11,7 @@ open TestClient
 let completionTests =
     testList "Completion Tests" [
         testAsync "Given no ubictionary respond with empty completion list " {
-            use! client = initTestClient
+            use! client = Simple |> init
 
             let completionParams = CompletionParams()
 
@@ -25,7 +25,7 @@ let completionTests =
 
             let workspaceOptionsBuilder = Workspace.createOptionsBuilder workspacePath
 
-            use! client = Map [("path", "definitions.yml")] |> initTestClientWithConfigAndWait workspaceOptionsBuilder
+            use! client = ConfigAndWait(workspaceOptionsBuilder, Map [("path", "definitions.yml")]) |> init
            
             let completionParams = CompletionParams()
 
