@@ -4,9 +4,6 @@ open System
 open System.IO.Pipelines
 open OmniSharp.Extensions.LanguageProtocol.Testing
 open OmniSharp.Extensions.LanguageServer.Client
-open OmniSharp.Extensions.LanguageServer.Protocol.Client
-open OmniSharp.Extensions.LanguageServer.Protocol.Window
-open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open OmniSharp.Extensions.JsonRpc.Testing
 open Ubictionary.LanguageServer.Server
 
@@ -48,16 +45,10 @@ let private createTestClient clientOptsBuilder = async {
 let private initAndWaitForConfigLoaded testClientConfig = async {
     let logAwaiter = ConditionAwaiter.create()
 
-    let logHandler = ServerLog.createHandler logAwaiter
-    let configHandler = ConfigurationSection.createHandler "ubictionary" testClientConfig.ConfigurationSettings
-    let workspaceHandler = Workspace.createHandler testClientConfig.WorkspaceFolderPath
-
-    let clientOptionsBuilder (b:LanguageClientOptions) = 
-        b.EnableWorkspaceFolders()
-            .WithCapability(Capabilities.DidChangeConfigurationCapability())
-            .OnConfiguration(configHandler)
-            .OnLogMessage(logHandler)
-            .OnWorkspaceFolders(workspaceHandler)
+    let clientOptionsBuilder = 
+        ServerLog.optionsBuilder logAwaiter >>
+        Workspace.optionsBuilder testClientConfig.WorkspaceFolderPath >>
+        ConfigurationSection.optionsBuilder "ubictionary" testClientConfig.ConfigurationSettings
     
     let! (client, _) = Some clientOptionsBuilder |> createTestClient
 
