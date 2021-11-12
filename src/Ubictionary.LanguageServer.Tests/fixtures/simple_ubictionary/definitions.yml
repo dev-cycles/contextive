@@ -1,7 +1,0 @@
-contexts:
-  context1:
-    displayName: Context 1
-    terms:
-      firstTerm
-      secondTerm
-      thirdTerm

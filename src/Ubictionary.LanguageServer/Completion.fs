@@ -11,7 +11,7 @@ let private completionList labels =
 type DefinitionsFinder = (Definitions.Term -> bool) -> (Definitions.Term -> string) -> string seq
 
 let private termMatches _ = true
-let private termToString (t:Definitions.Term) = t.Slug
+let private termToString (t:Definitions.Term) = t.Name
 
 let handler (termFinder: DefinitionsFinder) (p:CompletionParams) (hc:CompletionCapability) _ = 
     Task.FromResult(completionList <| termFinder termMatches termToString)
@@ -19,4 +19,5 @@ let handler (termFinder: DefinitionsFinder) (p:CompletionParams) (hc:CompletionC
 let private registrationOptionsProvider (hc:CompletionCapability) (cc:ClientCapabilities)  =
     CompletionRegistrationOptions()
 
-let registrationOptions = RegistrationOptionsDelegate<CompletionRegistrationOptions, CompletionCapability>(registrationOptionsProvider)
+let registrationOptions =
+    RegistrationOptionsDelegate<CompletionRegistrationOptions, CompletionCapability>(registrationOptionsProvider)

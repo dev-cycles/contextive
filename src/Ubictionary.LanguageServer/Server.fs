@@ -20,14 +20,25 @@ let getConfig section key (config:IConfiguration) =
     | "" | null -> None
     | _ -> Some configValue
 
-let private onStartup (loadDefinitions:string option -> unit) = OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
+let private onStartup (loadDefinitions:string -> unit) (clearDefinitions:unit -> unit) = OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
     async {
         Log.Logger.Information "Getting config..."
         let! config =
             s.Configuration.GetConfiguration(ConfigurationItem(Section = configSection))
             |> Async.AwaitTask
         let path = config |> getConfig configSection pathKey
-        loadDefinitions path
+
+        let workspaceFolders = s.WorkspaceFolderManager.CurrentWorkspaceFolders
+        if not (Seq.isEmpty workspaceFolders) then
+            let workspaceRoot = workspaceFolders |> Seq.head
+            let rootPath =  workspaceRoot.Uri.ToUri().LocalPath
+
+            match path with
+            | Some p -> loadDefinitions <| System.IO.Path.Combine(rootPath, p)
+            | None -> ()
+        else
+            clearDefinitions()
+
         Log.Logger.Information $"Got path {path}"
         s.Window.LogInfo $"Loading ubictionary from {path}"
     } |> Async.StartAsTask :> Task)
@@ -37,7 +48,7 @@ let private configureServer (input: Stream) (output: Stream) (opts:LanguageServe
         .WithInput(input)
         .WithOutput(output)
 
-        .OnStarted(onStartup Definitions.load)
+        .OnStarted(onStartup Definitions.load Definitions.clear)
         //.WithConfigurationSection(configSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z -> z.AddLanguageProtocolLogging().AddSerilog(Log.Logger).SetMinimumLevel(LogLevel.Trace) |> ignore)
         .WithServerInfo(ServerInfo(Name = "Ubictionary"))

@@ -9,7 +9,7 @@ open TestClient
 
 [<Tests>]
 let completionTests =
-    testList "Completion Tests" [
+    testSequenced <| testList "Completion Tests" [
         testAsync "Given no ubictionary respond with empty completion list " {
             use! client = SimpleTestClient |> init
 
@@ -20,18 +20,24 @@ let completionTests =
             test <@ Seq.length result.Items = 0 @>
         }
 
-        testAsync "Given ubictionary, respond with valid completion list " {
-            let config = {
-                WorkspaceFolderPath = Path.Combine("fixtures", "simple_ubictionary")
-                ConfigurationSettings = Map [("path", "definitions.yml")]
+        let testFileReader (name, fileName, expectedList) =
+            testAsync $"Given {name} ubictionary, respond with expected completion list " {
+                let config = {
+                    WorkspaceFolderPath = Path.Combine("fixtures", "completion_tests")
+                    ConfigurationSettings = Map [("path", $"{fileName}.yml")]
+                }
+
+                use! client = TestClient(config) |> init
+            
+                let! result = client.TextDocument.RequestCompletion(CompletionParams()).AsTask() |> Async.AwaitTask
+
+                let completionLabels = result.Items |> Seq.map (fun x -> x.Label)
+
+                test <@ (completionLabels, expectedList) ||> Seq.compareWith compare = 0 @>
             }
 
-            use! client = TestClient(config) |> init
-           
-            let! result = client.TextDocument.RequestCompletion(CompletionParams()).AsTask() |> Async.AwaitTask
-
-            let completionLabels = result.Items |> Seq.map (fun x -> x.Label)
-
-            test <@ (completionLabels, ["firstTerm";"secondTerm";"thirdTerm"]) ||> Seq.compareWith compare = 0 @>
-        }
+        [
+            ("first", "one", ["firstTerm";"secondTerm";"thirdTerm"])
+            ("second", "two", ["word1";"word2";"word3"])
+        ] |> List.map testFileReader |> testList "File reading tests"
     ]

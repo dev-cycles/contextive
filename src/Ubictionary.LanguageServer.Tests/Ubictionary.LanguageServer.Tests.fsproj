@@ -6,6 +6,7 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DefinitionsTests.fs" />
     <Compile Include="ConditionAwaiter.fs" />
     <Compile Include="ServerLog.fs" />
     <Compile Include="Workspace.fs" />
@@ -15,6 +16,14 @@
     <Compile Include="HoverTests.fs" />
     <Compile Include="InitializationTests.fs" />
     <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fixtures/completion_tests/one.yml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fixtures/completion_tests/two.yml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />

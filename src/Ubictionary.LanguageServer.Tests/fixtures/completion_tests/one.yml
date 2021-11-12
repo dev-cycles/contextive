@@ -1,0 +1,8 @@
+ProjectName: Test Project
+Description: A test project
+Contexts:
+  - Name: Context 1
+    Terms:
+    - Name: firstTerm
+    - Name: secondTerm
+    - Name: thirdTerm

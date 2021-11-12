@@ -42,6 +42,8 @@ NUGET
       Fable.Core (>= 3.1.5)
       FSharp.Core (>= 4.7.2)
     FSharp.Core (6.0.1)
+    Legivel (0.4.6)
+      FSharp.Core (>= 4.6)
     MediatR (8.1)
     Microsoft.Bcl.AsyncInterfaces (5.0)
     Microsoft.Extensions.Configuration (5.0)
