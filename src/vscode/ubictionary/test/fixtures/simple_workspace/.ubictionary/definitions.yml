@@ -1,0 +1,10 @@
+projectName: Simple Workspace Project
+description: A test project
+contexts:
+  - name: The first context
+    terms:
+    - name: term
+    - name: context
+    - name: language
+    - name: definitions
+    - name: usage

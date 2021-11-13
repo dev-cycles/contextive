@@ -28,19 +28,22 @@ let private onStartup (loadDefinitions:string -> unit) (clearDefinitions:unit ->
             |> Async.AwaitTask
         let path = config |> getConfig configSection pathKey
 
+        Log.Logger.Information $"Got path {path}"
+
         let workspaceFolders = s.WorkspaceFolderManager.CurrentWorkspaceFolders
         if not (Seq.isEmpty workspaceFolders) then
             let workspaceRoot = workspaceFolders |> Seq.head
             let rootPath =  workspaceRoot.Uri.ToUri().LocalPath
 
             match path with
-            | Some p -> loadDefinitions <| System.IO.Path.Combine(rootPath, p)
+            | Some p -> 
+                let fullPath = System.IO.Path.Combine(rootPath, p)
+                s.Window.LogInfo $"Loading ubictionary from {fullPath}"
+                loadDefinitions fullPath 
             | None -> ()
         else
             clearDefinitions()
 
-        Log.Logger.Information $"Got path {path}"
-        s.Window.LogInfo $"Loading ubictionary from {path}"
     } |> Async.StartAsTask :> Task)
 
 let private configureServer (input: Stream) (output: Stream) (opts:LanguageServerOptions) =

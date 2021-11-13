@@ -5,21 +5,21 @@ open System.IO
 
 type Term =
     {
-        Name: string
+        name: string
     }
 
 type Context =
     {
-        Name: string
-        Paths: string list
-        Terms: Term list
+        name: string
+        paths: string list
+        terms: Term list
     }
 
 type Definitions =
     {
-        ProjectName: string
-        Description: string
-        Contexts: Context list
+        projectName: string
+        description: string
+        contexts: Context list
     }
 
 
@@ -50,5 +50,5 @@ let find (matcher: Term -> bool) (transformer: Term -> 'a) : 'a seq =
     let terms =
         match definitions  with
         | None -> seq []
-        | Some d -> d.Contexts |> Seq.collect(fun c -> c.Terms)
+        | Some d -> d.contexts |> Seq.collect(fun c -> c.terms)
     terms |> Seq.map transformer

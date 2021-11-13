@@ -11,7 +11,7 @@ let private completionList labels =
 type DefinitionsFinder = (Definitions.Term -> bool) -> (Definitions.Term -> string) -> string seq
 
 let private termMatches _ = true
-let private termToString (t:Definitions.Term) = t.Name
+let private termToString (t:Definitions.Term) = t.name
 
 let handler (termFinder: DefinitionsFinder) (p:CompletionParams) (hc:CompletionCapability) _ = 
     Task.FromResult(completionList <| termFinder termMatches termToString)

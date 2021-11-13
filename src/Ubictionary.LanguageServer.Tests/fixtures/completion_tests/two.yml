@@ -1,8 +1,8 @@
-ProjectName: Test Project
-Description: A test project
-Contexts:
-  - Name: Context 1
-    Terms:
-    - Name: word1
-    - Name: word2
-    - Name: word3
+projectName: Test Project
+description: A test project
+contexts:
+  - name: Context 1
+    terms:
+    - name: word1
+    - name: word2
+    - name: word3
