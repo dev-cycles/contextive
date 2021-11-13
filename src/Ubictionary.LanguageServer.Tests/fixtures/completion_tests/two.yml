@@ -1,8 +1,5 @@
-projectName: Test Project
-description: A test project
 contexts:
-  - name: Context 1
-    terms:
+  - terms:
     - name: word1
     - name: word2
     - name: word3

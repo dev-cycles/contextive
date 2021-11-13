@@ -10,18 +10,13 @@ type Term =
 
 type Context =
     {
-        name: string
-        paths: string list
         terms: Term list
     }
 
 type Definitions =
     {
-        projectName: string
-        description: string
         contexts: Context list
     }
-
 
 let mutable private ubictionaryPath : string option = None
 let mutable definitions : Definitions option = None
@@ -36,10 +31,11 @@ let private loadUbictionary path =
     let yml = tryReadFile path
     match Deserialize yml with
     | [Success r] -> Some r.Data
-    | _ -> None
+    | e -> 
+        printfn "%A" e
+        None
 
-
-let getPath workspaceFolder (path: string option) =
+let private getPath workspaceFolder (path: string option) =
     match path with
     | None -> None
     | Some p -> 
