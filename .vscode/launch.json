@@ -39,7 +39,8 @@
             "request": "launch",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}${config:vsCodeExtensionPath}",
-                "--extensionTestsPath=${workspaceFolder}${config:vsCodeExtensionPath}/out/index"
+                "--extensionTestsPath=${workspaceFolder}${config:vsCodeExtensionPath}/out/index",
+                "${workspaceRoot}/src/vscode/ubictionary/test/fixtures/simple_workspace"
             ],
             "outFiles": [
                 "${workspaceFolder}${config:vsCodeExtensionPath}/out/**/*.js",
