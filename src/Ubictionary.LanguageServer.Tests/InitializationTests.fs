@@ -20,12 +20,12 @@ let initializationTests =
             test <@ client.ServerSettings.ServerInfo.Name = "Ubictionary" @>
         }
 
-        testAsync "Server requests ubictionary file location configuration" {
+        testAsync "Server loads ubictionary file from configured relative location with workspace" {
             let pathValue = Guid.NewGuid().ToString()
-            let config = {
-                WorkspaceFolderPath = ""
-                ConfigurationSettings = Map [("path", pathValue)]
-            }
+            let config = [
+                Workspace.optionsBuilder ""
+                ConfigurationSection.ubictionaryPathOptionsBuilder pathValue
+            ]
 
             let! (client, reply) = TestClient(config) |> initWithReply
 
@@ -33,6 +33,34 @@ let initializationTests =
             test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
             
             test <@ (defaultArg reply "").Contains(pathValue) @>
+        }
+
+        testAsync "Server loads ubictionary file from configured absolute location without workspace" {
+            let pathValue = Guid.NewGuid().ToString()
+            let config = [
+                ConfigurationSection.ubictionaryPathOptionsBuilder $"/tmp/{pathValue}"
+            ]
+
+            let! (client, reply) = TestClient(config) |> initWithReply
+
+            test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
+            test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
+            
+            test <@ (defaultArg reply "").Contains(pathValue) @>
+        }
+
+        testAsync "Server does NOT load ubictionary file from configured relative location without workspace" {
+            let pathValue = Guid.NewGuid().ToString()
+            let config = [
+                ConfigurationSection.ubictionaryPathOptionsBuilder pathValue
+            ]
+
+            let! (client, reply) = TestClient(config) |> initWithReply
+
+            test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
+            test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
+            
+            test <@ reply.IsNone @>
         }
 
     ]

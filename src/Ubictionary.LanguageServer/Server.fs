@@ -30,16 +30,26 @@ let private onStartup (loadDefinitions:string -> unit) (clearDefinitions:unit ->
 
         Log.Logger.Information $"Got path {path}"
 
+        let isRooted = match path with
+                        | Some p -> System.IO.Path.IsPathRooted(p)
+                        | None -> false
+
+        let load fullPath =
+            s.Window.LogInfo $"Loading ubictionary from {fullPath}"
+            loadDefinitions fullPath 
+
         let workspaceFolders = s.WorkspaceFolderManager.CurrentWorkspaceFolders
-        if not (Seq.isEmpty workspaceFolders) then
+
+        if isRooted then
+            load path.Value
+        else if not (Seq.isEmpty workspaceFolders) then
             let workspaceRoot = workspaceFolders |> Seq.head
             let rootPath =  workspaceRoot.Uri.ToUri().LocalPath
 
             match path with
             | Some p -> 
                 let fullPath = System.IO.Path.Combine(rootPath, p)
-                s.Window.LogInfo $"Loading ubictionary from {fullPath}"
-                loadDefinitions fullPath 
+                load fullPath
             | None -> ()
         else
             clearDefinitions()

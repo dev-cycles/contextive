@@ -9,14 +9,9 @@ open Ubictionary.LanguageServer.Server
 
 type ClientOptionsBuilder = LanguageClientOptions -> LanguageClientOptions
 
-type TestClientConfig = {
-    WorkspaceFolderPath: string
-    ConfigurationSettings: Map<string, String>
-}
-
 type InitializationOptions =
     | SimpleTestClient
-    | TestClient of TestClientConfig
+    | TestClient of ClientOptionsBuilder list
 
 type private TestClient() =
     inherit LanguageServerTestBase(JsonRpcTestOptions())
@@ -45,10 +40,9 @@ let private createTestClient clientOptsBuilder = async {
 let private initAndWaitForConfigLoaded testClientConfig = async {
     let logAwaiter = ConditionAwaiter.create()
 
-    let clientOptionsBuilder = 
-        ServerLog.optionsBuilder logAwaiter >>
-        Workspace.optionsBuilder testClientConfig.WorkspaceFolderPath >>
-        ConfigurationSection.optionsBuilder "ubictionary" testClientConfig.ConfigurationSettings
+    let allBuilders = ServerLog.optionsBuilder logAwaiter :: testClientConfig
+
+    let clientOptionsBuilder = List.fold (>>) id allBuilders
     
     let! (client, _) = Some clientOptionsBuilder |> createTestClient
 

@@ -22,10 +22,10 @@ let completionTests =
 
         let testFileReader (name, fileName, expectedList) =
             testAsync $"Given {name} ubictionary, respond with expected completion list " {
-                let config = {
-                    WorkspaceFolderPath = Path.Combine("fixtures", "completion_tests")
-                    ConfigurationSettings = Map [("path", $"{fileName}.yml")]
-                }
+                let config = [
+                    Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
+                    ConfigurationSection.ubictionaryPathOptionsBuilder $"{fileName}.yml"
+                ]
 
                 use! client = TestClient(config) |> init
             

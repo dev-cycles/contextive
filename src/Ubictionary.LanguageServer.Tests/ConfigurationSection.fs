@@ -33,3 +33,5 @@ let optionsBuilder section configValues (b:LanguageClientOptions) =
         .OnConfiguration(handler)
         |> ignore
     b
+
+let ubictionaryPathOptionsBuilder path = optionsBuilder "ubictionary" <| Map[("path", path)]
