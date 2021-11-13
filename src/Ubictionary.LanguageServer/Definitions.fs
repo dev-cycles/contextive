@@ -32,19 +32,34 @@ let private tryReadFile path =
     with
     | _ -> ""
 
-let loadUbictionary path =
+let private loadUbictionary path =
     let yml = tryReadFile path
     match Deserialize yml with
     | [Success r] -> Some r.Data
     | _ -> None
 
+
+let getPath workspaceFolder (path: string option) =
+    match path with
+    | None -> None
+    | Some p -> 
+        if Path.IsPathRooted(p) then
+            path
+        else match workspaceFolder with
+             | Some wsf -> Path.Combine(wsf, p) |> Some
+             | None -> None
+
 let clear () =
     definitions <- None
 
-let load (path:string) =
-    ubictionaryPath <- Some path
-    definitions <- loadUbictionary path
-    ()
+let load (workspaceFolder:string option) (path:string option) =
+    let absolutePath = getPath workspaceFolder path
+    ubictionaryPath <- absolutePath
+    definitions <-
+        match absolutePath with
+            | Some ap -> loadUbictionary ap
+            | None -> None
+    absolutePath
 
 let find (matcher: Term -> bool) (transformer: Term -> 'a) : 'a seq =
     let terms =

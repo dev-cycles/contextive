@@ -14,45 +14,40 @@ open System.IO
 let configSection = "ubictionary"
 let pathKey = "path"
 
-let getConfig section key (config:IConfiguration) =
+let private getConfig (s:ILanguageServer) section key = async {
+    Log.Logger.Information $"Getting {section} {key} config..."
+    let! config =
+        s.Configuration.GetConfiguration(ConfigurationItem(Section = configSection))
+        |> Async.AwaitTask
+
     let configValue = config.GetSection(section).Item(key)
-    match configValue with
-    | "" | null -> None
-    | _ -> Some configValue
+    let value =
+        match configValue with
+            | "" | null -> None
+            | _ -> Some configValue
 
-let private onStartup (loadDefinitions:string -> unit) (clearDefinitions:unit -> unit) = OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
+    Log.Logger.Information $"Got {key} {value}"
+    return value
+}
+
+let private getWorkspaceFolder (s:ILanguageServer) =
+    let workspaceFolders = s.WorkspaceFolderManager.CurrentWorkspaceFolders
+    if not (Seq.isEmpty workspaceFolders) then
+        let workspaceRoot = workspaceFolders |> Seq.head
+        Some <| workspaceRoot.Uri.ToUri().LocalPath
+    else
+        None
+
+let private onStartup (loadDefinitions:string option -> string option -> string option) (clearDefinitions:unit -> unit) = OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
     async {
-        Log.Logger.Information "Getting config..."
-        let! config =
-            s.Configuration.GetConfiguration(ConfigurationItem(Section = configSection))
-            |> Async.AwaitTask
-        let path = config |> getConfig configSection pathKey
+        let! path = getConfig s configSection pathKey
+        let workspaceFolder = getWorkspaceFolder s
 
-        Log.Logger.Information $"Got path {path}"
+        let fullPath = loadDefinitions workspaceFolder path
 
-        let isRooted = match path with
-                        | Some p -> System.IO.Path.IsPathRooted(p)
-                        | None -> false
-
-        let load fullPath =
-            s.Window.LogInfo $"Loading ubictionary from {fullPath}"
-            loadDefinitions fullPath 
-
-        let workspaceFolders = s.WorkspaceFolderManager.CurrentWorkspaceFolders
-
-        if isRooted then
-            load path.Value
-        else if not (Seq.isEmpty workspaceFolders) then
-            let workspaceRoot = workspaceFolders |> Seq.head
-            let rootPath =  workspaceRoot.Uri.ToUri().LocalPath
-
-            match path with
-            | Some p -> 
-                let fullPath = System.IO.Path.Combine(rootPath, p)
-                load fullPath
-            | None -> ()
-        else
-            clearDefinitions()
+        match fullPath with
+            | Some p -> s.Window.LogInfo $"Loading ubictionary from {p}"
+            | None -> clearDefinitions()
 
     } |> Async.StartAsTask :> Task)
 

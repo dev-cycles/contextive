@@ -11,7 +11,8 @@ let definitionsTests =
 
         testCase "Can load definitions file without an error" <|
             fun () -> 
-                let p = Path.Combine("fixtures", "completion_tests", "one.yml")
-                Definitions.load p
+                let path = Path.Combine("fixtures", "completion_tests", "one.yml") |> Some
+                let workspaceFolder = Some ""
+                Definitions.load workspaceFolder path |> ignore
                 test <@ Definitions.definitions <> None @>
     ]

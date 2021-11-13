@@ -20,7 +20,7 @@ let initializationTests =
             test <@ client.ServerSettings.ServerInfo.Name = "Ubictionary" @>
         }
 
-        testAsync "Server loads ubictionary file from configured relative location with workspace" {
+        testAsync "Server loads ubictionary file from relative location with workspace" {
             let pathValue = Guid.NewGuid().ToString()
             let config = [
                 Workspace.optionsBuilder ""
@@ -35,7 +35,7 @@ let initializationTests =
             test <@ (defaultArg reply "").Contains(pathValue) @>
         }
 
-        testAsync "Server loads ubictionary file from configured absolute location without workspace" {
+        testAsync "Server loads ubictionary file from absolute location without workspace" {
             let pathValue = Guid.NewGuid().ToString()
             let config = [
                 ConfigurationSection.ubictionaryPathOptionsBuilder $"/tmp/{pathValue}"
@@ -49,7 +49,7 @@ let initializationTests =
             test <@ (defaultArg reply "").Contains(pathValue) @>
         }
 
-        testAsync "Server does NOT load ubictionary file from configured relative location without workspace" {
+        testAsync "Server does NOT load ubictionary file from relative location without workspace" {
             let pathValue = Guid.NewGuid().ToString()
             let config = [
                 ConfigurationSection.ubictionaryPathOptionsBuilder pathValue
