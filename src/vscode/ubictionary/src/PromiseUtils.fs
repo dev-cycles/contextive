@@ -18,3 +18,6 @@ module Thenable =
         // Also provide these cases for overload resolution
         member _.Source(p: JS.Promise<'T1>): JS.Promise<'T1> = p
         member _.Source(ps: #seq<_>): _ = ps
+
+    type Async with
+        static member AwaitThenable(t: Thenable<'t>): Async<'t> = toPromise t |> Async.AwaitPromise

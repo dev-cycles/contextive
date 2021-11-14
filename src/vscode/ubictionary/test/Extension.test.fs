@@ -17,6 +17,6 @@ let tests =
             Expect.equal path.Value ".ubictionary/definitions.yml" "ubictionary.path config is not the default value"
 
         testCaseAsync "Language Client becomes Ready" <| async {
-            do! Helpers.getLanguageClient() |> Async.AwaitPromise |> Async.Ignore
+            do! Helpers.getLanguageClient() |> Async.Ignore
         }
     ]
