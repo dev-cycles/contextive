@@ -16,7 +16,7 @@ let tests =
             let! doc = workspace.openTextDocument(docUri)
             window.showTextDocument(doc, ViewColumn.Active, false) |> ignore
             let! _ = Helpers.getLanguageClient()
-            do! Async.Sleep 100 |> Async.StartAsPromise
+            do! Async.Sleep 500 |> Async.StartAsPromise
             let! result = commands.executeCommand(
                 "vscode.executeCompletionItemProvider",
                 Some (docUri :> obj),
