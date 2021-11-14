@@ -7,11 +7,16 @@ open Fable.Import.VSCode.Vscode
 open Ubictionary.VsCodeExtension
 open Node.Api
 
+let private getDocUri relativeFile =
+    vscode.Uri.file(path.resolve(__dirname,relativeFile))
+
 let tests =
     testList "Ubictionary Completion Tests" [
 
         testCaseAsync "Completion returns expected list" <| async {
-            let docUri = vscode.Uri.file(path.resolve(__dirname,"../test/fixtures/simple_workspace/test.txt"));
+            let workspaceUri = getDocUri "../test/fixtures/simple_workspace"
+            printfn "%A" (workspaceUri.toString())
+            let docUri = vscode.Uri.joinPath(workspaceUri, "test.txt")
             let! doc = workspace.openTextDocument(docUri) |> Async.AwaitThenable
             window.showTextDocument(doc, ViewColumn.Active, false) |> ignore
             let! _ = Helpers.getLanguageClient()
@@ -21,7 +26,6 @@ let tests =
                                 Some (docUri :> obj),
                                 Some (vscode.Position.Create(0.0, 10.0) :> obj)
                             ) |> Async.AwaitThenable
-            Expect.isSome result "executeCompletionItemProvider should return a result"
             match result with
             | (Some completionResult: CompletionList option) ->
                 let labels =
@@ -32,6 +36,7 @@ let tests =
                         | U2.Case2 ll -> ll.label)
                 let expected = seq {"context"; "definitions"; "language"; "term"; "usage"}
                 Expect.seqEqual expected labels "executeCompletionProvider should return expected completion items"
-            | None -> ()
+            | None ->
+                Expect.isSome result "executeCompletionItemProvider should return a result"
         }
     ]
