@@ -15,13 +15,13 @@ let tests =
             let! doc = workspace.openTextDocument(docUri) |> Async.AwaitThenable
             window.showTextDocument(doc, ViewColumn.Active, false) |> ignore
             let! _ = Helpers.getLanguageClient()
-            do! Async.Sleep 2000
+            do! Async.Sleep 100
             let! result = commands.executeCommand(
                                 "vscode.executeCompletionItemProvider",
                                 Some (docUri :> obj),
                                 Some (vscode.Position.Create(0.0, 10.0) :> obj)
                             ) |> Async.AwaitThenable
-            Expect.isSome result "Expect a result from the executeCompletionItemProvider"
+            Expect.isSome result "executeCompletionItemProvider should return a result"
             match result with
             | (Some completionResult: CompletionList option) ->
                 let labels =
@@ -30,9 +30,8 @@ let tests =
                         match i.label with
                         | U2.Case1 l -> l
                         | U2.Case2 ll -> ll.label)
-                let expected = seq {"context"; "definitions"; "language"; "term"; "usage"}
-                let comparison = Seq.compareWith compare expected labels
-                Expect.equal comparison 0 (sprintf "Should have correct completion list.\nExpected:\n- %A;\nActual:\n- %A" (expected |> String.concat "\n- ") (labels |> String.concat "\n- "))
+                let expected = seq {"context"; "definitions"; "languge"; "term"; "usage"}
+                Expect.seqEqual expected labels "executeCompletionProvider should return expected completion items"
             | None -> ()
         }
     ]

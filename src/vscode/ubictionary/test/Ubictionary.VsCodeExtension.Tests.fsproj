@@ -5,6 +5,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ExpectExtensions.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Completion.test.fs" />
     <Compile Include="Extension.test.fs" />
