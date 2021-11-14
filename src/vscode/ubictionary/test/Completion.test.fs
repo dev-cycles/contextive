@@ -30,7 +30,7 @@ let tests =
                         match i.label with
                         | U2.Case1 l -> l
                         | U2.Case2 ll -> ll.label)
-                let expected = seq {"context"; "definitions"; "languge"; "term"; "usage"}
+                let expected = seq {"context"; "definitions"; "language"; "term"; "usage"}
                 Expect.seqEqual expected labels "executeCompletionProvider should return expected completion items"
             | None -> ()
         }
