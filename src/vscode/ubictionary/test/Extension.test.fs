@@ -1,6 +1,5 @@
 module Ubictionary.VsCodeExtension.Tests.Extension
 
-open Fable.Core
 open Fable.Mocha
 open Fable.Import.VSCode.Vscode
 
@@ -16,7 +15,7 @@ let tests =
             Expect.isSome path "ubictionary.path config is not present"
             Expect.equal path.Value ".ubictionary/definitions.yml" "ubictionary.path config is not the default value"
 
-        testCaseAsync "Language Client becomes Ready" <| async {
-            do! Helpers.getLanguageClient() |> Async.Ignore
+        testCasePromise "Language Client becomes Ready" <| promise {
+            do! Helpers.getLanguageClient() |> Promise.Ignore
         }
     ]

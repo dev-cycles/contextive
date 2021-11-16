@@ -1,6 +1,5 @@
 ﻿namespace Ubictionary.VsCodeExtension
 
-open Fable.Core
 open Fable.Core.JsInterop
 open Fable.Import.VSCode.Vscode
 open Fable.Import.LanguageServer
@@ -48,6 +47,6 @@ module Extension =
         }
     }
 
-    let deactibate () = promise {
+    let deactivate () = promise {
         do! client.stop()
     }

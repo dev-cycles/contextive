@@ -5,7 +5,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="PromiseUtils.fs" />
     <Compile Include="ExpectExtensions.fs" />
+    <Compile Include="VsCodeCommands.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Completion.test.fs" />
     <Compile Include="Extension.test.fs" />
