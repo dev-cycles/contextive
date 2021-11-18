@@ -1,57 +1,66 @@
 module Ubictionary.LanguageServer.Tests.InitializationTests
 
 open System
-open System.Threading.Tasks
 open Expecto
 open Swensen.Unquote
-open OmniSharp.Extensions.JsonRpc
-open OmniSharp.Extensions.LanguageServer.Protocol.Models
-open OmniSharp.Extensions.LanguageServer.Protocol.Client
-open OmniSharp.Extensions.LanguageServer.Client
 open TestClient
-open ConfigurationSection
 
 [<Tests>]
 let initializationTests =
     testList "Initialization Tests" [
 
         testAsync "Can Initialize Language Server" {
-            use! client = initTestClient
+            use! client = SimpleTestClient |> init
             test <@ not (isNull client.ClientSettings) @>
             test <@ not (isNull client.ServerSettings) @>
         }
 
         testAsync "Has Correct ServerInfo Name" {
-            use! client = initTestClient
+            use! client = SimpleTestClient |> init
             test <@ client.ServerSettings.ServerInfo.Name = "Ubictionary" @>
         }
 
-        testAsync "Server requests ubictionary file location configuration" {
+        testAsync "Server loads ubictionary file from relative location with workspace" {
             let pathValue = Guid.NewGuid().ToString()
+            let config = [
+                Workspace.optionsBuilder ""
+                ConfigurationSection.ubictionaryPathOptionsBuilder pathValue
+            ]
 
-            let configHandler = handleConfigurationRequest "ubictionary" (Map [("path", pathValue)])
-
-            let logAwaiter = ConditionAwaiter.create()
-            let logHandler (l:LogMessageParams) =
-                l.Message |> ConditionAwaiter.received logAwaiter 
-                Task.CompletedTask 
-
-            let clientOptionsBuilder (b:LanguageClientOptions) = 
-                b.OnRequest("workspace/configuration", configHandler, JsonRpcHandlerOptions())
-                    .OnNotification("window/logMessage", logHandler, JsonRpcHandlerOptions())
-                    .WithCapability(Capabilities.DidChangeConfigurationCapability())
-                |> ignore
-
-            use! client = clientOptionsBuilder |> initTestClientWithConfig
+            let! (client, reply) = TestClient(config) |> initWithReply
 
             test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
             test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
             
-            let logCondition = fun (m:string) -> m.Contains("Loading ubictionary")
-            let! reply = ConditionAwaiter.waitFor logAwaiter logCondition 1500
-            test <@ match reply with
-                    | Some replyMsg -> replyMsg.Contains(pathValue)
-                    | None -> false @>
+            test <@ (defaultArg reply "").Contains(pathValue) @>
+        }
+
+        testAsync "Server loads ubictionary file from absolute location without workspace" {
+            let pathValue = Guid.NewGuid().ToString()
+            let config = [
+                ConfigurationSection.ubictionaryPathOptionsBuilder $"/tmp/{pathValue}"
+            ]
+
+            let! (client, reply) = TestClient(config) |> initWithReply
+
+            test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
+            test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
+            
+            test <@ (defaultArg reply "").Contains(pathValue) @>
+        }
+
+        testAsync "Server does NOT load ubictionary file from relative location without workspace" {
+            let pathValue = Guid.NewGuid().ToString()
+            let config = [
+                ConfigurationSection.ubictionaryPathOptionsBuilder pathValue
+            ]
+
+            let! (client, reply) = TestClient(config) |> initWithReply
+
+            test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
+            test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
+            
+            test <@ reply.IsNone @>
         }
 
     ]

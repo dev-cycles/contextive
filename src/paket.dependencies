@@ -6,6 +6,7 @@ nuget Expecto
 nuget Fable.Electron
 nuget Fable.Mocha
 nuget FSharp.Core
+nuget Legivel
 nuget OmniSharp.Extensions.LanguageProtocol.Testing
 nuget OmniSharp.Extensions.LanguageServer
 nuget Serilog

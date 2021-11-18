@@ -5,7 +5,13 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="PromiseUtils.fs" />
+    <Compile Include="ExpectExtensions.fs" />
+    <Compile Include="VsCodeCommands.fs" />
+    <Compile Include="Helpers.fs" />
+    <Compile Include="Completion.test.fs" />
     <Compile Include="Extension.test.fs" />
+    <Compile Include="Main.test.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Ubictionary.VsCodeExtension.fsproj" />

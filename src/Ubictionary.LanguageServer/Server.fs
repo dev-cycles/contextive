@@ -14,30 +14,56 @@ open System.IO
 let configSection = "ubictionary"
 let pathKey = "path"
 
-let getConfig section key (config:IConfiguration) =
-    config.GetSection(section).Item(key)
+let private getConfig (s:ILanguageServer) section key = async {
+    Log.Logger.Information $"Getting {section} {key} config..."
+    let! config =
+        s.Configuration.GetConfiguration(ConfigurationItem(Section = configSection))
+        |> Async.AwaitTask
 
-let private requestConfig = OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
+    let configValue = config.GetSection(section).Item(key)
+    let value =
+        match configValue with
+            | "" | null -> None
+            | _ -> Some configValue
+
+    Log.Logger.Information $"Got {key} {value}"
+    return value
+}
+
+let private getWorkspaceFolder (s:ILanguageServer) =
+    let workspaceFolders = s.WorkspaceFolderManager.CurrentWorkspaceFolders
+    if not (Seq.isEmpty workspaceFolders) then
+        let workspaceRoot = workspaceFolders |> Seq.head
+        Some <| workspaceRoot.Uri.ToUri().LocalPath
+    else
+        None
+
+let private onStartup (loadDefinitions:string option -> string option -> string option) (clearDefinitions:unit -> unit) = OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
     async {
-        Log.Logger.Information "Getting config..."
-        let! config =
-            s.Configuration.GetConfiguration(ConfigurationItem(Section = configSection))
-            |> Async.AwaitTask
-        let path = config |> getConfig configSection pathKey
-        Log.Logger.Information $"Got path {path}"
-        s.Window.LogInfo $"Loading ubictionary from {path}"
+        let! path = getConfig s configSection pathKey
+        let workspaceFolder = getWorkspaceFolder s
+
+        let fullPath = loadDefinitions workspaceFolder path
+
+        match fullPath with
+            | Some p -> s.Window.LogInfo $"Loading ubictionary from {p}"
+            | None -> clearDefinitions()
+
     } |> Async.StartAsTask :> Task)
 
 let private configureServer (input: Stream) (output: Stream) (opts:LanguageServerOptions) =
     opts
         .WithInput(input)
         .WithOutput(output)
-        .OnStarted(requestConfig)
+
+        .OnStarted(onStartup Definitions.load Definitions.clear)
         //.WithConfigurationSection(configSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z -> z.AddLanguageProtocolLogging().AddSerilog(Log.Logger).SetMinimumLevel(LogLevel.Trace) |> ignore)
-        // .WithServices(fun s -> s.AddLogging(fun b -> b.SetMinimumLevel(LogLevel.Trace) |> ignore) |> ignore)
         .WithServerInfo(ServerInfo(Name = "Ubictionary"))
+
         .OnHover(Hover.handler, Hover.registrationOptions)
+        .OnCompletion(Completion.handler Definitions.find, Completion.registrationOptions)
+        
         |> ignore
      
 

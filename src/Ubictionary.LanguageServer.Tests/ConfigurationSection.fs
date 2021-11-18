@@ -3,6 +3,9 @@ module Ubictionary.LanguageServer.Tests.ConfigurationSection
 open Newtonsoft.Json.Linq
 open System.Collections.Generic
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
+open OmniSharp.Extensions.LanguageServer.Client
+open OmniSharp.Extensions.LanguageServer.Protocol.Client
+open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open System.Threading.Tasks
 
 let private fromMap values =
@@ -16,10 +19,19 @@ let private fromMap values =
 let private includesSection section (configRequest:ConfigurationParams) =
     configRequest.Items |> Seq.map (fun ci -> ci.Section) |> Seq.contains section
 
-let handleConfigurationRequest section configValues =
+let private createHandler section configValues =
     let configSectionResult = fromMap configValues
     fun c ->
         if includesSection section c then
             Task.FromResult(configSectionResult)
         else
             Task.FromResult(null)
+
+let optionsBuilder section configValues (b:LanguageClientOptions) =
+    let handler = createHandler section configValues
+    b.WithCapability(Capabilities.DidChangeConfigurationCapability())
+        .OnConfiguration(handler)
+        |> ignore
+    b
+
+let ubictionaryPathOptionsBuilder path = optionsBuilder "ubictionary" <| Map[("path", path)]

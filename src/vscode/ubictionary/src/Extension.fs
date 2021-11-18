@@ -1,6 +1,5 @@
 ﻿namespace Ubictionary.VsCodeExtension
 
-open Fable.Core
 open Fable.Core.JsInterop
 open Fable.Import.VSCode.Vscode
 open Fable.Import.LanguageServer
@@ -10,10 +9,10 @@ open Node.Api
 module Extension =
 
     let private languageClientOptions = jsOptions<LanguageClientOptions>
-    let private executable f = ServerOptions.Case1 <| jsOptions<Executable>(f)
+    let private executable f = !^jsOptions<Executable>(f)
     let private executableOptions f = Some <| jsOptions<ExecutableOptions>(f)
     let private argsArray (f:string list) = Some <| new ResizeArray<string>(f)
-    let private documentSelectorList (x:string list) = Some << U2<DocumentSelector, ResizeArray<string>>.Case2 <| new ResizeArray<string>(x)
+    let private documentSelectorList (x:string list) = Some !^(new ResizeArray<string>(x))
 
     let private serverPath = Some <| path.resolve(__dirname, "../../../Ubictionary.LanguageServer")
 
@@ -48,6 +47,6 @@ module Extension =
         }
     }
 
-    let deactibate () = promise {
+    let deactivate () = promise {
         do! client.stop()
     }

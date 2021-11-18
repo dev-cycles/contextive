@@ -7,6 +7,12 @@ open OmniSharp.Extensions.LanguageServer.Client
 open OmniSharp.Extensions.JsonRpc.Testing
 open Ubictionary.LanguageServer.Server
 
+type ClientOptionsBuilder = LanguageClientOptions -> LanguageClientOptions
+
+type InitializationOptions =
+    | SimpleTestClient
+    | TestClient of ClientOptionsBuilder list
+
 type private TestClient() =
     inherit LanguageServerTestBase(JsonRpcTestOptions())
 
@@ -20,15 +26,38 @@ type private TestClient() =
 
     member _.Initialize clientOptsBuilder =
         match clientOptsBuilder with
-            | Some f -> base.InitializeClient(Action<LanguageClientOptions>(f))
-            | None -> base.InitializeClient(null)
+            | Some b -> base.InitializeClient(Action<LanguageClientOptions>(b >> ignore))
+            | _ -> base.InitializeClient(null)
 
-let initTestClient = async {
+let private createTestClient clientOptsBuilder = async {
     let testClient = new TestClient()
-    return! testClient.Initialize(None) |> Async.AwaitTask
+    
+    let! client = testClient.Initialize(clientOptsBuilder) |> Async.AwaitTask
+
+    return client, None
 }
 
-let initTestClientWithConfig clientConfigBuilder = async {
-    let testClient = new TestClient()
-    return! testClient.Initialize(Some clientConfigBuilder) |> Async.AwaitTask
+let private initAndWaitForConfigLoaded testClientConfig = async {
+    let logAwaiter = ConditionAwaiter.create()
+
+    let allBuilders = ServerLog.optionsBuilder logAwaiter :: testClientConfig
+
+    let clientOptionsBuilder = List.fold (>>) id allBuilders
+    
+    let! (client, _) = Some clientOptionsBuilder |> createTestClient
+
+    let! reply = "Loading ubictionary" |> ServerLog.waitForLogMessage logAwaiter
+
+    return (client, reply)
+}
+
+let initWithReply initOptions = async {
+    return! match initOptions with
+            | SimpleTestClient -> createTestClient None
+            | TestClient(testClientConfig) -> initAndWaitForConfigLoaded testClientConfig
+}
+
+let init o = async {
+    let! result = initWithReply o
+    return fst result
 }

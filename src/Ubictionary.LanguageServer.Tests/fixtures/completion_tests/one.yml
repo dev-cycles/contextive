@@ -1,0 +1,5 @@
+contexts:
+  - terms:
+    - name: firstTerm
+    - name: secondTerm
+    - name: thirdTerm

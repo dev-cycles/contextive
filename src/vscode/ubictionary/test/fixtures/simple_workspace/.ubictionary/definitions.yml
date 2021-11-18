@@ -1,0 +1,7 @@
+contexts:
+  - terms:
+    - name: term
+    - name: context
+    - name: language
+    - name: definitions
+    - name: usage
