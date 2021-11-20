@@ -18,9 +18,10 @@
         "yzhang"
     ],
     "FSharp.dotnetRoot": "/usr/share/dotnet",
-    "vsCodeExtensionPath": "/src/vscode/ubictionary",
-    "languageServerPath": "/src/Ubictionary.LanguageServer",
-    "languageServerTestsPath": "/src/Ubictionary.LanguageServer.Tests",
+    "FSharp.workspacePath": "./src/Ubictionary.sln",
+    "vsCodeExtensionPath": "./src/vscode/ubictionary",
+    "languageServerPath": "./src/Ubictionary.LanguageServer",
+    "languageServerTestsPath": "./src/Ubictionary.LanguageServer.Tests",
     "files.exclude": {
         "out": false, // set this to true to hide the "out" folder with the compiled JS files
         "dist": false // set this to true to hide the "dist" folder with the compiled JS files

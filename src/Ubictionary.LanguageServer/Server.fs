@@ -6,7 +6,6 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Server
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Window
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
-open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Logging
 open Serilog
 open System.IO
@@ -38,32 +37,33 @@ let private getWorkspaceFolder (s:ILanguageServer) =
     else
         None
 
-let private onStartup (loadDefinitions:string option -> string option -> string option) (clearDefinitions:unit -> unit) = OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
+let private onStartup (id:string)= OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
     async {
         let! path = getConfig s configSection pathKey
         let workspaceFolder = getWorkspaceFolder s
 
-        let fullPath = loadDefinitions workspaceFolder path
+        let fullPath = Definitions.load id workspaceFolder path
 
         match fullPath with
             | Some p -> s.Window.LogInfo $"Loading ubictionary from {p}"
-            | None -> clearDefinitions()
+            | None -> ()
 
     } |> Async.StartAsTask :> Task)
 
 let private configureServer (input: Stream) (output: Stream) (opts:LanguageServerOptions) =
+    let id = System.Guid.NewGuid().ToString()
     opts
         .WithInput(input)
         .WithOutput(output)
 
-        .OnStarted(onStartup Definitions.load Definitions.clear)
+        .OnStarted(onStartup id)
         //.WithConfigurationSection(configSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z -> z.AddLanguageProtocolLogging().AddSerilog(Log.Logger).SetMinimumLevel(LogLevel.Trace) |> ignore)
         .WithServerInfo(ServerInfo(Name = "Ubictionary"))
 
-        .OnHover(Hover.handler, Hover.registrationOptions)
-        .OnCompletion(Completion.handler Definitions.find, Completion.registrationOptions)
-        
+        .OnCompletion(Completion.handler <| Definitions.find id, Completion.registrationOptions)
+        .OnHover(Hover.handler <| Definitions.find id, Hover.registrationOptions)
+
         |> ignore
      
 

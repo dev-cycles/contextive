@@ -13,6 +13,13 @@ let definitionsTests =
             fun () -> 
                 let path = Path.Combine("fixtures", "completion_tests", "one.yml") |> Some
                 let workspaceFolder = Some ""
-                Definitions.load workspaceFolder path |> ignore
-                test <@ Definitions.definitions <> None @>
+                let id = System.Guid.NewGuid().ToString()
+                let fullPath = Definitions.load id workspaceFolder path
+
+                test <@ fullPath.IsSome @>
+                test <@ fullPath.Value = "fixtures/completion_tests/one.yml" @>
+
+                let foundLabels = Definitions.find id (fun _ -> true) (fun t -> t.name)
+                let expectedLabels = seq ["firstTerm"; "secondTerm"; "thirdTerm"]
+                test <@ (foundLabels, expectedLabels) ||> Seq.compareWith compare = 0 @>
     ]
