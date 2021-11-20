@@ -10,7 +10,7 @@ let textDocumentTests =
     testList "TextDocument Tests" [
 
         let testWordFinding (name, lines, position, (expectedWord: string option)) =
-            ftestCase $"{name}: Can identify {expectedWord} at position {position}" <|
+            testCase $"{name}: Can identify {expectedWord} at position {position}" <|
                 fun () -> 
                     let lines = ResizeArray<string>(seq lines)
                     let word = TextDocument.getWordAtPosition lines <| position
