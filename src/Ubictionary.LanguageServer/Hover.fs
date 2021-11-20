@@ -14,12 +14,10 @@ let private termMatches _ = true
 let private termToString (t:Definitions.Term) = t.name
 
 let handler (termFinder: Definitions.Finder) (p:HoverParams) (hc:HoverCapability) _ = 
-    match p.TextDocument with
-    | null -> noHoverResult
-    | _ -> 
-        match termFinder termMatches termToString with
-        | _ -> noHoverResult
-        //| _ -> Task.FromResult(Hover(Contents = new MarkedStringsOrMarkupContent(MarkupContent(Kind = MarkupKind.Markdown, Value = ""))))
+    let terms = termFinder termMatches termToString
+    match Seq.isEmpty terms with
+    | true -> noHoverResult
+    | _ -> Task.FromResult(Hover(Contents = new MarkedStringsOrMarkupContent(MarkupContent(Kind = MarkupKind.Markdown, Value = sprintf "### %s" (Seq.head terms)))))
 
 let private registrationOptionsProvider (hc:HoverCapability) (cc:ClientCapabilities)  =
     HoverRegistrationOptions()

@@ -14,7 +14,7 @@ let private createHandler logAwaiter (l:LogMessageParams) =
 let waitForLogMessage logAwaiter (logMessage:string) = async {
     let logCondition = fun (m:string) -> m.Contains(logMessage)
 
-    return! ConditionAwaiter.waitFor logAwaiter logCondition 1500
+    return! ConditionAwaiter.waitFor logAwaiter logCondition 5000
 }
 
 let optionsBuilder logAwaiter (b:LanguageClientOptions) =
