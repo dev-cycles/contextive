@@ -6,7 +6,6 @@ nuget Expecto
 nuget Fable.Electron
 nuget Fable.Mocha
 nuget FSharp.Core
-nuget Legivel
 nuget OmniSharp.Extensions.LanguageProtocol.Testing
 nuget OmniSharp.Extensions.LanguageServer
 nuget Serilog
@@ -15,6 +14,7 @@ nuget Serilog.Sinks.Console
 nuget Serilog.Sinks.File
 nuget MediatR 8.1.0
 nuget Unquote
+nuget YamlDotNet
 nuget YoloDev.Expecto.TestSdk
 nuget Fable.Promise
 nuget Fable.Node

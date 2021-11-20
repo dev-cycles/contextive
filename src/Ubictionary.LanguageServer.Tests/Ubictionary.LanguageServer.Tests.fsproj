@@ -6,6 +6,7 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="TextDocumentTests.fs" />
     <Compile Include="DefinitionsTests.fs" />
     <Compile Include="ConditionAwaiter.fs" />
     <Compile Include="ServerLog.fs" />

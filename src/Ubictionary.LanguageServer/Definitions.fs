@@ -1,22 +1,26 @@
 module Ubictionary.LanguageServer.Definitions
 
-open Legivel.Serialization
+open YamlDotNet.Serialization
+open YamlDotNet.Serialization.NamingConventions
 open System.IO
 open System.Collections.Concurrent
 
+[<CLIMutable>]
 type Term =
     {
-        name: string
+        Name: string
     }
 
+[<CLIMutable>]
 type Context =
     {
-        terms: Term list
+        Terms: ResizeArray<Term>
     }
 
+[<CLIMutable>]
 type Definitions =
     {
-        contexts: Context list
+        Contexts: ResizeArray<Context>
     }
 
 type Finder = (Term -> bool) -> (Term -> string) -> string seq
@@ -29,13 +33,13 @@ let private tryReadFile path =
     else
       None
 
-let private deserialize yml =
+let private deserialize (yml:string) =
     try
-        match Deserialize yml with
-        | [Success r] -> Some r.Data
-        | e -> 
-            printfn "%A" e
-            None
+        let deserializer = 
+            (new DeserializerBuilder())
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build()
+        deserializer.Deserialize<Definitions>(yml) |> Some
     with
     | e -> 
         printfn "%A" e
@@ -70,10 +74,10 @@ let load (id:string) (workspaceFolder:string option) (path:string option) =
 
 let find (id:string) (matcher: Term -> bool) (transformer: Term -> 'a) : 'a seq =
     
-    let mutable defs : Definitions = { contexts = [] }
+    let mutable defs : Definitions = { Contexts = new ResizeArray<Context>() }
 
     let terms =
         match definitions.TryGetValue(id, &defs) with
         | false -> seq []
-        | true -> defs.contexts |> Seq.collect(fun c -> c.terms)
+        | true -> defs.Contexts |> Seq.collect(fun c -> c.Terms) |> Seq.filter matcher
     terms |> Seq.map transformer
