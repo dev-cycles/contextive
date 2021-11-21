@@ -14,55 +14,51 @@ let private getDocument (documentUri: System.Uri) =
     | false -> None
     | true -> Some text
 
-let private getLines (document:string) : IList<string> = document.Split(System.Environment.NewLine)
-
 type private Word = 
-    | Line of string
-    | Start of string * int
-    | Boundary of string * int * int
+    | Line of line: string
+    | Start of line: string * start: int
+    | Token of line: string * start: int * end' : int
     | NoWord
+    member this.Length = 
+        match this with | Token(line, start, end') -> end' - start |> Some
+                        | _ -> None
+    member this.HasLength = 
+        match this.Length with | Some(length) -> length > 0
+                               | _ -> false
 
-let private getLine (lines:IList<string>) lineNumber =
-    if lineNumber >= lines.Count then
-        NoWord
-    else
-        Line(lines[lineNumber])
+    static member ofLine (lines:IList<string>) =
+        function | lineNumber when lineNumber >= lines.Count -> NoWord
+                 | lineNumber -> Line(lines[lineNumber])
 
-let private getWordStart (character: int) (line:Word) =
-    match line with
-    | Line(line) ->
-        if character >= line.Length then
-            NoWord
-        else
-            Start(line, line.LastIndexOf(" ", character) + 1)
-    | _ -> NoWord
+    static member getStart (character: int) =
+        function | Line(line) when character < line.Length -> 
+                    Start(line, line.LastIndexOf(" ", character) + 1)
+                 | _ -> NoWord
 
-let private getWordEnd (character: int) (line: Word) =
-    match line with
-    | Start(line, wordStart) ->
-        let wordEnd = line.IndexOf(" ", character)
-        let length = (if wordEnd < 0 then line.Length else wordEnd) - wordStart
-        if length < 0 then
-            NoWord
-        else
-            Boundary(line, wordStart, length)
-    | _ -> NoWord
+    static member getEnd (character: int) =
+        function | Start(line, start) -> 
+                    let end' = line.IndexOf(" ", character)
+                    let end' = if end' < 0 then line.Length else end'
+                    Token(line, start, end')
+                 | _ -> NoWord
        
-let private getWordFromBoundary (line: Word) =
-    match line with 
-    | Boundary(line, wordStart, length) -> line.Substring(wordStart, length) |> Some
-    | _ -> None
+    static member get =
+        function | Token(line, start, _) as t when t.HasLength -> 
+                    line.Substring(start, t.Length.Value) |> Some
+                 | _ -> None
 
 let getWordAtPosition (lines:IList<string>) (position:Position) =
-    getLine lines position.Line
-    |> getWordStart position.Character
-    |> getWordEnd position.Character
-    |> getWordFromBoundary
+    Word.ofLine lines position.Line
+    |> Word.getStart position.Character
+    |> Word.getEnd position.Character
+    |> Word.get
 
 let getWord (documentUri: System.Uri) (position:Position) =
     match getDocument documentUri with
     | None -> None
     | Some(document) -> getWordAtPosition document position
+
+let private getLines (document:string) : IList<string> = document.Split(System.Environment.NewLine)
 
 module DidOpen = 
     let handler (p:DidOpenTextDocumentParams) =
