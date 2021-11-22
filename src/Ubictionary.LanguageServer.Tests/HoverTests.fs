@@ -21,7 +21,7 @@ let hoverTests =
             test <@ not hover.Contents.HasMarkupContent @>
         }
 
-        let testHoverInOpenDoc (text, position: Position, expectedTerm: string) = 
+        let testHoverTermFound (text, position: Position, expectedTerm: string) = 
             testAsync $"Given ubictionary and document open, server responds to hover request with {expectedTerm} in {position}" {
                 let fileName = "one"
                 let config = [
@@ -56,6 +56,42 @@ let hoverTests =
             ("firstTerm", Position(0, 0), "firstTerm")
             ("secondTerm thirdTerm", Position(0, 12), "thirdTerm")
             ("secondTerm\nthirdTerm", Position(1, 5), "thirdTerm")
+            ("secondTerm\nthirdTerm\nfirstTerm", Position(2, 4), "firstTerm")
             ("thirdTerm\r\nsecondTerm", Position(1, 5), "secondTerm")
-        ] |> List.map testHoverInOpenDoc |> testList "Hover Tests in opened docs at Positions"
+            ("thirdTerm\r\nsecondTerm\r\nfirstTerm", Position(2, 5), "firstTerm")
+        ] |> List.map testHoverTermFound |> testList "Term found when hovering in opened docs at Positions"
+
+        let testHoverTermNotFound (text, position: Position) = 
+            testAsync $"Given ubictionary and document open, server responds to hover request with no content in {position}" {
+                let fileName = "one"
+                let config = [
+                        Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
+                        ConfigurationSection.ubictionaryPathOptionsBuilder $"{fileName}.yml"
+                    ]
+
+                use! client = TestClient(config) |> init
+
+                let textDocumentUri = $"file:///{System.Guid.NewGuid().ToString()}"
+
+                client.TextDocument.DidOpenTextDocument(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
+                    LanguageId = "plaintext",
+                    Version = 0,
+                    Text = text,
+                    Uri = textDocumentUri
+                )))
+
+                let hoverParams = HoverParams(
+                    TextDocument = textDocumentUri,
+                    Position = position
+                )
+
+                let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
+
+                test <@ not hover.Contents.HasMarkupContent @>
+            }
+
+        [
+            ("NotATerm", Position(0, 0))
+            ("firstTerm NotATerm", Position(0, 10))
+        ] |> List.map testHoverTermNotFound |> testList "Term not found when hovering"
     ]
