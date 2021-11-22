@@ -9,6 +9,7 @@ open System.Collections.Concurrent
 type Term =
     {
         Name: string
+        Definition: string option
     }
 
 [<CLIMutable>]
@@ -23,7 +24,7 @@ type Definitions =
         Contexts: ResizeArray<Context>
     }
 
-type Finder = (Term -> bool) -> (Term -> string) -> string seq
+type Finder = (Term -> bool) -> Term seq
 
 let mutable private definitions : ConcurrentDictionary<string, Definitions> = new ConcurrentDictionary<string, Definitions>()
 
@@ -72,12 +73,13 @@ let load (id:string) (workspaceFolder:string option) (path:string option) =
     
     absolutePath
 
-let find (id:string) (matcher: Term -> bool) (transformer: Term -> 'a) : 'a seq =
+let find (id:string) (filter: Term -> bool) : Term seq =
     
     let mutable defs : Definitions = { Contexts = new ResizeArray<Context>() }
 
-    let terms =
-        match definitions.TryGetValue(id, &defs) with
-        | false -> seq []
-        | true -> defs.Contexts |> Seq.collect(fun c -> c.Terms) |> Seq.filter matcher
-    terms |> Seq.map transformer
+    match definitions.TryGetValue(id, &defs) with
+    | false -> seq []
+    | true -> defs.Contexts |> Seq.collect(fun c -> c.Terms) |> Seq.filter filter
+    
+
+    

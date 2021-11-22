@@ -5,6 +5,7 @@ open Swensen.Unquote
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
+open Ubictionary.LanguageServer
 open TestClient
 open System.IO
 
@@ -94,4 +95,21 @@ let hoverTests =
             ("NotATerm", Position(0, 0))
             ("firstTerm NotATerm", Position(0, 10))
         ] |> List.map testHoverTermNotFound |> testList "Term not found when hovering"
+
+        let testHoverDisplay (term: Definitions.Term, expectedHover) =
+            testAsync $"Test hover format for {term.Name}" { 
+                let hoverHandler = Hover.handler (fun _ -> [term]) (fun _ _ -> Some term.Name)
+
+                let! result = hoverHandler (HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))) null null |> Async.AwaitTask
+
+                test <@ result.Contents.MarkupContent.Value = expectedHover @>
+            }
+        
+        [
+            ({Definitions.Term.Name = "firstTerm"; Definitions.Term.Definition = Some "The first term in our definitions list"},
+            "**firstTerm**: The first term in our definitions list")
+            ({Definitions.Term.Name = "SecondTerm"; Definitions.Term.Definition = None},
+            "**SecondTerm**")
+        ] |> List.map testHoverDisplay |> testList "Term hover display"
+        
     ]

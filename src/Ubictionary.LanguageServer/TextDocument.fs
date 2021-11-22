@@ -56,6 +56,8 @@ let getWordAtPosition (lines:IList<string>) (position:Position) =
     |> Word.getEnd position.Character
     |> Word.get
 
+type WordGetter = System.Uri -> Position -> string option
+
 let getWord (documentUri: System.Uri) (position:Position) =
     match getDocument documentUri with
     | None -> None

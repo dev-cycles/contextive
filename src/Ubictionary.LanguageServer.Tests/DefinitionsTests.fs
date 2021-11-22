@@ -19,7 +19,7 @@ let definitionsTests =
                 test <@ fullPath.IsSome @>
                 test <@ fullPath.Value = "fixtures/completion_tests/one.yml" @>
 
-                let foundLabels = Definitions.find id (fun _ -> true) (fun t -> t.Name)
+                let foundLabels = Definitions.find id (fun _ -> true) |> Seq.map (fun t -> t.Name)
                 let expectedLabels = seq ["firstTerm"; "secondTerm"; "thirdTerm"]
                 test <@ (foundLabels, expectedLabels) ||> Seq.compareWith compare = 0 @>
     ]

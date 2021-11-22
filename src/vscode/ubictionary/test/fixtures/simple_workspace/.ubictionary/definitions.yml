@@ -1,7 +1,9 @@
 contexts:
   - terms:
     - name: term
+      definition: A word in the ubiquitous language that has a specific precise meaning in a context.
     - name: context
     - name: language
     - name: definitions
     - name: usage
+      definition: An example of how a term is used in natural language.

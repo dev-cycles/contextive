@@ -62,7 +62,7 @@ let private configureServer (input: Stream) (output: Stream) (opts:LanguageServe
         .WithServerInfo(ServerInfo(Name = "Ubictionary"))
 
         .OnCompletion(Completion.handler <| Definitions.find id, Completion.registrationOptions)
-        .OnHover(Hover.handler <| Definitions.find id, Hover.registrationOptions)
+        .OnHover(Hover.handler <| Definitions.find id <| TextDocument.getWord, Hover.registrationOptions)
 
         |> TextDocument.onSync
 

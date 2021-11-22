@@ -1,5 +1,7 @@
 contexts:
   - terms:
     - name: firstTerm
+      definition: The first term in our definitions list
     - name: secondTerm
+      definition: The second term in our definitions list
     - name: thirdTerm

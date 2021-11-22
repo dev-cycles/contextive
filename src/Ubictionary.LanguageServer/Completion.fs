@@ -12,7 +12,7 @@ let private termMatches _ = true
 let private termToString (t:Definitions.Term) = t.Name
 
 let handler (termFinder: Definitions.Finder) (p:CompletionParams) (hc:CompletionCapability) _ = 
-    Task.FromResult(completionList <| termFinder termMatches termToString)
+    Task.FromResult(completionList <| (termFinder termMatches |> Seq.map termToString))
 
 let private registrationOptionsProvider (hc:CompletionCapability) (cc:ClientCapabilities)  =
     CompletionRegistrationOptions()
