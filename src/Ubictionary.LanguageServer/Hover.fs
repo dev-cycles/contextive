@@ -23,13 +23,16 @@ let private getHoverDefinition (term: Definitions.Term) =
     |> String.concat ": " 
     |> Some
 
+let private hoverUsageExamplesToMarkdown (e:ResizeArray<string>) =
+    e
+    |> Seq.map (sprintf "\"%s\"")
+    |> String.concat "\n\n"
+    |> fun e -> "***\n#### Usage Examples:\n" + e
+    |> Some
+
 let private getHoverUsageExamples = 
     function | {Definitions.Term.Examples = null} -> None
-             | t -> t.Examples
-                    |> Seq.map (sprintf "\"%s\"")
-                    |> String.concat "\n\n"
-                    |> function | "" -> None
-                                | e -> Some <| "***\n#### Usage Examples:\n" + e
+             | t -> t.Examples |> hoverUsageExamplesToMarkdown
 
 let private getTermHoverContent (terms: Definitions.Term seq) =
     let term = Seq.head terms
@@ -38,15 +41,19 @@ let private getTermHoverContent (terms: Definitions.Term seq) =
     |> Seq.choose id
     |> String.concat "\n"
 
+let private hoverResult (terms: Definitions.Term seq) =
+    Task.FromResult(Hover(Contents = new MarkedStringsOrMarkupContent(MarkupContent(Kind = MarkupKind.Markdown, Value = getTermHoverContent terms))))
+
 let handler (termFinder: Definitions.Finder) (getWord: TextDocument.WordGetter) (p:HoverParams) (hc:HoverCapability) _ = 
     let wordAtPosition = getWordAtPosition p getWord
     match wordAtPosition with
     | None -> noHoverResult
     | Some(word) -> // TODO: actually find the correct position
         let terms = termFinder (termMatches word)
-        match Seq.isEmpty terms with
-        | true -> noHoverResult
-        | false -> Task.FromResult(Hover(Contents = new MarkedStringsOrMarkupContent(MarkupContent(Kind = MarkupKind.Markdown, Value = getTermHoverContent terms))))
+        if Seq.isEmpty terms then
+            noHoverResult
+        else
+            hoverResult terms
 
 let private registrationOptionsProvider (hc:HoverCapability) (cc:ClientCapabilities)  =
     HoverRegistrationOptions()

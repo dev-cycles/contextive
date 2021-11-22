@@ -12,7 +12,7 @@ type Term =
         Definition: string option
         Examples: ResizeArray<string>
     }
-    static member Default = {Name = ""; Definition = None; Examples = ResizeArray<string>()}
+    static member Default = {Name = ""; Definition = None; Examples = null}
 
 [<CLIMutable>]
 type Context =
