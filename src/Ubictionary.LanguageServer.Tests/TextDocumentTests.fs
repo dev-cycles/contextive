@@ -4,6 +4,10 @@ open Expecto
 open Swensen.Unquote
 open Ubictionary.LanguageServer
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
+open OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities
+open OmniSharp.Extensions.LanguageServer.Protocol.Document
+open TestClient
+open System.IO
 
 [<Tests>]
 let textDocumentTests =
@@ -29,4 +33,92 @@ let textDocumentTests =
         ]
         |> List.map testWordFinding |> testList "Wordfinding Tests"
         
+        testAsync "Server supports full sync" {
+            let config = [
+                        Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
+                        ConfigurationSection.ubictionaryPathOptionsBuilder $"one.yml"
+                    ]
+
+            use! client = TestClient(config) |> init
+            test <@ client.ServerSettings.Capabilities.TextDocumentSync.Options.Change = TextDocumentSyncKind.Full @>
+        }
+
+        testAsync $"Given open text document, can find text document" {
+            let textDocumentUri = System.Uri($"file:///{System.Guid.NewGuid().ToString()}")
+
+            TextDocument.DidOpen.handler(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
+                LanguageId = "plaintext",
+                Version = 0,
+                Text = "firstTerm",
+                Uri = textDocumentUri
+            )))
+
+            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
+
+            test <@ word.IsSome @>
+            test <@ word.Value = "firstTerm" @>
+        }
+        
+        testAsync $"Given changed text document, can find text document" {
+            let textDocumentUri = System.Uri($"file:///{System.Guid.NewGuid().ToString()}")
+
+            TextDocument.DidOpen.handler(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
+                LanguageId = "plaintext",
+                Text = "firstTerm",
+                Uri = textDocumentUri
+            )))
+
+            TextDocument.DidChange.handler(DidChangeTextDocumentParams(
+                TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri),
+                ContentChanges = Container(TextDocumentContentChangeEvent(Text = "secondTerm"))
+            ))
+
+            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
+
+            test <@ word.IsSome @>
+            test <@ word.Value = "secondTerm" @>
+        }
+
+        testAsync $"Given Saved document, can find text document" {
+            let textDocumentUri = System.Uri($"file:///{System.Guid.NewGuid().ToString()}")
+
+            TextDocument.DidOpen.handler(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
+                LanguageId = "plaintext",
+                Text = "firstTerm",
+                Uri = textDocumentUri
+            )))
+
+            TextDocument.DidChange.handler(DidChangeTextDocumentParams(
+                TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri),
+                ContentChanges = Container(TextDocumentContentChangeEvent(Text = "secondTerm"))
+            ))
+
+            TextDocument.DidSave.handler(DidSaveTextDocumentParams(
+                TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri)
+            ))
+
+            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
+
+            test <@ word.IsSome @>
+            test <@ word.Value = "secondTerm" @>
+        }
+
+        testAsync $"Given Closed document, text document not found" {
+            let textDocumentUri = System.Uri($"file:///{System.Guid.NewGuid().ToString()}")
+
+            TextDocument.DidOpen.handler(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
+                LanguageId = "plaintext",
+                Text = "firstTerm",
+                Uri = textDocumentUri
+            )))
+
+            TextDocument.DidClose.handler(DidCloseTextDocumentParams(
+                TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri)
+            ))
+
+            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
+
+            test <@ word.IsNone @>
+        }
+
     ]

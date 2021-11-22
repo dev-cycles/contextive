@@ -21,63 +21,41 @@ let hoverTests =
             test <@ not hover.Contents.HasMarkupContent @>
         }
 
-        testAsync "Given ubictionary and document sync, server response to hover request in default position" {
-            let fileName = "one"
-            let config = [
-                    Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                    ConfigurationSection.ubictionaryPathOptionsBuilder $"{fileName}.yml"
-                ]
+        let testHoverInOpenDoc (text, position: Position, expectedTerm: string) = 
+            testAsync $"Given ubictionary and document open, server responds to hover request with {expectedTerm} in {position}" {
+                let fileName = "one"
+                let config = [
+                        Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
+                        ConfigurationSection.ubictionaryPathOptionsBuilder $"{fileName}.yml"
+                    ]
 
-            use! client = TestClient(config) |> init
+                use! client = TestClient(config) |> init
 
-            let textDocumentUri = $"file:///{System.Guid.NewGuid().ToString()}"
+                let textDocumentUri = $"file:///{System.Guid.NewGuid().ToString()}"
 
-            client.TextDocument.DidOpenTextDocument(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
-                LanguageId = "plaintext",
-                Version = 0,
-                Text = "secondTerm",
-                Uri = textDocumentUri
-            )))
+                client.TextDocument.DidOpenTextDocument(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
+                    LanguageId = "plaintext",
+                    Version = 0,
+                    Text = text,
+                    Uri = textDocumentUri
+                )))
 
-            let hoverParams = HoverParams(
-                TextDocument = textDocumentUri,
-                Position = Position(0, 0)
-            )
+                let hoverParams = HoverParams(
+                    TextDocument = textDocumentUri,
+                    Position = position
+                )
 
-            let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
+                let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
 
-            test <@ hover.Contents.HasMarkupContent @>
-            test <@ hover.Contents.MarkupContent.Kind = MarkupKind.Markdown @>
-            test <@ hover.Contents.MarkupContent.Value.Contains("secondTerm") @>
-        }
+                test <@ hover.Contents.HasMarkupContent @>
+                test <@ hover.Contents.MarkupContent.Kind = MarkupKind.Markdown @>
+                test <@ hover.Contents.MarkupContent.Value.Contains(expectedTerm) @>
+            }
 
-        testAsync "Given ubictionary and document sync, server response to hover request in defined position" {
-            let fileName = "one"
-            let config = [
-                    Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                    ConfigurationSection.ubictionaryPathOptionsBuilder $"{fileName}.yml"
-                ]
-
-            use! client = TestClient(config) |> init
-
-            let textDocumentUri = $"file:///{System.Guid.NewGuid().ToString()}"
-
-            client.TextDocument.DidOpenTextDocument(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
-                LanguageId = "plaintext",
-                Version = 0,
-                Text = "secondTerm thirdTerm",
-                Uri = textDocumentUri
-            )))
-
-            let hoverParams = HoverParams(
-                TextDocument = textDocumentUri,
-                Position = Position(0, 12)
-            )
-
-            let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
-
-            test <@ hover.Contents.HasMarkupContent @>
-            test <@ hover.Contents.MarkupContent.Kind = MarkupKind.Markdown @>
-            test <@ hover.Contents.MarkupContent.Value.Contains("thirdTerm") @>
-        }
+        [
+            ("firstTerm", Position(0, 0), "firstTerm")
+            ("secondTerm thirdTerm", Position(0, 12), "thirdTerm")
+            ("secondTerm\nthirdTerm", Position(1, 5), "thirdTerm")
+            ("thirdTerm\r\nsecondTerm", Position(1, 5), "secondTerm")
+        ] |> List.map testHoverInOpenDoc |> testList "Hover Tests in opened docs at Positions"
     ]

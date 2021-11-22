@@ -63,7 +63,8 @@ let private configureServer (input: Stream) (output: Stream) (opts:LanguageServe
 
         .OnCompletion(Completion.handler <| Definitions.find id, Completion.registrationOptions)
         .OnHover(Hover.handler <| Definitions.find id, Hover.registrationOptions)
-        .OnDidOpenTextDocument(TextDocument.DidOpen.handler, TextDocument.DidOpen.registrationOptions)
+
+        |> TextDocument.onSync
 
         |> ignore
      

@@ -3,6 +3,9 @@ module Ubictionary.LanguageServer.TextDocument
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
+open OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities
+open OmniSharp.Extensions.LanguageServer.Protocol.Server
+open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open System.Collections.Concurrent
 open System.Collections.Generic
 
@@ -60,12 +63,38 @@ let getWord (documentUri: System.Uri) (position:Position) =
 
 let private getLines (document:string) : IList<string> = document.Split(System.Environment.NewLine)
 
+let private registrationOptionsProvider (hc:SynchronizationCapability) (cc:ClientCapabilities) =
+    TextDocumentSyncRegistrationOptions(Change = TextDocumentSyncKind.Full)
+
+let registrationOptions = RegistrationOptionsDelegate<TextDocumentSyncRegistrationOptions, SynchronizationCapability>(registrationOptionsProvider)
+
 module DidOpen = 
     let handler (p:DidOpenTextDocumentParams) =
         let lines = getLines p.TextDocument.Text
         documents.AddOrUpdate(p.TextDocument.Uri.ToString(), lines, (fun _ _ -> lines)) |> ignore
 
-    let private registrationOptionsProvider (hc:SynchronizationCapability) (cc:ClientCapabilities) =
-        TextDocumentOpenRegistrationOptions()
+module DidChange =
+    let handler (p:DidChangeTextDocumentParams) =
+        let lines = getLines (Seq.head p.ContentChanges).Text
+        documents.AddOrUpdate(p.TextDocument.Uri.ToString(), lines, (fun _ _ -> lines)) |> ignore
 
-    let registrationOptions = RegistrationOptionsDelegate<TextDocumentOpenRegistrationOptions, SynchronizationCapability>(registrationOptionsProvider)
+module DidSave = 
+    let handler (p:DidSaveTextDocumentParams) =
+        ()
+
+module DidClose = 
+    let handler (p:DidCloseTextDocumentParams) =
+        documents.TryRemove(p.TextDocument.Uri.ToString()) |> ignore
+
+let getTextDocumentAttributes (uri : DocumentUri) = TextDocumentAttributes(uri, "")
+
+let onSync (b: ILanguageServerRegistry) : ILanguageServerRegistry = 
+    b.OnTextDocumentSync(
+        TextDocumentSyncKind.Full,
+        getTextDocumentAttributes,
+        DidOpen.handler,
+        DidClose.handler,
+        DidChange.handler,
+        DidSave.handler,        
+        registrationOptions
+    )
