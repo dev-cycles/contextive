@@ -4,4 +4,7 @@ contexts:
       definition: The first term in our definitions list
     - name: secondTerm
       definition: The second term in our definitions list
+      examples:
+        - "An arbitrary usage of secondTerm"
+        - "Don't forget to secondTerm the firstTerms"
     - name: thirdTerm

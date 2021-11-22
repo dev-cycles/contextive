@@ -100,16 +100,18 @@ let hoverTests =
             testAsync $"Test hover format for {term.Name}" { 
                 let hoverHandler = Hover.handler (fun _ -> [term]) (fun _ _ -> Some term.Name)
 
-                let! result = hoverHandler (HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))) null null |> Async.AwaitTask
+                let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
+                let! result = hoverHandler hoverParams null null |> Async.AwaitTask
 
                 test <@ result.Contents.MarkupContent.Value = expectedHover @>
             }
-        
         [
-            ({Definitions.Term.Name = "firstTerm"; Definitions.Term.Definition = Some "The first term in our definitions list"},
-            "**firstTerm**: The first term in our definitions list")
-            ({Definitions.Term.Name = "SecondTerm"; Definitions.Term.Definition = None},
-            "**SecondTerm**")
+            ({Definitions.Term.Default with Name = "firstTerm"; Definition = Some "The first term in our definitions list"},
+                "**firstTerm**: The first term in our definitions list")
+            ({Definitions.Term.Default with Name = "SecondTerm"},
+                "**SecondTerm**")
+            ({Definitions.Term.Default with Name = "ThirdTerm"; Examples = ResizeArray ["Do a thing"] },
+                "**ThirdTerm**\n***\n#### Usage Examples:\n\"Do a thing\"")
         ] |> List.map testHoverDisplay |> testList "Term hover display"
         
     ]

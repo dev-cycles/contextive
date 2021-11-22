@@ -2,6 +2,9 @@ contexts:
   - terms:
     - name: term
       definition: A word in the ubiquitous language that has a specific precise meaning in a context.
+      examples:
+        - Use the term correctly, or not at all
+        - Try not to use an ambiguous term - make them a explicit and specific as possible
     - name: context
     - name: language
     - name: definitions
