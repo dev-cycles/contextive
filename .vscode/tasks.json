@@ -9,14 +9,14 @@
             "type": "shell",
             "args": [
                 "build",
-                "${workspaceRoot}${config:languageServerPath}/Ubictionary.LanguageServer.fsproj",
+                "${workspaceRoot}/${config:languageServerPath}/Ubictionary.LanguageServer.fsproj",
                 // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
                 // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "options": {
-                "cwd": "${workspaceFolder}${config:languageServerPath}"
+                "cwd": "${workspaceFolder}/${config:languageServerPath}"
             },
             "group": "build",
             "problemMatcher": "$msCompile"
@@ -27,14 +27,14 @@
             "type": "shell",
             "args": [
                 "build",
-                "${workspaceRoot}${config:languageServerTestsPath}/Ubictionary.LanguageServer.Tests.fsproj",
+                "${workspaceRoot}/${config:languageServerTestsPath}/Ubictionary.LanguageServer.Tests.fsproj",
                 // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
                 // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "options": {
-                "cwd": "${workspaceFolder}${config:languageServerTestsPath}"
+                "cwd": "${workspaceFolder}/${config:languageServerTestsPath}"
             },
             "group": "build",
             "problemMatcher": "$msCompile"
@@ -48,7 +48,7 @@
                 "run"
             ],
             "options": {
-                "cwd": "${workspaceFolder}${config:languageServerTestsPath}"
+                "cwd": "${workspaceFolder}/${config:languageServerTestsPath}"
             },
             "group": "test",
             "problemMatcher": "$msCompile"
@@ -65,7 +65,7 @@
             },
             "group": "build",
             "options": {
-                "cwd": "${workspaceFolder}${config:vsCodeExtensionPath}"
+                "cwd": "${workspaceFolder}/${config:vsCodeExtensionPath}"
             },
         },
         {
@@ -80,7 +80,7 @@
             },
             "group": "build",
             "options": {
-                "cwd": "${workspaceFolder}${config:vsCodeExtensionPath}"
+                "cwd": "${workspaceFolder}/${config:vsCodeExtensionPath}"
             },
         },
         {

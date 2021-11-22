@@ -1,39 +1,57 @@
 module Ubictionary.LanguageServer.Definitions
 
-open Legivel.Serialization
+open YamlDotNet.Serialization
+open YamlDotNet.Serialization.NamingConventions
 open System.IO
+open System.Collections.Concurrent
 
+[<CLIMutable>]
 type Term =
     {
-        name: string
+        Name: string
+        Definition: string option
+        Examples: ResizeArray<string>
     }
+    static member Default = {Name = ""; Definition = None; Examples = null}
 
+[<CLIMutable>]
 type Context =
     {
-        terms: Term list
+        Terms: ResizeArray<Term>
     }
 
+[<CLIMutable>]
 type Definitions =
     {
-        contexts: Context list
+        Contexts: ResizeArray<Context>
     }
 
-let mutable private ubictionaryPath : string option = None
-let mutable definitions : Definitions option = None
+type Finder = (Term -> bool) -> Term seq
+
+let mutable private definitions : ConcurrentDictionary<string, Definitions> = new ConcurrentDictionary<string, Definitions>()
 
 let private tryReadFile path =
-    try 
-      File.ReadAllText(path)
-    with
-    | _ -> ""
+    if File.Exists(path) then
+      File.ReadAllText(path) |> Some
+    else
+      None
 
-let private loadUbictionary path =
-    let yml = tryReadFile path
-    match Deserialize yml with
-    | [Success r] -> Some r.Data
+let private deserialize (yml:string) =
+    try
+        let deserializer = 
+            (new DeserializerBuilder())
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build()
+        deserializer.Deserialize<Definitions>(yml) |> Some
+    with
     | e -> 
         printfn "%A" e
         None
+
+let private loadUbictionary path =
+    match tryReadFile path with
+    | None -> None
+    | Some(ymlText) -> deserialize ymlText
 
 let private getPath workspaceFolder (path: string option) =
     match path with
@@ -45,21 +63,25 @@ let private getPath workspaceFolder (path: string option) =
              | Some wsf -> Path.Combine(wsf, p) |> Some
              | None -> None
 
-let clear () =
-    definitions <- None
-
-let load (workspaceFolder:string option) (path:string option) =
+let load (instanceId:string) (workspaceFolder:string option) (path:string option) =
     let absolutePath = getPath workspaceFolder path
-    ubictionaryPath <- absolutePath
-    definitions <-
-        match absolutePath with
-            | Some ap -> loadUbictionary ap
-            | None -> None
+    
+    match absolutePath with
+    | Some ap ->
+        match loadUbictionary ap with
+        | Some(defs) -> definitions.TryAdd(instanceId, defs) |> ignore
+        | None -> ()
+    | None -> ()
+    
     absolutePath
 
-let find (matcher: Term -> bool) (transformer: Term -> 'a) : 'a seq =
-    let terms =
-        match definitions  with
-        | None -> seq []
-        | Some d -> d.contexts |> Seq.collect(fun c -> c.terms)
-    terms |> Seq.map transformer
+let find (instanceId:string) (filter: Term -> bool) : Term seq =
+    
+    let mutable defs : Definitions = { Contexts = new ResizeArray<Context>() }
+
+    match definitions.TryGetValue(instanceId, &defs) with
+    | false -> seq []
+    | true -> defs.Contexts |> Seq.collect(fun c -> c.Terms) |> Seq.filter filter
+    
+
+    

@@ -12,6 +12,7 @@
     <Compile Include="Workspace.fs" />
     <Compile Include="ConfigurationSection.fs" />
     <Compile Include="TestClient.fs" />
+    <Compile Include="TextDocumentTests.fs" />
     <Compile Include="CompletionTests.fs" />
     <Compile Include="HoverTests.fs" />
     <Compile Include="InitializationTests.fs" />
