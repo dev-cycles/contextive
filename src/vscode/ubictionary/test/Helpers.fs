@@ -16,18 +16,24 @@ let languageClientFactory() = promise {
     let languageClient: LanguageClient = extensionApi.Client
     do! languageClient.onReady()
 
+    
+    Fable.Core.JS.console.log "Sending completion request..."
     // This initial request ensures that the server is _really_ ready
     // Without it, we finding that completion responses via the vscode command weren't including
     // this language server's response.
     do! languageClient.sendRequest("textDocument/completion", {| |}) |> Promise.Ignore
+    Fable.Core.JS.console.log "...received completion response."
 
     return languageClient
 }
 
 let getLanguageClient() = promise {
+    Fable.Core.JS.console.log "getting language client..."
     if languageClient.IsNone then
         languageClient <- Some(languageClientFactory())
-    return! languageClient.Value
+    let! lc = languageClient.Value
+    Fable.Core.JS.console.log "... got language client."
+    return lc
 }
 
 let getDocUri relativeFile =
