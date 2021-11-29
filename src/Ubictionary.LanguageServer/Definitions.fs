@@ -27,6 +27,7 @@ type Definitions =
     }
 
 type Finder = (Term -> bool) -> Term seq
+type Loader = string option -> string option -> string option 
 
 let mutable private definitions : ConcurrentDictionary<string, Definitions> = new ConcurrentDictionary<string, Definitions>()
 
