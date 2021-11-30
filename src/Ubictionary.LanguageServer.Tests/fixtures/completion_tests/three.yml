@@ -1,0 +1,4 @@
+contexts:
+  - terms:
+    - name: original
+    - name: another

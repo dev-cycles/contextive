@@ -27,6 +27,8 @@ type Definitions =
     }
 
 type Finder = (Term -> bool) -> Term seq
+type Loader = string option -> string option -> string option 
+type Reloader = unit -> string option
 
 let mutable private definitions : ConcurrentDictionary<string, Definitions> = new ConcurrentDictionary<string, Definitions>()
 
@@ -63,20 +65,20 @@ let private getPath workspaceFolder (path: string option) =
              | Some wsf -> Path.Combine(wsf, p) |> Some
              | None -> None
 
-let load (instanceId:string) (workspaceFolder:string option) (path:string option) =
+let load (instanceId:string) : Loader = fun (workspaceFolder:string option) (path:string option) ->
     let absolutePath = getPath workspaceFolder path
     
     match absolutePath with
     | Some ap ->
         match loadUbictionary ap with
-        | Some(defs) -> definitions.TryAdd(instanceId, defs) |> ignore
+        | Some(defs) ->
+            definitions.AddOrUpdate(instanceId, defs, fun _ _ -> defs) |> ignore
         | None -> ()
     | None -> ()
     
     absolutePath
 
-let find (instanceId:string) (filter: Term -> bool) : Term seq =
-    
+let find (instanceId:string) : Finder = fun filter -> 
     let mutable defs : Definitions = { Contexts = new ResizeArray<Context>() }
 
     match definitions.TryGetValue(instanceId, &defs) with

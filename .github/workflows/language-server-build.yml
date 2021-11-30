@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: language-server-results-${{ matrix.dotnet-version }}
-          path: "src/Ubictionary.LanguageServer.Tests/TestResults/TestResults/TestResults-${{ matrix.dotnet-version }}.xml"
+          path: "src/Ubictionary.LanguageServer.Tests/TestResults/TestResults-${{ matrix.dotnet-version }}.xml"
         if: always()
       - name: Test Report
         uses: dorny/test-reporter@v1

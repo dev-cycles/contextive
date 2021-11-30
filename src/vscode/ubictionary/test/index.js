@@ -9,7 +9,7 @@ function run() {
 	const mocha = new Mocha({
 		ui: 'bdd', // Fable.Mocha uses `describe`, so we need to use the `bdd` API. See https://mochajs.org/#interfaces
 		color: true,
-		timeout: 15000 // 5000ms is typically enough locally, but 10,000 is safer in github actions CI.
+		timeout: 30000 // 5000ms is typically enough locally, but 30,000 is safer in github actions CI.
 	})
 	.reporter('mocha-multi-reporters', {
 		reporterEnabled: "spec, mocha-junit-reporter",

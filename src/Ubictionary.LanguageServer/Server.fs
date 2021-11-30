@@ -5,6 +5,7 @@ open OmniSharp.Extensions.LanguageServer.Server
 open OmniSharp.Extensions.LanguageServer.Protocol.Server
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Window
+open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open Microsoft.Extensions.Logging
 open Serilog
@@ -42,11 +43,16 @@ let private onStartup (instanceId:string)= OnLanguageServerStartedDelegate(fun (
         let! path = getConfig s configSection pathKey
         let workspaceFolder = getWorkspaceFolder s
 
-        let fullPath = Definitions.load instanceId workspaceFolder path
-
-        match fullPath with
+        let loader = fun () -> 
+            let fullPath = Definitions.load instanceId workspaceFolder path
+            match fullPath with
             | Some p -> s.Window.LogInfo $"Loading ubictionary from {p}"
             | None -> ()
+            fullPath
+
+        let fullPath = loader()
+
+        WatchedFiles.register instanceId s fullPath <| loader
 
     } |> Async.StartAsTask :> Task)
 
