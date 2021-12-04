@@ -1,6 +1,7 @@
 module Ubictionary.LanguageServer.Completion
 
 open System.Threading.Tasks
+open System.Linq
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
@@ -9,10 +10,25 @@ let private completionList labels =
     CompletionList(labels |> Seq.map (fun l -> CompletionItem(Label=l)))
 
 let private termMatches _ = true
-let private termToString (t:Definitions.Term) = t.Name
+let private termToString (caseTemplate:string option) (t:Definitions.Term) = 
+    match caseTemplate with
+    | None -> t.Name
+    | Some(ct) ->
+        if ct.Length > 1 && ct |> Seq.forall (System.Char.IsUpper) then
+            t.Name.ToUpper()
+        elif System.Char.IsUpper(ct.LastOrDefault()) then
+            t.Name.Substring(0,1).ToUpper() + t.Name.Substring(1)
+        else
+            t.Name
 
-let handler (termFinder: Definitions.Finder) (p:CompletionParams) (hc:CompletionCapability) _ = 
-    Task.FromResult(completionList <| (termFinder termMatches |> Seq.map termToString))
+let handler (termFinder: Definitions.Finder) (wordGetter: TextDocument.WordGetter) (p:CompletionParams) (hc:CompletionCapability) _ = 
+    let caseTemplate = 
+        match p.TextDocument with
+        | null -> None
+        | _ -> wordGetter (p.TextDocument.Uri.ToUri()) p.Position
+    let termToStringWithCase = termToString caseTemplate
+    let labels = termFinder termMatches |> Seq.map termToStringWithCase
+    Task.FromResult(completionList labels)
 
 let private registrationOptionsProvider (hc:CompletionCapability) (cc:ClientCapabilities)  =
     CompletionRegistrationOptions()

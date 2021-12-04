@@ -35,7 +35,11 @@ type private Word =
 
     static member getStart (character: int) =
         function | Line(line) when character < line.Length -> 
-                    Start(line, line.LastIndexOf(" ", character) + 1)
+                    match line[character] with
+                    | ' ' -> Start(line, line.LastIndexOf(" ", character-1) + 1) 
+                    | _ -> Start(line, line.LastIndexOf(" ", character) + 1)
+                 | Line(line) when character = line.Length -> 
+                    Start(line, line.LastIndexOf(" ", character-1) + 1) 
                  | _ -> NoWord
 
     static member getEnd (character: int) =

@@ -67,7 +67,7 @@ let private configureServer (input: Stream) (output: Stream) (opts:LanguageServe
         .ConfigureLogging(fun z -> z.AddLanguageProtocolLogging().AddSerilog(Log.Logger).SetMinimumLevel(LogLevel.Trace) |> ignore)
         .WithServerInfo(ServerInfo(Name = "Ubictionary"))
 
-        .OnCompletion(Completion.handler <| Definitions.find instanceId, Completion.registrationOptions)
+        .OnCompletion(Completion.handler <| Definitions.find instanceId <| TextDocument.getWord, Completion.registrationOptions)
         .OnHover(Hover.handler <| Definitions.find instanceId <| TextDocument.getWord, Hover.registrationOptions)
 
         |> TextDocument.onSync

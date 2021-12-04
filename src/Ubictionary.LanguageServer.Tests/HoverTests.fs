@@ -55,6 +55,8 @@ let hoverTests =
 
         [
             ("firstTerm", Position(0, 0), "firstTerm")
+            ("secondTerm thirdTerm", Position(0, 10), "secondTerm")
+            ("secondTerm thirdTerm", Position(0, 11), "thirdTerm")
             ("secondTerm thirdTerm", Position(0, 12), "thirdTerm")
             ("secondTerm\nthirdTerm", Position(1, 5), "thirdTerm")
             ("secondTerm\nthirdTerm\nfirstTerm", Position(2, 4), "firstTerm")

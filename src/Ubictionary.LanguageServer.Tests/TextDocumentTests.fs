@@ -5,7 +5,6 @@ open Swensen.Unquote
 open Ubictionary.LanguageServer
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities
-open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open TestClient
 open System.IO
 
@@ -26,8 +25,9 @@ let textDocumentTests =
             ("multiple words", ["firstWord secondWord"], Position(0,0), Some "firstWord")
             ("multiple words", ["firstWord secondWord"], Position(0,10), Some "secondWord")
             ("multiple words", ["firstWord secondWord"], Position(0,15), Some "secondWord")
-            ("position at end", ["firstWord secondWord"], Position(0,20), None)
-            ("position on space", ["firstWord secondWord"], Position(0,9), None)
+            ("position at end", ["firstWord secondWord"], Position(0,20), Some "secondWord")
+            ("position at end", ["firstWord secondWord"], Position(0,21), None)
+            ("position on space", ["firstWord secondWord"], Position(0,9), Some "firstWord")
             ("out of range lines", ["firstWord secondWord"], Position(1,0), None)
             ("out of range character", ["firstWord"], Position(0,50), None)
         ]
