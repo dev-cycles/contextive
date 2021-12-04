@@ -9,6 +9,25 @@ open Node.Api
 
 let mutable languageClient : Fable.Core.JS.Promise<LanguageClient> option = None
 
+let getDocUri relativeFile =
+    vscode.Uri.file(path.resolve(__dirname,relativeFile))
+
+let openDocument docPath = promise {
+    let docUri = getDocUri docPath
+    printfn "%A" (docUri.toString())
+    let! doc = workspace.openTextDocument(docUri)
+    let! _ = window.showTextDocument(doc, ViewColumn.Active, false)
+    return docUri
+}
+
+let closeDocument docPath = promise {
+    let docUri = getDocUri docPath
+    let! doc = workspace.openTextDocument(docUri)
+    let! _ = window.showTextDocument(doc, ViewColumn.Active, false)
+    let! _ = commands.executeCommand("workbench.action.closeActiveEditor")
+    return ()
+}
+
 /// Waits for the active language client to be ready
 let languageClientFactory() = promise {
     let extension = extensions.all.Find(fun x -> x.id = "devcycles.ubictionary")
@@ -19,7 +38,10 @@ let languageClientFactory() = promise {
     // This initial request ensures that the server is _really_ ready
     // Without it, we finding that completion responses via the vscode command weren't including
     // this language server's response.
-    do! languageClient.sendRequest("textDocument/completion", {| |}) |> Promise.Ignore
+    try
+        do! languageClient.sendRequest("textDocument/completion", {| |}) |> Promise.Ignore
+    with
+    | e -> printfn "%A" e
 
     return languageClient
 }
@@ -29,15 +51,4 @@ let getLanguageClient() = promise {
         languageClient <- Some(languageClientFactory())
     let! lc = languageClient.Value
     return lc
-}
-
-let getDocUri relativeFile =
-    vscode.Uri.file(path.resolve(__dirname,relativeFile))
-
-let openDocument docPath = promise {
-    let docUri = getDocUri docPath
-    printfn "%A" (docUri.toString())
-    let! doc = workspace.openTextDocument(docUri)
-    let! _ = window.showTextDocument(doc, ViewColumn.Active, false)
-    return docUri
 }
