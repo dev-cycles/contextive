@@ -10,7 +10,7 @@ let private markupContent content =
 
 let private noHoverResult = Task.FromResult(Hover())
 
-let private termMatches word (t:Definitions.Term) = t.Name = word
+let private termMatches word (t:Definitions.Term) = t.Name.Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
 
 let private getWordAtPosition (p:HoverParams) (getWord: TextDocument.WordGetter) =
     match p.TextDocument with
