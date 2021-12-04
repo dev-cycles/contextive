@@ -38,10 +38,16 @@ let languageClientFactory() = promise {
     // This initial request ensures that the server is _really_ ready
     // Without it, we finding that completion responses via the vscode command weren't including
     // this language server's response.
-    try
-        do! languageClient.sendRequest("textDocument/completion", {| |}) |> Promise.Ignore
-    with
-    | e -> printfn "%A" e
+    let rec warmUp() = promise {
+        try
+            do! languageClient.sendRequest("textDocument/completion", {| |}) |> Promise.Ignore
+        with
+        | e -> 
+            printf "Exception (retrying): %A" e
+            do! warmUp()
+    }
+
+    do! warmUp()
 
     return languageClient
 }
