@@ -69,7 +69,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: vscode-extension-logs-${{ matrix.dotnet-version }}
-          path: "**/*.log"
+          path: "**/log*.txt"
         if: always()
       - name: Test Report
         uses: dorny/test-reporter@v1
