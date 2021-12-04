@@ -31,7 +31,9 @@ type private Word =
         match this.Length with | Some(length) -> length > 0
                                | _ -> false
 
-    static member private startOfWord line position = Start(line, line.LastIndexOfAny([|' ';'.'|], position) + 1)
+    static member private delimiters = [|' ';'(';'.';'-';'>'|]
+
+    static member private startOfWord line position = Start(line, line.LastIndexOfAny(Word.delimiters, position) + 1)
 
     static member ofLine (lines:IList<string>) =
         function | lineNumber when lineNumber >= lines.Count -> NoWord
@@ -48,7 +50,7 @@ type private Word =
 
     static member getEnd (character: int) =
         function | Start(line, start) -> 
-                    let end' = line.IndexOfAny([|' ';'(';'.'|], character)
+                    let end' = line.IndexOfAny(Word.delimiters, character)
                     let end' = if end' < 0 then line.Length else end'
                     Token(line, start, end')
                  | _ -> NoWord
