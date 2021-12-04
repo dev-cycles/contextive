@@ -12,14 +12,14 @@ let private completionList labels =
 let private termMatches _ = true
 let private termToString (caseTemplate:string option) (t:Definitions.Term) = 
     match caseTemplate with
-    | None -> t.Name
+    | None -> seq {t.Name}
     | Some(ct) ->
         if ct.Length > 1 && ct |> Seq.forall (System.Char.IsUpper) then
-            t.Name.ToUpper()
+            seq {t.Name.ToUpper()}
         elif System.Char.IsUpper(ct.LastOrDefault()) then
-            t.Name.Substring(0,1).ToUpper() + t.Name.Substring(1)
+            seq {t.Name.Substring(0,1).ToUpper() + t.Name.Substring(1); t.Name.ToUpper()}
         else
-            t.Name
+            seq {t.Name}
 
 let handler (termFinder: Definitions.Finder) (wordGetter: TextDocument.WordGetter) (p:CompletionParams) (hc:CompletionCapability) _ = 
     let caseTemplate = 
@@ -27,7 +27,7 @@ let handler (termFinder: Definitions.Finder) (wordGetter: TextDocument.WordGette
         | null -> None
         | _ -> wordGetter (p.TextDocument.Uri.ToUri()) p.Position
     let termToStringWithCase = termToString caseTemplate
-    let labels = termFinder termMatches |> Seq.map termToStringWithCase
+    let labels = termFinder termMatches |> Seq.collect termToStringWithCase
     Task.FromResult(completionList labels)
 
 let private registrationOptionsProvider (hc:CompletionCapability) (cc:ClientCapabilities)  =

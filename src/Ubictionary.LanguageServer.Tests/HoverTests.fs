@@ -23,7 +23,7 @@ let hoverTests =
         }
 
         let testHoverTermFound (text, position: Position, expectedTerm: string) = 
-            testAsync $"Given ubictionary and document open, server responds to hover request with {expectedTerm} in {position}" {
+            testAsync $"Given ubictionary and text '{text}', server responds to hover request with {expectedTerm} in {position}" {
                 let fileName = "one"
                 let config = [
                         Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
@@ -55,6 +55,7 @@ let hoverTests =
 
         [
             ("firstTerm", Position(0, 0), "firstTerm")
+            ("FirstTerm", Position(0, 0), "firstTerm")
             ("secondTerm thirdTerm", Position(0, 10), "secondTerm")
             ("secondTerm thirdTerm", Position(0, 11), "thirdTerm")
             ("secondTerm thirdTerm", Position(0, 12), "thirdTerm")

@@ -55,12 +55,12 @@ let completionTests =
         [
             ("one", "", Position(0, 0), ["firstTerm";"secondTerm";"thirdTerm"])
             ("two", "", Position(0, 0), ["word1";"word2";"word3"])
-            ("two", "W", Position(0, 1), ["Word1";"Word2";"Word3"])
+            ("two", "W", Position(0, 1), ["Word1";"WORD1";"Word2";"WORD2";"Word3";"WORD3"])
             ("two", "WO", Position(0, 2), ["WORD1";"WORD2";"WORD3"])
         ] |> List.map testFileReader |> testList "File reading tests"
 
-        let completionCaseMatching (term, wordAtPosition, expectedCompletionLabel:string) = 
-            testCase $"Completion of \"{term}\" with {wordAtPosition} at position, returns \"{expectedCompletionLabel}\"" <| fun () -> 
+        let completionCaseMatching (term, wordAtPosition, expectedCompletionLabels:string seq) = 
+            testCase $"Completion of \"{term}\" with {wordAtPosition} at position, returns \"{expectedCompletionLabels}\"" <| fun () -> 
                 let finder : Definitions.Finder = fun _ -> seq { {Term.Default with Name = term} } 
 
                 let wordGetter : TextDocument.WordGetter = fun _ _ -> wordAtPosition
@@ -74,12 +74,12 @@ let completionTests =
 
                 let completionLabels = result.Items |> Seq.map (fun x -> x.Label)
 
-                test <@ (completionLabels, seq {expectedCompletionLabel}) ||> Seq.compareWith compare = 0 @>
+                test <@ (completionLabels, expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
         [
-            ("term", Some("t"), "term")
-            ("term", Some(""), "term")
-            ("term", Some("T"), "Term")
-            ("term", Some("TE"), "TERM")
+            ("term", Some("t"), seq {"term"})
+            ("term", Some(""), seq {"term"})
+            ("term", Some("T"), seq {"Term"; "TERM"})
+            ("term", Some("TE"), seq {"TERM"})
             // ("term", None, "blah")
             // ("Term", Some(""), "Term")
             // ("Term", Some("t"), "term")
