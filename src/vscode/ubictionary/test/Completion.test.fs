@@ -17,7 +17,8 @@ let tests =
     testList "Ubictionary Completion Tests" [
 
         testCasePromise "Completion returns expected list" <| promise {
-            let! docUri = openDocument "../test/fixtures/simple_workspace/test.txt"
+            let testDocPath = "../test/fixtures/simple_workspace/test.txt"
+            let! docUri = openDocument testDocPath
 
             do! getLanguageClient() |> Promise.Ignore
 
@@ -30,5 +31,7 @@ let tests =
                 Expect.seqEqual expected labels "executeCompletionProvider should return expected completion items"
             | None ->
                 Expect.isSome result "executeCompletionItemProvider should return a result"
+
+            do! closeDocument testDocPath
         }
     ]

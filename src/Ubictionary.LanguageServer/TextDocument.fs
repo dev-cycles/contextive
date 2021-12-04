@@ -17,6 +17,8 @@ let private getDocument (documentUri: System.Uri) =
     | false -> None
     | true -> Some text
 
+
+
 type private Word = 
     | Line of line: string
     | Start of line: string * start: int
@@ -29,6 +31,10 @@ type private Word =
         match this.Length with | Some(length) -> length > 0
                                | _ -> false
 
+    static member private delimiters = [|' ';'(';'.';'-';'>'|]
+
+    static member private startOfWord line position = Start(line, line.LastIndexOfAny(Word.delimiters, position) + 1)
+
     static member ofLine (lines:IList<string>) =
         function | lineNumber when lineNumber >= lines.Count -> NoWord
                  | lineNumber -> Line(lines[lineNumber])
@@ -36,15 +42,15 @@ type private Word =
     static member getStart (character: int) =
         function | Line(line) when character < line.Length -> 
                     match line[character] with
-                    | ' ' -> Start(line, line.LastIndexOf(" ", character-1) + 1) 
-                    | _ -> Start(line, line.LastIndexOf(" ", character) + 1)
+                    | ' ' -> Word.startOfWord line <| character-1
+                    | _ -> Word.startOfWord line character
                  | Line(line) when character = line.Length -> 
-                    Start(line, line.LastIndexOf(" ", character-1) + 1) 
+                    Word.startOfWord line <| character-1
                  | _ -> NoWord
 
     static member getEnd (character: int) =
         function | Start(line, start) -> 
-                    let end' = line.IndexOf(" ", character)
+                    let end' = line.IndexOfAny(Word.delimiters, character)
                     let end' = if end' < 0 then line.Length else end'
                     Token(line, start, end')
                  | _ -> NoWord

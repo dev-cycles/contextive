@@ -65,6 +65,12 @@ jobs:
           name: vscode-extension-results-${{ matrix.dotnet-version }}
           path: "**/TestResults-${{ matrix.dotnet-version }}.xml"
         if: always()
+      - name: Upload All Test Logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: vscode-extension-logs-${{ matrix.dotnet-version }}
+          path: "**/log*.txt"
+        if: always()
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: always()
