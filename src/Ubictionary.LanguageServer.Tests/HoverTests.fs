@@ -22,6 +22,8 @@ let hoverTests =
             test <@ not hover.Contents.HasMarkupContent @>
         }
 
+        
+
         let testHoverTermFound (text, position: Position, expectedTerm: string) = 
             testAsync $"Given ubictionary and text '{text}', server responds to hover request with {expectedTerm} in {position}" {
                 let fileName = "one"

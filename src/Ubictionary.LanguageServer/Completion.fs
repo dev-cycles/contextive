@@ -7,19 +7,21 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 
 let private completionList labels =
-    CompletionList(labels |> Seq.map (fun l -> CompletionItem(Label=l)))
+    CompletionList(labels |> Seq.map (fun l -> CompletionItem(Label=l)), isIncomplete=true)
 
 let private termMatches _ = true
 let private termToString (caseTemplate:string option) (t:Definitions.Term) = 
     match caseTemplate with
-    | None -> seq {t.Name}
+    | None -> t.Name
     | Some(ct) ->
         if ct.Length > 1 && ct |> Seq.forall (System.Char.IsUpper) then
-            seq {t.Name.ToUpper()}
-        elif System.Char.IsUpper(ct.LastOrDefault()) then
-            seq {t.Name.Substring(0,1).ToUpper() + t.Name.Substring(1); t.Name.ToUpper()}
+            t.Name.ToUpper()
+        elif System.Char.IsUpper(ct.FirstOrDefault()) then
+            t.Name.Substring(0,1).ToUpper() + t.Name.Substring(1)
+        elif System.Char.IsLower(ct.FirstOrDefault()) then
+            t.Name.ToLower()
         else
-            seq {t.Name}
+            t.Name
 
 let handler (termFinder: Definitions.Finder) (wordGetter: TextDocument.WordGetter) (p:CompletionParams) (hc:CompletionCapability) _ = 
     let caseTemplate = 
@@ -27,7 +29,7 @@ let handler (termFinder: Definitions.Finder) (wordGetter: TextDocument.WordGette
         | null -> None
         | _ -> wordGetter (p.TextDocument.Uri.ToUri()) p.Position
     let termToStringWithCase = termToString caseTemplate
-    let labels = termFinder termMatches |> Seq.collect termToStringWithCase
+    let labels = termFinder termMatches |> Seq.map termToStringWithCase
     Task.FromResult(completionList labels)
 
 let private registrationOptionsProvider (hc:CompletionCapability) (cc:ClientCapabilities)  =
