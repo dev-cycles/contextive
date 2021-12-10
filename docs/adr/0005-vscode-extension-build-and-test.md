@@ -42,9 +42,9 @@ The selected build and test approach must:
 
 Fable with webpack was the selected option.  The general extension architecture is modelled on the TypeScript sample extension, as transpilation from TypeScript to JavaScript necessitates a similar structure as transpilation from F# to JavaScript.
 
-The `src` folder contains an F# project - `Ubictionary.VsCodeExtension.fsproj` which can be independently compiled by Fable.
+The `src` folder contains an F# project - `Contextly.VsCodeExtension.fsproj` which can be independently compiled by Fable.
 
-The `test` folder contains a separate F# project - `Ubictionary.vSCodeExtension.Tests.fsproj` which can be independently compiled by Fable and holds a dotnet project reference to `Ubictionary.VsCodeExtension.fsproj`.
+The `test` folder contains a separate F# project - `Contextly.vSCodeExtension.Tests.fsproj` which can be independently compiled by Fable and holds a dotnet project reference to `Contextly.VsCodeExtension.fsproj`.
 
 Tests are written using `Fable.Mocha` due to support for similar structures/patterns to the [Expecto](https://github.com/haf/expecto) library being used in the Language Server tests. (Note: no Fable equivalent of the [Unquote](https://github.com/SwensenSoftware/unquote) library has yet been found, so the extension tests use the default Fable.Mocha assertion patterns, which are modelled on Expecto.)
 
@@ -52,14 +52,14 @@ Tests are written using `Fable.Mocha` due to support for similar structures/patt
 
 Compilation for execution proceeds in two steps:
 
-1. Fable compilation of the `Ubictionary.VsCodeExtension.fsproj` project as an 'in-place' compilation producing `.js` files beside the `.fs` files
+1. Fable compilation of the `Contextly.VsCodeExtension.fsproj` project as an 'in-place' compilation producing `.js` files beside the `.fs` files
 2. Webpack with output to the `dist` folder, and packing to a single output file - `./dist/extension.js`.  The extension entry point (`main` in `package.json`) is set to `./dist/extension.js`.
 
 ### Compilation for Testing
 
 Compilation for test also proceeds in two steps:
 
-1. Fable compilation of the `Ubictionary.VsCodeExtension.Tests.fsproj` project as an `in-place` compilation producing `.js` files beside the `.fs` files.  Fable will follow the project reference and ensure `Ubictionary.VsCodeExtension.fsproj` is built in a similar way.
+1. Fable compilation of the `Contextly.VsCodeExtension.Tests.fsproj` project as an `in-place` compilation producing `.js` files beside the `.fs` files.  Fable will follow the project reference and ensure `Contextly.VsCodeExtension.fsproj` is built in a similar way.
 2. Webpack with output to the `out` folder. A custom webpack configuration file for testing is used.  It has 3 entry points to ensure that individual javascript files required to support the VsCode extension testing mechanisms are transpiled individually, resulting in three files in the `out` folder:
 
 * `main.test.js` - the transpiled & packed test and extension code. This pulls in all the referenced files from the actual extension project so relative module imports are no longer needed.

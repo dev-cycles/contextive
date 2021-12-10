@@ -1,4 +1,4 @@
-name: Ubictionary
+name: Contextly
 on: [push]
 jobs:
   build-and-test:
@@ -31,12 +31,12 @@ jobs:
         working-directory: ./src
       - name: Build and Test Language Server
         run: |
-          dotnet test ./src/Ubictionary.LanguageServer.Tests/Ubictionary.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults-${{ matrix.dotnet-version }}.xml"
+          dotnet test ./src/Contextly.LanguageServer.Tests/Contextly.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults-${{ matrix.dotnet-version }}.xml"
       - name: Upload Language Server Test Results
         uses: actions/upload-artifact@v2
         with:
           name: language-server-results-${{ matrix.dotnet-version }}
-          path: "src/Ubictionary.LanguageServer.Tests/TestResults/TestResults-${{ matrix.dotnet-version }}.xml"
+          path: "src/Contextly.LanguageServer.Tests/TestResults/TestResults-${{ matrix.dotnet-version }}.xml"
         if: always()
       - name: Test Report
         uses: dorny/test-reporter@v1
@@ -47,7 +47,7 @@ jobs:
           reporter: dotnet-trx 
       - name: Restore npm dependencies
         run: npm install
-        working-directory: ./src/vscode/ubictionary
+        working-directory: ./src/vscode/contextly
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Start xvfb
         run: |
@@ -55,7 +55,7 @@ jobs:
           echo ">>> Started xvfb"
       - name: Build and Test VsCode Extension
         run: npm test
-        working-directory: ./src/vscode/ubictionary
+        working-directory: ./src/vscode/contextly
         env:
           DISPLAY: ":99.0"
           DOTNET_VERSION: ${{ matrix.dotnet-version }}
