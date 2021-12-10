@@ -18,4 +18,10 @@ let tests =
         testCasePromise "Language Client becomes Ready" <| promise {
             do! Helpers.getLanguageClient() |> Promise.Ignore
         }
+
+        // testCasePromise "Extension has Initialize Project Command" <| promise {
+        //     let! registeredCommands = commands.getCommands(false)
+        //     Expect.exists registeredCommands (fun c -> c = "ubictionary.initialize") "Initialize command doesn't exist"
+        // }
+
     ]
