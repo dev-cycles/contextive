@@ -1,4 +1,4 @@
-# contextly README
+# Contextly README
 
 Contextly is a Visual Studio Code extension to help you use a Domain Driven Design Ubiquitous Language on your projects.  It's powered by an IDE agonistic Language Server, so you can access the same Contextly from multiple IDEs.
 

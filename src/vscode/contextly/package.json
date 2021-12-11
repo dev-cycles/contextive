@@ -27,7 +27,7 @@
 				"contextly.path": {
 					"type": "string",
 					"default": ".contextly/definitions.yml",
-					"description": "Path to the Ubiquitous Language Definitions File"
+					"description": "Path to the Contextly Definitions File"
 				}
 			}
 		}
