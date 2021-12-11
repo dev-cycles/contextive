@@ -42,7 +42,7 @@ jobs:
         if: always()
         with:
           name: Language Server Tests
-          path: "**/TestResults-${{ env.dotnet-version }}.xml"
+          path: "src/Contextly.LanguageServer.Tests/TestResults/TestResults-${{ env.dotnet-version }}.xml"
           reporter: dotnet-trx 
       - name: Restore npm dependencies
         run: npm install
@@ -57,11 +57,12 @@ jobs:
         working-directory: ./src/vscode/contextly
         env:
           DISPLAY: ":99.0"
+          DOTNET_VERSION: ${{ env.dotnet-version }}
       - name: Upload vsCode Extension Test Results
         uses: actions/upload-artifact@v2
         with:
           name: vscode-extension-results-${{ env.dotnet-version }}
-          path: "**/TestResults-${{ env.dotnet-version }}.xml"
+          path: "src/vscode/**/TestResults-${{ env.dotnet-version }}.xml"
         if: always()
       - name: Upload All Test Logs
         uses: actions/upload-artifact@v2
