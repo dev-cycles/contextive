@@ -56,7 +56,6 @@
 		"webpack-node-externals": "^3.0.0"
 	},
 	"dependencies": {
-		"react": "^17.0.2",
 		"vscode-languageclient": "^7.0.0"
 	}
 }

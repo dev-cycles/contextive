@@ -1,3 +1,7 @@
 # Fable build outputs
 **/*.js
 **/*.js.map
+!webpack.config.js
+!webpack.test.config.js
+!test/runTest.js
+!test/index.js
