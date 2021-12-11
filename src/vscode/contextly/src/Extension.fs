@@ -40,8 +40,13 @@ module Extension =
         Client: LanguageClient
     }
 
+    let registerCommand (context: ExtensionContext) (name: string) (handler) =
+        context.subscriptions.Add(commands.registerCommand(name, handler) :?> ExtensionContextSubscriptions)
+
     let activate (context: ExtensionContext) = promise {
         client.start() |> ignore
+        let registerCommandInContext = registerCommand context
+        registerCommandInContext "contextly.initialize" Initialize.handler
         return {
             Client = client
         }

@@ -4,11 +4,13 @@
     <TargetFramework>net6.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+  <Import Project="..\..\..\.paket\Paket.Restore.targets" />
   <ItemGroup>
     <Compile Include="PromiseUtils.fs" />
     <Compile Include="ExpectExtensions.fs" />
-    <Compile Include="VsCodeCommands.fs" />
     <Compile Include="Helpers.fs" />
+    <Compile Include="VsCodeCommands.fs" />
+    <Compile Include="Initialize.test.fs" />
     <Compile Include="Completion.test.fs" />
     <Compile Include="Extension.test.fs" />
     <Compile Include="Main.test.fs" />
@@ -16,5 +18,4 @@
   <ItemGroup>
     <ProjectReference Include="..\src\Contextly.VsCodeExtension.fsproj" />
   </ItemGroup>
-  <Import Project="..\..\..\.paket\Paket.Restore.targets" />
 </Project>
