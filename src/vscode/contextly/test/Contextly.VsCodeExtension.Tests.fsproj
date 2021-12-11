@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="PromiseUtils.fs" />
+    <Compile Include="ExpectExtensions.fs" />
+    <Compile Include="VsCodeCommands.fs" />
+    <Compile Include="Helpers.fs" />
+    <Compile Include="Completion.test.fs" />
+    <Compile Include="Extension.test.fs" />
+    <Compile Include="Main.test.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\Contextly.VsCodeExtension.fsproj" />
+  </ItemGroup>
+  <Import Project="..\..\..\.paket\Paket.Restore.targets" />
+</Project>

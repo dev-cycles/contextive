@@ -12,16 +12,16 @@
         "MADR",
         "paket",
         "sinonjs",
-        "Ubictionary",
+        "Contextly",
         "vimscript",
         "xvfb",
         "yzhang"
     ],
     "FSharp.dotnetRoot": "/usr/share/dotnet",
-    "FSharp.workspacePath": "./src/Ubictionary.sln",
-    "vsCodeExtensionPath": "./src/vscode/ubictionary",
-    "languageServerPath": "./src/Ubictionary.LanguageServer",
-    "languageServerTestsPath": "./src/Ubictionary.LanguageServer.Tests",
+    "FSharp.workspacePath": "./src/Contextly.sln",
+    "vsCodeExtensionPath": "./src/vscode/contextly",
+    "languageServerPath": "./src/Contextly.LanguageServer",
+    "languageServerTestsPath": "./src/Contextly.LanguageServer.Tests",
     "files.exclude": {
         "out": false, // set this to true to hide the "out" folder with the compiled JS files
         "dist": false // set this to true to hide the "dist" folder with the compiled JS files

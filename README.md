@@ -1,6 +1,6 @@
-# Ubictionary
+# Contextly
 
-Ubictionary is a suite of tools to support the project-wide use of a Ubiquitous Language for software projects following Domain Driven Design.
+Contextly is a suite of tools to support the project-wide use of a Ubiquitous Language for software projects following Domain Driven Design.
 
 ## Proposed Features
 
@@ -26,11 +26,11 @@ The following list of features is a draft proposal of the vision at the start of
 
 The project is just getting started, so there aren't a lot of details yet - if this project is of interest, get in touch or check back soon!
 
-[![Ubictionary Language Server Build and Test](https://github.com/dev-cycles/ubictionary/actions/workflows/language-server-build.yml/badge.svg)](https://github.com/dev-cycles/ubictionary/actions/workflows/language-server-build.yml)
+[![Contextly Language Server Build and Test](https://github.com/dev-cycles/contextly/actions/workflows/language-server-build.yml/badge.svg)](https://github.com/dev-cycles/contextly/actions/workflows/language-server-build.yml)
 
 ## Installation
 
-It's expected that Ubictionary will be available via the Extension/Plugin Marketplaces of the various IDEs that will be supported.
+It's expected that Contextly will be available via the Extension/Plugin Marketplaces of the various IDEs that will be supported.
 
 ## Contributing
 
