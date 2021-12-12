@@ -8,10 +8,10 @@ open Contextly.VsCodeExtension.Tests.Helpers
 
 let private getLabels (items:ResizeArray<CompletionItem>) =
     items
-    |> Seq.map (fun i ->
-        match i.label with
-        | U2.Case1 l -> l
-        | U2.Case2 ll -> ll.label)
+    |> Seq.map (fun item ->
+        match item.label with
+        | U2.Case2 ll -> ll.label
+        | U2.Case1 l -> l)
 
 let tests =
     testList "Contextly Completion Tests" [
