@@ -27,7 +27,7 @@ let tests =
             match result with
             | (Some completionResult: CompletionList option) ->
                 let labels = getLabels completionResult.items
-                let expected = seq {"context"; "definitions"; "language"; "term"; "usage"}
+                let expected = seq {"context"; "definition"; "example"; "term"}
                 Expect.seqEqual expected labels "executeCompletionProvider should return expected completion items"
             | None ->
                 Expect.isSome result "executeCompletionItemProvider should return a result"

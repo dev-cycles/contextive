@@ -1,6 +1,7 @@
 ﻿namespace Contextly.VsCodeExtension
 
 open Fable.Core.JsInterop
+open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
 open Fable.Import.LanguageServer
 open Fable.Import.LanguageServer.Client
@@ -25,7 +26,7 @@ module Extension =
     )
           
     let private clientOptions = languageClientOptions(fun x ->
-            x.documentSelector <- documentSelectorList ["plaintext"; "markdown"]
+            x.documentSelector <- documentSelectorList ["plaintext"; "markdown"; "yaml"]
         )
 
     let private client =
@@ -40,13 +41,25 @@ module Extension =
         Client: LanguageClient
     }
 
-    let registerCommand (context: ExtensionContext) (name: string) (handler) =
+    let private registerCommand (context: ExtensionContext) (name: string) (handler) =
         context.subscriptions.Add(commands.registerCommand(name, handler) :?> ExtensionContextSubscriptions)
+    
+    let private getPath() =
+        let config = workspace.getConfiguration("contextly")
+        // match config.get("path") with
+        // | Some p -> vscode.Uri.file(p) |> Some
+        // | _ -> None
+        match config.get("path"), workspace.workspaceFolders with
+        | Some p, Some wsf -> vscode.Uri.joinPath(wsf[0].uri, [|p|]) |> Some
+        | _, _ -> None
+
 
     let activate (context: ExtensionContext) = promise {
         client.start() |> ignore
         let registerCommandInContext = registerCommand context
-        registerCommandInContext "contextly.initialize" Initialize.handler
+        match getPath() with
+        | Some p -> registerCommandInContext "contextly.initialize" (Initialize.handler p)
+        | None -> window.showErrorMessage("Please open a workspace before initializing Contextly.") |> ignore
         return {
             Client = client
         }
