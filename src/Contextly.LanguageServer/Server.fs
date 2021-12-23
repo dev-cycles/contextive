@@ -38,37 +38,49 @@ let private getWorkspaceFolder (s:ILanguageServer) =
     else
         None
 
-let private onStartup (instanceId:string)= OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
+let private definitionsLoader instanceId logger path = fun () -> 
+    let fullPath = Definitions.Manager.load instanceId path
+    
+    fullPath
+
+let private onStartup definitionsManager = OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
     async {
         let! path = getConfig s configSection pathKey
         let workspaceFolder = getWorkspaceFolder s
 
-        let loader = fun () -> 
-            let fullPath = Definitions.load instanceId workspaceFolder path
-            match fullPath with
-            | Some p -> s.Window.LogInfo $"Loading contextly from {p}"
-            | None -> ()
-            fullPath
+        Definitions.Manager.init definitionsManager s.Window.LogInfo
+        Definitions.Manager.addFolder definitionsManager workspaceFolder
 
-        let fullPath = loader()
+        let loader = Definitions.Manager.load definitionsManager
 
-        WatchedFiles.register instanceId s fullPath <| loader
+        let initialLoader() = loader path
+
+        let fullPath = initialLoader()
+
+        WatchedFiles.register s fullPath <| initialLoader
 
     } |> Async.StartAsTask :> Task)
 
 let private configureServer (input: Stream) (output: Stream) (opts:LanguageServerOptions) =
-    let instanceId = System.Guid.NewGuid().ToString()
+    let definitionsManager = Definitions.Manager.create()
     opts
         .WithInput(input)
         .WithOutput(output)
 
-        .OnStarted(onStartup instanceId)
-        //.WithConfigurationSection(configSection) // Add back in when implementing didConfigurationChanged handling
+        .OnStarted(onStartup definitionsManager)
+        .WithConfigurationSection(configSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z -> z.AddLanguageProtocolLogging().AddSerilog(Log.Logger).SetMinimumLevel(LogLevel.Trace) |> ignore)
         .WithServerInfo(ServerInfo(Name = "Contextly"))
 
-        .OnCompletion(Completion.handler <| Definitions.find instanceId <| TextDocument.getWord, Completion.registrationOptions)
-        .OnHover(Hover.handler <| Definitions.find instanceId <| TextDocument.getWord, Hover.registrationOptions)
+        .OnDidChangeConfiguration(fun c ->
+            let section = c.Settings[configSection]
+            let newPathValue = section[pathKey]
+            let newPath = newPathValue.ToString()
+            Definitions.Manager.load definitionsManager <| Some newPath |> ignore
+            Task.CompletedTask
+        )
+        .OnCompletion(Completion.handler <| Definitions.Manager.find definitionsManager <| TextDocument.getWord, Completion.registrationOptions)
+        .OnHover(Hover.handler <| Definitions.Manager.find definitionsManager <| TextDocument.getWord, Hover.registrationOptions)
 
         |> TextDocument.onSync
 

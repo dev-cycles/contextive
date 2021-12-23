@@ -25,12 +25,12 @@ type Definitions =
     {
         Contexts: ResizeArray<Context>
     }
+    static member Default = { Contexts = new ResizeArray<Context>() }
 
+type Filter = Term -> bool
 type Finder = (Term -> bool) -> Term seq
 type Loader = string option -> string option -> string option 
 type Reloader = unit -> string option
-
-let mutable private definitions : ConcurrentDictionary<string, Definitions> = new ConcurrentDictionary<string, Definitions>()
 
 let private tryReadFile path =
     if File.Exists(path) then
@@ -65,25 +65,66 @@ let private getPath workspaceFolder (path: string option) =
              | Some wsf -> Path.Combine(wsf, p) |> Some
              | None -> None
 
-let load (instanceId:string) : Loader = fun (workspaceFolder:string option) (path:string option) ->
-    let absolutePath = getPath workspaceFolder path
-    
+let private load (absolutePath:string option) (logger:string -> unit) =
     match absolutePath with
     | Some ap ->
-        match loadContextly ap with
-        | Some(defs) ->
-            definitions.AddOrUpdate(instanceId, defs, fun _ _ -> defs) |> ignore
-        | None -> ()
-    | None -> ()
-    
-    absolutePath
+        logger $"Loading contextly from {ap}"
+        loadContextly ap
+    | None -> None
 
-let find (instanceId:string) : Finder = fun filter -> 
-    let mutable defs : Definitions = { Contexts = new ResizeArray<Context>() }
+module Manager =
 
-    match definitions.TryGetValue(instanceId, &defs) with
-    | false -> seq []
-    | true -> defs.Contexts |> Seq.collect(fun c -> c.Terms) |> Seq.filter filter
-    
+    type State =
+        {
+            WorkspaceFolder: string option
+            Logger: (string -> unit)
+            Definitions: Definitions
+        }
+        static member Initial() = { 
+            WorkspaceFolder = None;
+            Logger = fun _ -> ();
+            Definitions = Definitions.Default;
+        }
 
-    
+    type Message =
+        | Init of logger: (string -> unit)
+        | AddFolder of workspaceFolder: string option
+        | Load of path: string option * replyChannel: AsyncReplyChannel<string option>
+        | Find of filter: Filter * replyChannel: AsyncReplyChannel<Term seq>
+
+    let create() = MailboxProcessor.Start(fun inbox -> 
+        let rec loop (state: State) = async {
+            let! (msg: Message) = inbox.Receive()
+            let newState =
+                match msg with
+                | Init(logger) -> { state with Logger = logger}
+                | AddFolder(workspaceFolder) -> { state with WorkspaceFolder = workspaceFolder }
+                | Load(path, replyChannel) ->
+                    let absolutePath = getPath state.WorkspaceFolder path
+                    let defs = load absolutePath state.Logger
+                    let newState = match defs with 
+                                    | Some d -> { state with Definitions = d }
+                                    | _ -> { state with Definitions = Definitions.Default }
+                    replyChannel.Reply absolutePath
+                    newState
+                | Find(filter, replyChannel) ->
+                    let foundTerms = state.Definitions.Contexts |> Seq.collect(fun c -> c.Terms) |> Seq.filter filter
+                    replyChannel.Reply foundTerms
+                    state
+
+            return! loop newState
+        }
+        loop <| State.Initial()
+    )
+
+    let init (definitionsManager:MailboxProcessor<Message>) logger = 
+        Init(logger) |> definitionsManager.Post
+
+    let addFolder (definitionsManager:MailboxProcessor<Message>) workspaceFolder = 
+        AddFolder(workspaceFolder) |> definitionsManager.Post
+        
+    let load (definitionsManager:MailboxProcessor<Message>) path =
+        definitionsManager.PostAndReply <| fun rc -> Load(path, rc)
+
+    let find (definitionsManager:MailboxProcessor<Message>) (filter:Filter) =
+        definitionsManager.PostAndReply <| fun rc -> Find(filter, rc)

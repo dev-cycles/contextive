@@ -23,7 +23,7 @@ let private registrationOptionsProvider path _ _ =
 let registrationOptions path =
     RegistrationOptionsDelegate<DidChangeWatchedFilesRegistrationOptions, DidChangeWatchedFilesCapability>(registrationOptionsProvider path)
 
-let register instanceId (s:ILanguageServer) fullPath reloader = 
+let register (s:ILanguageServer) fullPath reloader = 
     s.Register(fun reg -> 
         reg.OnDidChangeWatchedFiles(handler <| reloader, registrationOptions fullPath)
         |> ignore) |> ignore

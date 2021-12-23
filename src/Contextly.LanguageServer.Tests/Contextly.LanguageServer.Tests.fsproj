@@ -6,13 +6,14 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DefinitionsTests.fs" />
     <Compile Include="ConditionAwaiter.fs" />
     <Compile Include="WatchedFiles.fs" />
     <Compile Include="ServerLog.fs" />
     <Compile Include="Workspace.fs" />
     <Compile Include="ConfigurationSection.fs" />
     <Compile Include="TestClient.fs" />
+    <Compile Include="DefinitionsTests.fs" />
+    <Compile Include="ConfigurationTests.fs" />
     <Compile Include="WatchedFilesTests.fs" />
     <Compile Include="TextDocumentTests.fs" />
     <Compile Include="CompletionTests.fs" />
