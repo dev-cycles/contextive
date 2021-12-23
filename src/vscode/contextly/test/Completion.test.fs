@@ -22,7 +22,7 @@ let tests =
 
             do! getLanguageClient() |> Promise.Ignore
 
-            let! result = VsCodeCommands.completion docUri <| vscode.Position.Create(0.0, 10.0)
+            let! result = VsCodeCommands.complete docUri <| vscode.Position.Create(0.0, 10.0)
             
             match result with
             | (Some completionResult: CompletionList option) ->
