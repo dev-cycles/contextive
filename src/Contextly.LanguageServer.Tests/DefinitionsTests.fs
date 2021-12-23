@@ -12,14 +12,14 @@ let definitionsTests =
         let getTermsFromFile =
             let path = Path.Combine("fixtures", "completion_tests", "one.yml") |> Some
             let workspaceFolder = Some ""
-            let definitionsManager = Definitions.Manager.create()
-            Definitions.Manager.addFolder definitionsManager workspaceFolder
-            let fullPath = Definitions.Manager.load definitionsManager path
+            let definitions = Definitions.create()
+            Definitions.addFolder definitions workspaceFolder
+            let fullPath = Definitions.load definitions path
 
             test <@ fullPath.IsSome @>
             test <@ fullPath.Value = "fixtures/completion_tests/one.yml" @>
 
-            Definitions.Manager.find definitionsManager (fun _ -> true)
+            Definitions.find definitions (fun _ -> true)
 
         let compareList = Seq.compareWith compare
 

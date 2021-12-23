@@ -65,66 +65,64 @@ let private getPath workspaceFolder (path: string option) =
              | Some wsf -> Path.Combine(wsf, p) |> Some
              | None -> None
 
-let private load (absolutePath:string option) (logger:string -> unit) =
+let private loadFromPath (absolutePath:string option) (logger:string -> unit) =
     match absolutePath with
     | Some ap ->
         logger $"Loading contextly from {ap}"
         loadContextly ap
     | None -> None
 
-module Manager =
+type private State =
+    {
+        WorkspaceFolder: string option
+        Logger: (string -> unit)
+        Definitions: Definitions
+    }
+    static member Initial() = { 
+        WorkspaceFolder = None;
+        Logger = fun _ -> ();
+        Definitions = Definitions.Default;
+    }
 
-    type State =
-        {
-            WorkspaceFolder: string option
-            Logger: (string -> unit)
-            Definitions: Definitions
-        }
-        static member Initial() = { 
-            WorkspaceFolder = None;
-            Logger = fun _ -> ();
-            Definitions = Definitions.Default;
-        }
+type Message =
+    | Init of logger: (string -> unit)
+    | AddFolder of workspaceFolder: string option
+    | Load of path: string option * replyChannel: AsyncReplyChannel<string option>
+    | Find of filter: Filter * replyChannel: AsyncReplyChannel<Term seq>
 
-    type Message =
-        | Init of logger: (string -> unit)
-        | AddFolder of workspaceFolder: string option
-        | Load of path: string option * replyChannel: AsyncReplyChannel<string option>
-        | Find of filter: Filter * replyChannel: AsyncReplyChannel<Term seq>
+let create() = MailboxProcessor.Start(fun inbox -> 
+    let rec loop (state: State) = async {
+        let! (msg: Message) = inbox.Receive()
+        let newState =
+            match msg with
+            | Init(logger) -> { state with Logger = logger}
+            | AddFolder(workspaceFolder) -> { state with WorkspaceFolder = workspaceFolder }
+            | Load(path, replyChannel) ->
+                let absolutePath = getPath state.WorkspaceFolder path
+                let defs = loadFromPath absolutePath state.Logger
+                let newState = match defs with 
+                                | Some d -> { state with Definitions = d }
+                                | _ -> { state with Definitions = Definitions.Default }
+                replyChannel.Reply absolutePath
+                newState
+            | Find(filter, replyChannel) ->
+                let foundTerms = state.Definitions.Contexts |> Seq.collect(fun c -> c.Terms) |> Seq.filter filter
+                replyChannel.Reply foundTerms
+                state
 
-    let create() = MailboxProcessor.Start(fun inbox -> 
-        let rec loop (state: State) = async {
-            let! (msg: Message) = inbox.Receive()
-            let newState =
-                match msg with
-                | Init(logger) -> { state with Logger = logger}
-                | AddFolder(workspaceFolder) -> { state with WorkspaceFolder = workspaceFolder }
-                | Load(path, replyChannel) ->
-                    let absolutePath = getPath state.WorkspaceFolder path
-                    let defs = load absolutePath state.Logger
-                    let newState = match defs with 
-                                    | Some d -> { state with Definitions = d }
-                                    | _ -> { state with Definitions = Definitions.Default }
-                    replyChannel.Reply absolutePath
-                    newState
-                | Find(filter, replyChannel) ->
-                    let foundTerms = state.Definitions.Contexts |> Seq.collect(fun c -> c.Terms) |> Seq.filter filter
-                    replyChannel.Reply foundTerms
-                    state
+        return! loop newState
+    }
+    loop <| State.Initial()
+)
 
-            return! loop newState
-        }
-        loop <| State.Initial()
-    )
+let init (definitionsManager:MailboxProcessor<Message>) logger = 
+    Init(logger) |> definitionsManager.Post
 
-    let init (definitionsManager:MailboxProcessor<Message>) logger = 
-        Init(logger) |> definitionsManager.Post
+let addFolder (definitionsManager:MailboxProcessor<Message>) workspaceFolder = 
+    AddFolder(workspaceFolder) |> definitionsManager.Post
+    
+let load (definitionsManager:MailboxProcessor<Message>) path =
+    definitionsManager.PostAndReply <| fun rc -> Load(path, rc)
 
-    let addFolder (definitionsManager:MailboxProcessor<Message>) workspaceFolder = 
-        AddFolder(workspaceFolder) |> definitionsManager.Post
-        
-    let load (definitionsManager:MailboxProcessor<Message>) path =
-        definitionsManager.PostAndReply <| fun rc -> Load(path, rc)
-
-    let find (definitionsManager:MailboxProcessor<Message>) (filter:Filter) =
-        definitionsManager.PostAndReply <| fun rc -> Find(filter, rc)
+let find (definitionsManager:MailboxProcessor<Message>) (filter:Filter) =
+    definitionsManager.PostAndReply <| fun rc -> Find(filter, rc)

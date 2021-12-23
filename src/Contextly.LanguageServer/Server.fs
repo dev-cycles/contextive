@@ -38,20 +38,15 @@ let private getWorkspaceFolder (s:ILanguageServer) =
     else
         None
 
-let private definitionsLoader instanceId logger path = fun () -> 
-    let fullPath = Definitions.Manager.load instanceId path
-    
-    fullPath
-
-let private onStartup definitionsManager = OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
+let private onStartup definitions = OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
     async {
         let! path = getConfig s configSection pathKey
         let workspaceFolder = getWorkspaceFolder s
 
-        Definitions.Manager.init definitionsManager s.Window.LogInfo
-        Definitions.Manager.addFolder definitionsManager workspaceFolder
+        Definitions.init definitions s.Window.LogInfo
+        Definitions.addFolder definitions workspaceFolder
 
-        let loader = Definitions.Manager.load definitionsManager
+        let loader = Definitions.load definitions
 
         let initialLoader() = loader path
 
@@ -62,12 +57,12 @@ let private onStartup definitionsManager = OnLanguageServerStartedDelegate(fun (
     } |> Async.StartAsTask :> Task)
 
 let private configureServer (input: Stream) (output: Stream) (opts:LanguageServerOptions) =
-    let definitionsManager = Definitions.Manager.create()
+    let definitions = Definitions.create()
     opts
         .WithInput(input)
         .WithOutput(output)
 
-        .OnStarted(onStartup definitionsManager)
+        .OnStarted(onStartup definitions)
         .WithConfigurationSection(configSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z -> z.AddLanguageProtocolLogging().AddSerilog(Log.Logger).SetMinimumLevel(LogLevel.Trace) |> ignore)
         .WithServerInfo(ServerInfo(Name = "Contextly"))
@@ -76,11 +71,11 @@ let private configureServer (input: Stream) (output: Stream) (opts:LanguageServe
             let section = c.Settings[configSection]
             let newPathValue = section[pathKey]
             let newPath = newPathValue.ToString()
-            Definitions.Manager.load definitionsManager <| Some newPath |> ignore
+            Definitions.load definitions <| Some newPath |> ignore
             Task.CompletedTask
         )
-        .OnCompletion(Completion.handler <| Definitions.Manager.find definitionsManager <| TextDocument.getWord, Completion.registrationOptions)
-        .OnHover(Hover.handler <| Definitions.Manager.find definitionsManager <| TextDocument.getWord, Hover.registrationOptions)
+        .OnCompletion(Completion.handler <| Definitions.find definitions <| TextDocument.getWord, Completion.registrationOptions)
+        .OnHover(Hover.handler <| Definitions.find definitions <| TextDocument.getWord, Hover.registrationOptions)
 
         |> TextDocument.onSync
 
