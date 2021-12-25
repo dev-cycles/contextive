@@ -17,3 +17,7 @@ let initialize() = promise {
 let closeActiveEditor() = promise {
     return! commands.executeCommand("workbench.action.closeActiveEditor")
 }
+
+let closeAllEditors() = promise {
+    return! commands.executeCommand("workbench.action.closeAllEditors")
+}

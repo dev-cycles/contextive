@@ -28,7 +28,7 @@
             "request": "launch",
             "preLaunchTask": "build: Language Server Tests",
             "program": "${workspaceFolder}/${config:languageServerTestsPath}/bin/Debug/net6.0/Contextly.LanguageServer.Tests.dll",
-            "args": [],
+            //"args": ["--filter-test-case","Can handle configuration value changing"],
             "cwd": "${workspaceFolder}/${config:languageServerTestsPath}",
             "stopAtEntry": false,
             "console": "integratedTerminal"

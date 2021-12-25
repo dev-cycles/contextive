@@ -16,14 +16,15 @@ let private getLabels (items:ResizeArray<CompletionItem>) =
 let tests =
     testList "Contextly Completion Tests" [
 
-        testCasePromise "Completion returns expected list" <| promise {
+        testCaseAsync "Completion returns expected list" <| async {
+            printfn "Starting Completion returns expected list"
             let testDocPath = "../test/fixtures/simple_workspace/test.txt"
-            let! docUri = openDocument testDocPath
+            let! docUri = getDocUri testDocPath |> openDocument |> awaitP
 
-            do! getLanguageClient() |> Promise.Ignore
+            do! getLanguageClient() |> awaitP |> Async.Ignore 
 
-            let! result = VsCodeCommands.complete docUri <| vscode.Position.Create(0.0, 10.0)
-            
+            let! result = awaitP (VsCodeCommands.complete docUri <| vscode.Position.Create(0.0, 10.0))
+
             match result with
             | (Some completionResult: CompletionList option) ->
                 let labels = getLabels completionResult.items
@@ -32,6 +33,8 @@ let tests =
             | None ->
                 Expect.isSome result "executeCompletionItemProvider should return a result"
 
-            do! closeDocument testDocPath
+            do! getDocUri testDocPath |> closeDocument |> awaitP
+            
+            printfn "Ending Completion returns expected list"
         }
     ]

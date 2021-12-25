@@ -12,16 +12,13 @@ let mutable languageClient : Fable.Core.JS.Promise<LanguageClient> option = None
 let getDocUri relativeFile =
     vscode.Uri.file(path.resolve(__dirname,relativeFile))
 
-let openDocument docPath = promise {
-    let docUri = getDocUri docPath
-    printfn "%A" (docUri.toString())
+let openDocument (docUri:Uri) = promise {
     let! doc = workspace.openTextDocument(docUri)
     let! _ = window.showTextDocument(doc, ViewColumn.Active, false)
     return docUri
 }
 
-let closeDocument docPath = promise {
-    let docUri = getDocUri docPath
+let closeDocument (docUri:Uri) = promise {
     let! doc = workspace.openTextDocument(docUri)
     let! _ = window.showTextDocument(doc, ViewColumn.Active, false)
     let! _ = commands.executeCommand("workbench.action.closeActiveEditor")

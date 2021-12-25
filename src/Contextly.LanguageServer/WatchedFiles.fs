@@ -5,10 +5,13 @@ open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Server
 open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
+open System.Threading.Tasks
 
 let handler (reloader: Definitions.Reloader) (p:DidChangeWatchedFilesParams) _ _ = 
-    reloader() |> ignore
-    ()
+    async {
+        do! reloader() |> Async.Ignore
+        return ()
+    } |> Async.StartAsTask :> Task
 
 let private registrationOptionsProvider path _ _ =
     match path with

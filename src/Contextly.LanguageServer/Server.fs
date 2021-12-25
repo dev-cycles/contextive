@@ -40,17 +40,18 @@ let private getWorkspaceFolder (s:ILanguageServer) =
 
 let private onStartup definitions = OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
     async {
-        let! path = getConfig s configSection pathKey
+        let configGetter() = getConfig s configSection pathKey
+        // Not sure if this is needed to ensure configuration is loaded, or allow a task/context switch
+        // Either way, if it's not here, then getWorkspaceFolder returns null
+        let! _ = configGetter() 
         let workspaceFolder = getWorkspaceFolder s
 
-        Definitions.init definitions s.Window.LogInfo
+        Definitions.init definitions s.Window.LogInfo configGetter 
         Definitions.addFolder definitions workspaceFolder
 
-        let loader = Definitions.load definitions
+        let initialLoader() = Definitions.load definitions
 
-        let initialLoader() = loader path
-
-        let fullPath = initialLoader()
+        let! fullPath = initialLoader()
 
         WatchedFiles.register s fullPath <| initialLoader
 
@@ -67,12 +68,10 @@ let private configureServer (input: Stream) (output: Stream) (opts:LanguageServe
         .ConfigureLogging(fun z -> z.AddLanguageProtocolLogging().AddSerilog(Log.Logger).SetMinimumLevel(LogLevel.Trace) |> ignore)
         .WithServerInfo(ServerInfo(Name = "Contextly"))
 
-        .OnDidChangeConfiguration(fun c ->
-            let section = c.Settings[configSection]
-            let newPathValue = section[pathKey]
-            let newPath = newPathValue.ToString()
-            Definitions.load definitions <| Some newPath |> ignore
-            Task.CompletedTask
+        .OnDidChangeConfiguration(fun c -> 
+            async {
+                do! Definitions.load definitions |> Async.Ignore
+            } |> Async.StartAsTask :> Task
         )
         .OnCompletion(Completion.handler <| Definitions.find definitions <| TextDocument.getWord, Completion.registrationOptions)
         .OnHover(Hover.handler <| Definitions.find definitions <| TextDocument.getWord, Hover.registrationOptions)

@@ -8,6 +8,12 @@ open Fable.Import.VSCode
 
 let private toPromise (t: Thenable<'T>): JS.Promise<'T> = unbox t
 
+type Async with
+    static member AwaitThenable(t: Thenable<'T>): Async<'T> = toPromise t |> Async.AwaitPromise
+
+let awaitT = Async.AwaitThenable
+let awaitP = Async.AwaitPromise
+
 type Promise.PromiseBuilder with
     /// To make a value interop with the promise builder, you have to add an
     /// overload of the `Source` member to convert from your type to a promise.
