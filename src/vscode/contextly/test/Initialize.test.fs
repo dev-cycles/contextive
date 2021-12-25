@@ -8,17 +8,14 @@ open Contextly.VsCodeExtension.Tests.Helpers
 let tests =
     testList "Initialize Tests" [
         testCaseAsync "Extension has Initialize Project Command" <| async {
-            printfn "Starting Extension has Initialize Project Command"
-            let! registeredCommands = awaitT (commands.getCommands(false))
+            let! registeredCommands = commands.getCommands(false)
             Expect.exists registeredCommands (fun c -> c = "contextly.initialize") "Initialize command doesn't exist"
-            printfn "Ending Extension has Initialize Project Command"
         }
 
         testCaseAsync "Initialize Command should open existing definitions.yml" <| async {
-            printfn "Starting Initialize Command should open existing definitions.yml"
-            do! getLanguageClient() |> awaitP |> Async.Ignore
+            do! getLanguageClient() |> Promise.Ignore
 
-            let! _ = awaitP (VsCodeCommands.initialize())
+            do! VsCodeCommands.initialize() |> Promise.Ignore
 
             let config = workspace.getConfiguration("contextly")
             let path = config["path"].Value :?> string
@@ -27,10 +24,9 @@ let tests =
 
             let editor = window.visibleTextEditors.Find(fun te -> te.document.uri.path = fullPath.path)
 
-            do! closeDocument fullPath |> awaitP |> Async.Ignore
+            do! closeDocument fullPath |> Promise.Ignore
 
             Expect.isNotNull editor "Existing definitions.yml isn't open"
-            printfn "Ending Initialize Command should open existing definitions.yml"
         }
 
         // testCasePromise "Initialize Command should open new definitions.yml" <| promise {

@@ -17,13 +17,14 @@ let tests =
     testList "Contextly Completion Tests" [
 
         testCaseAsync "Completion returns expected list" <| async {
-            printfn "Starting Completion returns expected list"
             let testDocPath = "../test/fixtures/simple_workspace/test.txt"
-            let! docUri = getDocUri testDocPath |> openDocument |> awaitP
+            let! docUri = getDocUri testDocPath |> openDocument
 
-            do! getLanguageClient() |> awaitP |> Async.Ignore 
+            do! getLanguageClient() |> Promise.Ignore 
 
-            let! result = awaitP (VsCodeCommands.complete docUri <| vscode.Position.Create(0.0, 10.0))
+            let! result = VsCodeCommands.complete docUri <| vscode.Position.Create(0.0, 10.0)
+
+            do! getDocUri testDocPath |> closeDocument
 
             match result with
             | (Some completionResult: CompletionList option) ->
@@ -32,9 +33,5 @@ let tests =
                 Expect.seqEqual expected labels "executeCompletionProvider should return expected completion items"
             | None ->
                 Expect.isSome result "executeCompletionItemProvider should return a result"
-
-            do! getDocUri testDocPath |> closeDocument |> awaitP
-            
-            printfn "Ending Completion returns expected list"
         }
     ]

@@ -2,11 +2,10 @@
 module Contextly.VsCodeExtension.Tests.Extensions
 
 open Fable.Core
-open Fable.Core.JS
-open Fable.Mocha
+open Fable.Import.VSCode
 
-let testCasePromise (name:string) (testPromise:Promise<unit>) = 
-    testCaseAsync name <| async {
-        let! _ = Async.AwaitPromise testPromise
-        return ()
-    }
+let private toPromise (t: Thenable<'T>): JS.Promise<'T> = unbox t
+
+type AsyncBuilder with
+    member _.Source(t: Thenable<'T>): Async<'T> = toPromise t |> Async.AwaitPromise
+    member _.Source(p: JS.Promise<'T>): Async<'T> = p |> Async.AwaitPromise
