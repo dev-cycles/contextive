@@ -7,8 +7,6 @@ open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
 open Node.Api
 
-let mutable languageClient : Fable.Core.JS.Promise<LanguageClient> option = None
-
 let getDocUri relativeFile =
     vscode.Uri.file(path.resolve(__dirname,relativeFile))
 
@@ -26,7 +24,7 @@ let closeDocument (docUri:Uri) = promise {
 }
 
 /// Waits for the active language client to be ready
-let languageClientFactory() = promise {
+let getLanguageClient() = promise {
     let extension = extensions.all.Find(fun x -> x.id = "devcycles.contextly")
     let extensionApi: Api = !!extension.exports.Value
     let languageClient: LanguageClient = extensionApi.Client
@@ -47,11 +45,4 @@ let languageClientFactory() = promise {
     do! warmUp()
 
     return languageClient
-}
-
-let getLanguageClient() = promise {
-    if languageClient.IsNone then
-        languageClient <- Some(languageClientFactory())
-    let! lc = languageClient.Value
-    return lc
 }
