@@ -16,6 +16,6 @@ let tests =
             Expect.equal path.Value ".contextly/definitions.yml" "contextly.path config is not the default value"
 
         testCaseAsync "Language Client becomes Ready" <| async {
-            do! Helpers.getLanguageClient() |> Promise.Ignore
+            do! Helpers.waitForLanguageClient() |> Promise.Ignore
         }
     ]

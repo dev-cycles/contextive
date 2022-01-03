@@ -24,10 +24,9 @@ let closeDocument (docUri:Uri) = promise {
 }
 
 /// Waits for the active language client to be ready
-let getLanguageClient() = promise {
-    let extension = extensions.all.Find(fun x -> x.id = "devcycles.contextly")
-    let extensionApi: Api = !!extension.exports.Value
-    let languageClient: LanguageClient = extensionApi.Client
+let waitForLanguageClient() = promise {
+    let languageClient = getLanguageClient()
+    
     do! languageClient.onReady()
 
     // This initial request ensures that the server is _really_ ready

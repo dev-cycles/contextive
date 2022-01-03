@@ -9,6 +9,8 @@ open Node.Api
 
 module Extension =
 
+    exception NoExtensionApi
+
     let private languageClientOptions = jsOptions<LanguageClientOptions>
     let private executable f = !^jsOptions<Executable>(f)
     let private executableOptions f = Some <| jsOptions<ExecutableOptions>(f)
@@ -29,7 +31,7 @@ module Extension =
             x.documentSelector <- documentSelectorList ["plaintext"; "markdown"; "yaml"]
         )
 
-    let private client =
+    let private clientFactory() =
         LanguageClient("contextly",
             "Contextly",
             serverOptions=serverOptions,
@@ -53,18 +55,38 @@ module Extension =
         | Some p, Some wsf -> vscode.Uri.joinPath(wsf[0].uri, [|p|]) |> Some
         | _, _ -> None
 
-
     let activate (context: ExtensionContext) = promise {
-        client.start() |> ignore
+        let client = clientFactory()
+        context.subscriptions.Add(client.start() :?> ExtensionContextSubscriptions)
+
+        do! client.onReady()
+
         let registerCommandInContext = registerCommand context
-        match getPath() with
-        | Some p -> registerCommandInContext "contextly.initialize" (Initialize.handler p)
-        | None -> window.showErrorMessage("Please open a workspace before initializing Contextly.") |> ignore
+
+        registerCommandInContext "contextly.initialize" (Initialize.handler getPath)
+
+        context.subscriptions.Add(workspace.onDidChangeConfiguration.Invoke(fun e -> 
+            if e.affectsConfiguration("contextly") then
+                client.sendNotification("workspace/didChangeConfiguration", Some {| settings = None |})
+            None
+        ) :?> ExtensionContextSubscriptions)
+
         return {
             Client = client
         }
     }
 
+    let rec getLanguageClient() = 
+        let extension = extensions.all.Find(fun x -> x.id = "devcycles.contextly")
+        match extension.exports with
+        | Some e -> 
+            let extensionApi: Api = !!e
+            extensionApi.Client
+        | None -> 
+            raise NoExtensionApi
+    
+
     let deactivate () = promise {
-        do! client.stop()
+        let languageClient = getLanguageClient()
+        do! languageClient.stop()
     }

@@ -40,29 +40,31 @@ let private fileExists uri =
         return true
     } |> Promise.catch(fun _ -> false)
 
-let handler (definitionsUri: Uri) _ : obj option = 
+let initializeHandler (definitionsUri:Uri) = promise {
+      let! exists = fileExists definitionsUri
+      do!
+          match exists with
+          | true -> promise {
+                  let! _ = window.showTextDocument(definitionsUri)
+                  ()
+              }
+          | false -> promise {
+                  let edit = vscode.WorkspaceEdit.Create()
+                  edit.createFile(definitionsUri)
+                  edit.insert(definitionsUri, vscode.Position.Create(0, 0), defaultDefinitions)
+                  let! _ = workspace.applyEdit(edit)
+                  let! document = workspace.openTextDocument(definitionsUri)
+                  let! _ = document.save()
+                  let! _ = window.showTextDocument(definitionsUri)
+                  ()
+              }
+    }
+
+let handler (definitionsUriLoader: unit -> Uri option) _ : obj option = 
     promise {
-        let! exists = fileExists definitionsUri
-        let! _ = 
-            match exists with
-            | true -> promise {
-                    let! _ = window.showTextDocument(definitionsUri)
-                    ()
-                }
-            | false -> promise {
-                    // let newDocDefinitionsUri = definitionsUri.``with``(!!{| scheme = "untitled" |})
-                    // printfn "%A" newDocDefinitionsUri
-                    // Create Untitled File
-                    // Fill in initial content
-                    let edit = vscode.WorkspaceEdit.Create()
-                    edit.createFile(definitionsUri)
-                    edit.insert(definitionsUri, vscode.Position.Create(0, 0), defaultDefinitions)
-                    let! _ = workspace.applyEdit(edit)
-                    let! document = workspace.openTextDocument(definitionsUri)
-                    let! _ = document.save()
-                    let! _ = window.showTextDocument(definitionsUri)
-                    ()
-                }
-        return None
+        let definitionsUriSetting = definitionsUriLoader()
+        do! match definitionsUriSetting with
+            | Some definitionsUri -> initializeHandler definitionsUri
+            | None -> promise { return () }
     } :> obj |> Some
     

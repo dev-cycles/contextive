@@ -20,7 +20,7 @@ let tests =
             let testDocPath = "../test/fixtures/simple_workspace/test.txt"
             let! docUri = getDocUri testDocPath |> openDocument
 
-            do! getLanguageClient() |> Promise.Ignore 
+            do! waitForLanguageClient() |> Promise.Ignore 
 
             let! result = VsCodeCommands.complete docUri <| vscode.Position.Create(0.0, 10.0)
 

@@ -13,7 +13,7 @@ let tests =
         }
 
         testCaseAsync "Initialize Command should open existing definitions.yml" <| async {
-            do! getLanguageClient() |> Promise.Ignore
+            do! waitForLanguageClient() |> Promise.Ignore
 
             do! VsCodeCommands.initialize() |> Promise.Ignore
 
@@ -29,29 +29,24 @@ let tests =
             Expect.isNotNull editor "Existing definitions.yml isn't open"
         }
 
-        // testCasePromise "Initialize Command should open new definitions.yml" <| promise {
-        //     do! getLanguageClient() |> Promise.Ignore
+        testCaseAsync "Initialize Command should open new definitions.yml" <| async {
+            do! waitForLanguageClient() |> Promise.Ignore
 
-        //     do! VsCodeCommands.closeAllEditors() |> Promise.Ignore
+            let config = workspace.getConfiguration("contextly")
+            let newPath = $"{System.Guid.NewGuid().ToString()}.yml"
+            do! config.update("path", newPath :> obj |> Some)
+            do! Promise.sleep 10
+            
+            do! VsCodeCommands.initialize() |> Promise.Ignore
+            let activeEditor = window.activeTextEditor.Value
 
-        //     let config = workspace.getConfiguration("contextly")
-        //     let existingPath = config["path"].Value :?> string
-        //     printfn "Existing path: %A" existingPath
-        //     let newPath = $"{System.Guid.NewGuid().ToString()}.yml"
-        //     let! _ = config.update("path", newPath :> obj |> Some)
-        //     do! Promise.sleep 1000
-        //     let config = workspace.getConfiguration("contextly")
-        //     let newPathFromConfig = config["path"].Value :?> string
-        //     printfn "New PathFrom Config: %A" newPathFromConfig
-        //     let! _ = VsCodeCommands.initialize()
+            do! config.update("path", None)
 
-        //     let wsf = workspace.workspaceFolders.Value[0]
-        //     let fullPath = vscode.Uri.joinPath(wsf.uri, [|newPath|])
+            let wsf = workspace.workspaceFolders.Value[0]
+            let fullPath = vscode.Uri.joinPath(wsf.uri, [|newPath|])
+            do! closeDocument fullPath |> Promise.Ignore
+            do! workspace.fs.delete fullPath
 
-        //     let! _ = config.update("path", None)
-        //     let activeEditor = window.activeTextEditor.Value
-        //     do! VsCodeCommands.closeActiveEditor() |> Promise.Ignore
-
-        //     Expect.equal fullPath.path activeEditor.document.uri.path "New definitions.yml isn't open"
-        // }
+            Expect.equal fullPath.path activeEditor.document.uri.path "New definitions.yml isn't open"
+        }
     ]
