@@ -42,20 +42,19 @@ let private fileExists uri =
 
 let initializeHandler (definitionsUri:Uri) = promise {
       let! exists = fileExists definitionsUri
-      do!
-          match exists with
+      do! match exists with
           | true -> promise {
-                  let! _ = window.showTextDocument(definitionsUri)
+                  do! window.showTextDocument(definitionsUri) |> Thenable.Ignore
                   ()
               }
           | false -> promise {
                   let edit = vscode.WorkspaceEdit.Create()
                   edit.createFile(definitionsUri)
                   edit.insert(definitionsUri, vscode.Position.Create(0, 0), defaultDefinitions)
-                  let! _ = workspace.applyEdit(edit)
+                  do! workspace.applyEdit(edit) |> Thenable.Ignore
                   let! document = workspace.openTextDocument(definitionsUri)
-                  let! _ = document.save()
-                  let! _ = window.showTextDocument(definitionsUri)
+                  do! document.save() |> Thenable.Ignore
+                  do! window.showTextDocument(definitionsUri) |> Thenable.Ignore
                   ()
               }
     }

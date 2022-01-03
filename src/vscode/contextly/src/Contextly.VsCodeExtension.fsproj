@@ -15,6 +15,7 @@
     </Compile>
     <Compile Include="PromiseUtils.fs" />
     <Compile Include="PromiseBuilderUtils.fs" />
+    <Compile Include="ThenableUtils.fs" />
     <Compile Include="Initialize.fs" />
     <Compile Include="Extension.fs" />
   </ItemGroup>

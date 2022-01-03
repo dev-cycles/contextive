@@ -43,33 +43,34 @@ module Extension =
         Client: LanguageClient
     }
 
+    let private addDisposable (context: ExtensionContext) (disposable:Disposable) =
+        context.subscriptions.Add(disposable :?> ExtensionContextSubscriptions)
+
     let private registerCommand (context: ExtensionContext) (name: string) (handler) =
-        context.subscriptions.Add(commands.registerCommand(name, handler) :?> ExtensionContextSubscriptions)
+        commands.registerCommand(name, handler) |> addDisposable context 
     
     let private getPath() =
         let config = workspace.getConfiguration("contextly")
-        // match config.get("path") with
-        // | Some p -> vscode.Uri.file(p) |> Some
-        // | _ -> None
         match config.get("path"), workspace.workspaceFolders with
         | Some p, Some wsf -> vscode.Uri.joinPath(wsf[0].uri, [|p|]) |> Some
         | _, _ -> None
 
     let activate (context: ExtensionContext) = promise {
         let client = clientFactory()
-        context.subscriptions.Add(client.start() :?> ExtensionContextSubscriptions)
+        
+        client.start() |> addDisposable context
 
         do! client.onReady()
 
-        let registerCommandInContext = registerCommand context
+        Initialize.handler getPath |> registerCommand context "contextly.initialize"
 
-        registerCommandInContext "contextly.initialize" (Initialize.handler getPath)
-
-        context.subscriptions.Add(workspace.onDidChangeConfiguration.Invoke(fun e -> 
-            if e.affectsConfiguration("contextly") then
-                client.sendNotification("workspace/didChangeConfiguration", Some {| settings = None |})
-            None
-        ) :?> ExtensionContextSubscriptions)
+        // May be needed if we refactor towards using the language server to initialize files - can remove 
+        // after that is resolved
+        // context.subscriptions.Add(workspace.onDidChangeConfiguration.Invoke(fun e -> 
+        //     if e.affectsConfiguration("contextly") then
+        //         client.sendNotification("workspace/didChangeConfiguration", Some {| settings = None |})
+        //     None
+        // ) :?> ExtensionContextSubscriptions)
 
         return {
             Client = client

@@ -12,41 +12,61 @@ let tests =
             Expect.exists registeredCommands (fun c -> c = "contextly.initialize") "Initialize command doesn't exist"
         }
 
-        testCaseAsync "Initialize Command should open existing definitions.yml" <| async {
-            do! waitForLanguageClient() |> Promise.Ignore
+        let getConfig() = workspace.getConfiguration("contextly")
 
-            do! VsCodeCommands.initialize() |> Promise.Ignore
-
-            let config = workspace.getConfiguration("contextly")
+        let getFullPathFromConfig() =
+            let config = getConfig()
             let path = config["path"].Value :?> string
             let wsf = workspace.workspaceFolders.Value[0]
-            let fullPath = vscode.Uri.joinPath(wsf.uri, [|path|])
+            vscode.Uri.joinPath(wsf.uri, [|path|])
 
-            let editor = window.visibleTextEditors.Find(fun te -> te.document.uri.path = fullPath.path)
+        let findUriInVisibleEditors (path:Uri) =
+            window.visibleTextEditors.Find(fun te -> te.document.uri.path = path.path)
+
+        testCaseAsync "Initialize Command should open existing definitions.yml" <| async {
+            do! VsCodeCommands.initialize() |> Promise.Ignore
+
+            let fullPath = getFullPathFromConfig()
+
+            let editor = findUriInVisibleEditors fullPath
 
             do! closeDocument fullPath |> Promise.Ignore
 
             Expect.isNotNull editor "Existing definitions.yml isn't open"
         }
 
-        testCaseAsync "Initialize Command should open new definitions.yml" <| async {
-            do! waitForLanguageClient() |> Promise.Ignore
-
-            let config = workspace.getConfiguration("contextly")
-            let newPath = $"{System.Guid.NewGuid().ToString()}.yml"
+        let updateConfig newPath = promise {
+            let config = getConfig()
             do! config.update("path", newPath :> obj |> Some)
             do! Promise.sleep 10
-            
-            do! VsCodeCommands.initialize() |> Promise.Ignore
-            let activeEditor = window.activeTextEditor.Value
+        }
 
+        let resetConfig() = promise {
+            let config = getConfig()
             do! config.update("path", None)
+        }
 
-            let wsf = workspace.workspaceFolders.Value[0]
-            let fullPath = vscode.Uri.joinPath(wsf.uri, [|newPath|])
+        let resetDefinitionsFile fullPath = promise {
             do! closeDocument fullPath |> Promise.Ignore
             do! workspace.fs.delete fullPath
+        }
 
-            Expect.equal fullPath.path activeEditor.document.uri.path "New definitions.yml isn't open"
+        let resetWorkspace fullPath = promise {
+            do! resetConfig()
+            do! resetDefinitionsFile fullPath
+        }
+
+        testCaseAsync "Initialize Command should open new definitions.yml" <| async {
+            let newPath = $"{System.Guid.NewGuid().ToString()}.yml"
+            do! updateConfig newPath
+
+            do! VsCodeCommands.initialize() |> Promise.Ignore
+            
+            let fullPath = getFullPathFromConfig()
+            let editor = findUriInVisibleEditors fullPath
+
+            do! resetWorkspace fullPath
+
+            Expect.isNotNull editor "New definitions.yml isn't open"
         }
     ]

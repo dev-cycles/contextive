@@ -1,8 +1,6 @@
 module Contextly.VsCodeExtension.Tests.Helpers
 
-open Fable.Core.JsInterop
-open Fable.Import.LanguageServer
-open Contextly.VsCodeExtension.Extension
+open Contextly.VsCodeExtension
 open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
 open Node.Api
@@ -12,36 +10,13 @@ let getDocUri relativeFile =
 
 let openDocument (docUri:Uri) = promise {
     let! doc = workspace.openTextDocument(docUri)
-    let! _ = window.showTextDocument(doc, ViewColumn.Active, false)
+    do! window.showTextDocument(doc, ViewColumn.Active, false) |> Thenable.Ignore
     return docUri
 }
 
 let closeDocument (docUri:Uri) = promise {
     let! doc = workspace.openTextDocument(docUri)
-    let! _ = window.showTextDocument(doc, ViewColumn.Active, false)
-    let! _ = commands.executeCommand("workbench.action.closeActiveEditor")
+    do! window.showTextDocument(doc, ViewColumn.Active, false) |> Thenable.Ignore
+    do! commands.executeCommand("workbench.action.closeActiveEditor") |> Thenable.Ignore
     return ()
-}
-
-/// Waits for the active language client to be ready
-let waitForLanguageClient() = promise {
-    let languageClient = getLanguageClient()
-    
-    do! languageClient.onReady()
-
-    // This initial request ensures that the server is _really_ ready
-    // Without it, we finding that completion responses via the vscode command weren't including
-    // this language server's response.
-    let rec warmUp() = promise {
-        try
-            do! languageClient.sendRequest("textDocument/completion", {| |}) |> Promise.Ignore
-        with
-        | e -> 
-            printf "Exception (retrying): %A" e
-            do! warmUp()
-    }
-
-    do! warmUp()
-
-    return languageClient
 }

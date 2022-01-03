@@ -2,6 +2,7 @@ module Contextly.VsCodeExtension.Tests.Extension
 
 open Fable.Mocha
 open Fable.Import.VSCode.Vscode
+open Contextly.VsCodeExtension.Extension
 
 let tests =
     testList "Contextly Activation Tests" [
@@ -15,7 +16,6 @@ let tests =
             Expect.isSome path "contextly.path config is not present"
             Expect.equal path.Value ".contextly/definitions.yml" "contextly.path config is not the default value"
 
-        testCaseAsync "Language Client becomes Ready" <| async {
-            do! Helpers.waitForLanguageClient() |> Promise.Ignore
-        }
+        testCase "Language Client becomes Ready" <| fun () ->
+            getLanguageClient() |> ignore
     ]
