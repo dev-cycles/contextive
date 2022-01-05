@@ -25,6 +25,7 @@ let registrationOptions path =
     RegistrationOptionsDelegate<DidChangeWatchedFilesRegistrationOptions, DidChangeWatchedFilesCapability>(registrationOptionsProvider path)
 
 let register (s:ILanguageServer) reloader fullPath = 
-    s.Register(fun reg -> 
+    let registration = s.Register(fun reg -> 
         reg.OnDidChangeWatchedFiles(handler <| reloader, registrationOptions fullPath)
-        |> ignore) |> ignore
+        |> ignore)
+    fun () -> registration.Dispose()

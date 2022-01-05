@@ -13,7 +13,7 @@ let definitionsTests =
             let path = Path.Combine("fixtures", "completion_tests", "one.yml") |> Some
             let workspaceFolder = Some ""
             let definitions = Definitions.create()
-            Definitions.init definitions (fun _ -> ()) (fun _ -> async.Return path) (fun _ -> ())
+            Definitions.init definitions (fun _ -> ()) (fun _ -> async.Return path) None
             Definitions.addFolder definitions workspaceFolder
             (Definitions.loader definitions)()
             return! Definitions.find definitions (fun _ -> true)

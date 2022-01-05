@@ -3,7 +3,6 @@ module Contextly.LanguageServer.Definitions
 open YamlDotNet.Serialization
 open YamlDotNet.Serialization.NamingConventions
 open System.IO
-open System.Collections.Concurrent
 
 [<CLIMutable>]
 type Term =
@@ -29,8 +28,8 @@ type Definitions =
 
 type Filter = Term -> bool
 type Finder = Filter -> Async<Term seq>
-//type Loader = string option -> string option -> string option 
 type Reloader = unit -> unit
+type Unregisterer = unit -> unit
 
 let private tryReadFile path =
     if File.Exists(path) then
@@ -77,20 +76,22 @@ type private State =
         Logger: (string -> unit)
         Definitions: Definitions
         ConfigGetter: (unit -> Async<string option>)
-        RegisterWatchedFiles: (string option -> unit)
+        RegisterWatchedFile: (string option -> Unregisterer) option
+        UnregisterLastWatchedFile: Unregisterer option
     }
     static member Initial() = { 
         WorkspaceFolder = None;
         Logger = fun _ -> ();
         Definitions = Definitions.Default;
         ConfigGetter = fun () -> async.Return None;
-        RegisterWatchedFiles = fun _ -> ()
+        RegisterWatchedFile = None
+        UnregisterLastWatchedFile = None
     }
 
 type LoadReply = string option
 
 type Message =
-    | Init of logger: (string -> unit) * configGetter: (unit -> Async<string option>) * registerWatchedFiles: (string option -> unit)
+    | Init of logger: (string -> unit) * configGetter: (unit -> Async<string option>) * registerWatchedFile: (string option -> Unregisterer) option
     | AddFolder of workspaceFolder: string option
     | Load
     | Find of filter: Filter * replyChannel: AsyncReplyChannel<Term seq>
@@ -100,7 +101,12 @@ let create() = MailboxProcessor.Start(fun inbox ->
         let! (msg: Message) = inbox.Receive()
         let! newState =
             match msg with
-            | Init(logger, configGetter, registerWatchedFiles) -> async.Return { state with Logger = logger; ConfigGetter = configGetter; RegisterWatchedFiles = registerWatchedFiles}
+            | Init(logger, configGetter, registerWatchedFile) -> async.Return { 
+                state with
+                    Logger = logger;
+                    ConfigGetter = configGetter;
+                    RegisterWatchedFile = registerWatchedFile
+                }
             | AddFolder(workspaceFolder) -> async.Return { state with WorkspaceFolder = workspaceFolder }
             | Load -> async {
                     let! path = state.ConfigGetter()
@@ -112,8 +118,14 @@ let create() = MailboxProcessor.Start(fun inbox ->
                     match absolutePath with
                     | Some ap -> state.Logger $"Loading contextly from {ap}"
                     | None -> ()
-                    state.RegisterWatchedFiles absolutePath
-                    return newState
+                    match state.UnregisterLastWatchedFile with
+                    | Some unregister -> unregister()
+                    | None -> ()                    
+                    let unregisterer =
+                        match state.RegisterWatchedFile with
+                        | Some rwf -> rwf absolutePath |> Some
+                        | None -> None
+                    return { newState with UnregisterLastWatchedFile = unregisterer }
                 }
             | Find(filter, replyChannel) ->
                 let foundTerms = state.Definitions.Contexts |> Seq.collect(fun c -> c.Terms) |> Seq.filter filter
