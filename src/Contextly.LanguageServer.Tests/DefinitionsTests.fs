@@ -13,14 +13,10 @@ let definitionsTests =
             let path = Path.Combine("fixtures", "completion_tests", "one.yml") |> Some
             let workspaceFolder = Some ""
             let definitions = Definitions.create()
-            Definitions.init definitions (fun _ -> ()) (fun _ -> async.Return path)
+            Definitions.init definitions (fun _ -> ()) (fun _ -> async.Return path) (fun _ -> ())
             Definitions.addFolder definitions workspaceFolder
-            let! fullPath = Definitions.load definitions
-
-            test <@ fullPath.IsSome @>
-            test <@ fullPath.Value = "fixtures/completion_tests/one.yml" @>
-
-            return Definitions.find definitions (fun _ -> true)
+            (Definitions.loader definitions)()
+            return! Definitions.find definitions (fun _ -> true)
         }
 
         let compareList = Seq.compareWith compare

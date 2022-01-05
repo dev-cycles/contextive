@@ -28,9 +28,9 @@ type Definitions =
     static member Default = { Contexts = new ResizeArray<Context>() }
 
 type Filter = Term -> bool
-type Finder = (Term -> bool) -> Term seq
+type Finder = Filter -> Async<Term seq>
 //type Loader = string option -> string option -> string option 
-type Reloader = unit -> Async<string option>
+type Reloader = unit -> unit
 
 let private tryReadFile path =
     if File.Exists(path) then
@@ -76,21 +76,23 @@ type private State =
         WorkspaceFolder: string option
         Logger: (string -> unit)
         Definitions: Definitions
-        ConfigGetter: (unit -> Async<string option>);
+        ConfigGetter: (unit -> Async<string option>)
+        RegisterWatchedFiles: (string option -> unit)
     }
     static member Initial() = { 
         WorkspaceFolder = None;
         Logger = fun _ -> ();
         Definitions = Definitions.Default;
         ConfigGetter = fun () -> async.Return None;
+        RegisterWatchedFiles = fun _ -> ()
     }
 
-type LoadReply = string option * (string -> unit)
+type LoadReply = string option
 
 type Message =
-    | Init of logger: (string -> unit) * configGetter: (unit -> Async<string option>)
+    | Init of logger: (string -> unit) * configGetter: (unit -> Async<string option>) * registerWatchedFiles: (string option -> unit)
     | AddFolder of workspaceFolder: string option
-    | Load of replyChannel: AsyncReplyChannel<LoadReply>
+    | Load
     | Find of filter: Filter * replyChannel: AsyncReplyChannel<Term seq>
 
 let create() = MailboxProcessor.Start(fun inbox -> 
@@ -98,16 +100,19 @@ let create() = MailboxProcessor.Start(fun inbox ->
         let! (msg: Message) = inbox.Receive()
         let! newState =
             match msg with
-            | Init(logger, configGetter) -> async.Return { state with Logger = logger; ConfigGetter = configGetter}
+            | Init(logger, configGetter, registerWatchedFiles) -> async.Return { state with Logger = logger; ConfigGetter = configGetter; RegisterWatchedFiles = registerWatchedFiles}
             | AddFolder(workspaceFolder) -> async.Return { state with WorkspaceFolder = workspaceFolder }
-            | Load(replyChannel) -> async {
+            | Load -> async {
                     let! path = state.ConfigGetter()
                     let absolutePath = getPath state.WorkspaceFolder path
                     let defs = loadFromPath absolutePath
                     let newState = match defs with 
                                     | Some d -> { state with Definitions = d }
                                     | _ -> { state with Definitions = Definitions.Default }
-                    replyChannel.Reply (absolutePath, state.Logger)
+                    match absolutePath with
+                    | Some ap -> state.Logger $"Loading contextly from {ap}"
+                    | None -> ()
+                    state.RegisterWatchedFiles absolutePath
                     return newState
                 }
             | Find(filter, replyChannel) ->
@@ -120,19 +125,14 @@ let create() = MailboxProcessor.Start(fun inbox ->
     loop <| State.Initial()
 )
 
-let init (definitionsManager:MailboxProcessor<Message>) logger configGetter = 
-    Init(logger, configGetter) |> definitionsManager.Post
+let init (definitionsManager:MailboxProcessor<Message>) logger configGetter registerWatchedFiles = 
+    Init(logger, configGetter, registerWatchedFiles) |> definitionsManager.Post
 
 let addFolder (definitionsManager:MailboxProcessor<Message>) workspaceFolder = 
     AddFolder(workspaceFolder) |> definitionsManager.Post
-    
-let load (definitionsManager:MailboxProcessor<Message>) = async {
-    let! (absPath, logger) = definitionsManager.PostAndAsyncReply <| fun rc -> Load(rc)
-    match absPath with
-    | Some ap -> logger $"Loading contextly from {ap}"
-    | None -> ()
-    return absPath
-}
+
+let loader (definitionsManager:MailboxProcessor<Message>) = fun () ->
+    Load |> definitionsManager.Post
 
 let find (definitionsManager:MailboxProcessor<Message>) (filter:Filter) =
-    definitionsManager.PostAndReply <| fun rc -> Find(filter, rc)
+    definitionsManager.PostAndAsyncReply <| fun rc -> Find(filter, rc)

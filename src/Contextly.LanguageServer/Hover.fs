@@ -8,7 +8,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 let private markupContent content = 
     MarkedStringsOrMarkupContent(markupContent = MarkupContent(Kind = MarkupKind.Markdown, Value = content))
 
-let private noHoverResult = Task.FromResult(Hover())
+let private noHoverResult = Hover()
 
 let private termMatches word (t:Definitions.Term) = t.Name.Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
 
@@ -43,18 +43,23 @@ let private getTermHoverContent (terms: Definitions.Term seq) =
 
 let private hoverResult (terms: Definitions.Term seq) =
     let content = getTermHoverContent terms |> markupContent
-    Task.FromResult(Hover(Contents = content))
+    Hover(Contents = content)
 
-let handler (termFinder: Definitions.Finder) (getWord: TextDocument.WordGetter) (p:HoverParams) (hc:HoverCapability) _ = 
-    let wordAtPosition = getWordAtPosition p getWord
-    match wordAtPosition with
-    | None -> noHoverResult
-    | Some(word) -> // TODO: actually find the correct position
-        let terms = termFinder (termMatches word)
-        if Seq.isEmpty terms then
-            noHoverResult
-        else
-            hoverResult terms
+let handler (termFinder: Definitions.Finder) (getWord: TextDocument.WordGetter) (p:HoverParams) (hc:HoverCapability) _ =
+    async {
+            let wordAtPosition = getWordAtPosition p getWord
+            return!
+                match wordAtPosition with
+                | None -> async { return noHoverResult }
+                | Some(word) -> // TODO: actually find the correct position
+                    async {
+                        let! terms = termFinder (termMatches word)
+                        return if Seq.isEmpty terms then
+                                    noHoverResult
+                                else
+                                    hoverResult terms
+                    }
+    } |> Async.StartAsTask
 
 let private registrationOptionsProvider (hc:HoverCapability) (cc:ClientCapabilities)  =
     HoverRegistrationOptions()

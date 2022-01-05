@@ -46,14 +46,14 @@ let private onStartup definitions = OnLanguageServerStartedDelegate(fun (s:ILang
         let! _ = configGetter() 
         let workspaceFolder = getWorkspaceFolder s
 
-        Definitions.init definitions s.Window.LogInfo configGetter 
+        let definitionsLoader = Definitions.loader definitions
+
+        let registerWatchedFiles = WatchedFiles.register s definitionsLoader
+
+        Definitions.init definitions s.Window.LogInfo configGetter registerWatchedFiles
         Definitions.addFolder definitions workspaceFolder
-
-        let initialLoader() = Definitions.load definitions
-
-        let! fullPath = initialLoader()
-
-        WatchedFiles.register s fullPath <| initialLoader
+      
+        definitionsLoader()
 
     } |> Async.StartAsTask :> Task)
 
@@ -68,11 +68,7 @@ let private configureServer (input: Stream) (output: Stream) (opts:LanguageServe
         .ConfigureLogging(fun z -> z.AddLanguageProtocolLogging().AddSerilog(Log.Logger).SetMinimumLevel(LogLevel.Trace) |> ignore)
         .WithServerInfo(ServerInfo(Name = "Contextly"))
 
-        .OnDidChangeConfiguration(fun c -> 
-            async {
-                do! Definitions.load definitions |> Async.Ignore
-            } |> Async.StartAsTask :> Task
-        )
+        .OnDidChangeConfiguration(Configuration.handler <| Definitions.loader definitions)
         .OnCompletion(Completion.handler <| Definitions.find definitions <| TextDocument.getWord, Completion.registrationOptions)
         .OnHover(Hover.handler <| Definitions.find definitions <| TextDocument.getWord, Hover.registrationOptions)
 
