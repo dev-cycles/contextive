@@ -23,14 +23,17 @@ let private termToString (caseTemplate:string option) (t:Definitions.Term) =
         else
             t.Name
 
-let handler (termFinder: Definitions.Finder) (wordGetter: TextDocument.WordGetter) (p:CompletionParams) (hc:CompletionCapability) _ = 
-    let caseTemplate = 
-        match p.TextDocument with
-        | null -> None
-        | _ -> wordGetter (p.TextDocument.Uri.ToUri()) p.Position
-    let termToStringWithCase = termToString caseTemplate
-    let labels = termFinder termMatches |> Seq.map termToStringWithCase
-    Task.FromResult(completionList labels)
+let handler (termFinder: Definitions.Finder) (wordGetter: TextDocument.WordGetter) (p:CompletionParams) (hc:CompletionCapability) _ =
+    async {
+        let caseTemplate = 
+            match p.TextDocument with
+            | null -> None
+            | _ -> wordGetter (p.TextDocument.Uri.ToUri()) p.Position
+        let termToStringWithCase = termToString caseTemplate
+        let! matches = termFinder termMatches
+        let labels = matches |> Seq.map termToStringWithCase
+        return completionList labels
+    } |> Async.StartAsTask
 
 let private registrationOptionsProvider (hc:CompletionCapability) (cc:ClientCapabilities)  =
     CompletionRegistrationOptions()

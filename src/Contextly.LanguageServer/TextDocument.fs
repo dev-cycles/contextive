@@ -17,8 +17,6 @@ let private getDocument (documentUri: System.Uri) =
     | false -> None
     | true -> Some text
 
-
-
 type private Word = 
     | Line of line: string
     | Start of line: string * start: int
@@ -31,7 +29,7 @@ type private Word =
         match this.Length with | Some(length) -> length > 0
                                | _ -> false
 
-    static member private delimiters = [|' ';'(';'.';'-';'>'|]
+    static member private delimiters = [|' ';'(';'.';'-';'>';':';','|]
 
     static member private startOfWord line position = Start(line, line.LastIndexOfAny(Word.delimiters, position) + 1)
 

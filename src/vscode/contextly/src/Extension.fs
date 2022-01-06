@@ -1,12 +1,15 @@
 ﻿namespace Contextly.VsCodeExtension
 
 open Fable.Core.JsInterop
+open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
 open Fable.Import.LanguageServer
 open Fable.Import.LanguageServer.Client
 open Node.Api
 
 module Extension =
+
+    exception NoExtensionApi
 
     let private languageClientOptions = jsOptions<LanguageClientOptions>
     let private executable f = !^jsOptions<Executable>(f)
@@ -25,10 +28,10 @@ module Extension =
     )
           
     let private clientOptions = languageClientOptions(fun x ->
-            x.documentSelector <- documentSelectorList ["plaintext"; "markdown"]
+            x.documentSelector <- documentSelectorList ["plaintext"; "markdown"; "yaml"]
         )
 
-    let private client =
+    let private clientFactory() =
         LanguageClient("contextly",
             "Contextly",
             serverOptions=serverOptions,
@@ -40,13 +43,51 @@ module Extension =
         Client: LanguageClient
     }
 
+    let private addDisposable (context: ExtensionContext) (disposable:Disposable) =
+        context.subscriptions.Add(disposable :?> ExtensionContextSubscriptions)
+
+    let private registerCommand (context: ExtensionContext) (name: string) (handler) =
+        commands.registerCommand(name, handler) |> addDisposable context 
+    
+    let private getPath() =
+        let config = workspace.getConfiguration("contextly")
+        match config.get("path"), workspace.workspaceFolders with
+        | Some p, Some wsf -> vscode.Uri.joinPath(wsf[0].uri, [|p|]) |> Some
+        | _, _ -> None
+
     let activate (context: ExtensionContext) = promise {
-        client.start() |> ignore
+        let client = clientFactory()
+        
+        client.start() |> addDisposable context
+
+        do! client.onReady()
+
+        Initialize.handler getPath |> registerCommand context "contextly.initialize"
+
+        // May be needed if we refactor towards using the language server to initialize files - can remove 
+        // after that is resolved
+        // context.subscriptions.Add(workspace.onDidChangeConfiguration.Invoke(fun e -> 
+        //     if e.affectsConfiguration("contextly") then
+        //         client.sendNotification("workspace/didChangeConfiguration", Some {| settings = None |})
+        //     None
+        // ) :?> ExtensionContextSubscriptions)
+
         return {
             Client = client
         }
     }
 
+    let rec getLanguageClient() = 
+        let extension = extensions.all.Find(fun x -> x.id = "devcycles.contextly")
+        match extension.exports with
+        | Some e -> 
+            let extensionApi: Api = !!e
+            extensionApi.Client
+        | None -> 
+            raise NoExtensionApi
+    
+
     let deactivate () = promise {
-        do! client.stop()
+        let languageClient = getLanguageClient()
+        do! languageClient.stop()
     }

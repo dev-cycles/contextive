@@ -5,10 +5,11 @@ open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Server
 open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
+open System.Threading.Tasks
 
 let handler (reloader: Definitions.Reloader) (p:DidChangeWatchedFilesParams) _ _ = 
-    reloader() |> ignore
-    ()
+    reloader()
+    Task.CompletedTask
 
 let private registrationOptionsProvider path _ _ =
     match path with
@@ -23,7 +24,8 @@ let private registrationOptionsProvider path _ _ =
 let registrationOptions path =
     RegistrationOptionsDelegate<DidChangeWatchedFilesRegistrationOptions, DidChangeWatchedFilesCapability>(registrationOptionsProvider path)
 
-let register instanceId (s:ILanguageServer) fullPath reloader = 
-    s.Register(fun reg -> 
+let register (s:ILanguageServer) reloader fullPath = 
+    let registration = s.Register(fun reg -> 
         reg.OnDidChangeWatchedFiles(handler <| reloader, registrationOptions fullPath)
-        |> ignore) |> ignore
+        |> ignore)
+    fun () -> registration.Dispose()

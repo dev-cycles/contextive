@@ -82,6 +82,9 @@
             "options": {
                 "cwd": "${workspaceFolder}/${config:vsCodeExtensionPath}"
             },
+            "dependsOn": [
+                "build: VsCode Extension"
+            ]
         },
         {
             "label": "build: All",

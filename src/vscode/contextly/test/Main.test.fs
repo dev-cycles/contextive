@@ -10,5 +10,6 @@ let Mocha: obj = jsNative
 Fable.Mocha.Mocha.runTests <| testList "All" [
     Extension.tests
     Completion.tests
+    Initialize.tests
 ] |> ignore
 

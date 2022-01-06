@@ -33,6 +33,8 @@ let textDocumentTests =
             ("object arrow property", ["firstWord->property"], Position(0,11), Some "property")
             ("object property in clause", ["firstWord.property "], Position(0,18), Some "property")
             ("object method", ["firstWord.method()"], Position(0,10), Some "method")
+            ("yaml key", ["key: value"], Position(0,1), Some "key")
+            ("sentence", ["word, something"], Position(0,1), Some "word")
             ("position at end", ["firstWord secondWord"], Position(0,21), None)
             ("position on space", ["firstWord secondWord"], Position(0,9), Some "firstWord")
             ("out of range lines", ["firstWord secondWord"], Position(1,0), None)

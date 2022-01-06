@@ -8,13 +8,13 @@ The following list of features is a draft proposal of the vision at the start of
 
 * [ ] Ubiquitous Language Definition & Storage:
   * [ ] Classify terms as aggregates/entities, attributes, commands and events
-  * [ ] For each term, include a definition, and examples of usage in normal sentences
+  * [x] For each term, include a definition, and examples of usage in normal sentences
   * [ ] Link terms to each other (e.g. commands to the aggregates/entities they apply to; events to the aggregates/entities that publish them)
-  * [ ] Store Ubiquitous Language term definitions in a file in the repository (e.g. yml format)
+  * [x] Store Ubiquitous Language term definitions in a file in the repository (e.g. yml format)
   * [ ] Store terms by Bounded Context, and identify which repos/paths relate to each Bounded Context
 * [ ] Code-editing Features
-  * [ ] Show the term definition when hovering over the word in the editor 
-  * [ ] Add Ubiquitous Language terms to the auto-complete list
+  * [x] Show the term definition when hovering over the word in the editor 
+  * [x] Add Ubiquitous Language terms to the auto-complete list
   * [ ] Codelens to identify the number of Ubiquitous Language terms in a method or class
   * [ ] Problems/warnings if misuse of the Ubiquitous Language - e.g. use of Command/Event and aggregate in the same class or method name when they are not linked, or use of extra words next to an Aggregate that _isn't_ defined
   * [ ] In relevant places (e.g. hover), note the use of the term in other contexts to highlight the contrast and ensure clarity of which definition applies in the current context (e.g. '_THIS_ definition, _NOT_ that other definition that you might have been thinking of')

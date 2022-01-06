@@ -17,8 +17,8 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "contextly.helloWorld",
-				"title": "Hello World"
+				"command": "contextly.initialize",
+				"title": "Contextly: Initialize Definitions"
 			}
 		],
 		"configuration": {
