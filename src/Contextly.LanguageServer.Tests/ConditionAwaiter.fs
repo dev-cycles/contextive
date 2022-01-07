@@ -16,6 +16,7 @@ type private WaitState<'T> =
 type Message<'T> =
     | Received of 'T
     | WaitFor of WaitForCondition<'T>
+    | Clear
 
 
 let create<'T>() = MailboxProcessor.Start(fun inbox -> 
@@ -29,6 +30,8 @@ let create<'T>() = MailboxProcessor.Start(fun inbox ->
             | WaitFor waitFor ->
                 state.Messages |> Seq.iter (fun m -> if waitFor.Condition m then waitFor.ReplyChannel.Reply(m))
                 { state with Conditions = waitFor :: state.Conditions }
+            | Clear ->
+                { state with Messages = [] }
         return! loop newState
     }
     loop WaitState<'T>.Initial
@@ -42,3 +45,6 @@ let waitFor (awaiter: MailboxProcessor<Message<'T>>) condition timeout =
 
 let waitForAny (awaiter: MailboxProcessor<Message<'T>>) timeout =
     waitFor awaiter (fun _ -> true) timeout
+
+let clear (awaiter : MailboxProcessor<Message<'T>>) timeout =
+    awaiter.Post(Clear)
