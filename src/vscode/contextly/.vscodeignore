@@ -6,6 +6,9 @@ src/**
 .gitignore
 .yarnrc
 webpack.config.js
-webpack.config.test.js
+webpack.test.config.js
 vsc-extension-quickstart.md
 **/*.map
+TestResults/**
+.fable/**
+test/**
