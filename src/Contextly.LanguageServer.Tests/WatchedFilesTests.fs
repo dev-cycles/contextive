@@ -11,15 +11,16 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open TestClient
+open WatchedFiles
 
 [<Tests>]
 let watchedFileTests =
     testList "Watched File Tests" [
 
         let watcherIsForFile (fileName:string) (watcher:FileSystemWatcher) =
-            watcher.GlobPattern.Contains("one.yml") && watcher.Kind = WatchKind.Change
+            watcher.GlobPattern.Contains(fileName) && watcher.Kind = WatchKind.Change
 
-        testAsync "Server registers to receive watched file changes" {
+        ftestAsync "Server registers to receive watched file changes" {
             let registrationAwaiter = ConditionAwaiter.create()
 
             let config = [
@@ -28,15 +29,19 @@ let watchedFileTests =
                 WatchedFiles.optionsBuilder registrationAwaiter
             ]
 
-            do! TestClient(config) |> init |> Async.Ignore
+            let! client = TestClient(config) |> init
 
-            let! registrationOpts = ConditionAwaiter.waitForAny registrationAwaiter 500
+            let! registrationMsg = ConditionAwaiter.waitForAny registrationAwaiter 500
 
-            test <@ registrationOpts.IsSome @>
-            test <@ registrationOpts.Value.Watchers.First() |> watcherIsForFile "one.yml" @>
+            test <@ client.ClientSettings.Capabilities.Workspace.DidChangeWatchedFiles.IsSupported @>
+
+            test <@ registrationMsg.IsSome @>
+            match registrationMsg with 
+            | Some(Registered(_, opts)) -> test <@ opts.Watchers.First() |> watcherIsForFile "one.yml" @>
+            | _ -> test <@ false @>
         }
 
-        testAsync "Server registers to receive watched file changes after config update" {
+        ftestAsync "Server registers to receive watched file changes after config update" {
             let registrationAwaiter = ConditionAwaiter.create()
             let mutable definitionsFile = "one.yml"
             let pathLoader():obj = definitionsFile
@@ -48,17 +53,26 @@ let watchedFileTests =
 
             let! client = TestClient(config) |> init
 
-            definitionsFile <- "three.yml"
+            let! initialRegistrationMsg = ConditionAwaiter.waitForAny registrationAwaiter 500
 
+            ConditionAwaiter.clear registrationAwaiter 500
+
+            definitionsFile <- "three.yml"
             client.Workspace.DidChangeConfiguration(DidChangeConfigurationParams())
 
-            let! registrationOpts = ConditionAwaiter.waitForAny registrationAwaiter 500
+            let! secondRegistrationMsg = ConditionAwaiter.waitFor registrationAwaiter (fun m -> match m with | Registered(_) -> true | _ -> false) 500
+            let! unregistrationMsg = ConditionAwaiter.waitFor registrationAwaiter (fun m -> match m with | Unregistered(_) -> true | _ -> false) 500
 
-            test <@ registrationOpts.IsSome @>
-            // let anyWatchersForOne = registrationOpts.Value.Watchers.Any(watcherIsForFile "one.yml")
-            // test <@ anyWatchersForOne @>
-            let anyWatchersForTwo = registrationOpts.Value.Watchers.Any(watcherIsForFile "two.yml")
-            test <@ anyWatchersForTwo @>
+
+            match secondRegistrationMsg with
+            | Some(Registered(_, opts)) ->
+                test <@ opts.Watchers.First() |> watcherIsForFile "three.yml" @>
+            | _ -> failtest "no registration to watch after config changed"
+
+            match initialRegistrationMsg, unregistrationMsg with 
+            | Some(Registered(regoId, _)) , Some(Unregistered(unregoId)) -> 
+                test <@ regoId = unregoId @>
+            | _ -> failtest "registration of initial config not unregistered"
         }
 
         testAsync "Server reloads when the contextly file changes" {
