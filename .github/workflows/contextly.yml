@@ -127,7 +127,7 @@ jobs:
         run: npm install
         working-directory: ./src/vscode/contextly
       - name: Package VsCode Extension
-        run: vsce package -t ${{ matrix.vsce_platform }}
+        run: npx vsce package -t ${{ matrix.vsce_platform }}
         working-directory: ./src/vscode/contextly
       - name: Upload Extension Vsix
         uses: actions/upload-artifact@v2

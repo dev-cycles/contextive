@@ -56,7 +56,8 @@
 		"mocha-multi-reporters": "^1.5.1",
 		"webpack": "^5.52.1",
 		"webpack-cli": "^4.8.0",
-		"webpack-node-externals": "^3.0.0"
+		"webpack-node-externals": "^3.0.0",
+		"vsce": "^2.6.3"
 	},
 	"dependencies": {
 		"vscode-languageclient": "^7.0.0"
