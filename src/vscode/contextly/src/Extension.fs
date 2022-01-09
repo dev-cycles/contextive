@@ -47,7 +47,7 @@ module Extension =
             "Contextly",
             serverOptions=serverOptions,
             clientOptions=clientOptions,
-            forceDebug = false
+            forceDebug=(process.env?CONTEXTLY_CI="true")
         )
 
     type Api = {
