@@ -1,7 +1,7 @@
 # Ensure npm is available
 source /usr/local/share/nvm/nvm.sh
 # Install npm globals
-npm install -g yo generator-code
+npm install -g yo generator-code vsce
 # Install dotnet global tools
 PATH=/home/vscode/.dotnet/tools:$PATH
 dotnet new --install Fable.Template
