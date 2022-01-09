@@ -13,4 +13,4 @@ module Expect =
                 "seq {" + (prefix + (sequence |> Seq.map (sprintf "%A") |> String.concat prefix)) + "\n}"
             let expectedList = format expected
             let actualList = format actual
-            Expect.equal expectedList actualList msg
+            Expect.equal actualList expectedList msg

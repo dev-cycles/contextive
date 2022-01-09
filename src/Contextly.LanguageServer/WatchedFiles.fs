@@ -15,9 +15,13 @@ let private registrationOptionsProvider path _ _ =
     match path with
     | Some pathValue -> 
         DidChangeWatchedFilesRegistrationOptions(
-            Watchers = Container(FileSystemWatcher(
-                GlobPattern = pathValue,
-                Kind = WatchKind.Change)
+            Watchers = Container(
+                FileSystemWatcher(
+                    GlobPattern = pathValue,
+                    Kind = WatchKind.Change),
+                FileSystemWatcher(
+                    GlobPattern = pathValue,
+                    Kind = WatchKind.Create)
         ))
     | None -> DidChangeWatchedFilesRegistrationOptions()
 

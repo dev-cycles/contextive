@@ -1,6 +1,5 @@
 module Contextly.LanguageServer.Hover
 
-open System.Threading.Tasks
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities

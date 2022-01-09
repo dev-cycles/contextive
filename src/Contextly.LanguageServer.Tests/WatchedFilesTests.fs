@@ -5,6 +5,7 @@ open Expecto
 open Swensen.Unquote
 open System.IO
 open System.Linq
+open System.Collections.Generic
 open Contextly.LanguageServer
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
@@ -17,10 +18,12 @@ open WatchedFiles
 let watchedFileTests =
     testList "Watched File Tests" [
 
-        let watcherIsForFile (fileName:string) (watcher:FileSystemWatcher) =
-            watcher.GlobPattern.Contains(fileName) && watcher.Kind = WatchKind.Change
+        let watcherIsForFile (fileName:string) (watchers:IEnumerable<FileSystemWatcher>) =
+            watchers.Any(fun watcher -> watcher.GlobPattern.Contains(fileName) && watcher.Kind = WatchKind.Change)
+                &&
+            watchers.Any(fun watcher -> watcher.GlobPattern.Contains(fileName) && watcher.Kind = WatchKind.Create)
 
-        ftestAsync "Server registers to receive watched file changes" {
+        testAsync "Server registers to receive watched file changes" {
             let registrationAwaiter = ConditionAwaiter.create()
 
             let config = [
@@ -37,11 +40,12 @@ let watchedFileTests =
 
             test <@ registrationMsg.IsSome @>
             match registrationMsg with 
-            | Some(Registered(_, opts)) -> test <@ opts.Watchers.First() |> watcherIsForFile "one.yml" @>
+            | Some(Registered(_, opts)) -> 
+                test <@ opts.Watchers |> watcherIsForFile "one.yml" @>
             | _ -> test <@ false @>
         }
 
-        ftestAsync "Server registers to receive watched file changes after config update" {
+        testAsync "Server registers to receive watched file changes after config update" {
             let registrationAwaiter = ConditionAwaiter.create()
             let mutable definitionsFile = "one.yml"
             let pathLoader():obj = definitionsFile
@@ -63,16 +67,50 @@ let watchedFileTests =
             let! secondRegistrationMsg = ConditionAwaiter.waitFor registrationAwaiter (fun m -> match m with | Registered(_) -> true | _ -> false) 500
             let! unregistrationMsg = ConditionAwaiter.waitFor registrationAwaiter (fun m -> match m with | Unregistered(_) -> true | _ -> false) 500
 
-
             match secondRegistrationMsg with
             | Some(Registered(_, opts)) ->
-                test <@ opts.Watchers.First() |> watcherIsForFile "three.yml" @>
+                test <@ opts.Watchers |> watcherIsForFile "three.yml" @>
             | _ -> failtest "no registration to watch after config changed"
 
             match initialRegistrationMsg, unregistrationMsg with 
             | Some(Registered(regoId, _)) , Some(Unregistered(unregoId)) -> 
                 test <@ regoId = unregoId @>
             | _ -> failtest "registration of initial config not unregistered"
+        }
+
+        testAsync "Server reloads when the contextly file is created" {
+            let newTerm = Guid.NewGuid().ToString()
+
+            let relativePath = Path.Combine("fixtures", "completion_tests")
+            let definitionsFile = "four.yml"
+            let config = [
+                Workspace.optionsBuilder relativePath
+                ConfigurationSection.contextlyPathOptionsBuilder definitionsFile
+            ]
+            let! client = TestClient(config) |> init
+
+            let definitionsFileUri = Path.Combine(Directory.GetCurrentDirectory(), relativePath, definitionsFile)
+
+            if (File.Exists(definitionsFileUri)) then
+                File.Delete(definitionsFileUri)
+            File.WriteAllText(definitionsFileUri, """contexts:
+  - terms:
+    - name: anewterm""")
+            
+            client.SendNotification(WorkspaceNames.DidChangeWatchedFiles, DidChangeWatchedFilesParams(
+                Changes = Container(FileEvent(
+                    Uri = definitionsFileUri,
+                    Type = FileChangeType.Created
+                ))
+            ))
+
+            let! result = client.TextDocument.RequestCompletion(CompletionParams()).AsTask() |> Async.AwaitTask
+
+            File.Delete(definitionsFile)
+
+            let completionLabels = result.Items |> Seq.map (fun x -> x.Label)
+
+            test <@ completionLabels |> Seq.contains "anewterm" @>
         }
 
         testAsync "Server reloads when the contextly file changes" {

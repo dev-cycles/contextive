@@ -1,6 +1,5 @@
 module Contextly.LanguageServer.Completion
 
-open System.Threading.Tasks
 open System.Linq
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
