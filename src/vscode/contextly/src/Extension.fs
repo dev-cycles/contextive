@@ -12,24 +12,35 @@ module Extension =
     exception NoExtensionApi
 
     let private languageClientOptions = jsOptions<LanguageClientOptions>
-    let private executable f = !^jsOptions<Executable>(f)
+    let private executable f = jsOptions<Executable>(f)
     let private executableOptions f = Some <| jsOptions<ExecutableOptions>(f)
     let private argsArray (f:string list) = Some <| new ResizeArray<string>(f)
     let private documentSelectorList (x:string list) = Some !^(new ResizeArray<string>(x))
 
-    let private serverPath = Some <| path.resolve(__dirname, "../../../Contextly.LanguageServer")
-
-    let private serverOptions = executable(fun x -> 
+    let private debugServerOptions = executable(fun x -> 
         x.command <- "dotnet"
         x.args <- argsArray ["run"]
         x.options <- executableOptions(fun x -> 
-            x.cwd <- serverPath
+            x.cwd <- Some <| path.resolve(__dirname, "../../../Contextly.LanguageServer")
         )
     )
+
+    let private runServerOptions = executable(fun x -> 
+        x.command <- "./Contextly.LanguageServer"
+        x.options <- executableOptions(fun x -> 
+            x.cwd <- Some <| path.resolve(__dirname)
+        )
+    )
+
+    let private serverOptions =
+        createObj [
+            "run" ==> runServerOptions
+            "debug" ==> debugServerOptions
+        ] |> unbox<ServerOptions>
           
     let private clientOptions = languageClientOptions(fun x ->
-            x.documentSelector <- documentSelectorList ["plaintext"; "markdown"; "yaml"]
-        )
+        x.documentSelector <- documentSelectorList ["plaintext"; "markdown"; "yaml"]
+    )
 
     let private clientFactory() =
         LanguageClient("contextly",

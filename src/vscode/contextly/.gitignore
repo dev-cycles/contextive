@@ -5,3 +5,6 @@
 !webpack.test.config.js
 !test/runTest.js
 !test/index.js
+**/*.vsix
+dist
+out
