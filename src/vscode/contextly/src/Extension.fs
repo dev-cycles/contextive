@@ -11,6 +11,8 @@ module Extension =
 
     exception NoExtensionApi
 
+    let private ExtensionId = "contextly"
+
     let private languageClientOptions = jsOptions<LanguageClientOptions>
     let private executable f = jsOptions<Executable>(f)
     let private executableOptions f = Some <| jsOptions<ExecutableOptions>(f)
@@ -43,7 +45,7 @@ module Extension =
     )
 
     let private clientFactory() =
-        LanguageClient("contextly",
+        LanguageClient(ExtensionId,
             "Contextly",
             serverOptions=serverOptions,
             clientOptions=clientOptions,
@@ -61,10 +63,17 @@ module Extension =
         commands.registerCommand(name, handler) |> addDisposable context 
     
     let private getPath() =
-        let config = workspace.getConfiguration("contextly")
+        let config = workspace.getConfiguration(ExtensionId)
         match config.get("path"), workspace.workspaceFolders with
         | Some p, Some wsf -> vscode.Uri.joinPath(wsf[0].uri, [|p|]) |> Some
         | _, _ -> None
+
+    let registerConfigChangeNotifications context (client:LanguageClient) =
+        workspace.onDidChangeConfiguration.Invoke(fun e -> 
+            if e.affectsConfiguration(ExtensionId) then
+                client.sendNotification("workspace/didChangeConfiguration", Some {| settings = None |})
+            None
+        ) |> addDisposable context
 
     let activate (context: ExtensionContext) = promise {
         let client = clientFactory()
@@ -75,13 +84,7 @@ module Extension =
 
         Initialize.handler getPath |> registerCommand context "contextly.initialize"
 
-        // May be needed if we refactor towards using the language server to initialize files - can remove 
-        // after that is resolved
-        // context.subscriptions.Add(workspace.onDidChangeConfiguration.Invoke(fun e -> 
-        //     if e.affectsConfiguration("contextly") then
-        //         client.sendNotification("workspace/didChangeConfiguration", Some {| settings = None |})
-        //     None
-        // ) :?> ExtensionContextSubscriptions)
+        registerConfigChangeNotifications context client
 
         return {
             Client = client

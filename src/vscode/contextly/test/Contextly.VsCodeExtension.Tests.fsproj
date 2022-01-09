@@ -12,8 +12,8 @@
     <Compile Include="ExpectExtensions.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="VsCodeCommands.fs" />
-    <Compile Include="Initialize.test.fs" />
     <Compile Include="Completion.test.fs" />
+    <Compile Include="Initialize.test.fs" />
     <Compile Include="Extension.test.fs" />
     <Compile Include="Main.test.fs" />
   </ItemGroup>

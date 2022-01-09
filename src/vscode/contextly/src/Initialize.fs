@@ -1,6 +1,5 @@
 module Contextly.VsCodeExtension.Initialize
 
-open Fable.Core.JsInterop
 open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
 
@@ -9,9 +8,9 @@ let private defaultDefinitions = """# Welcome to Contextly!
 # This initial definitions file illustrates the syntax of the file by providing definitions and examples of the terms
 # used in schema of the definitions file.
 #
-# Hover over some of the defined words, such a `context`, `term`, `definition` and `example` to see Contextly in action.
+# Hover over some of the defined words, such as `context`, `term`, `definition` and `example` to see Contextly in action.
 #
-# Update the yaml below to define your specific contexts and definitions and feel free to use markdown in definitions and examples.
+# Update the yaml below to define your specific contexts and definitions, and feel free to use markdown in definitions and examples.
 contexts:
   - terms:
     - name: context
