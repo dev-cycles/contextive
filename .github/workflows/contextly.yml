@@ -82,6 +82,7 @@ jobs:
 
   package:
     name: Package
+    if: github.ref == 'refs/heads/main' # Only do the package and artifact step on commits to main.
     needs: build-and-test
     strategy:
       matrix:
@@ -132,5 +133,5 @@ jobs:
       - name: Upload Extension Vsix
         uses: actions/upload-artifact@v2
         with:
-          name: "contextly-${{ matrix.vsce_platform }}.vsix""
+          name: "contextly-${{ matrix.vsce_platform }}.vsix"
           path: "src/vscode/contextly/contextly-${{ matrix.vsce_platform }}-*.vsix"
