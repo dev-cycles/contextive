@@ -82,7 +82,7 @@ jobs:
 
   package:
     name: Package
-    if: github.ref == 'refs/heads/main' # Only do the package and artifact step on commits to main.
+    #if: github.ref == 'refs/heads/main' # Only do the package and artifact step on commits to main.
     needs: build-and-test
     strategy:
       matrix:
