@@ -86,12 +86,12 @@ jobs:
     strategy:
       matrix:
         include:
-          # - os: windows-latest
-          #   dotnet_runtime: win-x64
-          #   vsce_platform: win32-x64
-          - os: ubuntu-latest
-            dotnet_runtime: linux-x64
+          - dotnet_runtime: win-x64
+            vsce_platform: win32-x64
+            os: windows-latest
+          - dotnet_runtime: linux-x64
             vsce_platform: linux-x64
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -118,7 +118,7 @@ jobs:
         working-directory: ./src
       - name: Build Language Server
         run: |
-          dotnet publish -c Release -r ${{ matrix.dotnet_runtime }} -o publish
+          dotnet publish -c Release -r ${{ matrix.dotnet_runtime }} -o publish --self-contained
         working-directory: ./src/Contextly.LanguageServer
       - name: Copy Language Server to VsCode Extension Folder
         run: mkdir -p ../vscode/contextly/dist && cp publish/* ../vscode/contextly/dist
@@ -132,4 +132,4 @@ jobs:
       - name: Upload Extension Vsix
         uses: actions/upload-artifact@v2
         with:
-          path: "contextly-${{ matrix.vsce_platform }}-*.vsix"
+          path: "src/vscode/contextly/contextly-${{ matrix.vsce_platform }}-*.vsix"
