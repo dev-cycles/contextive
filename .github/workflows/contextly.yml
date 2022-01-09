@@ -1,0 +1,164 @@
+name: Contextly
+on: push
+env:
+  dotnet-version: '6.0.x'
+jobs:
+  build-and-test:
+    name: 'Build and Test'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: Setup .NET Core SDK ${{ env.dotnet-version }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.dotnet-version }}
+          include-prerelease: true
+      - name: Display dotnet version
+        run: dotnet --version
+      - name: Install Fable
+        run: dotnet tool install fable --global
+      - name: Install paket
+        run: dotnet tool install paket --global
+      - name: Restore paket dependencies
+        run: paket restore
+        working-directory: ./src
+      - name: Build and Test Language Server
+        run: |
+          dotnet test ./src/Contextly.LanguageServer.Tests/Contextly.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults-${{ env.dotnet-version }}.xml"
+      - name: Upload Language Server Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: language-server-results-${{ env.dotnet-version }}
+          path: "src/Contextly.LanguageServer.Tests/TestResults/TestResults-${{ env.dotnet-version }}.xml"
+        if: always()
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Language Server Tests
+          path: "src/Contextly.LanguageServer.Tests/TestResults/TestResults-${{ env.dotnet-version }}.xml"
+          reporter: dotnet-trx 
+      - name: Restore npm dependencies
+        run: npm install
+        working-directory: ./src/vscode/contextly
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: Start xvfb
+        run: |
+          /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          echo ">>> Started xvfb"
+      - name: Build and Test VsCode Extension
+        run: npm test
+        working-directory: ./src/vscode/contextly
+        env:
+          DISPLAY: ":99.0"
+          DOTNET_VERSION: ${{ env.dotnet-version }}
+      - name: Upload vsCode Extension Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: vscode-extension-results-${{ env.dotnet-version }}
+          path: "src/vscode/**/TestResults-${{ env.dotnet-version }}.xml"
+        if: always()
+      - name: Upload All Test Logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: vscode-extension-logs-${{ env.dotnet-version }}
+          path: "**/log*.txt"
+        if: always()
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: VsCode Extension Tests
+          path: "src/vscode/**/TestResults-${{ env.dotnet-version }}.xml"
+          reporter: java-junit
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+
+  package:
+    name: Package
+    needs: build-and-test
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            platform: win32
+            arch: x64
+            npm_config_arch: x64
+          # - os: windows-latest
+          #   platform: win32
+          #   arch: ia32
+          #   npm_config_arch: ia32
+          # - os: windows-latest
+          #   platform: win32
+          #   arch: arm64
+          #   npm_config_arch: arm
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+            npm_config_arch: x64
+          # - os: ubuntu-latest
+          #   platform: linux
+          #   arch: arm64
+          #   npm_config_arch: arm64
+          # - os: ubuntu-latest
+          #   platform: linux
+          #   arch: armhf
+          #   npm_config_arch: arm
+          # - os: ubuntu-latest
+          #   platform: alpine
+          #   arch: x64
+          #   npm_config_arch: x64
+          # - os: macos-latest
+          #   platform: darwin
+          #   arch: x64
+          #   npm_config_arch: x64
+          # - os: macos-latest
+          #   platform: darwin
+          #   arch: arm64
+          #   npm_config_arch: arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: Setup .NET Core SDK ${{ env.dotnet-version }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.dotnet-version }}
+          include-prerelease: true
+      - name: Display dotnet version
+        run: dotnet --version
+      - name: Install Fable
+        run: dotnet tool install fable --global
+      - name: Install paket
+        run: dotnet tool install paket --global
+      - name: Restore paket dependencies
+        run: paket restore
+        working-directory: ./src
+      - name: Build Language Server
+        run: |
+          dotnet publish -c Release -r ${{ matrix.platform }}-${{ matrix.arch }} -o publish
+        working-directory: ./src/Contextly.LanguageServer
+      - name: Copy Language Server to VsCode Extension Folder
+        run: cp publish/* ../vscode/contextly/dist
+        working-directory: ./src/Contextly.LanguageServer
+      - name: Restore npm dependencies
+        run: npm install
+        working-directory: ./src/vscode/contextly
+      - name: Package VsCode Extension
+        run: vsce package -t ${{ matrix.platform }}-${{ matrix.arch }}
+        working-directory: ./src/vscode/contextly
+      - name: Upload Extension Vsix
+        uses: actions/upload-artifact@v2
+        with:
+          path: "contextly-${{ matrix.platform }}-${{ matrix.arch }}-*.vsix"
