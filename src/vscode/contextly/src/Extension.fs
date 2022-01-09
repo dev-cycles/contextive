@@ -41,7 +41,7 @@ module Extension =
         ] |> unbox<ServerOptions>
           
     let private clientOptions = languageClientOptions(fun x ->
-        x.documentSelector <- documentSelectorList ["plaintext"; "markdown"; "yaml"]
+        x.documentSelector <- documentSelectorList ["c"; "cpp"; "csharp"; "fsharp"; "go"; "groovy"; "html"; "java"; "javascript"; "javascriptreact"; "json"; "jsonc"; "markdown"; "perl"; "php"; "plaintext"; "powershell"; "python"; "ruby"; "rust"; "sql"; "typescript"; "typescriptreact"; "vb"; "xml"; "yaml"]
     )
 
     let private clientFactory() =

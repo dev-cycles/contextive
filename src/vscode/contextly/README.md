@@ -10,17 +10,28 @@ Use the `Contextly: Initialize Definitions` command from the command palette to 
 
 ## Features
 
-* [x] Initialize your Contextly Definitions
-* [x] Auto-complete from your Contextly Definitions
-* [x] Hover to show definitions from your Contextly Definitions
+* Initialize your Contextly Definitions
+* Auto-complete from your Contextly Definitions
+* Hover to show definitions from your Contextly Definitions
+* Currently configured to work in files of type: c, cpp, csharp, fsharp, go, groovy, html, java, javascript, javascriptreact, json, jsonc, markdown, perl, php, plaintext, powershell, python, ruby, rust, sql, typescript, typescriptreact, vb, xml, yaml
 
 #### Coming Soon
 
-* [ ] UI to edit/manage Contextly Definitions
-* [ ] Support for multiple contexts in the same or separate repos
+* UI to edit/manage Contextly Definitions
+* Show definitions in auto-complete details
+* Internationalization support
+* Support for multiple contexts in the same or separate repos
+* Configurable list of language identifiers. The list is currently hard coded as above.
+* Better support for key word identification in different languages
+* Support for word identification in combined usage such as camelCase, PascalCase and snake_case
+* Support for documenting combined words (e.g. verbNoun or noun_verbed)
 
 ## Extension Settings
 
 This extension contributes the following settings:
 
 * `contextly.path`: The path of the `contextly.yml` file that stores the Contextly definitions.  Default: `.contextly/definitions.yml`
+
+## Known Issues
+
+* The extension only activates on the presence of the `.contextly` folder in the workspace.  If the `contextly.path` setting has been updated, the `.contextly` folder may not exist.  (The extension will also activate on use of the `Contextly: Initialize Definitions` command.)
