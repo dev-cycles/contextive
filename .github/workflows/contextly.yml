@@ -132,4 +132,5 @@ jobs:
       - name: Upload Extension Vsix
         uses: actions/upload-artifact@v2
         with:
+          name: "contextly-${{ matrix.vsce_platform }}.vsix""
           path: "src/vscode/contextly/contextly-${{ matrix.vsce_platform }}-*.vsix"
