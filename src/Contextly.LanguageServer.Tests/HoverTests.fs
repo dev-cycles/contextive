@@ -19,10 +19,8 @@ let hoverTests =
 
             let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
 
-            test <@ not hover.Contents.HasMarkupContent @>
+            test <@ hover = null @>
         }
-
-        
 
         let testHoverTermFound (text, position: Position, expectedTerm: string) = 
             testAsync $"Given contextly and text '{text}', server responds to hover request with {expectedTerm} in {position}" {
@@ -93,7 +91,7 @@ let hoverTests =
 
                 let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
 
-                test <@ not hover.Contents.HasMarkupContent @>
+                test <@ hover = null @>
             }
 
         [
