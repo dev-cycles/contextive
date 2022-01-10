@@ -22,8 +22,9 @@ Use the `Contextly: Initialize Definitions` command from the command palette to 
 * Internationalization support
 * Support for multiple contexts in the same or separate repos
 * Configurable list of language identifiers. The list is currently hard coded as above.
-* Better support for key word identification in different languages
+* Better support for key word identification in different languages (e.g. different syntax delimiters)
 * Support for word identification in combined usage such as camelCase, PascalCase and snake_case
+* Support for detecting plural or singular versions of terms
 * Support for documenting combined words (e.g. verbNoun or noun_verbed)
 
 ## Extension Settings

@@ -29,7 +29,7 @@ type private Word =
         match this.Length with | Some(length) -> length > 0
                                | _ -> false
 
-    static member private delimiters = [|' ';'(';'.';'-';'>';':';','|]
+    static member private delimiters = [|' ';'(';'.';'-';'>';':';',';')';'{';'}';'[';']'|]
 
     static member private startOfWord line position = Start(line, line.LastIndexOfAny(Word.delimiters, position) + 1)
 
