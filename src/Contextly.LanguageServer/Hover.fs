@@ -7,7 +7,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 let private markupContent content = 
     MarkedStringsOrMarkupContent(markupContent = MarkupContent(Kind = MarkupKind.Markdown, Value = content))
 
-let private noHoverResult = Hover()
+let private noHoverResult = null
 
 let private termMatches word (t:Definitions.Term) = t.Name.Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
 
