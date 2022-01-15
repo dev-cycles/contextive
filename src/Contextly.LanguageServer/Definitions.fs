@@ -43,7 +43,10 @@ let private deserialize (yml:string) =
             (new DeserializerBuilder())
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build()
-        deserializer.Deserialize<Definitions>(yml) |> Some
+        let definitions = deserializer.Deserialize<Definitions>(yml)
+        match definitions |> box with
+        | null -> None
+        | _ -> Some definitions
     with
     | e -> 
         printfn "%A" e
