@@ -5,38 +5,6 @@ open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
 open Contextly.VsCodeExtension.Tests.Helpers
 
-let getConfig() = workspace.getConfiguration("contextly")
-
-let getFullPathFromConfig() =
-    let config = getConfig()
-    let path = config["path"].Value :?> string
-    let wsf = workspace.workspaceFolders.Value[0]
-    vscode.Uri.joinPath(wsf.uri, [|path|])
-
-let findUriInVisibleEditors (path:Uri) =
-    window.visibleTextEditors.Find(fun te -> te.document.uri.path = path.path)
-
-let updateConfig newPath = promise {
-    let config = getConfig()
-    do! config.update("path", newPath :> obj |> Some)
-    do! Promise.sleep 10
-}
-
-let resetConfig() = promise {
-    let config = getConfig()
-    do! config.update("path", None)
-}
-
-let resetDefinitionsFile fullPath = promise {
-    do! closeDocument fullPath |> Promise.Ignore
-    do! workspace.fs.delete fullPath
-}
-
-let resetWorkspace fullPath = promise {
-    do! resetConfig()
-    do! resetDefinitionsFile fullPath
-}
-
 let tests =
     testList "Initialize Tests" [
         testCaseAsync "Extension has Initialize Project Command" <| async {
@@ -65,7 +33,7 @@ let tests =
             let fullPath = getFullPathFromConfig()
             let editor = findUriInVisibleEditors fullPath
 
-            do! resetWorkspace fullPath
+            do! deleteDefinitionsFile()
 
             Expect.isNotNull editor "New definitions.yml isn't open"
         }
@@ -88,7 +56,7 @@ let tests =
 
             do! Promise.sleep 500
 
-            let resetWorkspaceHook = Some (fun _ -> promise {do! resetWorkspace fullPath})
+            let resetWorkspaceHook = Some deleteDefinitionsFile
 
             let testDocPath = "../test/fixtures/simple_workspace/test.txt"
             let position = vscode.Position.Create(0.0, 10.0)
