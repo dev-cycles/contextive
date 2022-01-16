@@ -102,70 +102,86 @@ type InitPayload = {
     RegisterWatchedFile: (string option -> Unregisterer) option;
     OnErrorLoading: (string -> unit);
 }
- 
 
+type AddFolderPayload = {
+    WorkspaceFolder: string option
+}
+
+type FindReplyChannel = AsyncReplyChannel<Term seq>
+
+type FindPayload = {
+    Filter: Filter;
+    ReplyChannel: FindReplyChannel
+}
+ 
 type Message =
     | Init of InitPayload
-    | AddFolder of workspaceFolder: string option
+    | AddFolder of AddFolderPayload
     | Load
-    | Find of filter: Filter * replyChannel: AsyncReplyChannel<Term seq>
+    | Find of FindPayload
 
-let private handleInit state (initMsg:InitPayload) : State =
-    { 
-        state with
-            Logger = initMsg.Logger
-            ConfigGetter = initMsg.ConfigGetter
-            RegisterWatchedFile = initMsg.RegisterWatchedFile
-            OnErrorLoading = initMsg.OnErrorLoading
-    }
+module private Handle =
+    let init state (initMsg:InitPayload) : State =
+        { 
+            state with
+                Logger = initMsg.Logger
+                ConfigGetter = initMsg.ConfigGetter
+                RegisterWatchedFile = initMsg.RegisterWatchedFile
+                OnErrorLoading = initMsg.OnErrorLoading
+        }
+
+    let addFolder state (addFolderMsg:AddFolderPayload) : State = 
+        { state with WorkspaceFolder = addFolderMsg.WorkspaceFolder }
+
+    let updateFileWatchers (state:State) (absolutePath:string option)=
+        match state.DefinitionsFilePath, absolutePath with
+        | Some existingPath, Some newPath when existingPath = newPath -> state
+        | _, _ -> 
+            match state.UnregisterLastWatchedFile with
+            | Some unregister -> unregister()
+            | None -> ()
+
+            let unregisterer =
+                match state.RegisterWatchedFile with
+                | Some rwf -> rwf absolutePath |> Some
+                | None -> None
+
+            { state with UnregisterLastWatchedFile = unregisterer; DefinitionsFilePath = absolutePath }
+
+    let load (state:State) : Async<State> = async {
+            let! path = state.ConfigGetter()
+            let absolutePath = getPath state.WorkspaceFolder path
+
+            absolutePath |> Option.iter (fun ap -> state.Logger $"Loading contextly from {ap}...") 
+
+            let defs = loadFromPath absolutePath
+            let newState = { state with Definitions = defaultArg defs Definitions.Default }
+            
+            match absolutePath, defs with
+            | Some _, Some _ -> state.Logger "Succesfully loaded."
+            | Some ap, None -> 
+                let msg = $"Error loading definitions.  Please check syntax in {ap}."
+                state.Logger msg
+                state.OnErrorLoading msg
+            | _, _ -> ()
+
+            return updateFileWatchers newState absolutePath
+        }
+    
+    let find (state: State) (findMsg: FindPayload) : State =
+        let foundTerms = state.Definitions.Contexts |> Seq.collect(fun c -> c.Terms) |> Seq.filter findMsg.Filter
+        findMsg.ReplyChannel.Reply foundTerms
+        state
 
 let private handleMessage (state: State) (msg: Message) = async {
-    return! match msg with
-            | Init(initMsg) -> handleInit state initMsg |> async.Return
-            | AddFolder(workspaceFolder) -> async.Return { state with WorkspaceFolder = workspaceFolder }
-            | Load -> async {
-                    let! path = state.ConfigGetter()
-                    let absolutePath = getPath state.WorkspaceFolder path
+    return!
+        match msg with
+        | Init(initMsg) -> Handle.init state initMsg |> async.Return
+        | AddFolder(workspaceFolderMsg) -> Handle.addFolder state workspaceFolderMsg |> async.Return 
+        | Load -> Handle.load state
+        | Find(findMsg) -> Handle.find state findMsg |> async.Return
+    }
 
-                    match absolutePath with
-                    | Some ap -> state.Logger $"Loading contextly from {ap}..."
-                    | None -> ()
-
-                    let defs = loadFromPath absolutePath
-                    let newState = 
-                        match defs with 
-                        | Some d -> { state with Definitions = d }
-                        | _ -> { state with Definitions = Definitions.Default }
-                    
-                    match absolutePath, defs with
-                    | Some _, Some _ -> state.Logger "Succesfully loaded."
-                    | Some ap, None -> state.Logger $"Error loading definitions.  Please check syntax in {ap}"
-                    | _, _ -> ()
-
-                    let returnState = 
-                        match state.DefinitionsFilePath, absolutePath with
-                        | Some existingPath, Some newPath when existingPath = newPath -> newState
-                        | _, _ -> 
-                            match state.UnregisterLastWatchedFile with
-                            | Some unregister -> 
-                                unregister()
-                            | None -> ()
-
-                            let unregisterer =
-                                match state.RegisterWatchedFile with
-                                | Some rwf -> rwf absolutePath |> Some
-                                | None -> None
-
-                            { newState with UnregisterLastWatchedFile = unregisterer; DefinitionsFilePath = absolutePath }
-                    state.Logger $"About to return state {returnState}"
-                    return returnState
-                    
-                }
-            | Find(filter, replyChannel) ->
-                let foundTerms = state.Definitions.Contexts |> Seq.collect(fun c -> c.Terms) |> Seq.filter filter
-                replyChannel.Reply foundTerms
-                async.Return state
-}
 
 let create() = MailboxProcessor.Start(fun inbox -> 
     let rec loop (state: State) = async {
@@ -188,11 +204,11 @@ let init (definitionsManager:MailboxProcessor<Message>) logger configGetter regi
     |> definitionsManager.Post
 
 let addFolder (definitionsManager:MailboxProcessor<Message>) workspaceFolder = 
-    AddFolder(workspaceFolder) |> definitionsManager.Post
+    AddFolder({WorkspaceFolder=workspaceFolder}) |> definitionsManager.Post
 
 let loader (definitionsManager:MailboxProcessor<Message>) = fun () ->
     Load |> definitionsManager.Post
 
 let find (definitionsManager:MailboxProcessor<Message>) (filter:Filter) =
-    let msgBuilder = fun rc -> Find(filter, rc)
+    let msgBuilder = fun rc -> Find({Filter=filter;ReplyChannel=rc})
     definitionsManager.PostAndAsyncReply(msgBuilder, 1000)
