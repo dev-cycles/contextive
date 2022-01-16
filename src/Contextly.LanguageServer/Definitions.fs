@@ -96,28 +96,32 @@ type private State =
 
 type LoadReply = string option
 
+type InitPayload = {
+    Logger: (string -> unit);
+    ConfigGetter: (unit -> Async<string option>);
+    RegisterWatchedFile: (string option -> Unregisterer) option;
+    OnErrorLoading: (string -> unit);
+}
+ 
+
 type Message =
-    | Init of
-        logger: (string -> unit) *
-        configGetter: (unit -> Async<string option>) *
-        registerWatchedFile: (string option -> Unregisterer) option *
-        onErrorLoading: (string -> unit)
+    | Init of InitPayload
     | AddFolder of workspaceFolder: string option
     | Load
     | Find of filter: Filter * replyChannel: AsyncReplyChannel<Term seq>
 
+let private handleInit state (initMsg:InitPayload) : State =
+    { 
+        state with
+            Logger = initMsg.Logger
+            ConfigGetter = initMsg.ConfigGetter
+            RegisterWatchedFile = initMsg.RegisterWatchedFile
+            OnErrorLoading = initMsg.OnErrorLoading
+    }
+
 let private handleMessage (state: State) (msg: Message) = async {
     return! match msg with
-            | Init(logger, configGetter, registerWatchedFile, onErrorLoading) -> async.Return { 
-                state with
-                    Logger = fun msg -> 
-                                async {
-                                    logger msg
-                                } |> Async.Start
-                    ConfigGetter = configGetter;
-                    RegisterWatchedFile = registerWatchedFile
-                    OnErrorLoading = onErrorLoading;
-                }
+            | Init(initMsg) -> handleInit state initMsg |> async.Return
             | AddFolder(workspaceFolder) -> async.Return { state with WorkspaceFolder = workspaceFolder }
             | Load -> async {
                     let! path = state.ConfigGetter()
@@ -127,14 +131,11 @@ let private handleMessage (state: State) (msg: Message) = async {
                     | Some ap -> state.Logger $"Loading contextly from {ap}..."
                     | None -> ()
 
-                    state.Logger $"Load from path {absolutePath}..."
                     let defs = loadFromPath absolutePath
-                    state.Logger $"Returned defs {defs}..."
                     let newState = 
                         match defs with 
                         | Some d -> { state with Definitions = d }
                         | _ -> { state with Definitions = Definitions.Default }
-                    state.Logger $"newState {newState}..."
                     
                     match absolutePath, defs with
                     | Some _, Some _ -> state.Logger "Succesfully loaded."
@@ -147,15 +148,12 @@ let private handleMessage (state: State) (msg: Message) = async {
                         | _, _ -> 
                             match state.UnregisterLastWatchedFile with
                             | Some unregister -> 
-                                state.Logger $"Unwatching {state.DefinitionsFilePath}."
                                 unregister()
                             | None -> ()
 
                             let unregisterer =
                                 match state.RegisterWatchedFile with
-                                | Some rwf -> 
-                                    state.Logger $"Watching {absolutePath}."
-                                    rwf absolutePath |> Some
+                                | Some rwf -> rwf absolutePath |> Some
                                 | None -> None
 
                             { newState with UnregisterLastWatchedFile = unregisterer; DefinitionsFilePath = absolutePath }
@@ -185,8 +183,9 @@ let create() = MailboxProcessor.Start(fun inbox ->
     loop <| State.Initial()
 )
 
-let init (definitionsManager:MailboxProcessor<Message>) logger configGetter registerWatchedFiles onErrorLoading = 
-    Init(logger, configGetter, registerWatchedFiles, onErrorLoading) |> definitionsManager.Post
+let init (definitionsManager:MailboxProcessor<Message>) logger configGetter registerWatchedFile onErrorLoading = 
+    Init({Logger=logger; ConfigGetter=configGetter; RegisterWatchedFile=registerWatchedFile; OnErrorLoading=onErrorLoading})
+    |> definitionsManager.Post
 
 let addFolder (definitionsManager:MailboxProcessor<Message>) workspaceFolder = 
     AddFolder(workspaceFolder) |> definitionsManager.Post
