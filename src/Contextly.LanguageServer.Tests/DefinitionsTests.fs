@@ -4,9 +4,6 @@ open Expecto
 open Swensen.Unquote
 open System.IO
 open Contextly.LanguageServer
-open TestClient
-open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
-open OmniSharp.Extensions.LanguageServer.Protocol.Models
 
 [<Tests>]
 let definitionsTests =

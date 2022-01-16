@@ -7,12 +7,19 @@ open System.IO
 open System.Linq
 open System.Collections.Generic
 open Contextly.LanguageServer
+open OmniSharp.Extensions.LanguageServer.Protocol.Client
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
-open OmniSharp.Extensions.LanguageServer.Protocol.Document
-open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open TestClient
 open WatchedFiles
+
+let didChangeWatchedFiles (client:ILanguageClient) (uri:string) = 
+    client.SendNotification(WorkspaceNames.DidChangeWatchedFiles, DidChangeWatchedFilesParams(
+        Changes = Container(FileEvent(
+            Uri = uri,
+            Type = FileChangeType.Created
+        ))
+    ))
 
 [<Tests>]
 let watchedFileTests =
@@ -62,7 +69,7 @@ let watchedFileTests =
             ConditionAwaiter.clear registrationAwaiter 500
 
             definitionsFile <- "three.yml"
-            client.Workspace.DidChangeConfiguration(DidChangeConfigurationParams())
+            ConfigurationSection.didChange client definitionsFile
 
             let! secondRegistrationMsg = ConditionAwaiter.waitFor registrationAwaiter (fun m -> match m with | Registered(_) -> true | _ -> false) 500
             let! unregistrationMsg = ConditionAwaiter.waitFor registrationAwaiter (fun m -> match m with | Unregistered(_) -> true | _ -> false) 500
@@ -96,19 +103,12 @@ let watchedFileTests =
             File.WriteAllText(definitionsFileUri, """contexts:
   - terms:
     - name: anewterm""")
-            
-            client.SendNotification(WorkspaceNames.DidChangeWatchedFiles, DidChangeWatchedFilesParams(
-                Changes = Container(FileEvent(
-                    Uri = definitionsFileUri,
-                    Type = FileChangeType.Created
-                ))
-            ))
 
-            let! result = client.TextDocument.RequestCompletion(CompletionParams()).AsTask() |> Async.AwaitTask
+            didChangeWatchedFiles client definitionsFileUri
+            
+            let! completionLabels = Completion.getCompletionLabels client
 
             File.Delete(definitionsFile)
-
-            let completionLabels = result.Items |> Seq.map (fun x -> x.Label)
 
             test <@ completionLabels |> Seq.contains "anewterm" @>
         }
@@ -132,18 +132,11 @@ let watchedFileTests =
 
             File.AppendAllText(definitionsFileUri, newDefinition)
             
-            client.SendNotification(WorkspaceNames.DidChangeWatchedFiles, DidChangeWatchedFilesParams(
-                Changes = Container(FileEvent(
-                    Uri = definitionsFileUri,
-                    Type = FileChangeType.Changed
-                ))
-            ))
+            didChangeWatchedFiles client definitionsFileUri
 
-            let! result = client.TextDocument.RequestCompletion(CompletionParams()).AsTask() |> Async.AwaitTask
+            let! completionLabels = Completion.getCompletionLabels client
 
             File.WriteAllText(definitionsFileUri, existingContents)
-
-            let completionLabels = result.Items |> Seq.map (fun x -> x.Label)
 
             test <@ completionLabels |> Seq.contains newTerm @>
         }
