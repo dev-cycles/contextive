@@ -4,6 +4,9 @@ open Expecto
 open Swensen.Unquote
 open System.IO
 open Contextly.LanguageServer
+open TestClient
+open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
+open OmniSharp.Extensions.LanguageServer.Protocol.Models
 
 [<Tests>]
 let definitionsTests =
@@ -11,7 +14,7 @@ let definitionsTests =
 
         let getDefinitions configGetter workspaceFolder = async {
             let definitions = Definitions.create()
-            Definitions.init definitions (fun _ -> ()) configGetter None
+            Definitions.init definitions (fun _ -> ()) configGetter None (fun _ -> ())
             Definitions.addFolder definitions workspaceFolder
             (Definitions.loader definitions)()
             return definitions
@@ -51,8 +54,8 @@ let definitionsTests =
             test <@ (foundDefinitions, expectedDefinitions) ||> Seq.compareWith compareList = 0 @>
         }
 
-        testAsync "Can recover from invalid definitions" {
-            let mutable path = getFileName "invalid"
+        let canRecoverFromInvalidDefinitions fileName = testAsync fileName {
+            let mutable path = getFileName fileName
             let workspaceFolder = Some ""
             let configGetter = (fun _ -> async.Return path)
 
@@ -70,4 +73,8 @@ let definitionsTests =
             test <@ (foundNames, oneExpectedNames) ||> compareList = 0 @>
         }
 
+        [
+            "invalid_empty"
+            "invalid_schema"
+        ] |> List.map canRecoverFromInvalidDefinitions |> testList "Can recover from invalid definitions"
     ]

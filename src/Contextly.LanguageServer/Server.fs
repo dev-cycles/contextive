@@ -7,6 +7,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Window
 open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
+open OmniSharp.Extensions.LanguageServer.Protocol
 open Microsoft.Extensions.Logging
 open Serilog
 open System.IO
@@ -49,8 +50,8 @@ let private onStartup definitions = OnLanguageServerStartedDelegate(fun (s:ILang
         let definitionsLoader = Definitions.loader definitions
 
         let registerWatchedFiles = Some <| WatchedFiles.register s definitionsLoader
-
-        Definitions.init definitions s.Window.LogInfo configGetter registerWatchedFiles
+       
+        Definitions.init definitions s.Window.LogInfo configGetter registerWatchedFiles s.Window.ShowWarning
         Definitions.addFolder definitions workspaceFolder
       
         definitionsLoader()
