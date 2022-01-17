@@ -9,13 +9,15 @@ open Contextly.LanguageServer
 let definitionsTests =
     testList "Definitions File Tests" [
 
-        let getDefinitions configGetter workspaceFolder = async {
+        let getDefinitionsWithErrorHandler onErrorAction configGetter workspaceFolder  = async {
             let definitions = Definitions.create()
-            Definitions.init definitions (fun _ -> ()) configGetter None (fun _ -> ())
+            Definitions.init definitions (fun _ -> ()) configGetter None onErrorAction
             Definitions.addFolder definitions workspaceFolder
             (Definitions.loader definitions)()
             return definitions
         }
+
+        let getDefinitions = getDefinitionsWithErrorHandler (fun _ -> ())
 
         let getFileName fileName = Path.Combine("fixtures", "completion_tests", $"{fileName}.yml") |> Some
 
@@ -51,27 +53,33 @@ let definitionsTests =
             test <@ (foundDefinitions, expectedDefinitions) ||> Seq.compareWith compareList = 0 @>
         }
 
-        let canRecoverFromInvalidDefinitions fileName = testAsync fileName {
-            let mutable path = getFileName fileName
-            let workspaceFolder = Some ""
-            let configGetter = (fun _ -> async.Return path)
+        let canRecoverFromInvalidDefinitions (fileName, expectedErrorMessage) =
+            testAsync fileName {
+                let mutable path = getFileName fileName
+                let workspaceFolder = Some ""
+                let configGetter = (fun _ -> async.Return path)
 
-            let! definitions = getDefinitions configGetter workspaceFolder
-            let! termsWhenInvalid = Definitions.find definitions (fun _ -> true)
+                let errorMessage = ref ""
+                let onErrorLoading = fun msg -> errorMessage.Value <- msg
+                let! definitions = getDefinitionsWithErrorHandler onErrorLoading configGetter workspaceFolder
+                let! termsWhenInvalid = Definitions.find definitions (fun _ -> true)
 
-            test <@ Seq.length termsWhenInvalid = 0 @>
+                do! Async.Sleep 100
 
-            path <- getFileName "one"
-            (Definitions.loader definitions)()
+                test <@ errorMessage.Value = expectedErrorMessage @>
+                test <@ Seq.length termsWhenInvalid = 0 @>
 
-            let! termsWhenValid = Definitions.find definitions (fun _ -> true)
-            let foundNames = termsWhenValid |> Seq.map (fun t -> t.Name)
+                path <- getFileName "one"
+                (Definitions.loader definitions)()
 
-            test <@ (foundNames, oneExpectedNames) ||> compareList = 0 @>
-        }
+                let! termsWhenValid = Definitions.find definitions (fun _ -> true)
+                let foundNames = termsWhenValid |> Seq.map (fun t -> t.Name)
+
+                test <@ (foundNames, oneExpectedNames) ||> compareList = 0 @>
+            }
 
         [
-            "invalid_empty"
-            "invalid_schema"
+            ("invalid_empty","Error loading definitions: Definitions file is empty.")
+            ("invalid_schema","Error loading definitions: Error parsing definitions file:  Object starting line 4, column 7 - Property 'example' not found on type 'Contextly.LanguageServer.Definitions+Term'.")
         ] |> List.map canRecoverFromInvalidDefinitions |> testList "Can recover from invalid definitions"
     ]

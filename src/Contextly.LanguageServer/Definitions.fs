@@ -45,16 +45,16 @@ let private deserialize (yml:string) =
                 .Build()
         let definitions = deserializer.Deserialize<Definitions>(yml)
         match definitions |> box with
-        | null -> None
-        | _ -> Some definitions
+        | null -> Error "Definitions file is empty."
+        | _ -> Ok definitions
     with
-    | e -> 
-        None
+    | :? YamlDotNet.Core.YamlException as e -> 
+        Error $"Error parsing definitions file:  Object starting line {e.Start.Line}, column {e.Start.Column} - {e.InnerException.Message}"
 
 let private loadContextly path =
     match tryReadFile path with
     | None -> None
-    | Some(ymlText) -> deserialize ymlText
+    | Some(ymlText) -> deserialize ymlText |> Some
 
 let private getPath workspaceFolder (path: string option) =
     match path with
@@ -155,15 +155,19 @@ module private Handle =
             absolutePath |> Option.iter (fun ap -> state.Logger $"Loading contextly from {ap}...") 
 
             let defs = loadFromPath absolutePath
-            let newState = { state with Definitions = defaultArg defs Definitions.Default }
-            
-            match absolutePath, defs with
-            | Some _, Some _ -> state.Logger "Succesfully loaded."
-            | Some ap, None -> 
-                let msg = $"Error loading definitions.  Please check syntax in {ap}."
-                state.Logger msg
-                state.OnErrorLoading msg
-            | _, _ -> ()
+
+            let newState = match defs with
+                            | Some loadResult ->
+                                match loadResult with
+                                | Ok defs -> 
+                                    state.Logger "Succesfully loaded."
+                                    { state with Definitions = defs }
+                                | Error msg -> 
+                                    let msg = $"Error loading definitions: {msg}"
+                                    state.Logger msg
+                                    state.OnErrorLoading msg
+                                    state
+                            | None -> state
 
             return updateFileWatchers newState absolutePath
         }
