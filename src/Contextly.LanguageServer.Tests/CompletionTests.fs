@@ -4,7 +4,6 @@ open Expecto
 open Swensen.Unquote
 open System.IO
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
-open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open Contextly.LanguageServer
 open Contextly.LanguageServer.Definitions
 open TestClient
@@ -15,11 +14,9 @@ let completionTests =
         testAsync "Given no contextly respond with empty completion list " {
             use! client = SimpleTestClient |> init
 
-            let completionParams = CompletionParams()
-
-            let! result = client.TextDocument.RequestCompletion(completionParams).AsTask() |> Async.AwaitTask
+            let! completionLabels = Completion.getCompletionLabels client
         
-            test <@ Seq.length result.Items = 0 @>
+            test <@ Seq.length completionLabels = 0 @>
         }
 
         let testFileReader (fileName, text, position, expectedList) =
@@ -33,23 +30,11 @@ let completionTests =
             
                 let textDocumentUri = $"file:///{System.Guid.NewGuid().ToString()}"
 
-                client.TextDocument.DidOpenTextDocument(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
-                    LanguageId = "plaintext",
-                    Version = 0,
-                    Text = text,
-                    Uri = textDocumentUri
-                )))
-
-                let completionParams = CompletionParams(
-                    TextDocument = textDocumentUri,
-                    Position = position
-                )
-
-                let! result = client.TextDocument.RequestCompletion(completionParams).AsTask() |> Async.AwaitTask
+                let! result = client |> Completion.getCompletionFromText text textDocumentUri position
 
                 test <@ result.IsIncomplete @>
 
-                let completionLabels = result.Items |> Seq.map (fun x -> x.Label)
+                let completionLabels = Completion.getLabels result
 
                 test <@ (completionLabels, expectedList) ||> Seq.compareWith compare = 0 @>
             }
@@ -72,9 +57,9 @@ let completionTests =
                     Position = Position()
                 )
 
-                let result = (Completion.handler finder wordGetter completionParams null null).Result
-
-                let completionLabels = result.Items |> Seq.map (fun x -> x.Label)
+                let completionLabels =
+                    (Completion.handler finder wordGetter completionParams null null).Result
+                    |> Completion.getLabels
 
                 test <@ (completionLabels, seq {expectedCompletionLabel}) ||> Seq.compareWith compare = 0 @>
         [

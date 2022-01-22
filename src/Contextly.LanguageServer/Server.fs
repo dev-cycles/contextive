@@ -49,8 +49,8 @@ let private onStartup definitions = OnLanguageServerStartedDelegate(fun (s:ILang
         let definitionsLoader = Definitions.loader definitions
 
         let registerWatchedFiles = Some <| WatchedFiles.register s definitionsLoader
-
-        Definitions.init definitions s.Window.LogInfo configGetter registerWatchedFiles
+       
+        Definitions.init definitions s.Window.LogInfo configGetter registerWatchedFiles s.Window.ShowWarning
         Definitions.addFolder definitions workspaceFolder
       
         definitionsLoader()

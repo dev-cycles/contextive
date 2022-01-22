@@ -31,7 +31,7 @@ Use the `Contextly: Initialize Definitions` command from the command palette to 
 
 This extension contributes the following settings:
 
-* `contextly.path`: The path of the `contextly.yml` file that stores the Contextly definitions.  Default: `.contextly/definitions.yml`
+* `contextly.path`: The path of the file that stores the Contextly definitions.  Default: `.contextly/definitions.yml`
 
 ## Known Issues
 

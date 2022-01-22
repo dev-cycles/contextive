@@ -6,14 +6,15 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Completion.fs" />
     <Compile Include="ConditionAwaiter.fs" />
     <Compile Include="WatchedFiles.fs" />
     <Compile Include="ServerLog.fs" />
     <Compile Include="Workspace.fs" />
-    <Compile Include="ConfigurationSection.fs" />
     <Compile Include="TestClient.fs" />
-    <Compile Include="DefinitionsTests.fs" />
+    <Compile Include="ConfigurationSection.fs" />
     <Compile Include="ConfigurationTests.fs" />
+    <Compile Include="DefinitionsTests.fs" />
     <Compile Include="WatchedFilesTests.fs" />
     <Compile Include="TextDocumentTests.fs" />
     <Compile Include="CompletionTests.fs" />
@@ -29,6 +30,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="fixtures/completion_tests/three.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fixtures/completion_tests/invalid_schema.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fixtures/completion_tests/invalid_empty.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

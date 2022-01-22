@@ -32,13 +32,14 @@ let expectCompletion path position expectedResults (onBeforeAssert : (unit -> JS
         Expect.isSome result "executeCompletionItemProvider should return a result"
 }
 
+let DefaultExpectedTerms = seq {"context"; "definition"; "example"; "term"}
+
 let tests =
     testList "Contextly Completion Tests" [
 
         testCaseAsync "Completion returns expected list" <| async {
             let testDocPath = "../test/fixtures/simple_workspace/test.txt"
             let position = vscode.Position.Create(0.0, 10.0)
-            let expectedResults = seq {"context"; "definition"; "example"; "term"}
-            do! expectCompletion testDocPath position expectedResults None
+            do! expectCompletion testDocPath position DefaultExpectedTerms None
         }
     ]

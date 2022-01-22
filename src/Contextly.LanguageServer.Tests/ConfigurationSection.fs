@@ -48,3 +48,12 @@ let mapLoader (pathLoader:PathLoader) () = Map[("path", pathLoader())]
 let contextlyPathLoaderOptionsBuilder (pathLoader:PathLoader) = optionsBuilder "contextly" <| mapLoader pathLoader
 
 let contextlyPathOptionsBuilder path = contextlyPathLoaderOptionsBuilder (fun () -> path)
+
+let didChange (client:ILanguageClient) path =
+    let setting = jTokenFromMap <| Map[("path", path)]
+    let configSection = jTokenFromMap <| Map[("contextly", setting)]
+
+    let didChangeConfig = DidChangeConfigurationParams(
+        Settings = configSection
+    )
+    client.Workspace.DidChangeConfiguration(didChangeConfig)

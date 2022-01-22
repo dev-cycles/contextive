@@ -1,0 +1,7 @@
+# Invalid definitions.  `example` is an unknown key - it should be `examples`
+contexts:
+  - terms:
+    - name: invalidTerm
+      definition: A term with an invalid schema in the definitions.yml
+      example:
+        - This should be in the `examples` key.

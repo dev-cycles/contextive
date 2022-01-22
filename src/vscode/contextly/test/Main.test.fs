@@ -7,9 +7,14 @@ open Fable.Core
 [<Import("*", from="mocha")>]
 let Mocha: obj = jsNative
 
+Helpers.afterEach("reset config", fun () -> promise {
+    do! Helpers.resetConfig()
+})
+
 Fable.Mocha.Mocha.runTests <| testList "All" [
     Extension.tests
     Completion.tests
     Initialize.tests
+    InvalidSchema.tests
 ] |> ignore
 
