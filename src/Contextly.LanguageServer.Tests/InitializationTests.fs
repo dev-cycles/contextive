@@ -17,7 +17,7 @@ let initializationTests =
 
         testAsync "Has Correct ServerInfo Name" {
             use! client = SimpleTestClient |> init
-            test <@ client.ServerSettings.ServerInfo.Name = "Contextly" @>
+            test <@ client.ServerSettings.ServerInfo.Name = "Contextly.LanguageServer" @>
         }
 
         testAsync "Server loads contextly file from relative location with workspace" {

@@ -14,7 +14,7 @@ open System.Reflection
 
 let configSection = "contextly"
 let pathKey = "path"
-let assembly = Assembly.GetEntryAssembly()
+let assembly = Assembly.GetExecutingAssembly()
 let name = assembly.GetName().Name
 let version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion
 
