@@ -8,6 +8,10 @@
 
 Use the [semantic-release](https://www.npmjs.com/package/semantic-release) package to manage version changes, change logs and release activities.  Use branches for feature development and merge to `main` when a feature is complete.  Any commit to `main` will trigger a new release using [semantic-release](https://www.npmjs.com/package/semantic-release).
 
+During pre-release, `main` will be marked as a pre-release branch.  Since `semantic-release` requires at least one `release` branch, a temporary branch will be created to server that purpose. Once ready for public release, `main` will become the release branch.
+
+Since `semantic-release` doesn't support major versions < 1, a v1.0.0 tag will be added manually to the latest manually created release to serve as the baseline for the first `semantic-release` managed release.
+
 ## Context and Problem Statement
 
 There are two areas of Release management that are determined in this ADR:
