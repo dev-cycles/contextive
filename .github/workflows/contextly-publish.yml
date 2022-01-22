@@ -58,9 +58,14 @@ jobs:
       - name: Package VsCode Extension
         run: npx vsce package -t ${{ matrix.vsce_platform }}
         working-directory: ./src/vscode/contextly
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@master
+        with:
+          path: "src/vscode/contextly/"
       - name: Upload to release
         uses: JasonEtco/upload-to-release@master
         with:
-          args: "src/vscode/contextly/contextly-${{ matrix.vsce_platform }}-*.vsix"
+          args: "src/vscode/contextly/contextly-${{ matrix.vsce_platform }}-${{ steps.package-version.outputs.current-version}}.vsix"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
