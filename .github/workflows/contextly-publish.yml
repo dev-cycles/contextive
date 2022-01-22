@@ -1,15 +1,12 @@
 name: Contextly Publish
-on:
-  push:
-    tags:
-      - 'v**'
+on: release
+  
 env:
   dotnet-version: '6.0.x'
   CONTEXTLY_CI: true
 jobs:
   publish:
     name: Publish
-    needs: build-and-test
     strategy:
       matrix:
         include:

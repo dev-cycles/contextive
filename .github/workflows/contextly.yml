@@ -7,8 +7,6 @@ on:
 # for the intersection between branch and tag-ignore
     branches: 
       - '**'
-    tags-ignore:
-      - '**'
     
 env:
   dotnet-version: '6.0.x'
