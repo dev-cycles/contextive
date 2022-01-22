@@ -1,5 +1,18 @@
 # Change Log
 
+# [1.1.0-test.1](https://github.com/dev-cycles/contextly/compare/v1.0.0...v1.1.0-test.1) (2022-01-22)
+
+
+### Bug Fixes
+
+* **devcontainer:** Resolve adr template default setting by ensuring /home/vscode/.config exists in advance, and running scripts with  to ensure profile env variables are loaded. ([#20](https://github.com/dev-cycles/contextly/issues/20)) ([9c4639e](https://github.com/dev-cycles/contextly/commit/9c4639e6c4ab7f3845e0c403a9c50d76ec4df9a4))
+* handle invalid definitions file ([#21](https://github.com/dev-cycles/contextly/issues/21)) ([caba982](https://github.com/dev-cycles/contextly/commit/caba98230ee995177bfa098b4f8604f09c640da5))
+
+
+### Features
+
+* Add more word boundary delimiters (arrays, parentheses, parens) ([#18](https://github.com/dev-cycles/contextly/issues/18)) ([5c6d6be](https://github.com/dev-cycles/contextly/commit/5c6d6be5b854833ac278b17804838bfd27d0cd06))
+
 # [v0.0.1](https://github.com/dev-cycles/contextly/compare/v0.0.2-beta...v1.0.0) (2022-01-22)
 
 This is a release label attached to the existing v0.0.1-beta release, in order to serve as a baseline for [semantic-release](https://semantic-release.gitbook.io/semantic-release/).
