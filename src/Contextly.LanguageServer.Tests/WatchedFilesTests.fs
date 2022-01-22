@@ -108,7 +108,7 @@ let watchedFileTests =
             
             let! completionLabels = Completion.getCompletionLabels client
 
-            File.Delete(definitionsFile)
+            File.Delete(definitionsFileUri)
 
             test <@ completionLabels |> Seq.contains "anewterm" @>
         }

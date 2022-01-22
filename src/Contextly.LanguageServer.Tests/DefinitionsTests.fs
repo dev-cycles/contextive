@@ -56,16 +56,19 @@ let definitionsTests =
         let canRecoverFromInvalidDefinitions (fileName, expectedErrorMessage) =
             testAsync fileName {
                 let mutable path = getFileName fileName
+
                 let workspaceFolder = Some ""
                 let configGetter = (fun _ -> async.Return path)
 
-                let errorMessage = ref ""
-                let onErrorLoading = fun msg -> errorMessage.Value <- msg
+                let errorMessageAwaiter = ConditionAwaiter.create()
+
+                let onErrorLoading = fun msg -> ConditionAwaiter.received errorMessageAwaiter msg
+
                 let! definitions = getDefinitionsWithErrorHandler onErrorLoading configGetter workspaceFolder
                 let! termsWhenInvalid = Definitions.find definitions (fun _ -> true)
 
-                do! Async.Sleep 100
-
+                
+                let! errorMessage = ConditionAwaiter.waitForAny errorMessageAwaiter 500
                 test <@ errorMessage.Value = expectedErrorMessage @>
                 test <@ Seq.length termsWhenInvalid = 0 @>
 
