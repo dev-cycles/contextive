@@ -62,3 +62,5 @@ jobs:
         uses: JasonEtco/upload-to-release@master
         with:
           args: "src/vscode/contextly/contextly-${{ matrix.vsce_platform }}-*.vsix"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
