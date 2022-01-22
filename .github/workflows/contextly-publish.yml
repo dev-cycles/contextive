@@ -63,9 +63,9 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@master
         with:
           path: "src/vscode/contextly/"
-      - name: Upload to release
-        uses: JasonEtco/upload-to-release@master
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          args: "src/vscode/contextly/contextly-${{ matrix.vsce_platform }}-${{ steps.package-version.outputs.current-version}}.vsix"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: "src/vscode/contextly/contextly-${{ matrix.vsce_platform }}-${{ steps.package-version.outputs.current-version}}.vsix"
+          tag: ${{ github.ref }}
