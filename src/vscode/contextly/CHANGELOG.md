@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.1.0-test.2](https://github.com/dev-cycles/contextly/compare/v1.1.0-test.1...v1.1.0-test.2) (2022-01-22)
+
+
+### Bug Fixes
+
+* upload artifact to release, trying a different action ([f4a5b0a](https://github.com/dev-cycles/contextly/commit/f4a5b0a5cd0f273328f268cf8d30856f6381c62b))
+
 # [1.1.0-test.1](https://github.com/dev-cycles/contextly/compare/v1.0.0...v1.1.0-test.1) (2022-01-22)
 
 
