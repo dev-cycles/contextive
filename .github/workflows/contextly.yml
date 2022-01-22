@@ -88,18 +88,9 @@ jobs:
           name: VsCode Extension Tests
           path: "src/vscode/**/TestResults-${{ env.dotnet-version }}.xml"
           reporter: java-junit
-      - run: echo "🍏 This job's status is ${{ job.status }}."
-
-  release:
-    name: Release
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Restore npm dependencies
-        run: npm install
-        working-directory: ./src/vscode/contextly
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
         working-directory: ./src/vscode/contextly
+      - run: echo "🍏 This job's status is ${{ job.status }}."
