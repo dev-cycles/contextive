@@ -1,5 +1,7 @@
 name: Contextly Publish
-on: release
+on:
+  release:
+    types: [published]
   
 env:
   dotnet-version: '6.0.x'
@@ -56,8 +58,7 @@ jobs:
       - name: Package VsCode Extension
         run: npx vsce package -t ${{ matrix.vsce_platform }}
         working-directory: ./src/vscode/contextly
-      - name: Upload Extension Vsix
-        uses: actions/upload-artifact@v2
+      - name: Upload to release
+        uses: JasonEtco/upload-to-release@master
         with:
-          name: "VsCode Extension"
-          path: "src/vscode/contextly/contextly-${{ matrix.vsce_platform }}-*.vsix"
+          args: "src/vscode/contextly/contextly-${{ matrix.vsce_platform }}-*.vsix"
