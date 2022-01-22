@@ -166,7 +166,7 @@ module private Handle =
                                     let msg = $"Error loading definitions: {msg}"
                                     state.Logger msg
                                     state.OnErrorLoading msg
-                                    state
+                                    { state with Definitions = Definitions.Default }
                             | None -> state
 
             return updateFileWatchers newState absolutePath

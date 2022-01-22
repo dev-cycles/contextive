@@ -4,6 +4,7 @@ open Expecto
 open Swensen.Unquote
 open System.IO
 open Contextly.LanguageServer
+open TestClient
 
 [<Tests>]
 let definitionsTests =
@@ -53,6 +54,12 @@ let definitionsTests =
             test <@ (foundDefinitions, expectedDefinitions) ||> Seq.compareWith compareList = 0 @>
         }
 
+        let invalidScenarios =
+            [
+                ("invalid_empty","Error loading definitions: Definitions file is empty.")
+                ("invalid_schema","Error loading definitions: Error parsing definitions file:  Object starting line 4, column 7 - Property 'example' not found on type 'Contextly.LanguageServer.Definitions+Term'.")
+            ]
+
         let canRecoverFromInvalidDefinitions (fileName, expectedErrorMessage) =
             testAsync fileName {
                 let mutable path = getFileName fileName
@@ -67,7 +74,6 @@ let definitionsTests =
                 let! definitions = getDefinitionsWithErrorHandler onErrorLoading configGetter workspaceFolder
                 let! termsWhenInvalid = Definitions.find definitions (fun _ -> true)
 
-                
                 let! errorMessage = ConditionAwaiter.waitForAny errorMessageAwaiter 500
                 test <@ errorMessage.Value = expectedErrorMessage @>
                 test <@ Seq.length termsWhenInvalid = 0 @>
@@ -80,9 +86,38 @@ let definitionsTests =
 
                 test <@ (foundNames, oneExpectedNames) ||> compareList = 0 @>
             }
+        
+        invalidScenarios |> List.map canRecoverFromInvalidDefinitions |> testList "Can recover from invalid definitions"
 
-        [
-            ("invalid_empty","Error loading definitions: Definitions file is empty.")
-            ("invalid_schema","Error loading definitions: Error parsing definitions file:  Object starting line 4, column 7 - Property 'example' not found on type 'Contextly.LanguageServer.Definitions+Term'.")
-        ] |> List.map canRecoverFromInvalidDefinitions |> testList "Can recover from invalid definitions"
+        let canRecoverFromInvalidDefinitionsInNewConfig (fileName, _) =
+            testAsync fileName {
+                let validPath = "one.yml"
+                let mutable path = validPath
+
+                let pathLoader():obj = path
+
+                let config = [
+                    Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
+                    ConfigurationSection.contextlyPathLoaderOptionsBuilder pathLoader
+                ]
+
+                use! client = TestClient(config) |> init
+
+                let! termsWhenValidAtStart = Completion.getCompletionLabels client
+                test <@ (termsWhenValidAtStart, oneExpectedNames) ||> compareList = 0 @>
+
+                path <- $"{fileName}.yml"
+                ConfigurationSection.didChange client path
+
+                let! termsWhenInvalid = Completion.getCompletionLabels client
+                test <@ Seq.length termsWhenInvalid = 0 @>
+
+                path <- validPath
+                ConfigurationSection.didChange client path
+
+                let! termsWhenValidAtEnd = Completion.getCompletionLabels client
+                test <@ (termsWhenValidAtEnd, oneExpectedNames) ||> compareList = 0 @>
+            }
+        
+        invalidScenarios |> List.map canRecoverFromInvalidDefinitionsInNewConfig |> testList "Can recover from invalid definitions in fresh config"
     ]

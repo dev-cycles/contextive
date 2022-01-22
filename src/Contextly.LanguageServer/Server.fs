@@ -7,7 +7,6 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Window
 open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
-open OmniSharp.Extensions.LanguageServer.Protocol
 open Microsoft.Extensions.Logging
 open Serilog
 open System.IO
