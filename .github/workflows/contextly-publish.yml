@@ -6,7 +6,8 @@ on:
 env:
   dotnet-version: '6.0.x'
   CONTEXTLY_CI: true
-package:
+jobs:
+  package:
     name: Package
     needs: build-and-test
     strategy:

@@ -6,9 +6,9 @@ on:
 # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushbranchestagsbranches-ignoretags-ignore
 # for the intersection between branch and tag-ignore
     branches: 
-      - **
+      - '**'
     tags-ignore:
-      - **
+      - '**'
     
 env:
   dotnet-version: '6.0.x'
