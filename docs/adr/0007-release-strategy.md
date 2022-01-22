@@ -22,10 +22,11 @@ When a release is triggered, a series of steps needs to be actioned:
 
 1. Validating the proposed release (automated tests)
 2. Compiling and packaging the Language Server for all target platforms & architectures
-3. Packaging the Visual Studio Code extension
-4. Creating a github release
-5. Uploading the extension packages (1 per target platform) to the VS Code Extension marketplace(s)
-6. Committing & pushing changes to the version number into the repo, tagging the commit with the release
+3. Preparing release notes
+4. Committing & pushing changes to the version number (package.json) and changelog into the repo, tagging the commit with the release
+5. Packaging the Visual Studio Code extension (including the new version number in the package)
+6. Creating a github release, including the packages as files attached to the release
+7. Uploading the extension packages (1 per target platform) to the VS Code Extension marketplace(s)
 
 ### General Context
 

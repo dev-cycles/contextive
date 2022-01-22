@@ -1,0 +1,65 @@
+name: Contextly Publish
+on:
+  push:
+    tags:
+      - v**
+env:
+  dotnet-version: '6.0.x'
+  CONTEXTLY_CI: true
+package:
+    name: Package
+    needs: build-and-test
+    strategy:
+      matrix:
+        include:
+          - dotnet_runtime: win-x64
+            vsce_platform: win32-x64
+            os: windows-latest
+          - dotnet_runtime: linux-x64
+            vsce_platform: linux-x64
+            os: ubuntu-latest
+          - dotnet_runtime: osx-x64
+            vsce_platform: darwin-x64
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: Setup .NET Core SDK ${{ env.dotnet-version }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.dotnet-version }}
+          include-prerelease: true
+      - name: Display dotnet version
+        run: dotnet --version
+      - name: Install Fable
+        run: dotnet tool install fable --global
+      - name: Install paket
+        run: dotnet tool install paket --global
+      - name: Restore paket dependencies
+        run: paket restore
+        working-directory: ./src
+      - name: Build Language Server
+        run: |
+          dotnet publish -c Release -r ${{ matrix.dotnet_runtime }} -o publish --self-contained
+        working-directory: ./src/Contextly.LanguageServer
+      - name: Copy Language Server to VsCode Extension Folder
+        run: mkdir -p ../vscode/contextly/dist && cp publish/* ../vscode/contextly/dist
+        working-directory: ./src/Contextly.LanguageServer
+      - name: Restore npm dependencies
+        run: npm install
+        working-directory: ./src/vscode/contextly
+      - name: Package VsCode Extension
+        run: npx vsce package -t ${{ matrix.vsce_platform }}
+        working-directory: ./src/vscode/contextly
+      - name: Upload Extension Vsix
+        uses: actions/upload-artifact@v2
+        with:
+          name: "VsCode Extension"
+          path: "src/vscode/contextly/contextly-${{ matrix.vsce_platform }}-*.vsix"
