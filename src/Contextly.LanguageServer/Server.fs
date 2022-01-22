@@ -10,9 +10,13 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open Microsoft.Extensions.Logging
 open Serilog
 open System.IO
+open System.Reflection
 
 let configSection = "contextly"
 let pathKey = "path"
+let assembly = Assembly.GetEntryAssembly()
+let name = assembly.GetName().Name
+let version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion
 
 let private getConfig (s:ILanguageServer) section key = async {
     Log.Logger.Information $"Getting {section} {key} config..."
@@ -40,6 +44,7 @@ let private getWorkspaceFolder (s:ILanguageServer) =
 
 let private onStartup definitions = OnLanguageServerStartedDelegate(fun (s:ILanguageServer) _cancellationToken ->
     async {
+        s.Window.LogInfo $"Starting {name} v{version}..."
         let configGetter() = getConfig s configSection pathKey
         // Not sure if this is needed to ensure configuration is loaded, or allow a task/context switch
         // Either way, if it's not here, then getWorkspaceFolder returns null
@@ -66,7 +71,7 @@ let private configureServer (input: Stream) (output: Stream) (opts:LanguageServe
         .OnStarted(onStartup definitions)
         .WithConfigurationSection(configSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z -> z.AddLanguageProtocolLogging().AddSerilog(Log.Logger).SetMinimumLevel(LogLevel.Trace) |> ignore)
-        .WithServerInfo(ServerInfo(Name = "Contextly"))
+        .WithServerInfo(ServerInfo(Name = name, Version = version))
 
         .OnDidChangeConfiguration(Configuration.handler <| Definitions.loader definitions)
         .OnCompletion(Completion.handler <| Definitions.find definitions <| TextDocument.getWord, Completion.registrationOptions)

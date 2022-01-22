@@ -49,6 +49,7 @@
 		"test": "node ./out/runTest.js"
 	},
 	"devDependencies": {
+		"@google/semantic-release-replace-plugin": "^1.1.0",
 		"@semantic-release/changelog": "^6.0.1",
 		"@semantic-release/git": "^10.0.1",
 		"@sinonjs/fake-timers": "^7.1.2",

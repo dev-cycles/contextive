@@ -5,11 +5,15 @@ open Serilog
 open System
 
 let setupLogging = 
+#if DEBUG
     Log.Logger <- LoggerConfiguration()
         .MinimumLevel.Verbose()
         .Enrich.FromLogContext()
         .WriteTo.File("log.txt", rollingInterval = RollingInterval.Day)
         .CreateLogger();
+#else
+    ()
+#endif
 
 let private startWithConsole = 
     setupAndStartLanguageServer (Console.OpenStandardInput()) (Console.OpenStandardOutput())
