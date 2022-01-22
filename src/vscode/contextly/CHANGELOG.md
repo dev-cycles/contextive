@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.1.0-test.3](https://github.com/dev-cycles/contextly/compare/v1.1.0-test.2...v1.1.0-test.3) (2022-01-22)
+
+
+### Bug Fixes
+
+* extract version using jq and github action exec with output ([03068a8](https://github.com/dev-cycles/contextly/commit/03068a83c96f4b41bc4770231b6410783c276def))
+
 # [1.1.0-test.2](https://github.com/dev-cycles/contextly/compare/v1.1.0-test.1...v1.1.0-test.2) (2022-01-22)
 
 
