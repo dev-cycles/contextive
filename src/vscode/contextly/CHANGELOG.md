@@ -1,5 +1,22 @@
 # Change Log
 
+# [1.1.0](https://github.com/dev-cycles/contextly/compare/v1.0.0...v1.1.0) (2022-01-22)
+
+
+### Bug Fixes
+
+* **devcontainer:** Resolve adr template default setting by ensuring /home/vscode/.config exists in advance, and running scripts with  to ensure profile env variables are loaded. ([#20](https://github.com/dev-cycles/contextly/issues/20)) ([9c4639e](https://github.com/dev-cycles/contextly/commit/9c4639e6c4ab7f3845e0c403a9c50d76ec4df9a4))
+* extract version using jq and github action exec with output ([03068a8](https://github.com/dev-cycles/contextly/commit/03068a83c96f4b41bc4770231b6410783c276def))
+* get correct assembly name for reporting language server name ([018d089](https://github.com/dev-cycles/contextly/commit/018d089e7f11c635c25ff2780652b6b68cf88d24))
+* handle invalid definitions file ([#21](https://github.com/dev-cycles/contextly/issues/21)) ([caba982](https://github.com/dev-cycles/contextly/commit/caba98230ee995177bfa098b4f8604f09c640da5))
+* update language server version, and emit log ([3ec115f](https://github.com/dev-cycles/contextly/commit/3ec115f408b02e87997b6701f3f5e0239fa4aa8f))
+* upload artifact to release, trying a different action ([f4a5b0a](https://github.com/dev-cycles/contextly/commit/f4a5b0a5cd0f273328f268cf8d30856f6381c62b))
+
+
+### Features
+
+* Add more word boundary delimiters (arrays, parentheses, parens) ([#18](https://github.com/dev-cycles/contextly/issues/18)) ([5c6d6be](https://github.com/dev-cycles/contextly/commit/5c6d6be5b854833ac278b17804838bfd27d0cd06))
+
 # [1.1.0-test.3](https://github.com/dev-cycles/contextly/compare/v1.1.0-test.2...v1.1.0-test.3) (2022-01-22)
 
 
