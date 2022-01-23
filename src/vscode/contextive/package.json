@@ -5,6 +5,7 @@
 	"version": "1.1.0",
 	"publisher": "devcycles",
 	"license": "SEE LICENSE IN LICENSE",
+	"icon": "images/contextive.png",
 	"repository": {
 		"url": "https://github.com/dev-cycles/contextive"
 	},
