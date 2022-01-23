@@ -21,6 +21,9 @@ jobs:
           - dotnet_runtime: osx-x64
             vsce_platform: darwin-x64
             os: macos-latest
+          - dotnet_runtime: osx-arm64
+            vsce_platform: darwin-arm64
+            os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
