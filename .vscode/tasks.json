@@ -9,7 +9,7 @@
             "type": "shell",
             "args": [
                 "build",
-                "${workspaceRoot}/${config:languageServerPath}/Contextly.LanguageServer.fsproj",
+                "${workspaceRoot}/${config:languageServerPath}/Contextive.LanguageServer.fsproj",
                 // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
                 // Do not generate summary otherwise it leads to duplicate errors in Problems panel
@@ -27,7 +27,7 @@
             "type": "shell",
             "args": [
                 "build",
-                "${workspaceRoot}/${config:languageServerTestsPath}/Contextly.LanguageServer.Tests.fsproj",
+                "${workspaceRoot}/${config:languageServerTestsPath}/Contextive.LanguageServer.Tests.fsproj",
                 // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
                 // Do not generate summary otherwise it leads to duplicate errors in Problems panel

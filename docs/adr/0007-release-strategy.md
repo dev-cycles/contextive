@@ -35,7 +35,7 @@ When a release is triggered, a series of steps needs to be actioned:
 ### General Context
 
 * Processes that require manual steps are likely to be inconsistently executed
-* There is a preference to invest time in developing software unique to Contextly and leveraging existing systems and tools for common/generic functionality
+* There is a preference to invest time in developing software unique to Contextive and leveraging existing systems and tools for common/generic functionality
 * There is currently no need for a pre-release or beta channel (this may change in the future)
 
 ## Decision Drivers 
@@ -79,7 +79,7 @@ Key decision drivers are:
 
 * If we merge to main too often, we may push updates faster than users are happy with.  If this happens, we should investigate a separate `release` branch, and manually, or on a schedule, merge from `main` to `release` to trigger the release.
 * Although there are tools to enforce the conventional commit approach when committing locally, squash merges of merge requests via the github UI do not allow to enforce a commit message structure.  
-* [semantic-release](https://www.npmjs.com/package/semantic-release) is tailored for javascript packages.  Contextly expects to have other types of packages in the future (e.g. Visual Studio extension) which may not be as amenable to it's use.  This will need to be revisited when that extension is added.
+* [semantic-release](https://www.npmjs.com/package/semantic-release) is tailored for javascript packages.  Contextive expects to have other types of packages in the future (e.g. Visual Studio extension) which may not be as amenable to it's use.  This will need to be revisited when that extension is added.
 
 ## Pros and Cons of the Options
 

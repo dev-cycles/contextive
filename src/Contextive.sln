@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.LanguageServer", "Contextive.LanguageServer\Contextive.LanguageServer.fsproj", "{662D5E4C-A0D9-46AA-A692-9D0B8156EC8D}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.LanguageServer.Tests", "Contextive.LanguageServer.Tests\Contextive.LanguageServer.Tests.fsproj", "{85E2E304-240D-4064-9933-3807E2D2B997}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension", "vscode\contextive\src\Contextive.VsCodeExtension.fsproj", "{8DA034DE-6B86-4843-9616-767DD40369B7}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension.Tests", "vscode\contextive\test\Contextive.VsCodeExtension.Tests.fsproj", "{E85D0AAB-2EC0-4EFA-A569-43FDEC19AE58}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{662D5E4C-A0D9-46AA-A692-9D0B8156EC8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{662D5E4C-A0D9-46AA-A692-9D0B8156EC8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{662D5E4C-A0D9-46AA-A692-9D0B8156EC8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{662D5E4C-A0D9-46AA-A692-9D0B8156EC8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85E2E304-240D-4064-9933-3807E2D2B997}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85E2E304-240D-4064-9933-3807E2D2B997}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85E2E304-240D-4064-9933-3807E2D2B997}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85E2E304-240D-4064-9933-3807E2D2B997}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DA034DE-6B86-4843-9616-767DD40369B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DA034DE-6B86-4843-9616-767DD40369B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DA034DE-6B86-4843-9616-767DD40369B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DA034DE-6B86-4843-9616-767DD40369B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E85D0AAB-2EC0-4EFA-A569-43FDEC19AE58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E85D0AAB-2EC0-4EFA-A569-43FDEC19AE58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E85D0AAB-2EC0-4EFA-A569-43FDEC19AE58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E85D0AAB-2EC0-4EFA-A569-43FDEC19AE58}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
