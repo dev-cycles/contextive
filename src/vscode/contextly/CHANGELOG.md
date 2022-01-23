@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.1](https://github.com/dev-cycles/contextly/compare/v1.1.0...v1.1.1) (2022-01-23)
+
+
+### Bug Fixes
+
+* ensure the package version extraction is cross-platform ([3e1e603](https://github.com/dev-cycles/contextly/commit/3e1e6039dfefc25705a1931ed937d5c6ccbb7a5b))
+
 # [1.1.0](https://github.com/dev-cycles/contextly/compare/v1.0.0...v1.1.0) (2022-01-22)
 
 
