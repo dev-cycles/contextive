@@ -8,6 +8,10 @@
 
 Use the [semantic-release](https://www.npmjs.com/package/semantic-release) package to manage version changes, change logs and release activities.  Use branches for feature development and merge to `main` when a feature is complete.  Any commit to `main` will trigger a new release using [semantic-release](https://www.npmjs.com/package/semantic-release).
 
+During pre-release, `main` will be marked as a pre-release branch.  Since `semantic-release` requires at least one `release` branch, a temporary branch will be created to server that purpose. Once ready for public release, `main` will become the release branch.
+
+Since `semantic-release` doesn't support major versions < 1, a v1.0.0 tag will be added manually to the latest manually created release to serve as the baseline for the first `semantic-release` managed release.
+
 ## Context and Problem Statement
 
 There are two areas of Release management that are determined in this ADR:
@@ -22,10 +26,11 @@ When a release is triggered, a series of steps needs to be actioned:
 
 1. Validating the proposed release (automated tests)
 2. Compiling and packaging the Language Server for all target platforms & architectures
-3. Packaging the Visual Studio Code extension
-4. Creating a github release
-5. Uploading the extension packages (1 per target platform) to the VS Code Extension marketplace(s)
-6. Committing & pushing changes to the version number into the repo, tagging the commit with the release
+3. Preparing release notes
+4. Committing & pushing changes to the version number (package.json) and changelog into the repo, tagging the commit with the release
+5. Packaging the Visual Studio Code extension (including the new version number in the package)
+6. Creating a github release, including the packages as files attached to the release
+7. Uploading the extension packages (1 per target platform) to the VS Code Extension marketplace(s)
 
 ### General Context
 

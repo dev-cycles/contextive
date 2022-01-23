@@ -26,7 +26,7 @@ The following list of features is a draft proposal of the vision at the start of
 
 The project is just getting started, so there aren't a lot of details yet - if this project is of interest, get in touch or check back soon!
 
-[![Contextly Language Server Build and Test](https://github.com/dev-cycles/contextly/actions/workflows/language-server-build.yml/badge.svg)](https://github.com/dev-cycles/contextly/actions/workflows/language-server-build.yml)
+[![Contextly](https://github.com/dev-cycles/contextly/actions/workflows/contextly.yml/badge.svg)](https://github.com/dev-cycles/contextly/actions/workflows/contextly.yml)
 
 ## Installation
 
