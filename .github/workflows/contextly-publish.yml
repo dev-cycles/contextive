@@ -59,7 +59,7 @@ jobs:
         run: npx vsce package -t ${{ matrix.vsce_platform }}
         working-directory: ./src/vscode/contextly
       - name: Get Package Version
-        run: echo '::set-output name=VERSION::'`jq ".version" package.json -r`
+        run: echo "::set-output name=VERSION::$(jq .version package.json -r)"
         id: get-version
         working-directory: ./src/vscode/contextly
       - name: Upload binaries to release
