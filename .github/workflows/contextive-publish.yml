@@ -56,7 +56,7 @@ jobs:
         run: npm install
         working-directory: ./src/vscode/contextive
       - name: Package VsCode Extension
-        run: npx vsce package -t ${{ matrix.vsce_platform }} --githubBranch main --baseImagesUrl https://github.com/dev-cycles/contextive/blob/main/src/vscode/contextive/
+        run: npx vsce package -t ${{ matrix.vsce_platform }} --githubBranch main --baseImagesUrl https://github.com/dev-cycles/contextive/raw/main/src/vscode/contextive/
         working-directory: ./src/vscode/contextive
       - name: Get Package Version
         run: echo "::set-output name=VERSION::$(jq .version package.json -r)"
