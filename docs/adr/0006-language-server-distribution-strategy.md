@@ -12,7 +12,7 @@ Build using .NET single-file and self-contained option with separate builds per 
 
 ### .NET Publishing Options for the Language Server
 
-As per [ADR-0002](0002-language-&-framework-selection.md), Contextly uses F# and .NET 6.0 for the Language Server.  .NET offers a number of [deployment models](https://docs.microsoft.com/en-us/dotnet/core/deploying/).  The main two modes are:
+As per [ADR-0002](0002-language-&-framework-selection.md), Contextive uses F# and .NET 6.0 for the Language Server.  .NET offers a number of [deployment models](https://docs.microsoft.com/en-us/dotnet/core/deploying/).  The main two modes are:
 
 1. _self-contained_ - an app that includes the .NET runtime and libraries and the application and all dependencies.  
   * Pros:
@@ -33,7 +33,7 @@ There are other publishing and deployment options:
 * [Ready To Run](https://docs.microsoft.com/en-us/dotnet/core/deploying/ready-to-run) - includes a level of pre-compilation to reduce the amount of work done by the JIT (Just in time) compiler
 * [Trimmed deployment](https://docs.microsoft.com/en-us/dotnet/core/deploying/trimming/trim-self-contained) (applicable to self-contained) - reduces deployment artifact size by removing unused parts of the .NET runtime and libraries
 
-This ADR is to explore the trade-offs in the options above and determine a build, publishing and distribution strategy for the .NET executable that is the Contextly Language Server.
+This ADR is to explore the trade-offs in the options above and determine a build, publishing and distribution strategy for the .NET executable that is the Contextive Language Server.
 
 ### VS Code Extension Publishing Options
 
@@ -43,8 +43,8 @@ In our case, as the extension needs to include or obtain the language server, if
 
 ## Decision Drivers
 
-* Contextly needs to support a variety of platforms (windows, linux, mac, webassembly)
-* Contextly users may not have the correct version of the .NET runtime installed
+* Contextive needs to support a variety of platforms (windows, linux, mac, webassembly)
+* Contextive users may not have the correct version of the .NET runtime installed
 
 ## Considered Options
 

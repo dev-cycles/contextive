@@ -10,7 +10,7 @@
             "request": "launch",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}/${config:vsCodeExtensionPath}",
-                "${workspaceRoot}/src/vscode/contextly/test/fixtures/simple_workspace"
+                "${workspaceRoot}/src/vscode/contextive/test/fixtures/simple_workspace"
             ],
             "outFiles": [
                 "${workspaceFolder}/${config:vsCodeExtensionPath}/dist/**/*.js"
@@ -27,7 +27,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build: Language Server Tests",
-            "program": "${workspaceFolder}/${config:languageServerTestsPath}/bin/Debug/net6.0/Contextly.LanguageServer.Tests.dll",
+            "program": "${workspaceFolder}/${config:languageServerTestsPath}/bin/Debug/net6.0/Contextive.LanguageServer.Tests.dll",
             //"args": ["--filter-test-case","Can handle configuration value changing"],
             "cwd": "${workspaceFolder}/${config:languageServerTestsPath}",
             "stopAtEntry": false,
@@ -40,7 +40,7 @@
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}/${config:vsCodeExtensionPath}",
                 "--extensionTestsPath=${workspaceFolder}/${config:vsCodeExtensionPath}/out/index",
-                "${workspaceRoot}/src/vscode/contextly/test/fixtures/simple_workspace"
+                "${workspaceRoot}/src/vscode/contextive/test/fixtures/simple_workspace"
             ],
             "outFiles": [
                 "${workspaceFolder}/${config:vsCodeExtensionPath}/out/**/*.js",

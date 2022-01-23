@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Completion.fs" />
+    <Compile Include="ConditionAwaiter.fs" />
+    <Compile Include="WatchedFiles.fs" />
+    <Compile Include="ServerLog.fs" />
+    <Compile Include="Workspace.fs" />
+    <Compile Include="TestClient.fs" />
+    <Compile Include="ConfigurationSection.fs" />
+    <Compile Include="ConfigurationTests.fs" />
+    <Compile Include="DefinitionsTests.fs" />
+    <Compile Include="WatchedFilesTests.fs" />
+    <Compile Include="TextDocumentTests.fs" />
+    <Compile Include="CompletionTests.fs" />
+    <Compile Include="HoverTests.fs" />
+    <Compile Include="InitializationTests.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fixtures/completion_tests/one.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fixtures/completion_tests/two.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fixtures/completion_tests/three.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fixtures/completion_tests/invalid_schema.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fixtures/completion_tests/invalid_empty.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+    <PackageReference Include="coverlet.collector" Version="3.0.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Contextive.LanguageServer\Contextive.LanguageServer.fsproj" />
+  </ItemGroup>
+  <Import Project="..\.paket\Paket.Restore.targets" />
+</Project>

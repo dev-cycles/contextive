@@ -10,9 +10,9 @@ Use a common Language Server following the [Language Server Protocol](https://mi
 
 ## Context and Problem Statement
 
-The vision of Contextly is to provide a suite of tools to assist with the consistent usage of a Ubiquitous Language in code and documentation. The concept of a [Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html) is drawn directly from the discipline of [Domain Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html).
+The vision of Contextive is to provide a suite of tools to assist with the consistent usage of a Ubiquitous Language in code and documentation. The concept of a [Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html) is drawn directly from the discipline of [Domain Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html).
 
-To ensure the ubiquity of the language it is important that the Contextly tools are useful and usable in a variety of contexts.
+To ensure the ubiquity of the language it is important that the Contextive tools are useful and usable in a variety of contexts.
 
 This decision record captures the thinking around how best to ensure this as the project gets started.
 
@@ -20,7 +20,7 @@ This decision record captures the thinking around how best to ensure this as the
 
 * Developers work across a number of IDEs (e.g. Visual Studio 2019/2022, Visual Studio Code, IntelliJ, Eclipse, NetBeans, vim, emacs, etc.)
 * The various IDEs have a range of extension development languages/frameworks
-* Contextly is going to have a small development team, so we will prioritize reuse of components over independent ownership to start with.
+* Contextive is going to have a small development team, so we will prioritize reuse of components over independent ownership to start with.
 
 ## Considered Options
 
@@ -30,7 +30,7 @@ This decision record captures the thinking around how best to ensure this as the
 
 ## Decision Outcome
 
-Chosen option: "Common Language Server" using the "Language Server Protocol", because it is *probably* the option that will allow Contextly to be useful in more IDEs with less effort.
+Chosen option: "Common Language Server" using the "Language Server Protocol", because it is *probably* the option that will allow Contextive to be useful in more IDEs with less effort.
 
 ### Positive Consequences
 
@@ -40,7 +40,7 @@ Chosen option: "Common Language Server" using the "Language Server Protocol", be
 
 * Constrained by the capabilities of the Language Server Protocol
 * More complexity when deploying extensions, e.g.:
-   * still need to determine if the Contextly Language Server will be bundled with extensions or need to be downloaded separately?
+   * still need to determine if the Contextive Language Server will be bundled with extensions or need to be downloaded separately?
    * what if a user is using multiple IDEs, will they share a Language Server Process, or have separate processes?
 * Use of Language Server Protocol Custom Messages may have varying levels of support in different IDE Frameworks
 
@@ -55,7 +55,7 @@ Chosen option: "Common Language Server" using the "Language Server Protocol", be
 
 ### Language Server Protocol
 
-* Good, because it should be easier to add Contextly to more IDEs
+* Good, because it should be easier to add Contextive to more IDEs
 * Good, because it follows a standard and familiar protocol structure for IDE extension developers
 * Good, because new features added to the Language Server will immediately be supported in all IDEs
 * Bad, because deploying the Language Server with the IDE extension (and managing updates) adds an extra level of complexity

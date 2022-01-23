@@ -1,7 +1,7 @@
 {
     "cSpell.words": [
         "amodio",
-        "Contextly",
+        "Contextive",
         "dbaeumer",
         "devcycles",
         "dorny",
@@ -19,10 +19,10 @@
         "yzhang"
     ],
     "FSharp.dotnetRoot": "/usr/share/dotnet",
-    "FSharp.workspacePath": "./src/Contextly.sln",
-    "vsCodeExtensionPath": "./src/vscode/contextly",
-    "languageServerPath": "./src/Contextly.LanguageServer",
-    "languageServerTestsPath": "./src/Contextly.LanguageServer.Tests",
+    "FSharp.workspacePath": "./src/Contextive.sln",
+    "vsCodeExtensionPath": "./src/vscode/contextive",
+    "languageServerPath": "./src/Contextive.LanguageServer",
+    "languageServerTestsPath": "./src/Contextive.LanguageServer.Tests",
     "files.exclude": {
         "out": false, // set this to true to hide the "out" folder with the compiled JS files
         "dist": false // set this to true to hide the "dist" folder with the compiled JS files

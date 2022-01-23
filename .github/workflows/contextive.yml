@@ -1,0 +1,96 @@
+name: Contextive
+on:
+  push:
+# By defining a branch, it ensures this won't run for tags.  See contextive-publish.yml for the workflow
+# that will run when semantic-release adds the release tag.
+# See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushbranchestagsbranches-ignoretags-ignore
+# for the intersection between branch and tag-ignore
+    branches: 
+      - '**'
+    
+env:
+  dotnet-version: '6.0.x'
+  CONTEXTIVE_CI: true
+jobs:
+  build-and-test:
+    name: 'Build and Test'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: Setup .NET Core SDK ${{ env.dotnet-version }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.dotnet-version }}
+          include-prerelease: true
+      - name: Display dotnet version
+        run: dotnet --version
+      - name: Install Fable
+        run: dotnet tool install fable --global
+      - name: Install paket
+        run: dotnet tool install paket --global
+      - name: Restore paket dependencies
+        run: paket restore
+        working-directory: ./src
+      - name: Build and Test Language Server
+        run: |
+          dotnet test ./src/Contextive.LanguageServer.Tests/Contextive.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults-${{ env.dotnet-version }}.xml"
+      - name: Upload Language Server Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: language-server-results-${{ env.dotnet-version }}
+          path: "src/Contextive.LanguageServer.Tests/TestResults/TestResults-${{ env.dotnet-version }}.xml"
+        if: always()
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Language Server Tests
+          path: "src/Contextive.LanguageServer.Tests/TestResults/TestResults-${{ env.dotnet-version }}.xml"
+          reporter: dotnet-trx 
+      - name: Restore npm dependencies
+        run: npm install
+        working-directory: ./src/vscode/contextive
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: Start xvfb
+        run: |
+          /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          echo ">>> Started xvfb"
+      - name: Build and Test VsCode Extension
+        run: npm test
+        working-directory: ./src/vscode/contextive
+        env:
+          DISPLAY: ":99.0"
+          DOTNET_VERSION: ${{ env.dotnet-version }}
+      - name: Upload vsCode Extension Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: vscode-extension-results-${{ env.dotnet-version }}
+          path: "src/vscode/**/TestResults-${{ env.dotnet-version }}.xml"
+        if: always()
+      - name: Upload All Test Logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: vscode-extension-logs-${{ env.dotnet-version }}
+          path: "**/log*.txt"
+        if: always()
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: VsCode Extension Tests
+          path: "src/vscode/**/TestResults-${{ env.dotnet-version }}.xml"
+          reporter: java-junit
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx semantic-release
+        working-directory: ./src/vscode/contextive
+      - run: echo "🍏 This job's status is ${{ job.status }}."

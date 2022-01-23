@@ -10,24 +10,24 @@ Use F# for the Language Server, F#/Fable for the VSCode extension & F# for the V
 
 ## Context and Problem Statement
 
-Following ADR0001, Contextly will use the Language Server Protocol as the primary architectural pattern.  This ADR is to determine the languages/frameworks that will be used to implement the various components.
+Following ADR0001, Contextive will use the Language Server Protocol as the primary architectural pattern.  This ADR is to determine the languages/frameworks that will be used to implement the various components.
 
 The components are:
-* The Language Server, owning planned Contextly features such as:
+* The Language Server, owning planned Contextive features such as:
   * Providing auto-complete suggestions
-  * Information from the Contextly to be displayed on hover, such as:
+  * Information from the Contextive to be displayed on hover, such as:
     * Definitions of Ubiquitous Language terms
     * Links to related terms and code usage
   * Automatic support for term variations (e.g. tense, pluralization)
   * Managing relationships between terms (e.g. entities and associated commands or events)
 * The IDE-specific Extensions that owns:
   * Internationalization
-  * UI Interactions for managing the Contextly settings and data (e.g. ubiquitous language term definitions)
+  * UI Interactions for managing the Contextive settings and data (e.g. ubiquitous language term definitions)
   * Interactions with the Language Server via the Language Server Protocol
 
 ## Decision Drivers
 
-* Contextly will initially have a small team, so using the same language for multiple components will reduce cognitive load
+* Contextive will initially have a small team, so using the same language for multiple components will reduce cognitive load
 * Ability to share libraries, such as service contract/dto class definitions should reduce risk of errors
 * Initial contributor has most experience with .NET
 * The Language Server needs to run on the IDE's Operating System
@@ -35,7 +35,7 @@ The components are:
 * While the MVP does not have any online components, the overall project may one day incorporate an online service, so a language/framework that supports web app and API development is beneficial
 
 Factors not specifically considered:
-* While all languages have inherent strengths and weaknesses, these have not been considered in this evaluation due to the number of languages and lack of clarity at this point over which strengths and weaknesses are most relevant for the development of a Contextly type project.
+* While all languages have inherent strengths and weaknesses, these have not been considered in this evaluation due to the number of languages and lack of clarity at this point over which strengths and weaknesses are most relevant for the development of a Contextive type project.
 * As a result, the primary consideration is support for the relevant and priority execution environments
 * Inherent language strength/weakness concerns may be considered if there is a need to narrow down two viable candidates, or after MVP when the project needs are more well understood
 
@@ -74,7 +74,7 @@ To determine the language/framework options, we need to consider the target IDEs
 
 Chosen option: "F#", because it appears to offer the best combination of an at least partially trodden path for non-JS or TS VSCode extension development, as well as the possibility of having a common language with at least one other IDE (Visual Studio 2019/2022).
 
-F# will be used for the MVP build and re-evaluated, at which point the status of this ADR should be updated to `accepted` for further development of Contextly.
+F# will be used for the MVP build and re-evaluated, at which point the status of this ADR should be updated to `accepted` for further development of Contextive.
 
 ### Considerations
 
