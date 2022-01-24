@@ -12,9 +12,9 @@
    id="svg20"
    sodipodi:docname="contextive.svg"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   inkscape:export-filename="/home/chris/Contextive/contextive/src/vscode/contextive/images/contextive.png"
-   inkscape:export-xdpi="149.3437"
-   inkscape:export-ydpi="149.3437"
+   inkscape:export-filename="/home/chris/Contextive/contextive.png"
+   inkscape:export-xdpi="597.37482"
+   inkscape:export-ydpi="597.37482"
    width="82.279999"
    height="82.279999">
   <metadata
@@ -94,7 +94,7 @@
      transform="translate(-150.16188,-57.97529)"
      id="g18">
     <path
-       style="fill:#ffffff;fill-opacity:1;stroke-width:0.92873746"
+       style="fill:#fffffd;fill-opacity:1;stroke-width:0.92873746"
        d="m 166.43569,59.71851 c -6.74533,0 -12.17457,5.177341 -12.17457,11.607507 v 51.396063 c 0,6.43016 5.42924,11.6075 12.17457,11.6075 h 50.44282 c 6.74534,0 12.17643,-5.17734 12.17643,-11.6075 V 71.326017 c 0,-6.430166 -5.43109,-11.607507 -12.17643,-11.607507 z"
        id="path14-3"
        inkscape:connector-curvature="0"

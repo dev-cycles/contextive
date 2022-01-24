@@ -1,6 +1,6 @@
 # Contextive README
 
-[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml)
+[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/contextive_tech.svg?style=social&label=Follow%20%40Contextive)](https://twitter.com/contextive_tech)
 
 Contextive is a Visual Studio Code extension to promote the use of a Domain Driven Design Ubiquitous Language on your projects.  It should help new team members get up to speed more quickly in understanding domain-specific terms.
 
