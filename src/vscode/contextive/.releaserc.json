@@ -24,7 +24,7 @@
             "npmPublish": false
         }],
         ["@semantic-release/git",{
-            "assets": ["../../**/*.fsproj", "CHANGELOG.md", "package.json", "package-lock.json", "npm-shrinkwrap.json"]
+            "assets": ["Contextive.LanguageServer.fsproj", "CHANGELOG.md", "package.json", "package-lock.json", "npm-shrinkwrap.json"]
         }],
         "@semantic-release/github"
     ]
