@@ -1,0 +1,7 @@
+# Invalid definitions. Two colons after `definition` is invalid yml
+contexts:
+  - terms:
+    - name: invalidTerm
+      definition: : A definition with an extra colon is invalid yml
+      examples:
+        - This should be in the `examples` key.

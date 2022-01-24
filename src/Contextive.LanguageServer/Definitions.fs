@@ -49,7 +49,8 @@ let private deserialize (yml:string) =
         | _ -> Ok definitions
     with
     | :? YamlDotNet.Core.YamlException as e -> 
-        Error $"Error parsing definitions file:  Object starting line {e.Start.Line}, column {e.Start.Column} - {e.InnerException.Message}"
+        let msg = if e.InnerException = null then e.Message else e.InnerException.Message
+        Error $"Error parsing definitions file:  Object starting line {e.Start.Line}, column {e.Start.Column} - {msg}"
 
 let private loadContextive path =
     match tryReadFile path with

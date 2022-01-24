@@ -35,6 +35,9 @@
     <Content Include="fixtures/completion_tests/invalid_schema.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="fixtures/completion_tests/invalid_schema2.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="fixtures/completion_tests/invalid_empty.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
