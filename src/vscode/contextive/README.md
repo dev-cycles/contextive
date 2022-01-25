@@ -1,16 +1,24 @@
 # Contextive README
 
-[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/contextive_tech.svg?style=social&label=Follow%20%40Contextive)](https://twitter.com/contextive_tech)
+[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Twitter](https://img.shields.io/twitter/follow/contextive_tech?label=Follow%20Contextive)](https://twitter.com/intent/follow?screen_name=contextive_tech)
 
-Contextive is a Visual Studio Code extension to promote the use of a Domain Driven Design Ubiquitous Language on your projects.  It should help new team members get up to speed more quickly in understanding domain-specific terms.
+Contextive is a Visual Studio Code extension to assist developers in environments with a complex & domain- or project-specific language, where words have a special meaning in the context of the project.
 
-By storing the term definitions in your repository, it encourages regularly updating and evolving the definitions as the domain evolves and team's understanding improves, in line with the implementation of the code.
-
-![Example of a Contextive definition hover over the word "context" in a yml file.](images/example_hover.png)
+It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages regularly updating the definitions as the team's understanding evolves.
 
 ## Getting Started
 
-Use the `Contextive: Initialize Definitions` command from the command palette to create a sample definitions file.  This sample file defines the terms used in the definitions file yml structure.  You can hover over the name of the terms in the file to see Contextive in action.
+![Example of a Contextive definition hover over the word "context" in a yml file.](images/example_hover.png)
+
+Use the `Contextive: Initialize Definitions` command from the command palette to create a sample definitions file.  This sample file illustrates the use of Contextive by defining the terms used in the definitions file yml structure.  You can hover over the name of the terms in the file to see Contextive in action (see the sample image above).
+
+You should delete the sample definitions and replace them with your own.
+
+## Philosophy
+
+Contextive is inspired by the concept of the [Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html) from the practice of [Domain Driven Design (DDD)](https://martinfowler.com/bliki/DomainDrivenDesign.html) and should support ubiquitous language management practices on DDD projects.
+
+Even if you're not using Domain Driven Design, Contextive should still be very helpful in any software project where it's important that developers are aligned on the meaning of terms.
 
 ## Features
 
