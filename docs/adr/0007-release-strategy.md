@@ -6,9 +6,9 @@
 
 ## Decision Summary
 
-Use the [semantic-release](https://www.npmjs.com/package/semantic-release) package to manage version changes, change logs and release activities.  Use branches for feature development and merge to `main` when a feature is complete.  Any commit to `main` will trigger a new release using [semantic-release](https://www.npmjs.com/package/semantic-release).
+Use the [semantic-release](https://www.npmjs.com/package/semantic-release) package to manage version changes, change logs and release activities.  Use branches for feature development and merge to `main` when a feature is complete.
 
-During pre-release, `main` will be marked as a pre-release branch.  Since `semantic-release` requires at least one `release` branch, a temporary branch will be created to server that purpose. Once ready for public release, `main` will become the release branch.
+When ready to cut a release, merge to `release`, which will trigger a new release using [semantic-release](https://www.npmjs.com/package/semantic-release).
 
 Since `semantic-release` doesn't support major versions < 1, a v1.0.0 tag will be added manually to the latest manually created release to serve as the baseline for the first `semantic-release` managed release.
 
@@ -63,21 +63,21 @@ Key decision drivers are:
 
 ## Decision Outcome
 
-1. Release Trigger from commits to `main` branch
-   1. because the expected frequency of commits is low enough that there is limited value in a separate `release` branch, and there is no need for a pre-release/beta channel at this time.
+1. Release Trigger from commits to `release` branch
+   1. Initial experiments with releasing off every commit to `main` indicated that there would be too high a release frequency, prompting too many updates and a more complex change log. By controlling releases with a manual merge from `main` to `release` we can review over time what a reasonable frequency/size of releases are.
    2. Commits to `main` are to be done by [squash merges](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/about-pull-request-merges#squash-and-merge-your-pull-request-commits) from a merge request from a feature branch, with the squash merge commit message using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
 2. Release Process managed by [semantic-release](https://www.npmjs.com/package/semantic-release)
    1. because it provides repeatable, industry conventional approaches and already includes plugins for all the services currently needed.
 
 ### Positive Consequences 
 
-* Releasing will become a fully automated unemotional process
+* Maintainers will have control over release schedule - in the future, this may be further automated
+* All mechanisms involved in releasing will be fully automated, making releasing a very simple task (simply merge from `main` to `release`).
 * Semantic-release necessitates the use of [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) which will improve the quality and consistency of git commit logs
 * Change logs/release notes will be based on git commit history automatically
 
 ### Negative Consequences
 
-* If we merge to main too often, we may push updates faster than users are happy with.  If this happens, we should investigate a separate `release` branch, and manually, or on a schedule, merge from `main` to `release` to trigger the release.
 * Although there are tools to enforce the conventional commit approach when committing locally, squash merges of merge requests via the github UI do not allow to enforce a commit message structure.  
 * [semantic-release](https://www.npmjs.com/package/semantic-release) is tailored for javascript packages.  Contextive expects to have other types of packages in the future (e.g. Visual Studio extension) which may not be as amenable to it's use.  This will need to be revisited when that extension is added.
 
