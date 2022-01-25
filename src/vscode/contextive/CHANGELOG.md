@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.1.4-fix.4](https://github.com/dev-cycles/contextive/compare/v1.1.4-fix.3...v1.1.4-fix.4) (2022-01-25)
+
+
+### Bug Fixes
+
+* manually commit all changed files, including update version ([a316bd7](https://github.com/dev-cycles/contextive/commit/a316bd78eb656afdd3ef257cea721e30a0fe283b))
+
 ## [1.1.4-fix.3](https://github.com/dev-cycles/contextive/compare/v1.1.4-fix.2...v1.1.4-fix.3) (2022-01-25)
 
 

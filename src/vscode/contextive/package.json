@@ -2,7 +2,7 @@
 	"name": "contextive",
 	"displayName": "Contextive",
 	"description": "Supports the project-wide use of a Ubiquitous Language for software projects following Domain Driven Design.",
-	"version": "1.1.4-fix.3",
+	"version": "1.1.4-fix.4",
 	"publisher": "devcycles",
 	"license": "SEE LICENSE IN LICENSE",
 	"icon": "images/contextive.png",
