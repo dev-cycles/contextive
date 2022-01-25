@@ -16,9 +16,9 @@ You should delete the sample definitions and replace them with your own.
 
 ## Philosophy
 
-Contextive is inspired by the concept of the [Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html) from the practice of [Domain Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html).
+Contextive is inspired by the concept of the [Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html) from the practice of [Domain Driven Design (DDD)](https://martinfowler.com/bliki/DomainDrivenDesign.html) and should support ubiquitous language management practices on DDD projects.
 
-However, if you're not using Domain Driven Design, we hope it will still be very helpful in any software project where it's important that developers are aligned on the meaning of terms.
+Even if you're not using Domain Driven Design, Contextive should still be very helpful in any software project where it's important that developers are aligned on the meaning of terms.
 
 ## Features
 
