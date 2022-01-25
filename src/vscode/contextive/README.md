@@ -1,6 +1,6 @@
 # Contextive README
 
-[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Twitter](https://img.shields.io/twitter/follow/contextive_tech?label=Follow%20Contextive)](https://twitter.com/intent/follow?screen_name=contextive_tech)
+[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg?branch=release)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml?query=branch%3Arelease) [![Twitter](https://img.shields.io/twitter/follow/contextive_tech?label=Follow%20Contextive)](https://twitter.com/intent/follow?screen_name=contextive_tech)
 
 Contextive is a Visual Studio Code extension to assist developers in environments with a complex & domain- or project-specific language, where words have a special meaning in the context of the project.
 
