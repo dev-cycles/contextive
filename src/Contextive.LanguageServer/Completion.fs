@@ -22,12 +22,12 @@ let private termToString (caseTemplate:string option) (t:Definitions.Term) =
         else
             t.Name
 
-let handler (termFinder: Definitions.Finder) (wordGetter: TextDocument.WordGetter) (p:CompletionParams) (hc:CompletionCapability) _ =
+let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGetter) (p:CompletionParams) (hc:CompletionCapability) _ =
     async {
         let caseTemplate = 
             match p.TextDocument with
             | null -> None
-            | _ -> wordGetter (p.TextDocument.Uri.ToUri()) p.Position
+            | _ -> wordsGetter (p.TextDocument.Uri.ToUri()) p.Position |> List.tryHead
         let termToStringWithCase = termToString caseTemplate
         let! matches = termFinder termMatches
         let labels = matches |> Seq.map termToStringWithCase
