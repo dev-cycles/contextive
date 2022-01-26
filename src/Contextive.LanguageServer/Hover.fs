@@ -9,12 +9,13 @@ let private markupContent content =
 
 let private noHoverResult = null
 
-let private termMatches word (t:Definitions.Term) = t.Name.Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
+let private termMatches words (t:Definitions.Term) = 
+    words |> List.exists (fun word -> t.Name.Equals(word, System.StringComparison.InvariantCultureIgnoreCase))
 
 let private getWordAtPosition (p:HoverParams) (getWords: TextDocument.WordGetter) =
     match p.TextDocument with
-    | null -> None
-    | document -> getWords (document.Uri.ToUri()) p.Position |> List.tryHead
+    | null -> []
+    | document -> getWords (document.Uri.ToUri()) p.Position
 
 let private getHoverDefinition (term: Definitions.Term) =
     [Some <| $"**{term.Name}**"; term.Definition]
@@ -49,10 +50,10 @@ let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGett
             let wordAtPosition = getWordAtPosition p wordsGetter
             return!
                 match wordAtPosition with
-                | None -> async { return noHoverResult }
-                | Some(word) -> // TODO: actually find the correct position
+                | [] -> async { return noHoverResult }
+                | words -> // TODO: actually find the correct position
                     async {
-                        let! terms = termFinder (termMatches word)
+                        let! terms = termFinder (termMatches words)
                         return if Seq.isEmpty terms then
                                     noHoverResult
                                 else

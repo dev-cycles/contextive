@@ -12,7 +12,7 @@ open System.IO
 [<Tests>]
 let hoverTests =
     testList "Hover Tests" [
-        testAsync "Given no contextive and no document sync, server response to hover request with empty result" {
+        testAsync "Given no definitions and no document sync, server response to hover request with empty result" {
             use! client = SimpleTestClient |> init
 
             let hoverParams = HoverParams()
@@ -22,9 +22,11 @@ let hoverTests =
             test <@ hover = null @>
         }
 
+        let multiLineToSingleLine (t:string) = t.Replace("\n", "\\n").Replace("\r", "\\r")
+
         let testHoverTermFound (text, position: Position, expectedTerm: string) = 
-            testAsync $"Given contextive and text '{text}', server responds to hover request with {expectedTerm} in {position}" {
-                let fileName = "one"
+            testAsync $"Given definitions and text '{multiLineToSingleLine text}', server responds to hover request with {expectedTerm} in {position}" {
+                let fileName = "three"
                 let config = [
                         Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
                         ConfigurationSection.contextivePathOptionsBuilder $"{fileName}.yml"
@@ -54,19 +56,19 @@ let hoverTests =
             }
 
         [
-            ("firstTerm", Position(0, 0), "firstTerm")
-            ("FirstTerm", Position(0, 0), "firstTerm")
-            ("secondTerm thirdTerm", Position(0, 10), "secondTerm")
-            ("secondTerm thirdTerm", Position(0, 11), "thirdTerm")
-            ("secondTerm thirdTerm", Position(0, 12), "thirdTerm")
-            ("secondTerm\nthirdTerm", Position(1, 5), "thirdTerm")
-            ("secondTerm\nthirdTerm\nfirstTerm", Position(2, 4), "firstTerm")
-            ("thirdTerm\r\nsecondTerm", Position(1, 5), "secondTerm")
-            ("thirdTerm\r\nsecondTerm\r\nfirstTerm", Position(2, 5), "firstTerm")
+            ("original", Position(0, 0), "original")
+            ("Original", Position(0, 0), "original")
+            ("original another", Position(0, 10), "another")
+            ("original another word", Position(0, 11), "another")
+            ("original\nanother", Position(1, 5), "another")
+            ("original\nword\nanother", Position(2, 4), "another")
+            ("original\r\nanother", Position(1, 5), "another")
+            ("original\r\nword\r\nanother", Position(2, 5), "another")
+            ("anotherWord", Position(0, 1), "another")
         ] |> List.map testHoverTermFound |> testList "Term found when hovering in opened docs at Positions"
 
         let testHoverTermNotFound (text, position: Position) = 
-            testAsync $"Given contextive and document open, server responds to hover request with no content in {position}" {
+            testAsync $"Given definitions and document open, server responds to hover request with no content in {position}" {
                 let fileName = "one"
                 let config = [
                         Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
@@ -116,5 +118,20 @@ let hoverTests =
             ({Definitions.Term.Default with Name = "ThirdTerm"; Examples = ResizeArray ["Do a thing"] },
                 "**ThirdTerm**\n***\n#### Usage Examples:\n\"Do a thing\"")
         ] |> List.map testHoverDisplay |> testList "Term hover display"
-        
+
+        let testHoverOverMultiWord (term: string, foundWords: string list, expectedHover) =
+            testAsync $"Test hover result for {term}" { 
+                let termDefinition = {Definitions.Term.Default with Name = term}
+                let hoverHandler = Hover.handler (fun _ -> async { return [termDefinition] }) (fun _ _ -> foundWords)
+
+                let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
+                let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+
+                test <@ result.Contents.MarkupContent.Value = expectedHover @>
+            }
+        [
+            ("SecondTerm", ["SecondTerm"], "**SecondTerm**")            
+            ("Second", ["SecondTerm"; "Second"; "Term"], "**Second**")
+        ] |> List.map testHoverOverMultiWord |> testList "Term hover display over MultiWord"
+
     ]
