@@ -11,10 +11,10 @@ let private noHoverResult = null
 
 let private termMatches word (t:Definitions.Term) = t.Name.Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
 
-let private getWordAtPosition (p:HoverParams) (getWord: TextDocument.WordGetter) =
+let private getWordAtPosition (p:HoverParams) (getWords: TextDocument.WordGetter) =
     match p.TextDocument with
     | null -> None
-    | document -> getWord (document.Uri.ToUri()) p.Position
+    | document -> getWords (document.Uri.ToUri()) p.Position |> List.tryHead
 
 let private getHoverDefinition (term: Definitions.Term) =
     [Some <| $"**{term.Name}**"; term.Definition]
@@ -44,9 +44,9 @@ let private hoverResult (terms: Definitions.Term seq) =
     let content = getTermHoverContent terms |> markupContent
     Hover(Contents = content)
 
-let handler (termFinder: Definitions.Finder) (getWord: TextDocument.WordGetter) (p:HoverParams) (hc:HoverCapability) _ =
+let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGetter) (p:HoverParams) (hc:HoverCapability) _ =
     async {
-            let wordAtPosition = getWordAtPosition p getWord
+            let wordAtPosition = getWordAtPosition p wordsGetter
             return!
                 match wordAtPosition with
                 | None -> async { return noHoverResult }

@@ -101,7 +101,7 @@ let hoverTests =
 
         let testHoverDisplay (term: Definitions.Term, expectedHover) =
             testAsync $"Test hover format for {term.Name}" { 
-                let hoverHandler = Hover.handler (fun _ -> async { return [term] }) (fun _ _ -> Some term.Name)
+                let hoverHandler = Hover.handler (fun _ -> async { return [term] }) (fun _ _ -> [term.Name])
 
                 let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
                 let! result = hoverHandler hoverParams null null |> Async.AwaitTask

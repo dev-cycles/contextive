@@ -12,37 +12,37 @@ open System.IO
 let textDocumentTests =
     testList "TextDocument Tests" [
 
-        let testWordFinding (name, lines, position, (expectedWord: string option)) =
-            testCase $"{name}: Can identify {expectedWord} at position {position}" <|
+        let testWordFinding (name, lines, position, (expectedWords: string list)) =
+            testCase $"{name}: Can identify {expectedWords} at position {position}" <|
                 fun () -> 
                     let lines = ResizeArray<string>(seq lines)
-                    let word = TextDocument.getWordAtPosition lines <| position
-                    test <@ word = expectedWord @>
+                    let words = TextDocument.getWordAtPosition lines <| position
+                    test <@ words = expectedWords @>
 
         [
-            ("single word", ["firstWord"; "secondWord"], Position(0,0), Some "firstWord")
-            ("single word", ["firstWord"; "secondWord"], Position(1,0), Some "secondWord")
-            ("multiple words", ["firstWord secondWord"], Position(0,0), Some "firstWord")
-            ("multiple words", ["firstWord secondWord"], Position(0,10), Some "secondWord")
-            ("multiple words", ["firstWord secondWord"], Position(0,15), Some "secondWord")
-            ("position at end", ["firstWord secondWord"], Position(0,20), Some "secondWord")
-            ("method", ["firstWord()"], Position(0,1), Some "firstWord")
-            ("object", ["firstWord.method()"], Position(0,1), Some "firstWord")
-            ("object arrow", ["firstWord->method()"], Position(0,1), Some "firstWord")
-            ("object property", ["firstWord.property"], Position(0,10), Some "property")
-            ("object arrow property", ["firstWord->property"], Position(0,11), Some "property")
-            ("object property in clause", ["firstWord.property "], Position(0,18), Some "property")
-            ("object method", ["firstWord.method()"], Position(0,10), Some "method")
-            ("array", ["[firstElement]"], Position(0,10), Some "firstElement")
-            ("array", ["[firstElement,secondElement]"], Position(0,15), Some "secondElement")
-            ("argument", ["(firstElement)"], Position(0,10), Some "firstElement")
-            ("braces", ["{firstElement}"], Position(0,10), Some "firstElement")
-            ("yaml key", ["key: value"], Position(0,1), Some "key")
-            ("sentence", ["word, something"], Position(0,1), Some "word")
-            ("position at end", ["firstWord secondWord"], Position(0,21), None)
-            ("position on space", ["firstWord secondWord"], Position(0,9), Some "firstWord")
-            ("out of range lines", ["firstWord secondWord"], Position(1,0), None)
-            ("out of range character", ["firstWord"], Position(0,50), None)
+            ("single word", ["firstword"; "secondword"], Position(0,0),  ["firstword"])
+            ("single word", ["firstword"; "secondword"], Position(1,0), ["secondword"])
+            ("multiple words", ["firstword secondword"], Position(0,0), ["firstword"])
+            ("multiple words", ["firstword secondword"], Position(0,10), ["secondword"])
+            ("multiple words", ["firstword secondword"], Position(0,15), ["secondword"])
+            ("position at end", ["firstword secondword"], Position(0,20), ["secondword"])
+            ("method", ["firstword()"], Position(0,1), ["firstword"])
+            ("object", ["firstword.method()"], Position(0,1), ["firstword"])
+            ("object arrow", ["firstword->method()"], Position(0,1), ["firstword"])
+            ("object property", ["firstWord.property"], Position(0,10), ["property"])
+            ("object arrow property", ["firstWord->property"], Position(0,11), ["property"])
+            ("object property in clause", ["firstWord.property "], Position(0,18), ["property"])
+            ("object method", ["firstWord.method()"], Position(0,10), ["method"])
+            ("array", ["[firstelement]"], Position(0,10), ["firstelement"])
+            ("array", ["[firstElement,secondelement]"], Position(0,15), ["secondelement"])
+            ("argument", ["(firstelement)"], Position(0,10), ["firstelement"])
+            ("braces", ["{firstelement}"], Position(0,10), ["firstelement"])
+            ("yaml key", ["key: value"], Position(0,1), ["key"])
+            ("sentence", ["word, something"], Position(0,1), ["word"])
+            ("position at end", ["firstWord secondWord"], Position(0,21), [])
+            ("position on space", ["firstword secondWord"], Position(0,9), ["firstword"])
+            ("out of range lines", ["firstWord secondWord"], Position(1,0), [])
+            ("out of range character", ["firstWord"], Position(0,50), [])
         ]
         |> List.map testWordFinding |> testList "Wordfinding Tests"
         
@@ -62,14 +62,13 @@ let textDocumentTests =
             TextDocument.DidOpen.handler(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
                 LanguageId = "plaintext",
                 Version = 0,
-                Text = "firstTerm",
+                Text = "firstterm",
                 Uri = textDocumentUri
             )))
 
-            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
+            let words = TextDocument.getWords textDocumentUri <| Position(0, 0)
 
-            test <@ word.IsSome @>
-            test <@ word.Value = "firstTerm" @>
+            test <@ words = ["firstterm"] @>
         }
         
         testAsync $"Given changed text document, can find text document" {
@@ -83,13 +82,12 @@ let textDocumentTests =
 
             TextDocument.DidChange.handler(DidChangeTextDocumentParams(
                 TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri),
-                ContentChanges = Container(TextDocumentContentChangeEvent(Text = "secondTerm"))
+                ContentChanges = Container(TextDocumentContentChangeEvent(Text = "secondterm"))
             ))
 
-            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
+            let words = TextDocument.getWords textDocumentUri <| Position(0, 0)
 
-            test <@ word.IsSome @>
-            test <@ word.Value = "secondTerm" @>
+            test <@ words = ["secondterm"] @>
         }
 
         testAsync $"Given Saved document, can find text document" {
@@ -103,17 +101,16 @@ let textDocumentTests =
 
             TextDocument.DidChange.handler(DidChangeTextDocumentParams(
                 TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri),
-                ContentChanges = Container(TextDocumentContentChangeEvent(Text = "secondTerm"))
+                ContentChanges = Container(TextDocumentContentChangeEvent(Text = "secondterm"))
             ))
 
             TextDocument.DidSave.handler(DidSaveTextDocumentParams(
                 TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri)
             ))
 
-            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
+            let words = TextDocument.getWords textDocumentUri <| Position(0, 0)
 
-            test <@ word.IsSome @>
-            test <@ word.Value = "secondTerm" @>
+            test <@ words = ["secondterm"] @>
         }
 
         testAsync $"Given Closed document, text document not found" {
@@ -129,9 +126,9 @@ let textDocumentTests =
                 TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri)
             ))
 
-            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
+            let words = TextDocument.getWords textDocumentUri <| Position(0, 0)
 
-            test <@ word.IsNone @>
+            test <@ words = [] @>
         }
 
     ]

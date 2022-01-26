@@ -55,8 +55,8 @@ type private Word =
        
     static member get =
         function | Token(line, start, _) as t when t.HasLength -> 
-                    line.Substring(start, t.Length.Value) |> Some
-                 | _ -> None
+                    [line.Substring(start, t.Length.Value)]
+                 | _ -> []
 
 let getWordAtPosition (lines:IList<string>) (position:Position) =
     Word.ofLine lines position.Line
@@ -64,11 +64,11 @@ let getWordAtPosition (lines:IList<string>) (position:Position) =
     |> Word.getEnd position.Character
     |> Word.get
 
-type WordGetter = System.Uri -> Position -> string option
+type WordGetter = System.Uri -> Position -> string list
 
-let getWord (documentUri: System.Uri) (position:Position) =
+let getWords (documentUri: System.Uri) (position:Position) =
     match getDocument documentUri with
-    | None -> None
+    | None -> []
     | Some(document) -> getWordAtPosition document position
 
 let private getLines (document:string) : IList<string> = document.Split(System.Environment.NewLine)

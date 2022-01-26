@@ -46,11 +46,13 @@ let completionTests =
             ("two", "WO", Position(0, 2), ["WORD1";"WORD2";"WORD3"])
         ] |> List.map testFileReader |> testList "File reading tests"
 
-        let completionCaseMatching (term, wordAtPosition, expectedCompletionLabel:string) = 
-            testCase $"Completion of \"{term}\" with {wordAtPosition} at position, returns \"{expectedCompletionLabel}\"" <| fun () -> 
+        let quoter = fun s -> $"\"{s}\""
+
+        let completionCaseMatching (term, wordsAtPosition, expectedCompletionLabel:string) = 
+            testCase $"Completion of \"{term}\" with {wordsAtPosition |> List.map quoter} at position, returns \"{expectedCompletionLabel}\"" <| fun () -> 
                 let finder : Definitions.Finder = fun _ -> async { return seq { {Term.Default with Name = term} } }
 
-                let wordGetter : TextDocument.WordGetter = fun _ _ -> wordAtPosition
+                let wordGetter : TextDocument.WordGetter = fun _ _ -> wordsAtPosition
 
                 let completionParams = CompletionParams(
                     TextDocument = TextDocumentIdentifier(Uri = new System.Uri("https://test")),
@@ -63,14 +65,14 @@ let completionTests =
 
                 test <@ (completionLabels, seq {expectedCompletionLabel}) ||> Seq.compareWith compare = 0 @>
         [
-            ("term", Some(""), "term")
-            ("Term", Some(""), "Term")
-            ("term", Some("t"), "term")
-            ("Term", Some("t"), "term")
-            ("term", Some("T"), "Term")
-            ("term", Some("Te"), "Term")
-            ("term", Some("TE"),"TERM")
-            ("term", Some("TEr"),"Term")
-            ("term", None, "term")
+            ("term", [""], "term")
+            ("Term", [""], "Term")
+            ("term", ["t"], "term")
+            ("Term", ["t"], "term")
+            ("term", ["T"], "Term")
+            ("term", ["Te"], "Term")
+            ("term", ["TE"],"TERM")
+            ("term", ["TEr"],"Term")
+            ("term", [], "term")
         ] |> List.map completionCaseMatching |> testList "Completion Case Matching"
     ]
