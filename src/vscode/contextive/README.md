@@ -37,9 +37,7 @@ After identifying the combined word, it is split into the individual words and a
 
 The exception to this is if there is a defined term that matches the whole combined word - in this case, only the combined word's definition is included in the hover.
 
-#### Examples:
-
-A few examples to illustrate:
+#### Examples
 
 ##### EntityId
 
@@ -61,7 +59,7 @@ Consider a definitions list including the terms `parent` and `child` and `parent
 
 #### Limitations
 
-Both of these limitations will be handled in a future updated:
+Both of these limitations will be handled in a future update:
 
 1. If you have a defined term `entityChild` but your code includes `entity_child`, Contextive does not yet recognise this is a match.
 1. If you have a defined term `entityChild`, and your code includes `entityChildId`, Contextive will not recognise the match as it splits `entityChildId` into `entity`, `Child` and `Id` and none of them match the defined term `entityChild`, and `entityChildId` is not an exact match for the defined term. 
