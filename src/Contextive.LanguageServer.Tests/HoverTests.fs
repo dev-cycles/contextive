@@ -134,10 +134,10 @@ let hoverTests =
                 "`Third`\n\n`Term`\n\n***\n#### `Third` Usage Examples:\n\"Do a thing\"\n\n***\n#### `Term` Usage Examples:\n\"Do something else\"")
         ] |> List.map testHoverDisplay |> testList "Term hover display"
 
-        let testHoverOverMultiWord (term: string, foundWords: string list, expectedHover) =
-            testAsync $"Test hover result for {term}" { 
-                let termDefinition = {Definitions.Term.Default with Name = term}
-                let hoverHandler = Hover.handler (fun _ -> async { return [termDefinition] }) (fun _ _ -> foundWords)
+        let testHoverOverMultiWord (terms: string list, foundWords: string list, expectedHover) =
+            testAsync $"Test hover result for {terms}" { 
+                let termDefinitions = terms |> Seq.map (fun t -> {Definitions.Term.Default with Name = t})
+                let hoverHandler = Hover.handler (fun f -> async { return Seq.filter f termDefinitions }) (fun _ _ -> foundWords)
 
                 let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
                 let! result = hoverHandler hoverParams null null |> Async.AwaitTask
@@ -145,8 +145,10 @@ let hoverTests =
                 test <@ result.Contents.MarkupContent.Value = expectedHover @>
             }
         [
-            ("SecondTerm", ["SecondTerm"], "`SecondTerm`")            
-            ("Second", ["SecondTerm"; "Second"; "Term"], "`Second`")
+            (["SecondTerm"], ["SecondTerm"], "`SecondTerm`")            
+            (["Second"], ["SecondTerm"; "Second"; "Term"], "`Second`")
+            (["SecondTerm";"Second";"Term"], ["SecondTerm"; "Second"; "Term"], "`SecondTerm`")
+            (["ThirdTerm";"Third";"Term"], ["thirdTerm"; "Third"; "Term"], "`ThirdTerm`")
         ] |> List.map testHoverOverMultiWord |> testList "Term hover display over MultiWord"
 
     ]

@@ -26,6 +26,45 @@ Even if you're not using Domain Driven Design, Contextive should still be very h
 * Auto-complete from your Contextive Definitions
 * Hover to show definitions from your Contextive Definitions
 * Currently configured to work in files of type: c, cpp, csharp, fsharp, go, groovy, html, java, javascript, javascriptreact, json, jsonc, markdown, perl, php, plaintext, powershell, python, ruby, rust, sql, typescript, typescriptreact, vb, xml, yaml
+* Support for word identification in combined usage such as camelCase, PascalCase and snake_case
+* Support for documenting combined words (e.g. verbNoun or noun_verbed)
+
+### Combined Words
+
+For the hover display, Contextive is able to identify the use of defined terms in combined words - where terms are combined using `camelCase`, `PascalCase` or `snake_case`.
+
+After identifying the combined word, it is split into the individual words and any words that are defined in the `definitions.yml` file are included in the hover display.
+
+The exception to this is if there is a defined term that matches the whole combined word - in this case, only the combined word's definition is included in the hover.
+
+#### Examples:
+
+A few examples to illustrate:
+
+##### EntityId
+
+Consider a definitions list including the term `entity`.  If your code includes `entityId`, `EntityId` or `entity_id`, Contextive will identify the word `entity` and display the defined definition and usage examples:
+
+![Example of hovering over a combined word containing a match.](images/entity_id_example.png)
+
+##### ParentChild as a combined term
+
+Consider a definitions list including the terms `parent` and `child`.  If your code includes `parentChild`, `ParentChild` or `parent_child` (or the reverse), Contextive will identify the words `parent` and `child` and display the defined definitions and usage examples for both words:
+
+![Example of hovering over a combined word with multiple matches.](images/parent_child_example.png)
+
+##### ParentChild as a single term
+
+Consider a definitions list including the terms `parent` and `child` and `parentChild`.  If your code includes `parentChild`, or `ParentChild` Contextive will identify that the token `parentChild` is an exact match for a defined term, and display ONLY the definitions and usage examples for `parentChild`.  It's assumed that the supplied definition will be more precise and accurate for this usage of the combined word.
+
+![Example of hovering over an exactly matching combined word.](images/parent_child_exact_example.png)
+
+#### Limitations
+
+Both of these limitations will be handled in a future updated:
+
+1. If you have a defined term `entityChild` but your code includes `entity_child`, Contextive does not yet recognise this is a match.
+1. If you have a defined term `entityChild`, and your code includes `entityChildId`, Contextive will not recognise the match as it splits `entityChildId` into `entity`, `Child` and `Id` and none of them match the defined term `entityChild`, and `entityChildId` is not an exact match for the defined term. 
 
 #### Coming Soon
 
@@ -35,9 +74,8 @@ Even if you're not using Domain Driven Design, Contextive should still be very h
 * Support for multiple contexts in the same or separate repos
 * Configurable list of language identifiers. The list is currently hard coded as above.
 * Better support for key word identification in different languages (e.g. different syntax delimiters)
-* Support for word identification in combined usage such as camelCase, PascalCase and snake_case
 * Support for detecting plural or singular versions of terms
-* Support for documenting combined words (e.g. verbNoun or noun_verbed)
+* Enhanced support for combined words, as noted above.
 
 ## Extension Settings
 

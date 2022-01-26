@@ -9,8 +9,10 @@ let private markupContent content =
 
 let private noHoverResult = null
 
+let termMatch (term:Definitions.Term) word = term.Name.Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
+
 let private termMatches words (t:Definitions.Term) = 
-    words |> List.exists (fun word -> t.Name.Equals(word, System.StringComparison.InvariantCultureIgnoreCase))
+    words |> List.exists (termMatch t)
 
 let private getWordAtPosition (p:HoverParams) (getWords: TextDocument.WordGetter) =
     match p.TextDocument with
@@ -46,6 +48,14 @@ let private hoverResult (terms: Definitions.Term seq) =
     let content = getTermHoverContent terms |> markupContent
     Hover(Contents = content)
 
+let private filterRelevantTerms (terms: Definitions.Term seq) (words: string list) =
+    let fullWord = List.head words
+    let exactTerm = terms |> Seq.filter (fun t -> termMatch t fullWord)
+    if Seq.isEmpty exactTerm then
+        terms
+    else
+        exactTerm
+
 let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGetter) (p:HoverParams) (hc:HoverCapability) _ =
     async {
             let wordAtPosition = getWordAtPosition p wordsGetter
@@ -55,10 +65,11 @@ let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGett
                 | words -> // TODO: actually find the correct position
                     async {
                         let! terms = termFinder (termMatches words)
-                        return if Seq.isEmpty terms then
+                        let relevantTerms = filterRelevantTerms terms words
+                        return if Seq.isEmpty relevantTerms then
                                     noHoverResult
                                 else
-                                    hoverResult terms
+                                    hoverResult relevantTerms
                     }
     } |> Async.StartAsTask
 
