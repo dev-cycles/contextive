@@ -101,9 +101,9 @@ let hoverTests =
             ("firstTerm NotATerm", Position(0, 10))
         ] |> List.map testHoverTermNotFound |> testList "Term not found when hovering"
 
-        let testHoverDisplay (term: Definitions.Term, expectedHover) =
-            testAsync $"Test hover format for {term.Name}" { 
-                let hoverHandler = Hover.handler (fun _ -> async { return [term] }) (fun _ _ -> [term.Name])
+        let testHoverDisplay (terms: Definitions.Term list, foundWords, expectedHover) =
+            testAsync $"Test hover format when hovering over {foundWords} and definitions are {terms |> List.map (fun t -> t.Name)}" { 
+                let hoverHandler = Hover.handler (fun f -> async { return Seq.filter f terms }) (fun _ _ -> foundWords)
 
                 let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
                 let! result = hoverHandler hoverParams null null |> Async.AwaitTask
@@ -111,12 +111,27 @@ let hoverTests =
                 test <@ result.Contents.MarkupContent.Value = expectedHover @>
             }
         [
-            ({Definitions.Term.Default with Name = "firstTerm"; Definition = Some "The first term in our definitions list"},
-                "**firstTerm**: The first term in our definitions list")
-            ({Definitions.Term.Default with Name = "SecondTerm"},
-                "**SecondTerm**")
-            ({Definitions.Term.Default with Name = "ThirdTerm"; Examples = ResizeArray ["Do a thing"] },
-                "**ThirdTerm**\n***\n#### Usage Examples:\n\"Do a thing\"")
+            ([{Definitions.Term.Default with Name = "firstTerm"; Definition = Some "The first term in our definitions list"}],
+                ["firstTerm"],
+                "`firstTerm`: The first term in our definitions list")
+            ([{Definitions.Term.Default with Name = "SecondTerm"}],
+                ["secondTerm"],
+                "`SecondTerm`")
+            ([{Definitions.Term.Default with Name = "ThirdTerm"; Examples = ResizeArray ["Do a thing"] }],
+                ["thirdTerm"],
+                "`ThirdTerm`\n\n***\n#### `ThirdTerm` Usage Examples:\n\"Do a thing\"")
+            ([{Definitions.Term.Default with Name = "SecondTerm"}; {Definitions.Term.Default with Name = "ThirdTerm"}],
+                ["secondTerm"],
+                "`SecondTerm`")
+            ([{Definitions.Term.Default with Name = "Second"}; {Definitions.Term.Default with Name = "Term"}],
+                ["secondTerm"; "second"; "term"],
+                "`Second`\n\n`Term`")
+            ([{Definitions.Term.Default with Name = "First"; Examples = ResizeArray ["Do a thing"] }; {Definitions.Term.Default with Name = "Term"}],
+                ["firstTerm"; "first"; "term"],
+                "`First`\n\n`Term`\n\n***\n#### `First` Usage Examples:\n\"Do a thing\"")
+            ([{Definitions.Term.Default with Name = "Third"; Examples = ResizeArray ["Do a thing"] }; {Definitions.Term.Default with Name = "Term"; Examples = ResizeArray ["Do something else"]}],
+                ["thirdTerm"; "third"; "term"],
+                "`Third`\n\n`Term`\n\n***\n#### `Third` Usage Examples:\n\"Do a thing\"\n\n***\n#### `Term` Usage Examples:\n\"Do something else\"")
         ] |> List.map testHoverDisplay |> testList "Term hover display"
 
         let testHoverOverMultiWord (term: string, foundWords: string list, expectedHover) =
@@ -130,8 +145,8 @@ let hoverTests =
                 test <@ result.Contents.MarkupContent.Value = expectedHover @>
             }
         [
-            ("SecondTerm", ["SecondTerm"], "**SecondTerm**")            
-            ("Second", ["SecondTerm"; "Second"; "Term"], "**Second**")
+            ("SecondTerm", ["SecondTerm"], "`SecondTerm`")            
+            ("Second", ["SecondTerm"; "Second"; "Term"], "`Second`")
         ] |> List.map testHoverOverMultiWord |> testList "Term hover display over MultiWord"
 
     ]

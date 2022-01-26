@@ -17,29 +17,30 @@ let private getWordAtPosition (p:HoverParams) (getWords: TextDocument.WordGetter
     | null -> []
     | document -> getWords (document.Uri.ToUri()) p.Position
 
+let emphasise t = $"`{t}`"
+
 let private getHoverDefinition (term: Definitions.Term) =
-    [Some <| $"**{term.Name}**"; term.Definition]
+    [Some <| emphasise term.Name; term.Definition]
     |> Seq.choose id
     |> String.concat ": " 
     |> Some
 
-let private hoverUsageExamplesToMarkdown (e:ResizeArray<string>) =
-    e
+let private hoverUsageExamplesToMarkdown (t:Definitions.Term) =
+    t.Examples
     |> Seq.map (sprintf "\"%s\"")
     |> String.concat "\n\n"
-    |> fun e -> "***\n#### Usage Examples:\n" + e
+    |> fun e -> $"***\n#### {emphasise t.Name} Usage Examples:\n" + e
     |> Some
 
 let private getHoverUsageExamples = 
     function | {Definitions.Term.Examples = null} -> None
-             | t -> t.Examples |> hoverUsageExamplesToMarkdown
+             | t -> hoverUsageExamplesToMarkdown t
 
 let private getTermHoverContent (terms: Definitions.Term seq) =
-    let term = Seq.head terms
     [getHoverDefinition; getHoverUsageExamples]
-    |> Seq.map (fun p -> p term)
+    |> Seq.collect (fun p -> terms |> Seq.map p)
     |> Seq.choose id
-    |> String.concat "\n"
+    |> String.concat "\n\n"
 
 let private hoverResult (terms: Definitions.Term seq) =
     let content = getTermHoverContent terms |> markupContent
@@ -61,7 +62,7 @@ let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGett
                     }
     } |> Async.StartAsTask
 
-let private registrationOptionsProvider (hc:HoverCapability) (cc:ClientCapabilities)  =
+let private registrationOptionsProvider (hc:HoverCapability) (cc:ClientCapabilities) =
     HoverRegistrationOptions()
 
 let registrationOptions = RegistrationOptionsDelegate<HoverRegistrationOptions, HoverCapability>(registrationOptionsProvider)
