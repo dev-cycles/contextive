@@ -43,8 +43,12 @@ let textDocumentTests =
             ("position on space", ["firstword secondWord"], Position(0,9), ["firstword"])
             ("out of range lines", ["firstWord secondWord"], Position(1,0), [])
             ("out of range character", ["firstWord"], Position(0,50), [])
-            ("camelCase (firstWord)", ["camelCase"], Position(0,3), ["camelCase";"camel";"Case"])
-            ("camelCase2 (firstWord)", ["firstWord"], Position(0,6), ["firstWord";"first";"Word"])
+            ("camelCase (first word)", ["camelCase"], Position(0,3), ["camelCase";"camel";"Case"])
+            ("camelCase2 (second word)", ["secondWord"], Position(0,6), ["secondWord";"second";"Word"])
+            ("PascalCase (first word)", ["PascalCase"], Position(0,3), ["PascalCase";"Pascal";"Case"])
+            ("PascalCase2 (second word)", ["SecondWord"], Position(0,6), ["SecondWord";"Second";"Word"])
+            ("snake_cake (first word)", ["snake_case"], Position(0,3), ["snake_case";"snake";"case"])
+            ("snake_case2 (second word)", ["second_word"], Position(0,6), ["second_word";"second";"word"])
         ]
         |> List.map testWordFinding |> testList "Wordfinding Tests"
         
