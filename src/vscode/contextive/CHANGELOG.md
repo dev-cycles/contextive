@@ -1,5 +1,16 @@
 # Change Log
 
+# [1.2.0](https://github.com/dev-cycles/contextive/compare/v1.1.3...v1.2.0) (2022-01-26)
+
+
+### Bug Fixes
+
+* **language-server:** language server version updated on release ([#26](https://github.com/dev-cycles/contextive/issues/26)) ([2a626a7](https://github.com/dev-cycles/contextive/commit/2a626a7f2285cb6eb73878aa90ff8149b49d1e38))
+
+
+### Features
+
+* **language-server:** hover now supports camelCase, PascalCase or snake_case words where defined terms are combined with other defined terms, or undefined terms ([#27](https://github.com/dev-cycles/contextive/issues/27)) ([19d9c6c](https://github.com/dev-cycles/contextive/commit/19d9c6c69c9484140b639bf4d0a430a20cd788fc))
 
 ## [1.1.3](https://github.com/dev-cycles/contextive/compare/v1.1.2...v1.1.3) (2022-01-24)
 
