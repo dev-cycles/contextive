@@ -1,4 +1,4 @@
-name: Contextive
+name: Contextive Release
 on: workflow_dispatch    
 
 env:
