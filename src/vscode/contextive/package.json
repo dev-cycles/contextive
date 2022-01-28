@@ -1,7 +1,7 @@
 {
 	"name": "contextive",
 	"displayName": "Contextive",
-	"description": "Supports the project-wide use of a Ubiquitous Language for software projects following Domain Driven Design.",
+	"description": "Supports developers where a complex domain or project specific language is in use by surfacing definitions everywhere specific words are used - code, comments, config or documentation.",
 	"version": "1.2.0",
 	"publisher": "devcycles",
 	"license": "SEE LICENSE IN LICENSE",
@@ -13,7 +13,15 @@
 		"vscode": "^1.63.0"
 	},
 	"categories": [
+		"Programming Languages",
 		"Other"
+	],
+	"keywords": [
+		"Domain Driven Design",
+		"Domain Modelling",
+		"DDD",
+		"Knowledge Management",
+		"Dictionary"
 	],
 	"activationEvents": [
 		"workspaceContains:**/.contextive/**",

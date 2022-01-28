@@ -19,17 +19,21 @@ let private getWordAtPosition (p:HoverParams) (getWords: TextDocument.WordGetter
     | null -> []
     | document -> getWords (document.Uri.ToUri()) p.Position
 
+
+let emojify t = "📖 " + t
 let emphasise t = $"`{t}`"
 
 let private getHoverDefinition (term: Definitions.Term) =
-    [Some <| emphasise term.Name; term.Definition]
+    [term.Name |> emphasise |> emojify |> Some; term.Definition]
     |> Seq.choose id
     |> String.concat ": " 
     |> Some
 
+let speechify usageExample = $"🗨️ \"{usageExample}\""
+
 let private hoverUsageExamplesToMarkdown (t:Definitions.Term) =
     t.Examples
-    |> Seq.map (sprintf "\"%s\"")
+    |> Seq.map speechify
     |> String.concat "\n\n"
     |> fun e -> $"***\n#### {emphasise t.Name} Usage Examples:\n" + e
     |> Some

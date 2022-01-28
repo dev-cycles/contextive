@@ -1,0 +1,17 @@
+# https://www.nysscpa.org/professional-resources/accounting-terminology-guide
+contexts:
+  - terms:
+    - name: Account
+      definition: Formal record that represents, in words, money or other unit of measurement, certain resources, claims to such resources, transactions or other events that result in changes to those resources and claims.
+      examples:
+        - Check the account's ledger to see if the transaction has been posted.
+        - We'll need to debit the payer's account and credit the payee's account.
+    - name: Ledger
+      definition: Any book of accounts containing the summaries of debit and credit entries.
+    - name: Journal
+      definition: Any book containing original entries of daily financial transactions.
+    - name: JournalEntry
+      definition: A notation in the General Journal. It records a single transaction.
+    - name: Transaction
+      definition: Event or condition recognized by an entry in the book Account.
+      

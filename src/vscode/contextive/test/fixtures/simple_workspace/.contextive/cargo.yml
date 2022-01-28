@@ -1,0 +1,21 @@
+# Inspired by https://www.dddcommunity.org/book/evans_2003/
+contexts:
+  - terms:
+    - name: Cargo
+      definition: A unit of transportation that needs moving and delivery to its delivery location.
+      examples:
+        - Multiple Customers are involved with a Cargo, each playing a different role.
+        - They’re going to need the whole itinerary for the Cargo.
+    - name: Leg
+      definition: The movement of a Cargo on a specific vessel from load location to unload location.
+      examples:
+        - Operations will need to contract handling work based on the expected times for each leg
+        - For each leg we'd like to see the vessel voyage, the load and unload location, and time.
+    - name: Policy
+      definition: A set of rules that the routing service must follow when evaluating legs that confirm to the desired routing specification.
+      examples:
+        - We need to configure the set of policies that will apply for a specific customer.
+    - name: LegMagnitudePolicy
+      definition: A policy that helps the routing engine select the legs with the lowest magnitude.
+      examples:
+        - The leg magnitude policy is selecting the fastest leg, but we need it to select the cheapest leg.
