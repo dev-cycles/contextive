@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.1](https://github.com/dev-cycles/contextive/compare/v1.2.0...v1.2.1) (2022-01-28)
+
+
+### Bug Fixes
+
+* **language-server:** add emojis to the hover panel to illustrate definitions and usage examples ([634b1df](https://github.com/dev-cycles/contextive/commit/634b1df2f994d96efb2201259c3c3296860fe757))
+
 # [1.2.0](https://github.com/dev-cycles/contextive/compare/v1.1.3...v1.2.0) (2022-01-26)
 
 
