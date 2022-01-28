@@ -1,6 +1,6 @@
 name: Contextive
-on: push
-    
+on: workflow_dispatch    
+
 env:
   dotnet-version: '6.0.x'
   CONTEXTIVE_CI: true
@@ -81,4 +81,9 @@ jobs:
           name: VsCode Extension Tests
           path: "src/vscode/**/TestResults-${{ env.dotnet-version }}.xml"
           reporter: java-junit
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npm exec --prefix "vscode/contextive" -- semantic-release
+        working-directory: ./src
       - run: echo "🍏 This job's status is ${{ job.status }}."
