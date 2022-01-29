@@ -20,7 +20,7 @@ let private getWordAtPosition (p:HoverParams) (getWords: TextDocument.WordGetter
     | document -> getWords (document.Uri.ToUri()) p.Position
 
 
-let emojify t = "📖 " + t
+let emojify t = "📗 " + t
 let emphasise t = $"`{t}`"
 
 let private getHoverDefinition (term: Definitions.Term) =
@@ -29,7 +29,7 @@ let private getHoverDefinition (term: Definitions.Term) =
     |> String.concat ": " 
     |> Some
 
-let speechify usageExample = $"🗨️ \"{usageExample}\""
+let speechify usageExample = $"💬 \"{usageExample}\""
 
 let private hoverUsageExamplesToMarkdown (t:Definitions.Term) =
     t.Examples

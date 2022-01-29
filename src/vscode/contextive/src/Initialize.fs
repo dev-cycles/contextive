@@ -14,7 +14,7 @@ let private defaultDefinitions = """# Welcome to Contextive!
 contexts:
   - terms:
     - name: context
-      definition: A bounded set of definitions within which words have specific and singular meanings.
+      definition: A bounded set of definitions within which words have specific meanings.
       examples:
         - In the _Sales_ context, the language focuses on activities associated with selling products.
         - Are you sure you're thinking of the definition from the right context?

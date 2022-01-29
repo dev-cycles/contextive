@@ -113,52 +113,52 @@ let hoverTests =
         [
             ([{Definitions.Term.Default with Name = "firstTerm"; Definition = Some "The first term in our definitions list"}],
                 ["firstTerm"],
-                "📖 `firstTerm`: The first term in our definitions list")
+                "📗 `firstTerm`: The first term in our definitions list")
             ([{Definitions.Term.Default with Name = "SecondTerm"}],
                 ["secondTerm"],
-                "📖 `SecondTerm`")
+                "📗 `SecondTerm`")
             ([{Definitions.Term.Default with Name = "ThirdTerm"; Examples = ResizeArray ["Do a thing"] }],
                 ["thirdTerm"],
                 "\
-📖 `ThirdTerm`
+📗 `ThirdTerm`
 
 ***
 #### `ThirdTerm` Usage Examples:
-🗨️ \"Do a thing\"")
+💬 \"Do a thing\"")
             ([{Definitions.Term.Default with Name = "SecondTerm"}; {Definitions.Term.Default with Name = "ThirdTerm"}],
                 ["secondTerm"],
-                "📖 `SecondTerm`")
+                "📗 `SecondTerm`")
             ([{Definitions.Term.Default with Name = "Second"}; {Definitions.Term.Default with Name = "Term"}],
                 ["secondTerm"; "second"; "term"],
                 "\
-📖 `Second`
+📗 `Second`
 
-📖 `Term`\
+📗 `Term`\
                 ")
             ([{Definitions.Term.Default with Name = "First"; Examples = ResizeArray ["Do a thing"] }; {Definitions.Term.Default with Name = "Term"}],
                 ["firstTerm"; "first"; "term"],
                 "\
-📖 `First`
+📗 `First`
 
-📖 `Term`
+📗 `Term`
 
 ***
 #### `First` Usage Examples:
-🗨️ \"Do a thing\"")
+💬 \"Do a thing\"")
             ([{Definitions.Term.Default with Name = "Third"; Examples = ResizeArray ["Do a thing"] }; {Definitions.Term.Default with Name = "Term"; Examples = ResizeArray ["Do something else"]}],
                 ["thirdTerm"; "third"; "term"],
                 "\
-📖 `Third`
+📗 `Third`
 
-📖 `Term`
+📗 `Term`
 
 ***
 #### `Third` Usage Examples:
-🗨️ \"Do a thing\"
+💬 \"Do a thing\"
 
 ***
 #### `Term` Usage Examples:
-🗨️ \"Do something else\"")
+💬 \"Do something else\"")
         ] |> List.map testHoverDisplay |> testList "Term hover display"
 
         let testHoverOverMultiWord (terms: string list, foundWords: string list, expectedHover) =
@@ -172,10 +172,10 @@ let hoverTests =
                 test <@ result.Contents.MarkupContent.Value = expectedHover @>
             }
         [
-            (["SecondTerm"], ["SecondTerm"], "📖 `SecondTerm`")            
-            (["Second"], ["SecondTerm"; "Second"; "Term"], "📖 `Second`")
-            (["SecondTerm";"Second";"Term"], ["SecondTerm"; "Second"; "Term"], "📖 `SecondTerm`")
-            (["ThirdTerm";"Third";"Term"], ["thirdTerm"; "Third"; "Term"], "📖 `ThirdTerm`")
+            (["SecondTerm"], ["SecondTerm"], "📗 `SecondTerm`")            
+            (["Second"], ["SecondTerm"; "Second"; "Term"], "📗 `Second`")
+            (["SecondTerm";"Second";"Term"], ["SecondTerm"; "Second"; "Term"], "📗 `SecondTerm`")
+            (["ThirdTerm";"Third";"Term"], ["thirdTerm"; "Third"; "Term"], "📗 `ThirdTerm`")
         ] |> List.map testHoverOverMultiWord |> testList "Term hover display over MultiWord"
 
     ]
