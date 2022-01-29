@@ -8,7 +8,7 @@
 
 Use the [semantic-release](https://www.npmjs.com/package/semantic-release) package to manage version changes, change logs and release activities.  Use branches for feature development and merge to `main` when a feature is complete.
 
-When ready to cut a release, merge to `release`, which will trigger a new release using [semantic-release](https://www.npmjs.com/package/semantic-release).
+When ready to cut a release, manually trigger a GitHub Actions workflow which will call [semantic-release](https://www.npmjs.com/package/semantic-release) to create a GitHub Release.  A separate GitHub Actions workflow will be triggered from the Github Release being published, and will do a matrix strategy build to generate platform-specific builds and publish them to the VSCode marketplace.
 
 Since `semantic-release` doesn't support major versions < 1, a v1.0.0 tag will be added manually to the latest manually created release to serve as the baseline for the first `semantic-release` managed release.
 
@@ -63,11 +63,14 @@ Key decision drivers are:
 
 ## Decision Outcome
 
-1. Release Trigger from commits to `release` branch
-   1. Initial experiments with releasing off every commit to `main` indicated that there would be too high a release frequency, prompting too many updates and a more complex change log. By controlling releases with a manual merge from `main` to `release` we can review over time what a reasonable frequency/size of releases are.
-   2. Commits to `main` are to be done by [squash merges](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/about-pull-request-merges#squash-and-merge-your-pull-request-commits) from a merge request from a feature branch, with the squash merge commit message using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
+1. Manually trigger a workflow
+   1. Initial experiments with releasing off every commit to `main` indicated that there would be too high a release frequency, prompting too many updates and a change log that doesn't group related changes. 
+   2. Experiments with releasing by merging to a `release` branch shows that the manual effort in creating the merge and the merging the release commit back to `main` is unnecessarily excessive.
+   3. Experiments with releasing by manually triggering a workflow linked to `main` indicated it is the best balance of release control and minimal effort.
+   4. Commits to `main` are to be done by [squash merges](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/about-pull-request-merges#squash-and-merge-your-pull-request-commits) from a merge request from a feature branch, with the squash merge commit message using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
 2. Release Process managed by [semantic-release](https://www.npmjs.com/package/semantic-release)
    1. because it provides repeatable, industry conventional approaches and already includes plugins for all the services currently needed.
+   2. the release process will update changelogs and embedded versions, and commit those changes into the repo with a `[skip ci]` commit message and tagged with the release
 
 ### Positive Consequences 
 
@@ -106,7 +109,9 @@ Any commit to `main` will initiate a release process.
 Any commits to a dedicated `release` branch will initiate a release process
 
 * Good, many commits can accumulate on `main` before being released, so the release cadence can be more measured than the commit cadence
-* Bad, because a human still needs to decide when to merge to `release`, or extra automation is required to trigger a merge to `release` at a given time
+* Bad, because releases may be inconsistent
+* Bad, because extra effort spent determining the need for a release and initiating a release
+* Bad, because the release effort is higher - merge from `main` to `release` and then back from `release` to `main` to keep release tags in `main`'s history
 
 ### Release Process
 
