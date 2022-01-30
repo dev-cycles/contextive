@@ -12,7 +12,12 @@ let private defaultDefinitions = """# Welcome to Contextive!
 #
 # Update the yaml below to define your specific contexts and definitions, and feel free to use markdown in definitions and examples.
 contexts:
-  - terms:
+  - name: Demo
+    domainVisionStatement: To illustrate the usage of the contextive definitions file.
+    paths:
+    # Globs are supported. Multiple paths may be included. If any match the currently open file, the context will be used.
+    - "**" # This is the default path glob if the `paths` key is excluded, and will match all files
+    terms:
     - name: context
       definition: A bounded set of definitions within which words have specific meanings.
       examples:

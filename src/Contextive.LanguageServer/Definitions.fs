@@ -2,6 +2,7 @@ module Contextive.LanguageServer.Definitions
 
 open YamlDotNet.Serialization
 open YamlDotNet.Serialization.NamingConventions
+open DotNet.Globbing
 open System.IO
 
 [<CLIMutable>]
@@ -16,6 +17,9 @@ type Term =
 [<CLIMutable>]
 type Context =
     {
+        Name: string
+        DomainVisionStatement: string
+        Paths: ResizeArray<string>
         Terms: ResizeArray<Term>
     }
 
@@ -27,7 +31,7 @@ type Definitions =
     static member Default = { Contexts = new ResizeArray<Context>() }
 
 type Filter = Term -> bool
-type Finder = Filter -> Async<Term seq>
+type Finder = string -> Filter -> Async<Term seq>
 type Reloader = unit -> unit
 type Unregisterer = unit -> unit
 
@@ -111,6 +115,7 @@ type AddFolderPayload = {
 type FindReplyChannel = AsyncReplyChannel<Term seq>
 
 type FindPayload = {
+    OpenFileUri: string;
     Filter: Filter;
     ReplyChannel: FindReplyChannel
 }
@@ -165,6 +170,7 @@ module private Handle =
                                     { state with Definitions = defs }
                                 | Error msg -> 
                                     let msg = $"Error loading definitions: {msg}"
+                                    Serilog.Log.Logger.Error msg
                                     state.Logger msg
                                     state.OnErrorLoading msg
                                     { state with Definitions = Definitions.Default }
@@ -172,9 +178,38 @@ module private Handle =
 
             return updateFileWatchers newState absolutePath
         }
+
+    let matchPreciseGlob (openFileUri:string) pathGlob =
+        Glob.Parse(pathGlob)
+            .IsMatch(openFileUri)
+
+    let matchGlob (openFileUri:string) pathGlob =
+        let formats: Printf.StringFormat<string->string> list =
+            [
+                "%s"
+                "**%s"
+                "**%s*"
+                "**%s**"
+            ]
+        formats
+        |> List.map (fun s -> sprintf s pathGlob)
+        |> List.exists (matchPreciseGlob openFileUri)
+
+    let matchGlobs openFileUri (context:Context) =
+        let matchOpenFileUri = matchGlob openFileUri
+        match context.Paths with
+        | null -> true
+        | _ -> context.Paths |> Seq.exists matchOpenFileUri
+    
+    let extractTerms t = t.Terms
     
     let find (state: State) (findMsg: FindPayload) : State =
-        let foundTerms = state.Definitions.Contexts |> Seq.collect(fun c -> c.Terms) |> Seq.filter findMsg.Filter
+        let matchOpenFileUri = matchGlobs findMsg.OpenFileUri
+        let foundTerms =
+            state.Definitions.Contexts
+            |> Seq.filter matchOpenFileUri
+            |> Seq.collect extractTerms
+            |> Seq.filter findMsg.Filter
         findMsg.ReplyChannel.Reply foundTerms
         state
 
@@ -214,6 +249,6 @@ let addFolder (definitionsManager:MailboxProcessor<Message>) workspaceFolder =
 let loader (definitionsManager:MailboxProcessor<Message>) = fun () ->
     Load |> definitionsManager.Post
 
-let find (definitionsManager:MailboxProcessor<Message>) (filter:Filter) =
-    let msgBuilder = fun rc -> Find({Filter=filter;ReplyChannel=rc})
+let find (definitionsManager:MailboxProcessor<Message>) (openFileUri:string) (filter:Filter) =
+    let msgBuilder = fun rc -> Find({OpenFileUri=openFileUri;Filter=filter;ReplyChannel=rc})
     definitionsManager.PostAndAsyncReply(msgBuilder, 1000)

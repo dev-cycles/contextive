@@ -50,7 +50,7 @@ let completionTests =
 
         let completionCaseMatching (term, wordsAtPosition, expectedCompletionLabel:string) = 
             testCase $"Completion of \"{term}\" with {wordsAtPosition |> List.map quoter} at position, returns \"{expectedCompletionLabel}\"" <| fun () -> 
-                let finder : Definitions.Finder = fun _ -> async { return seq { {Term.Default with Name = term} } }
+                let finder : Definitions.Finder = fun _ _ -> async { return seq { {Term.Default with Name = term} } }
 
                 let wordGetter : TextDocument.WordGetter = fun _ _ -> wordsAtPosition
 

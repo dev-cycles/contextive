@@ -1,6 +1,10 @@
 # Inspired by https://www.dddcommunity.org/book/evans_2003/
 contexts:
-  - terms:
+  - name: Cargo
+    domainVisionStatement: Handle the routing of cargo through legs
+    paths:
+      - CargoDemo
+    terms:
     - name: Cargo
       definition: A unit of transportation that needs moving and delivery to its delivery location.
       examples:

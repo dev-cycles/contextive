@@ -68,7 +68,7 @@ let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGett
                 | [] -> async { return noHoverResult }
                 | words -> // TODO: actually find the correct position
                     async {
-                        let! terms = termFinder (termMatches words)
+                        let! terms = termFinder (p.TextDocument.Uri.ToString()) (termMatches words)
                         let relevantTerms = filterRelevantTerms terms words
                         return if Seq.isEmpty relevantTerms then
                                     noHoverResult

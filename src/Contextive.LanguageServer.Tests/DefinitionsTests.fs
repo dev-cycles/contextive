@@ -20,15 +20,17 @@ let definitionsTests =
 
         let getDefinitions = getDefinitionsWithErrorHandler (fun _ -> ())
 
-        let getFileName fileName = Path.Combine("fixtures", "completion_tests", $"{fileName}.yml") |> Some
+        let getFileName definitionsFileName = Path.Combine("fixtures", "completion_tests", $"{definitionsFileName}.yml") |> Some
 
-        let getTermsFromFile fileName = async {
-            let path = getFileName fileName
+        let getTermsFromFileInContext termFileUri definitionsFileName = async {
+            let definitionsPath = getFileName definitionsFileName
             let workspaceFolder = Some ""
-            let configGetter = (fun _ -> async.Return path)
+            let configGetter = (fun _ -> async.Return definitionsPath)
             let! definitions = getDefinitions configGetter workspaceFolder
-            return! Definitions.find definitions (fun _ -> true)
+            return! Definitions.find definitions termFileUri (fun _ -> true)
         }
+
+        let getTermsFromFile = getTermsFromFileInContext ""
 
         let compareList = Seq.compareWith compare
 
@@ -54,6 +56,33 @@ let definitionsTests =
             test <@ (foundDefinitions, expectedDefinitions) ||> Seq.compareWith compareList = 0 @>
         }
 
+        testAsync "Can load multi-context definitions" {
+            let! terms = getTermsFromFileInContext "/primary/secondary/test.txt" "multi" // Path contains both context's globs
+            let foundNames = terms |> Seq.map (fun t -> t.Name)
+            test <@ (foundNames, seq ["termInPrimary"; "termInSecondary"]) ||> compareList = 0 @>
+        }
+
+        let testInPath ((path:string),expectedTerms) =
+            let pathName = path.Replace(".", "_dot_")
+            ftestAsync $"with path {pathName}, expecting {expectedTerms}" {
+                let! terms = getTermsFromFileInContext path "multi"
+                let foundNames = terms |> Seq.map (fun t -> t.Name)
+                test <@ (foundNames, seq expectedTerms) ||> compareList = 0 @>
+            }
+        [
+            ("/some/path/with/primary/in/it.txt", ["termInPrimary"])
+            ("/some/path/with/primary.txt", ["termInPrimary"])
+            ("/some/path/with/primary", ["termInPrimary"])
+            ("/some/path/with/test.js", ["termInPrimary"])
+            ("/primary", ["termInPrimary"])
+            ("/some/path/with/secondary/in/it.txt", ["termInSecondary"])
+            ("/some/path/with/secondary.txt", ["termInSecondary"])
+            ("/some/path/with/secondary", ["termInSecondary"])
+            ("/secondary", ["termInSecondary"])
+            ("/some/path", [])
+            ("/some/path/test.cs", [])
+        ] |> List.map testInPath |> testList "Can load definition from correct context"
+
         let invalidScenarios =
             [
                 ("invalid_empty","Error loading definitions: Definitions file is empty.")
@@ -73,7 +102,7 @@ let definitionsTests =
                 let onErrorLoading = fun msg -> ConditionAwaiter.received errorMessageAwaiter msg
 
                 let! definitions = getDefinitionsWithErrorHandler onErrorLoading configGetter workspaceFolder
-                let! termsWhenInvalid = Definitions.find definitions (fun _ -> true)
+                let! termsWhenInvalid = Definitions.find definitions "" (fun _ -> true)
 
                 let! errorMessage = ConditionAwaiter.waitForAny errorMessageAwaiter 500
                 test <@ errorMessage.Value = expectedErrorMessage @>
@@ -82,7 +111,7 @@ let definitionsTests =
                 path <- getFileName "one"
                 (Definitions.loader definitions)()
 
-                let! termsWhenValid = Definitions.find definitions (fun _ -> true)
+                let! termsWhenValid = Definitions.find definitions "" (fun _ -> true)
                 let foundNames = termsWhenValid |> Seq.map (fun t -> t.Name)
 
                 test <@ (foundNames, oneExpectedNames) ||> compareList = 0 @>

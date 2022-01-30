@@ -103,7 +103,7 @@ let hoverTests =
 
         let testHoverDisplay (terms: Definitions.Term list, foundWords, expectedHover) =
             testAsync $"Test hover format when hovering over {foundWords} and definitions are {terms |> List.map (fun t -> t.Name)}" { 
-                let hoverHandler = Hover.handler (fun f -> async { return Seq.filter f terms }) (fun _ _ -> foundWords)
+                let hoverHandler = Hover.handler (fun _ f -> async { return Seq.filter f terms }) (fun _ _ -> foundWords)
 
                 let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
                 let! result = hoverHandler hoverParams null null |> Async.AwaitTask
@@ -164,7 +164,7 @@ let hoverTests =
         let testHoverOverMultiWord (terms: string list, foundWords: string list, expectedHover) =
             testAsync $"Test hover result for {terms}" { 
                 let termDefinitions = terms |> Seq.map (fun t -> {Definitions.Term.Default with Name = t})
-                let hoverHandler = Hover.handler (fun f -> async { return Seq.filter f termDefinitions }) (fun _ _ -> foundWords)
+                let hoverHandler = Hover.handler (fun _ f -> async { return Seq.filter f termDefinitions }) (fun _ _ -> foundWords)
 
                 let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
                 let! result = hoverHandler hoverParams null null |> Async.AwaitTask

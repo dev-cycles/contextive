@@ -1,0 +1,14 @@
+contexts:
+  - name: Primary
+    domainVisionStatement: The primary context in this application
+    paths:
+      - primary
+      - test.js
+    terms:
+      - name: termInPrimary
+  - name: Secondary
+    domainVisionStatement: The secondary context in this application
+    paths:
+      - secondary
+    terms:
+      - name: termInSecondary

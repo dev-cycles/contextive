@@ -29,7 +29,7 @@ let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGett
             | null -> None
             | _ -> wordsGetter (p.TextDocument.Uri.ToUri()) p.Position |> List.tryHead
         let termToStringWithCase = termToString caseTemplate
-        let! matches = termFinder termMatches
+        let! matches = termFinder (p.TextDocument.Uri.ToString()) termMatches
         let labels = matches |> Seq.map termToStringWithCase
         return completionList labels
     } |> Async.StartAsTask
