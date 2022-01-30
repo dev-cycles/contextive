@@ -1,6 +1,14 @@
 # Contextive
 
-Contextive is a suite of tools to support the project-wide use of a Ubiquitous Language for software projects following Domain Driven Design.
+Contextive is a suite of tools to immerse developers in the language of their users' domains.
+
+## Inspiration
+
+Contextive is inspired by the concept of the [Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html) from the practice of [Domain Driven Design (DDD)](https://martinfowler.com/bliki/DomainDrivenDesign.html) and is intended to support ubiquitous language management practices on DDD projects.
+
+Even if you're not using Domain Driven Design, Contextive should still be very helpful in any software project where it's important that developers are aligned on the meaning of terms.
+
+![Example of hovering over a combined word containing a match.](src/vscode/contextive/images/cargo_id_example.png)
 
 ## Proposed Features
 
@@ -11,9 +19,17 @@ The following list of features is a draft proposal of the vision at the start of
   * [x] For each term, include a definition, and examples of usage in normal sentences
   * [ ] Link terms to each other (e.g. commands to the aggregates/entities they apply to; events to the aggregates/entities that publish them)
   * [x] Store Ubiquitous Language term definitions in a file in the repository (e.g. yml format)
-  * [ ] Store terms by Bounded Context, and identify which repos/paths relate to each Bounded Context
+  * [x] Store terms by Bounded Context, and identify which repos/paths relate to each Bounded Context
+* [ ] IDE Support
+  * [x] Visual Studio Code
+  * [ ] Visual Studio (2019/2022)
+  * [ ] Eclipse
+  * [ ] NetBeans
+  * [ ] JetBrains
+  * [ ] vim
+  * [ ] emacs
 * [ ] Code-editing Features
-  * [x] Show the term definition when hovering over the word in the editor 
+  * [x] Show the term definitions & usage examples when hovering over the word in the editor 
   * [x] Add Ubiquitous Language terms to the auto-complete list
   * [ ] Codelens to identify the number of Ubiquitous Language terms in a method or class
   * [ ] Problems/warnings if misuse of the Ubiquitous Language - e.g. use of Command/Event and aggregate in the same class or method name when they are not linked, or use of extra words next to an Aggregate that _isn't_ defined
@@ -24,17 +40,27 @@ The following list of features is a draft proposal of the vision at the start of
 
 ## Status
 
-The project is just getting started, so there aren't a lot of details yet - if this project is of interest, get in touch or check back soon!
-
-[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml)
+[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Twitter](https://img.shields.io/twitter/follow/contextive_tech?label=Follow%20Contextive)](https://twitter.com/intent/follow?screen_name=contextive_tech)
 
 ## Installation
 
-It's expected that Contextive will be available via the Extension/Plugin Marketplaces of the various IDEs that will be supported.
+### Visual Studio Code
+
+Open Visual Studio Code, launch the quick open (`Ctrl+P`) and then enter `ext install devcycles.contextive`.  OR, search `contextive` in the extensions side-bar.
+
+Visit the [Contextive Marketplace](https://marketplace.visualstudio.com/items?itemName=devcycles.contextive) page for details.
+
+Check the extension [README](src/vscode/contextive/README.md) for usage instructions.
+
+### Others
+
+Coming soon!
 
 ## Contributing
 
-As there isn't much here yet, pull requests won't have much to contribute against. If you have ideas for features or implementation, please open an issue to record your thoughts.
+If you have ideas for features or implementation, please open an issue to record your thoughts.
+
+PRs welcome, but as things are evolving rapidly, a conversation before any major changes is probably worthwhile.
 
 Key architectural decisions are tracked using ADRs (Architectural Decision Records) which can be found in the [docs/adr](docs/adr) folder.  The [MADR](https://adr.github.io/madr/) format is the current default.
 
