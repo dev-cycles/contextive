@@ -34,7 +34,7 @@ jobs:
         working-directory: ./src
       - name: Build and Test Language Server
         run: |
-          dotnet test ./src/Contextive.LanguageServer.Tests/Contextive.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults-${{ env.dotnet-version }}.xml"
+          dotnet test ./src/Contextive.LanguageServer.Tests/Contextive.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults-${{ env.dotnet-version }}.xml" -- Expecto.fail-on-focused-tests=true
       - name: Upload Language Server Test Results
         uses: actions/upload-artifact@v2
         with:

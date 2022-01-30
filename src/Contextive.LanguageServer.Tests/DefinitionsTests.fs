@@ -64,7 +64,7 @@ let definitionsTests =
 
         let testInPath ((path:string),expectedTerms) =
             let pathName = path.Replace(".", "_dot_")
-            ftestAsync $"with path {pathName}, expecting {expectedTerms}" {
+            testAsync $"with path {pathName}, expecting {expectedTerms}" {
                 let! terms = getTermsFromFileInContext path "multi"
                 let foundNames = terms |> Seq.map (fun t -> t.Name)
                 test <@ (foundNames, seq expectedTerms) ||> compareList = 0 @>
