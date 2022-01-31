@@ -1,5 +1,18 @@
 # Change Log
 
+# [1.3.0](https://github.com/dev-cycles/contextive/compare/v1.2.1...v1.3.0) (2022-01-31)
+
+
+### Bug Fixes
+
+* **language-server:** update emojis for definitions and usage examples ([f08e477](https://github.com/dev-cycles/contextive/commit/f08e477b1c2b7ba48bf811662a8a509a86fe7726))
+
+
+### Features
+
+* **language-server:** contexts can now be defined with a list of path globs. hover and autocomplete terms will only be shown from contexts where at least one path glob matches the currently open file ([8bf13ee](https://github.com/dev-cycles/contextive/commit/8bf13ee4f4d9d7238c9952de4e136ce185babfea))
+* **language-server:** display current context name and domain vision statement in hover panel, if defined. ([9658385](https://github.com/dev-cycles/contextive/commit/9658385809f9f36a21f694ad4654af5e285c5097))
+
 ## [1.2.1](https://github.com/dev-cycles/contextive/compare/v1.2.0...v1.2.1) (2022-01-28)
 
 
