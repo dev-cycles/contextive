@@ -8,7 +8,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 let private completionList labels =
     CompletionList(labels |> Seq.map (fun l -> CompletionItem(Label=l)), isIncomplete=true)
 
-let private termMatches _ = true
+let private termFilter _ = true
 let private termToString (caseTemplate:string option) (t:Definitions.Term) = 
     match caseTemplate with
     | None -> t.Name
@@ -29,8 +29,11 @@ let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGett
             | null -> None
             | _ -> wordsGetter (p.TextDocument.Uri.ToUri()) p.Position |> List.tryHead
         let termToStringWithCase = termToString caseTemplate
-        let! matches = termFinder (p.TextDocument.Uri.ToString()) termMatches
-        let labels = matches |> Seq.map termToStringWithCase
+        let uri = p.TextDocument.Uri.ToString()
+        let! findResult = termFinder uri termFilter
+        let labels = findResult
+                     |> Definitions.FindResult.allTerms
+                     |> Seq.map termToStringWithCase
         return completionList labels
     } |> Async.StartAsTask
 

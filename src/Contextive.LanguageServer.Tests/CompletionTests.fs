@@ -8,6 +8,8 @@ open Contextive.LanguageServer
 open Contextive.LanguageServer.Definitions
 open TestClient
 
+module DH = Contextive.LanguageServer.Tests.Definitions
+
 [<Tests>]
 let completionTests =
     testSequenced <| testList "Completion Tests" [
@@ -50,7 +52,7 @@ let completionTests =
 
         let completionCaseMatching (term, wordsAtPosition, expectedCompletionLabel:string) = 
             testCase $"Completion of \"{term}\" with {wordsAtPosition |> List.map quoter} at position, returns \"{expectedCompletionLabel}\"" <| fun () -> 
-                let finder : Definitions.Finder = fun _ _ -> async { return seq { {Term.Default with Name = term} } }
+                let finder : Definitions.Finder = DH.mockTermsFinder Context.Default ([term])
 
                 let wordGetter : TextDocument.WordGetter = fun _ _ -> wordsAtPosition
 

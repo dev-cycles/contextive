@@ -1,15 +1,15 @@
 # Inspired by https://www.dddcommunity.org/book/evans_2003/
 contexts:
   - name: Cargo
-    domainVisionStatement: Handle the routing of cargo through legs
+    domainVisionStatement: To manage the routing of cargo through transportation legs
     paths:
-      - CargoDemo
+    - CargoDemo
     terms:
     - name: Cargo
       definition: A unit of transportation that needs moving and delivery to its delivery location.
       examples:
         - Multiple Customers are involved with a Cargo, each playing a different role.
-        - They’re going to need the whole itinerary for the Cargo.
+        - The Cargo delivery goal is specified.
     - name: Leg
       definition: The movement of a Cargo on a specific vessel from load location to unload location.
       examples:
@@ -23,3 +23,12 @@ contexts:
       definition: A policy that helps the routing engine select the legs with the lowest magnitude.
       examples:
         - The leg magnitude policy is selecting the fastest leg, but we need it to select the cheapest leg.
+  - name: Billing
+    domainVisionStatement: Compute and levy charges for shipping
+    paths:
+    - BillingDemo
+    terms:
+    - name: Policy
+      definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
+      examples:
+        - The billing policy is to send to collections after 90 days in arrears.

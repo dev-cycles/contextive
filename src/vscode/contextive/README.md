@@ -27,23 +27,26 @@ Even if you're not using Domain Driven Design, Contextive should still be very h
 * Initialize your Contextive Definitions
 * Auto-complete from your Contextive Definitions
 * Hover to show definitions from your Contextive Definitions
+* Support for multiple contexts in the same repository (identified by path globs)
 * Currently configured to work in files of type: c, cpp, csharp, fsharp, go, groovy, html, java, javascript, javascriptreact, json, jsonc, markdown, perl, php, plaintext, powershell, python, ruby, rust, sql, typescript, typescriptreact, vb, xml, yaml
 * Support for word identification in combined usage such as camelCase, PascalCase and snake_case
 * Support for documenting combined words (e.g. verbNoun or noun_verbed)
 
-### Combined Words
+### Examples
 
-For the hover display, Contextive is able to identify the use of defined terms in combined words - where terms are combined using `camelCase`, `PascalCase` or `snake_case`, or defined terms that _are_ combined words.
+In the following sections, examples are drawn from the Cargo domain, as explored by [Eric Evans](https://twitter.com/ericevans0) in his seminal work on DDD - [Domain Driven Design: Tackling Complexity in the Heart of Software](https://www.dddcommunity.org/book/evans_2003/).
 
-#### Examples
+The usage examples are quoted or inspired by sample conversations in the book - ideally, your usage examples should be exact sentences as said by your domain experts.
 
-The following examples are drawn from the Cargo domain, as explored by [Eric Evans](https://twitter.com/ericevans0) in his seminal work on DDD - [Domain Driven Design: Tackling Complexity in the Heart of Software](https://www.dddcommunity.org/book/evans_2003/).  The usage examples are drawn from sample conversations in the book - ideally, your usage examples should be exact sentences as said by domain experts.
-
-Consider the following Contextive definitions file:
+The following Contextive definitions file was used to generate all screenshots/scenarios below:
 
 ```
 contexts:
-  - terms:
+  - name: Cargo
+    domainVisionStatement: To manage the routing of cargo through transportation legs
+    paths:
+    - CargoDemo
+    terms:
     - name: Cargo
       definition: A unit of transportation that needs moving and delivery to its delivery location.
       examples:
@@ -62,7 +65,51 @@ contexts:
       definition: A policy that helps the routing engine select the legs with the lowest magnitude.
       examples:
         - The leg magnitude policy is selecting the fastest leg, but we need it to select the cheapest leg.
+  - name: Billing
+    domainVisionStatement: Compute and levy charges for shipping
+    paths:
+    - BillingDemo
+    terms:
+    - name: Policy
+      definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
+      examples:
+        - The billing policy is to send to collections after 90 days in arrears.
 ```
+
+### Multiple Contexts
+
+For projects utilising a [monorepo](https://en.wikipedia.org/wiki/Monorepo) it's not uncommon to have code relating to multiple [bounded contexts](https://martinfowler.com/bliki/BoundedContext.html) in the same repository.  At this time, Contextive tracks all definitions in the same file.  Each context has a `paths` property that defines a list of path [globs](https://en.wikipedia.org/wiki/Glob_(programming)).  When working on a file, any context with a matching path glob will be evaluated when finding matches for hover and auto-complete.
+
+This is particularly helpful if the same term (e.g. a common term, like `client`, or `invoice`) is used in multiple contexts.  The definition in each context can relate specifically to its usage in that context.
+
+Each context has optional properties `name` and `domainVisionStatement`.  When set, these names and vision statements will be included in the hover panel.
+
+#### Examples
+
+Given the definitions file above, and a folder structure like so:
+
+```
+/CargoDemo
+  /LegPolicy.cs
+/BillingDemo
+  /Policy.cs
+```
+
+Contextive will match the files to the path glob configurations.
+
+When hovering over `CargoDemo/LegPolicy.cs` we get:
+
+![Example of hovering over policy in the Cargo context.](images/leg_policy_example.png)
+
+When hovering over `BillingDemo/Policy.cs` we get:
+
+![Example of hovering over policy in the Billing context.](images/billing_policy_example.png)
+
+### Combined Words
+
+For the hover display, Contextive is able to identify the use of defined terms in combined words - where terms are combined using `camelCase`, `PascalCase` or `snake_case`, or defined terms that _are_ combined words.
+
+#### Examples
 
 ##### Suffixes and Prefixes
 
@@ -96,7 +143,7 @@ Both of these limitations will be fixed in a future update:
 * UI to edit/manage Contextive Definitions
 * Show definitions in auto-complete details
 * Internationalization support
-* Support for multiple contexts in the same or separate repos
+* Support for multiple contexts in separate repositories
 * Configurable list of language identifiers. The list is currently hard coded as above.
 * Better support for key word identification in different languages (e.g. different syntax delimiters)
 * Support for detecting plural or singular versions of terms

@@ -4,6 +4,7 @@ open YamlDotNet.Serialization
 open YamlDotNet.Serialization.NamingConventions
 open DotNet.Globbing
 open System.IO
+open System.Linq
 
 [<CLIMutable>]
 type Term =
@@ -22,6 +23,8 @@ type Context =
         Paths: ResizeArray<string>
         Terms: ResizeArray<Term>
     }
+    static member Default = { Name=""; DomainVisionStatement=""; Paths=new ResizeArray<string>(); Terms=new ResizeArray<Term>()}
+    member this.WithTerms (terms:Term seq) = { this with Terms = terms.ToList() }
 
 [<CLIMutable>]
 type Definitions =
@@ -31,9 +34,13 @@ type Definitions =
     static member Default = { Contexts = new ResizeArray<Context>() }
 
 type Filter = Term -> bool
-type Finder = string -> Filter -> Async<Term seq>
+type FindResult = Context seq
+type Finder = string -> Filter -> Async<FindResult>
 type Reloader = unit -> unit
 type Unregisterer = unit -> unit
+
+module FindResult =
+    let allTerms (contexts:FindResult) : Term seq = contexts |> Seq.collect(fun c -> c.Terms)
 
 let private tryReadFile path =
     if File.Exists(path) then
@@ -112,7 +119,7 @@ type AddFolderPayload = {
     WorkspaceFolder: string option
 }
 
-type FindReplyChannel = AsyncReplyChannel<Term seq>
+type FindReplyChannel = AsyncReplyChannel<FindResult>
 
 type FindPayload = {
     OpenFileUri: string;
@@ -205,12 +212,11 @@ module private Handle =
     
     let find (state: State) (findMsg: FindPayload) : State =
         let matchOpenFileUri = matchGlobs findMsg.OpenFileUri
-        let foundTerms =
+        let foundContexts =
             state.Definitions.Contexts
             |> Seq.filter matchOpenFileUri
-            |> Seq.collect extractTerms
-            |> Seq.filter findMsg.Filter
-        findMsg.ReplyChannel.Reply foundTerms
+            |> Seq.map (fun c -> c.WithTerms(c.Terms |> Seq.filter findMsg.Filter))
+        findMsg.ReplyChannel.Reply foundContexts
         state
 
 let private handleMessage (state: State) (msg: Message) = async {

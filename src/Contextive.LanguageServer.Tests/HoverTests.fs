@@ -6,12 +6,16 @@ open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open Contextive.LanguageServer
+open Contextive.LanguageServer.Definitions
 open TestClient
 open System.IO
+
+module DH = Contextive.LanguageServer.Tests.Definitions
 
 [<Tests>]
 let hoverTests =
     testList "Hover Tests" [
+
         testAsync "Given no definitions and no document sync, server response to hover request with empty result" {
             use! client = SimpleTestClient |> init
 
@@ -101,70 +105,69 @@ let hoverTests =
             ("firstTerm NotATerm", Position(0, 10))
         ] |> List.map testHoverTermNotFound |> testList "Term not found when hovering"
 
-        let testHoverDisplay (terms: Definitions.Term list, foundWords, expectedHover) =
+        let testHoverDisplay (terms: Term list, foundWords, (expectedHover:string)) =
             testAsync $"Test hover format when hovering over {foundWords} and definitions are {terms |> List.map (fun t -> t.Name)}" { 
-                let hoverHandler = Hover.handler (fun _ f -> async { return Seq.filter f terms }) (fun _ _ -> foundWords)
+                let hoverHandler = Hover.handler (DH.mockDefinitionsFinder Context.Default terms) (fun _ _ -> foundWords)
 
                 let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
                 let! result = hoverHandler hoverParams null null |> Async.AwaitTask
 
-                test <@ result.Contents.MarkupContent.Value = expectedHover @>
+                test <@ result.Contents.MarkupContent.Value.Contains(expectedHover) @>
             }
         [
-            ([{Definitions.Term.Default with Name = "firstTerm"; Definition = Some "The first term in our definitions list"}],
+            ([{Term.Default with Name = "firstTerm"; Definition = Some "The first term in our definitions list"}],
                 ["firstTerm"],
                 "📗 `firstTerm`: The first term in our definitions list")
-            ([{Definitions.Term.Default with Name = "SecondTerm"}],
+            ([{Term.Default with Name = "SecondTerm"}],
                 ["secondTerm"],
                 "📗 `SecondTerm`")
-            ([{Definitions.Term.Default with Name = "ThirdTerm"; Examples = ResizeArray ["Do a thing"] }],
+            ([{Term.Default with Name = "ThirdTerm"; Examples = ResizeArray ["Do a thing"] }],
                 ["thirdTerm"],
                 "\
 📗 `ThirdTerm`
 
-***
 #### `ThirdTerm` Usage Examples:
+
 💬 \"Do a thing\"")
-            ([{Definitions.Term.Default with Name = "SecondTerm"}; {Definitions.Term.Default with Name = "ThirdTerm"}],
+            ([{Term.Default with Name = "SecondTerm"}; {Term.Default with Name = "ThirdTerm"}],
                 ["secondTerm"],
                 "📗 `SecondTerm`")
-            ([{Definitions.Term.Default with Name = "Second"}; {Definitions.Term.Default with Name = "Term"}],
+            ([{Term.Default with Name = "Second"}; {Term.Default with Name = "Term"}],
                 ["secondTerm"; "second"; "term"],
                 "\
 📗 `Second`
 
 📗 `Term`\
                 ")
-            ([{Definitions.Term.Default with Name = "First"; Examples = ResizeArray ["Do a thing"] }; {Definitions.Term.Default with Name = "Term"}],
+            ([{Term.Default with Name = "First"; Examples = ResizeArray ["Do a thing"] }; {Term.Default with Name = "Term"}],
                 ["firstTerm"; "first"; "term"],
                 "\
 📗 `First`
 
 📗 `Term`
 
-***
 #### `First` Usage Examples:
+
 💬 \"Do a thing\"")
-            ([{Definitions.Term.Default with Name = "Third"; Examples = ResizeArray ["Do a thing"] }; {Definitions.Term.Default with Name = "Term"; Examples = ResizeArray ["Do something else"]}],
+            ([{Term.Default with Name = "Third"; Examples = ResizeArray ["Do a thing"] }; {Term.Default with Name = "Term"; Examples = ResizeArray ["Do something else"]}],
                 ["thirdTerm"; "third"; "term"],
                 "\
 📗 `Third`
 
 📗 `Term`
 
-***
 #### `Third` Usage Examples:
+
 💬 \"Do a thing\"
 
-***
 #### `Term` Usage Examples:
+
 💬 \"Do something else\"")
         ] |> List.map testHoverDisplay |> testList "Term hover display"
 
         let testHoverOverMultiWord (terms: string list, foundWords: string list, expectedHover) =
             testAsync $"Test hover result for {terms}" { 
-                let termDefinitions = terms |> Seq.map (fun t -> {Definitions.Term.Default with Name = t})
-                let hoverHandler = Hover.handler (fun _ f -> async { return Seq.filter f termDefinitions }) (fun _ _ -> foundWords)
+                let hoverHandler = Hover.handler (DH.mockTermsFinder Context.Default terms) (fun _ _ -> foundWords)
 
                 let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
                 let! result = hoverHandler hoverParams null null |> Async.AwaitTask
@@ -177,5 +180,63 @@ let hoverTests =
             (["SecondTerm";"Second";"Term"], ["SecondTerm"; "Second"; "Term"], "📗 `SecondTerm`")
             (["ThirdTerm";"Third";"Term"], ["thirdTerm"; "Third"; "Term"], "📗 `ThirdTerm`")
         ] |> List.map testHoverOverMultiWord |> testList "Term hover display over MultiWord"
+
+        testAsync $"Test hover with context info" {
+            let terms = ["term"]
+            let foundWords = ["term"]
+            let hoverHandler =
+                Hover.handler (DH.mockTermsFinder ({Context.Default with Name = "TestContext"; DomainVisionStatement="supporting the test"}) terms) (fun _ _ -> foundWords)
+
+            let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
+            let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+
+            let expectedHover = "### 💠 TestContext Context
+
+_Vision: supporting the test_
+
+📗 `term`"
+
+            test <@ result.Contents.MarkupContent.Value = expectedHover @>
+        }
+
+
+
+        testAsync $"Test hover with multiple context info" {
+            let terms = ["term"]
+            let foundWords = ["term"]
+            let contexts = seq {
+                {Context.Default with Name = "Test"}
+                {Context.Default with Name = "Other"}
+            }
+
+            let hoverHandler = Hover.handler (DH.mockMultiContextTermsFinder contexts terms) (fun _ _ -> foundWords)
+
+            let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
+            let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+
+            let expectedHover = "### 💠 Test Context
+
+📗 `term`
+
+***
+
+### 💠 Other Context
+
+📗 `term`"
+
+            test <@ result.Contents.MarkupContent.Value = expectedHover @>
+        }
+
+        testAsync $"Test hover with context info and no match" {
+            let terms = []
+            let foundWords = ["term"]
+            let hoverHandler =
+                Hover.handler (DH.mockTermsFinder ({Context.Default with Name = "TestContext"}) terms) (fun _ _ -> foundWords)
+
+            let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
+            let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+
+            test <@ result = null @>
+        }
 
     ]

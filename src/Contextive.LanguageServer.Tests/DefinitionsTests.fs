@@ -10,6 +10,8 @@ open TestClient
 let definitionsTests =
     testList "Definitions File Tests" [
 
+        let getName (t:Definitions.Term) = t.Name
+
         let getDefinitionsWithErrorHandler onErrorAction configGetter workspaceFolder  = async {
             let definitions = Definitions.create()
             Definitions.init definitions (fun _ -> ()) configGetter None onErrorAction
@@ -27,7 +29,8 @@ let definitionsTests =
             let workspaceFolder = Some ""
             let configGetter = (fun _ -> async.Return definitionsPath)
             let! definitions = getDefinitions configGetter workspaceFolder
-            return! Definitions.find definitions termFileUri (fun _ -> true)
+            let! contexts = Definitions.find definitions termFileUri (fun _ -> true)
+            return contexts |> Definitions.FindResult.allTerms
         }
 
         let getTermsFromFile = getTermsFromFileInContext ""
@@ -38,7 +41,7 @@ let definitionsTests =
 
         testAsync "Can load term Names" {
             let! terms = getTermsFromFile "one"
-            let foundNames = terms |> Seq.map (fun t -> t.Name)
+            let foundNames = terms |> Seq.map getName
             test <@ (foundNames, oneExpectedNames) ||> compareList = 0 @>
         }
 
@@ -58,7 +61,7 @@ let definitionsTests =
 
         testAsync "Can load multi-context definitions" {
             let! terms = getTermsFromFileInContext "/primary/secondary/test.txt" "multi" // Path contains both context's globs
-            let foundNames = terms |> Seq.map (fun t -> t.Name)
+            let foundNames = terms |> Seq.map getName
             test <@ (foundNames, seq ["termInPrimary"; "termInSecondary"]) ||> compareList = 0 @>
         }
 
@@ -66,7 +69,7 @@ let definitionsTests =
             let pathName = path.Replace(".", "_dot_")
             testAsync $"with path {pathName}, expecting {expectedTerms}" {
                 let! terms = getTermsFromFileInContext path "multi"
-                let foundNames = terms |> Seq.map (fun t -> t.Name)
+                let foundNames = terms |> Seq.map getName
                 test <@ (foundNames, seq expectedTerms) ||> compareList = 0 @>
             }
         [
@@ -111,8 +114,8 @@ let definitionsTests =
                 path <- getFileName "one"
                 (Definitions.loader definitions)()
 
-                let! termsWhenValid = Definitions.find definitions "" (fun _ -> true)
-                let foundNames = termsWhenValid |> Seq.map (fun t -> t.Name)
+                let! contexts = Definitions.find definitions "" (fun _ -> true)
+                let foundNames = contexts |> Definitions.FindResult.allTerms |> Seq.map getName
 
                 test <@ (foundNames, oneExpectedNames) ||> compareList = 0 @>
             }
