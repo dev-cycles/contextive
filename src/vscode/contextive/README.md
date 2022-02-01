@@ -140,7 +140,6 @@ This also now works for `snake_case` code:
 * Configurable list of language identifiers. The list is currently hard coded as above.
 * Better support for key word identification in different languages (e.g. different syntax delimiters)
 * Support for detecting plural or singular versions of terms
-* Support for multi-word defined terms (e.g. with `<space>` between words, rather than a combined word.)
 
 ## Extension Settings
 
