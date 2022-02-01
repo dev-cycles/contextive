@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.3.1](https://github.com/dev-cycles/contextive/compare/v1.3.0...v1.3.1) (2022-02-01)
+
+
+### Bug Fixes
+
+* **language-server:** support snake_case combined words ([#35](https://github.com/dev-cycles/contextive/issues/35)) ([abd076a](https://github.com/dev-cycles/contextive/commit/abd076afc7a2d089f00be9d766be3ddf0a02d66c))
+* **language-server:** support true multi-word terms, not just camelCase and PascalCase terms ([5fc2f73](https://github.com/dev-cycles/contextive/commit/5fc2f73230dfbe24237eee2767d9d7b001a647d8))
+
 # [1.3.0](https://github.com/dev-cycles/contextive/compare/v1.2.1...v1.3.0) (2022-01-31)
 
 
