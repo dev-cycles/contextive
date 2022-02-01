@@ -4,25 +4,39 @@ open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 
+let (|EmptySeq|_|) a = if Seq.isEmpty a then Some () else None
+
 let private markupContent content = 
     MarkedStringsOrMarkupContent(markupContent = MarkupContent(Kind = MarkupKind.Markdown, Value = content))
 
 let private noHoverResult = null
 
-let termWordEquals (term:Definitions.Term) word = term.Name.Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
+let termEquals (term:Definitions.Term) (word:string) = term.Name.Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
+
+let termWordEquals (term:Definitions.Term) (word:TextDocument.WordAndParts) = fst word |> termEquals term
+let termInParts (term:Definitions.Term) (word:TextDocument.WordAndParts) = (snd word) |> Seq.exists (termEquals term)
 
 let private termFilterForWords words =
     fun (t:Definitions.Term) -> 
         let wordMatchesTerm = termWordEquals t
-        words |> List.exists wordMatchesTerm
+        words |> Seq.exists wordMatchesTerm
 
-let private filterRelevantTerms (terms: Definitions.Term seq) (words: string list) =
-    let fullWord = List.head words
-    let exactTerm = terms |> Seq.filter (fun t -> termWordEquals t fullWord)
-    if Seq.isEmpty exactTerm then
-        terms
-    else
-        exactTerm
+let private filterRelevantTerms (terms: Definitions.Term seq) (words: TextDocument.WordAndParts seq) =
+    let exactTerms =
+        words
+        |> Seq.allPairs terms
+        |> Seq.filter (fun (t, w) -> termWordEquals t w)
+    let relevantTerms =
+        exactTerms
+        |> Seq.filter (fun (t, wAndP) -> 
+            exactTerms
+            |> Seq.except (seq {(t, wAndP)})
+            |> Seq.exists (fun (_, w) -> termInParts t w)
+            |> not)
+        |> Seq.map fst
+    match relevantTerms with
+    | EmptySeq -> terms
+    | _ -> relevantTerms
 
 let private getWordAtPosition (p:HoverParams) (getWords: TextDocument.WordGetter) =
     match p.TextDocument with
@@ -66,7 +80,7 @@ let getContextDomainVisionStatement (context: Definitions.Context) =
     | null | "" -> None
     | _ -> Some $"_Vision: {context.DomainVisionStatement}_"
 
-let private getContextHover (words: string list) (context: Definitions.Context) =
+let private getContextHover (words: TextDocument.WordAndParts seq) (context: Definitions.Context) =
     let relevantTerms = filterRelevantTerms context.Terms words
     if Seq.length relevantTerms = 0 then
         ""
@@ -80,18 +94,18 @@ let private getContextHover (words: string list) (context: Definitions.Context) 
 
 let ContextSeparator = "\n\n***\n\n"
 
-let private getContextsHoverContent (words: string list) (contexts: Definitions.FindResult)  =
+let private getContextsHoverContent (words: TextDocument.WordAndParts seq) (contexts: Definitions.FindResult)  =
     contexts
     |> Seq.map (getContextHover words)
     |> String.concat ContextSeparator
 
-let private hoverResult (words: string list) (contexts: Definitions.FindResult) =
+let private hoverResult (words:  TextDocument.WordAndParts seq) (contexts: Definitions.FindResult) =
     let content = getContextsHoverContent words contexts
     match content with
     | "" -> noHoverResult
     | _ -> Hover(Contents = (content |> markupContent))
 
-let private hoverContentForWords (uri:string) (termFinder:Definitions.Finder) (words: string list) = async {
+let private hoverContentForWords (uri:string) (termFinder:Definitions.Finder) (words: TextDocument.WordAndParts seq) = async {
         let! findResult = termFinder uri (termFilterForWords words)
         return
             if Seq.isEmpty findResult then

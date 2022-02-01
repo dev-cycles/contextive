@@ -12,11 +12,14 @@ open System.IO
 let textDocumentTests =
     testList "TextDocument Tests" [
 
+        let getWords = List.map fst
+
         let testWordFinding (name, lines, position, (expectedWords: string list)) =
-            testCase $"{name}: Can identify {expectedWords} at position {position}" <|
+            let expectedWordsList = sprintf "%A" expectedWords
+            testCase $"{name}: Can identify {expectedWordsList} at position {position}" <|
                 fun () -> 
                     let lines = ResizeArray<string>(seq lines)
-                    let words = TextDocument.getWordAtPosition lines <| position
+                    let words = TextDocument.getWordAtPosition lines position |> getWords
                     test <@ words = expectedWords @>
 
         [
@@ -43,12 +46,13 @@ let textDocumentTests =
             ("position on space", ["firstword secondWord"], Position(0,9), ["firstword"])
             ("out of range lines", ["firstWord secondWord"], Position(1,0), [])
             ("out of range character", ["firstWord"], Position(0,50), [])
-            ("camelCase (first word)", ["camelCase"], Position(0,3), ["camelCase";"camel";"Case"])
-            ("camelCase2 (second word)", ["secondWord"], Position(0,6), ["secondWord";"second";"Word"])
-            ("PascalCase (first word)", ["PascalCase"], Position(0,3), ["PascalCase";"Pascal";"Case"])
-            ("PascalCase2 (second word)", ["SecondWord"], Position(0,6), ["SecondWord";"Second";"Word"])
-            ("snake_cake (first word)", ["snake_case"], Position(0,3), ["snake_case";"snake";"case"])
-            ("snake_case2 (second word)", ["second_word"], Position(0,6), ["second_word";"second";"word"])
+            ("camelCase (first word)", ["camelCase"], Position(0,3), ["camel";"Case";"camelCase"])
+            ("camelCase2 (second word)", ["secondWord"], Position(0,6), ["second";"Word";"secondWord"])
+            ("PascalCase (first word)", ["PascalCase"], Position(0,3), ["Pascal";"Case";"PascalCase"])
+            ("PascalCase2 (second word)", ["SecondWord"], Position(0,6), ["Second";"Word";"SecondWord"])
+            ("snake_cake (first word)", ["snake_case"], Position(0,3), ["snake";"case";"snakecase"])
+            ("snake_case2 (second word)", ["second_word"], Position(0,6), ["second";"word";"secondword"])
+            ("PascalCase (three words)", ["PascalCaseId"], Position(0,3), ["Pascal";"Case";"Id";"PascalCase";"CaseId";"PascalCaseId"])
         ]
         |> List.map testWordFinding |> testList "Wordfinding Tests"
         
@@ -72,7 +76,7 @@ let textDocumentTests =
                 Uri = textDocumentUri
             )))
 
-            let words = TextDocument.getWords textDocumentUri <| Position(0, 0)
+            let words = TextDocument.getWords textDocumentUri <| Position(0, 0) |> getWords
 
             test <@ words = ["firstterm"] @>
         }
@@ -91,7 +95,7 @@ let textDocumentTests =
                 ContentChanges = Container(TextDocumentContentChangeEvent(Text = "secondterm"))
             ))
 
-            let words = TextDocument.getWords textDocumentUri <| Position(0, 0)
+            let words = TextDocument.getWords textDocumentUri <| Position(0, 0) |> getWords
 
             test <@ words = ["secondterm"] @>
         }
@@ -114,7 +118,7 @@ let textDocumentTests =
                 TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri)
             ))
 
-            let words = TextDocument.getWords textDocumentUri <| Position(0, 0)
+            let words = TextDocument.getWords textDocumentUri <| Position(0, 0) |> getWords
 
             test <@ words = ["secondterm"] @>
         }
@@ -132,7 +136,7 @@ let textDocumentTests =
                 TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri)
             ))
 
-            let words = TextDocument.getWords textDocumentUri <| Position(0, 0)
+            let words = TextDocument.getWords textDocumentUri <| Position(0, 0) |> getWords
 
             test <@ words = [] @>
         }

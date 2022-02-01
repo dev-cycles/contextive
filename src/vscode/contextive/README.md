@@ -84,8 +84,6 @@ This is particularly helpful if the same term (e.g. a common term, like `client`
 
 Each context has optional properties `name` and `domainVisionStatement`.  When set, these names and vision statements will be included in the hover panel.
 
-#### Examples
-
 Given the definitions file above, and a folder structure like so:
 
 ```
@@ -109,8 +107,6 @@ When hovering over `BillingDemo/Policy.cs` we get:
 
 For the hover display, Contextive is able to identify the use of defined terms in combined words - where terms are combined using `camelCase`, `PascalCase` or `snake_case`, or defined terms that _are_ combined words.
 
-#### Examples
-
 ##### Suffixes and Prefixes
 
 It's quite common to combine a term from your language, such as `cargo` with a suffix such as `Id` (or `service`, or `factory`, etc.).  If your code includes `cargoId`, `CargoId` or `cargo_id`, Contextive will identify the defined term `cargo` and display the definition and usage examples:
@@ -129,14 +125,9 @@ Sometimes, the combined term needs it's own unique definition - just add it to y
 
 ![Example of hovering over an exactly matching combined word.](images/leg_magnitude_policy_example.png)
 
-#### Limitations
+This also now works for `snake_case` even if the term is defined in `PascalCase`:
 
-Both of these limitations will be fixed in a future update:
-
-1. `snake_case` doesn't work for terms that are actual combined words, because when looking for an exact match, Contextive just does a case-insensitive string comparison.
-   1. E.g. if your code includes `leg_magnitude_policy`, Contextive will not recognise the match, and only show you definitions for `Leg` and `Policy`.
-2. Terms that are actual combined words can't yet be found as substrings of a token.
-   1. E.g. if code includes `LegMagnitudePolicyFactory`, Contextive will not recognise the match as it splits into `Leg`, `Magnitude` and `Policy` and `Factory`, none of which match the term `LegMagnitudePolicy`.
+![Example of hovering over an exactly matching combined word in snake_case.](images/leg_magnitude_policy_snake_case_example.png)
 
 #### Coming Soon
 
@@ -147,7 +138,6 @@ Both of these limitations will be fixed in a future update:
 * Configurable list of language identifiers. The list is currently hard coded as above.
 * Better support for key word identification in different languages (e.g. different syntax delimiters)
 * Support for detecting plural or singular versions of terms
-* Enhanced support for combined words, as noted above.
 * Support for multi-word defined terms (e.g. with `<space>` between words, rather than a combined word.)
 
 ## Extension Settings

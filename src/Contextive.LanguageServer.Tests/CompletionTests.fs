@@ -50,11 +50,12 @@ let completionTests =
 
         let quoter = fun s -> $"\"{s}\""
 
-        let completionCaseMatching (term, wordsAtPosition, expectedCompletionLabel:string) = 
+        let completionCaseMatching (term, (wordsAtPosition:string list), expectedCompletionLabel:string) = 
             testCase $"Completion of \"{term}\" with {wordsAtPosition |> List.map quoter} at position, returns \"{expectedCompletionLabel}\"" <| fun () -> 
                 let finder : Definitions.Finder = DH.mockTermsFinder Context.Default ([term])
 
-                let wordGetter : TextDocument.WordGetter = fun _ _ -> wordsAtPosition
+                let wordAndPartsAtPosition = wordsAtPosition |> List.map (fun w -> (w, seq { w }))
+                let wordGetter : TextDocument.WordGetter = fun _ _ -> wordAndPartsAtPosition
 
                 let completionParams = CompletionParams(
                     TextDocument = TextDocumentIdentifier(Uri = new System.Uri("https://test")),

@@ -9,10 +9,10 @@ let private completionList labels =
     CompletionList(labels |> Seq.map (fun l -> CompletionItem(Label=l)), isIncomplete=true)
 
 let private termFilter _ = true
-let private termToString (caseTemplate:string option) (t:Definitions.Term) = 
+let private termToString (caseTemplate:TextDocument.WordAndParts option) (t:Definitions.Term) = 
     match caseTemplate with
     | None -> t.Name
-    | Some(ct) ->
+    | Some((ct,_)) ->
         if ct.Length > 1 && ct |> Seq.forall (System.Char.IsUpper) then
             t.Name.ToUpper()
         elif System.Char.IsUpper(ct.FirstOrDefault()) then

@@ -11,14 +11,16 @@ open System.Collections.Generic
 open System.Text.RegularExpressions
 open System.Linq
 
+let (|EmptySeq|_|) a = if Seq.isEmpty a then Some () else None
+
 let (|Regex|_|) pattern input =
     let res = Regex.Matches(input, pattern)
                 .OfType<Match>()
                 .Select(fun m -> m.Value)
-                |> List.ofSeq
+                |> Seq.cast<string>
     match res with
-    | [] -> None
-    | l -> input :: l |> Some
+    | EmptySeq -> None
+    | _ -> res |> Some
 
 let private documents = new ConcurrentDictionary<string, IList<string>>()
 
@@ -43,7 +45,7 @@ type private Words =
     static member private delimiters = [|' ';'(';'.';'-';'>';':';',';')';'{';'}';'[';']'|]
     static member private wordSplitterRegex = "([A-Z]+(?![a-z])|[A-Z][a-z]+|[0-9]+|[a-z]+)"
 
-    static member Default = []
+    static member Default = Seq.empty<string>
 
     static member private startOfWord line position = Start(line, line.LastIndexOfAny(Words.delimiters, position) + 1)
 
@@ -66,22 +68,24 @@ type private Words =
                     let end' = if end' < 0 then line.Length else end'
                     Token(line, start, end')
                  | _ -> NoWord
-    
-    static member split =
-        function | None -> Words.Default
-                 | Some(Regex Words.wordSplitterRegex list) -> 
-                    match list with
-                    | [] -> Words.Default
-                    | [w ; _] -> [w]
-                    | l -> l
-                 | Some(w) -> [w]
 
     static member getWord =
         function | Token(line, start, _) as t when t.HasLength -> 
                     line.Substring(start, t.Length.Value) |> Some
                  | _ -> None
+
+    static member split =
+        function | None -> Words.Default
+                 | Some(Regex Words.wordSplitterRegex words) -> words
+                 | Some(w) -> seq {w}
+
+    static member combine wordList =
+        seq { 1 .. (Seq.length wordList) }
+        |> Seq.collect (fun chunkSize -> 
+            Seq.windowed chunkSize wordList
+            |> Seq.map (fun chunk -> (String.concat "" chunk, Seq.cast<string> chunk) ))
     
-    static member get = Words.getWord >> Words.split
+    static member get = Words.getWord >> Words.split >> Words.combine >> List.ofSeq
 
 let getWordAtPosition (lines:IList<string>) (position:Position) =
     Words.ofLine lines position.Line
@@ -89,11 +93,12 @@ let getWordAtPosition (lines:IList<string>) (position:Position) =
     |> Words.getEnd position.Character
     |> Words.get
 
-type WordGetter = System.Uri -> Position -> string list
+type WordAndParts = string * seq<string>
+type WordGetter = System.Uri -> Position -> WordAndParts list
 
 let getWords (documentUri: System.Uri) (position:Position) =
     match getDocument documentUri with
-    | None -> Words.Default
+    | None -> []
     | Some(document) -> getWordAtPosition document position
 
 let private getLines (document:string) : IList<string> = document.Split(System.Environment.NewLine)
