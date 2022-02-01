@@ -11,7 +11,11 @@ let private markupContent content =
 
 let private noHoverResult = null
 
-let termEquals (term:Definitions.Term) (word:string) = term.Name.Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
+let termEquals (term:Definitions.Term) (word:string) =
+    term
+        .Name
+        .Replace(" ", "")
+        .Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
 
 let termWordEquals (term:Definitions.Term) (word:TextDocument.WordAndParts) = fst word |> termEquals term
 let termInParts (term:Definitions.Term) (word:TextDocument.WordAndParts) = (snd word) |> Seq.exists (termEquals term)

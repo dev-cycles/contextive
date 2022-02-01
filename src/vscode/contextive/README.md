@@ -121,11 +121,13 @@ It's also common to end up with code elements (classes, variables or methods) th
 
 ##### Combined words as a single term
 
-Sometimes, the combined term needs it's own unique definition - just add it to your definitions file, and Contextive will work out that the more precise match is the one you want, decluttering your hover panel.  For example, once `LegMagnitudePolicy` is defined, the definitions of `Leg` and `Policy` will no longer be shown:
+Sometimes, the combined term needs its own unique definition - just add it to your definitions file, and Contextive will work out that the more precise match is the one you want, decluttering your hover panel.  
+
+It can be added to your definitions file as either separate words (e.g. `Leg Magnitude Policy`) or as `PascalCase` or `camelCase` (e.g. `LegMagnitudePolicy`).  Either way, once it's defined, the definitions of `Leg` and `Policy` will no longer be shown:
 
 ![Example of hovering over an exactly matching combined word.](images/leg_magnitude_policy_example.png)
 
-This also now works for `snake_case` even if the term is defined in `PascalCase`:
+This also now works for `snake_case` code:
 
 ![Example of hovering over an exactly matching combined word in snake_case.](images/leg_magnitude_policy_snake_case_example.png)
 

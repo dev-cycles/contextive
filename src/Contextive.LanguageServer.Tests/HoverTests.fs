@@ -181,7 +181,8 @@ let hoverTests =
                 test <@ result.Contents.MarkupContent.Value = expectedHover @>
             }
         [
-            (["SecondTerm"], [("Second", seq{"Second"}); ("Term", seq{"Term"}); ("SecondTerm",seq{"Second";"Term"})], "📗 `SecondTerm`")            
+            (["SecondTerm"], [("Second", seq{"Second"}); ("Term", seq{"Term"}); ("SecondTerm",seq{"Second";"Term"})], "📗 `SecondTerm`")
+            (["Second Term"], [("Second", seq{"Second"}); ("Term", seq{"Term"}); ("SecondTerm",seq{"Second";"Term"})], "📗 `Second Term`")
             (["Second"], [("Second", seq{"Second"}); ("Term", seq{"Term"}); ("SecondTerm",seq{"Second";"Term"})], "📗 `Second`")
             (["SecondTerm";"Second";"Term"], [("Second", seq{"Second"}); ("Term", seq{"Term"}); ("SecondTerm",seq{"Second";"Term"})], "📗 `SecondTerm`")
             (["ThirdTerm";"Third";"Term"], [("Third",seq{"Third"}); ("Term",seq{"Term"}); ("ThirdTerm",seq{"Third";"Term"})], "📗 `ThirdTerm`")

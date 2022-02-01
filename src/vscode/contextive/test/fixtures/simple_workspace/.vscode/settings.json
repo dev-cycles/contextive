@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
         "Contextive"
-    ]
+    ],
+    "contextive.path": ".contextive/cargo.yml"
 }
