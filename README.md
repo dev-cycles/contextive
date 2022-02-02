@@ -1,5 +1,9 @@
 # Contextive
 
+![Example of hovering over a combined word containing a match.](images/contextive_banner.png)
+
+[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Twitter](https://img.shields.io/twitter/follow/contextive_tech?label=Follow%20Contextive)](https://twitter.com/intent/follow?screen_name=contextive_tech)
+
 Contextive is a suite of tools to immerse developers in the language of their users' domains.
 
 ## Inspiration
@@ -7,6 +11,8 @@ Contextive is a suite of tools to immerse developers in the language of their us
 Contextive is inspired by the concept of the [Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html) from the practice of [Domain Driven Design (DDD)](https://martinfowler.com/bliki/DomainDrivenDesign.html) and is intended to support ubiquitous language management practices on DDD projects.
 
 Even if you're not using Domain Driven Design, Contextive should still be very helpful in any software project where it's important that developers are aligned on the meaning of terms.
+
+By defining terms in a central definitions file, Contextive can surface definitions and usage examples in hover panels wherever the terms are used - in code (of any language across the stack), comments, config, and documentation (e.g. markdown).
 
 ![Example of hovering over a combined word containing a match.](src/vscode/contextive/images/cargo_id_example.png)
 
@@ -38,10 +44,6 @@ The following list of features is a draft proposal of the vision at the start of
   * [ ] A UI widget to view the language terms in a TreeView and offer facilities for adding, updating & removing terms
   * [ ] Make it easy to add terms to the Ubiquitous Language from existing code e.g. by highlighting and using the right-click menu
 
-## Status
-
-[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Twitter](https://img.shields.io/twitter/follow/contextive_tech?label=Follow%20Contextive)](https://twitter.com/intent/follow?screen_name=contextive_tech)
-
 ## Installation
 
 ### Visual Studio Code
@@ -66,5 +68,10 @@ Key architectural decisions are tracked using ADRs (Architectural Decision Recor
 
 Development is being done using [Visual Studio Code Dev Containers](https://code.visualstudio.com/docs/remote/containers). After cloning the repository and opening in Visual Studio Code, choose the "Reopen in Container" option to work in the dev environment. See the Visual Studio Code documentation for more details on setting up your docker environment.
 
+## Logo
+
+The Contextive logo is based (with extreme gratitude!) on the `Bibliophile` image from https://undraw.co - an amazing resource of free images and illustrations.
+
 ## License
+
 [MIT](https://choosealicense.com/licenses/mit/)
