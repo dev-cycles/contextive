@@ -17,9 +17,10 @@ let completionTests =
             use! client = SimpleTestClient |> init
 
             let! completionLabels = Completion.getCompletionLabels client
-        
+
             test <@ Seq.length completionLabels = 0 @>
         }
+
 
         let testFileReader (fileName, text, position, expectedList) =
             testAsync $"Given {fileName} contextive, in document {text} at position {position} respond with expected completion list " {
@@ -42,10 +43,10 @@ let completionTests =
             }
 
         [
-            ("one", "", Position(0, 0), ["firstTerm";"secondTerm";"thirdTerm"])
-            ("two", "", Position(0, 0), ["word1";"word2";"word3"])
-            ("two", "W", Position(0, 1), ["Word1";"Word2";"Word3"])
-            ("two", "WO", Position(0, 2), ["WORD1";"WORD2";"WORD3"])
+            ("one", "", Position(0, 0), Fixtures.One.expectedCompletionLabels)
+            ("two", "", Position(0, 0), Fixtures.Two.expectedCompletionLabels)
+            //("two", "W", Position(0, 1), Fixtures.Two.expectedCompletionLabelsPascal)
+            //("two", "WO", Position(0, 2), Fixtures.Two.expectedCompletionLabelsUPPER)
         ] |> List.map testFileReader |> testList "File reading tests"
 
         let completionCaseMatching (term, (wordAtPosition:string option), expectedCompletionLabel:string) = 
@@ -75,4 +76,33 @@ let completionTests =
             ("term", Some "TEr","Term")
             ("term", None, "term")
         ] |> List.map completionCaseMatching |> testList "Completion Case Matching"
+
+
+        let multiWordCompletion (term, (wordAtPosition:string option), expectedCompletionLabels:string seq) = 
+            let expectedCompletionLabelsList = sprintf "%A" <| Seq.toList expectedCompletionLabels
+            testCase $"Completion of \"{term}\" with {wordAtPosition} at position, returns \"{expectedCompletionLabelsList}\"" <| fun () -> 
+                let finder : Definitions.Finder = DH.mockTermsFinder Context.Default ([term])
+
+                let wordGetter : TextDocument.WordGetter = fun _ _ -> wordAtPosition
+
+                let completionParams = CompletionParams(
+                    TextDocument = TextDocumentIdentifier(Uri = new System.Uri("https://test")),
+                    Position = Position()
+                )
+
+                let completionLabels =
+                    (Completion.handler finder wordGetter completionParams null null).Result
+                    |> Completion.getLabels
+
+                test <@ (completionLabels, expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
+        [
+            ("Multi Word", Some "", seq {"multiWord";"MultiWord";"multi_word"})
+            ("Multi Word", Some "m", seq {"multiWord";"multi_word"})
+            ("Multi Word", Some "M", seq {"MultiWord";"MULTI_WORD"})
+            ("Multi Word", Some "MU", seq {"MULTIWORD";"MULTI_WORD"})
+            ("multi word", Some "", seq {"multiWord";"MultiWord";"multi_word"})
+            ("multi word", Some "m", seq {"multiWord";"multi_word"})
+            ("multi word", Some "M", seq {"MultiWord";"MULTI_WORD"})
+            ("multi word", Some "MU", seq {"MULTIWORD";"MULTI_WORD"})
+        ] |> List.map multiWordCompletion |> testList "Multi Word Completion"
     ]

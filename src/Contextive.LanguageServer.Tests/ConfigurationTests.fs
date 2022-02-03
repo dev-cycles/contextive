@@ -18,7 +18,7 @@ let definitionsTests =
 
             let! completionLabels = Completion.getCompletionLabels client
 
-            test <@ (completionLabels, ["firstTerm";"secondTerm";"thirdTerm"]) ||> Seq.compareWith compare = 0 @>
+            test <@ (completionLabels, Fixtures.One.expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
         }
 
         testAsync "Can handle configuration value changing" {
@@ -38,7 +38,7 @@ let definitionsTests =
 
             let! completionLabels = Completion.getCompletionLabels client
 
-            test <@ (completionLabels, ["word1";"word2";"word3"]) ||> Seq.compareWith compare = 0 @>
+            test <@ (completionLabels, Fixtures.Two.expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
 
         }
              

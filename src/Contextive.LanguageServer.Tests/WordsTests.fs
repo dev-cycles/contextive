@@ -17,7 +17,7 @@ let definitionsTests =
             let expectedWordsList = sprintf "%A" <| Seq.toList expectedWords
             testCase $"{word}: splits to {expectedWordsList}" <|
                 fun () -> 
-                    let words = Some word |> Words.split
+                    let words = Some word |> Words.splitIntoWordAndParts
                     test <@ (words, expectedWords) ||> Seq.compareWith compareWordAndParts = 0 @>
 
         [

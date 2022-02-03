@@ -10,7 +10,7 @@ contexts:
       definition: Any book of accounts containing the summaries of debit and credit entries.
     - name: Journal
       definition: Any book containing original entries of daily financial transactions.
-    - name: JournalEntry
+    - name: Journal Entry
       definition: A notation in the General Journal. It records a single transaction.
     - name: Transaction
       definition: Event or condition recognized by an entry in the book Account.

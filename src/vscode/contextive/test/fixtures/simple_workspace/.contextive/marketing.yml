@@ -1,7 +1,7 @@
 # Inspired by https://blog.hubspot.com/marketing/inbound-marketing-glossary-list
 contexts:
   - terms:
-    - name: CallToAction
+    - name: Call To Action
       definition: A text link, button, image or some type of web link that encourages a website visitor to visit a landing page and become a lead.
       examples:
       - The user clicked the call to action at the top of the email.
@@ -15,7 +15,7 @@ contexts:
         - We need to improve the completion rate.
     - name: Page
       definition: All the content displayed in a browser when a user visits a url.
-    - name: LandingPage
+    - name: Landing Page
       definition: The page that users arrive at from an external source.
       examples:
         - Our landing page needs to really capture the user's attention.

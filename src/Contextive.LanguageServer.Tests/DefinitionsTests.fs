@@ -37,12 +37,10 @@ let definitionsTests =
 
         let compareList = Seq.compareWith compare
 
-        let oneExpectedNames = seq ["firstTerm"; "secondTerm"; "thirdTerm"]
-
         testAsync "Can load term Names" {
             let! terms = getTermsFromFile "one"
             let foundNames = terms |> Seq.map getName
-            test <@ (foundNames, oneExpectedNames) ||> compareList = 0 @>
+            test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>
         }
 
         testAsync "Can load term Definitions" {
@@ -117,7 +115,7 @@ let definitionsTests =
                 let! contexts = Definitions.find definitions "" (fun _ -> true)
                 let foundNames = contexts |> Definitions.FindResult.allTerms |> Seq.map getName
 
-                test <@ (foundNames, oneExpectedNames) ||> compareList = 0 @>
+                test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>
             }
         
         invalidScenarios |> List.map canRecoverFromInvalidDefinitions |> testList "Can recover from invalid definitions"
@@ -137,7 +135,7 @@ let definitionsTests =
                 use! client = TestClient(config) |> init
 
                 let! termsWhenValidAtStart = Completion.getCompletionLabels client
-                test <@ (termsWhenValidAtStart, oneExpectedNames) ||> compareList = 0 @>
+                test <@ (termsWhenValidAtStart, Fixtures.One.expectedCompletionLabels) ||> compareList = 0 @>
 
                 path <- $"{fileName}.yml"
                 ConfigurationSection.didChange client path
@@ -149,7 +147,7 @@ let definitionsTests =
                 ConfigurationSection.didChange client path
 
                 let! termsWhenValidAtEnd = Completion.getCompletionLabels client
-                test <@ (termsWhenValidAtEnd, oneExpectedNames) ||> compareList = 0 @>
+                test <@ (termsWhenValidAtEnd, Fixtures.One.expectedCompletionLabels) ||> compareList = 0 @>
             }
         
         invalidScenarios |> List.map canRecoverFromInvalidDefinitionsInNewConfig |> testList "Can recover from invalid definitions in fresh config"

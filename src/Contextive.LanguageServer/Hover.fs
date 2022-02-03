@@ -25,9 +25,9 @@ let private termFilterForWords words =
         let wordMatchesTerm = termWordEquals t
         words |> Seq.exists wordMatchesTerm
 
-let private filterRelevantTerms (terms: Definitions.Term seq) (words: Words.WordAndParts seq) =
+let private filterRelevantTerms (terms: Definitions.Term seq) (wordsAndParts: Words.WordAndParts seq) =
     let exactTerms =
-        words
+        wordsAndParts
         |> Seq.allPairs terms
         |> Seq.filter (fun (t, w) -> termWordEquals t w)
     let relevantTerms =
@@ -83,8 +83,8 @@ let getContextDomainVisionStatement (context: Definitions.Context) =
     | null | "" -> None
     | _ -> Some $"_Vision: {context.DomainVisionStatement}_"
 
-let private getContextHover (words: Words.WordAndParts seq) (context: Definitions.Context) =
-    let relevantTerms = filterRelevantTerms context.Terms words
+let private getContextHover (wordsAndParts: Words.WordAndParts seq) (context: Definitions.Context) =
+    let relevantTerms = filterRelevantTerms context.Terms wordsAndParts
     if Seq.length relevantTerms = 0 then
         ""
     else
@@ -97,24 +97,24 @@ let private getContextHover (words: Words.WordAndParts seq) (context: Definition
 
 let ContextSeparator = "\n\n***\n\n"
 
-let private getContextsHoverContent (words: Words.WordAndParts seq) (contexts: Definitions.FindResult)  =
+let private getContextsHoverContent (wordsAndParts: Words.WordAndParts seq) (contexts: Definitions.FindResult)  =
     contexts
-    |> Seq.map (getContextHover words)
+    |> Seq.map (getContextHover wordsAndParts)
     |> String.concat ContextSeparator
 
-let private hoverResult (words:  Words.WordAndParts seq) (contexts: Definitions.FindResult) =
-    let content = getContextsHoverContent words contexts
+let private hoverResult (wordsAndParts:  Words.WordAndParts seq) (contexts: Definitions.FindResult) =
+    let content = getContextsHoverContent wordsAndParts contexts
     match content with
     | "" -> noHoverResult
     | _ -> Hover(Contents = (content |> markupContent))
 
-let private hoverContentForWords (uri:string) (termFinder:Definitions.Finder) (words: Words.WordAndParts seq) = async {
-        let! findResult = termFinder uri (termFilterForWords words)
+let private hoverContentForWords (uri:string) (termFinder:Definitions.Finder) (wordsAndParts: Words.WordAndParts seq) = async {
+        let! findResult = termFinder uri (termFilterForWords wordsAndParts)
         return
             if Seq.isEmpty findResult then
                 noHoverResult
             else
-                hoverResult words findResult
+                hoverResult wordsAndParts findResult
     }
 
 let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGetter) (p:HoverParams) (hc:HoverCapability) _ =
@@ -124,8 +124,8 @@ let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGett
             match wordAtPosition with
             | None -> async { return noHoverResult }
             | _ -> 
-                let words = Words.split wordAtPosition
-                hoverContentForWords (p.TextDocument.Uri.ToString()) termFinder words
+                let wordAndParts = Words.splitIntoWordAndParts wordAtPosition
+                hoverContentForWords (p.TextDocument.Uri.ToString()) termFinder wordAndParts
                     
     } |> Async.StartAsTask
 

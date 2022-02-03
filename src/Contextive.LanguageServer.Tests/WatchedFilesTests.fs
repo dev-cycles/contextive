@@ -114,7 +114,7 @@ let watchedFileTests =
         }
 
         testAsync "Server reloads when the contextive file changes" {
-            let newTerm = Guid.NewGuid().ToString()
+            let newTerm = "newterm"
 
             let relativePath = Path.Combine("fixtures", "completion_tests")
             let definitionsFile = "three.yml"

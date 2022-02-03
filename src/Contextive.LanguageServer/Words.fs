@@ -17,7 +17,7 @@ let private (|Regex|_|) pattern input =
 let private Default = Seq.empty<string>
 let private WordSplitterRegex = "([A-Z]+(?![a-z])|[A-Z][a-z]+|[0-9]+|[a-z]+)"
 
-let private splitIntoParts =
+let splitIntoParts =
     function | None -> Default
              | Some(Regex WordSplitterRegex words) -> words
              | Some(w) -> seq {w}
@@ -30,7 +30,7 @@ let private combine wordList : WordAndParts seq =
         Seq.windowed chunkSize wordList
         |> Seq.map (fun chunk -> (String.concat "" chunk, Seq.cast<string> chunk) ))
 
-let split = splitIntoParts >> combine
+let splitIntoWordAndParts = splitIntoParts >> combine
 
 
 
