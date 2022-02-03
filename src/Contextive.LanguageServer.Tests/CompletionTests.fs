@@ -48,14 +48,11 @@ let completionTests =
             ("two", "WO", Position(0, 2), ["WORD1";"WORD2";"WORD3"])
         ] |> List.map testFileReader |> testList "File reading tests"
 
-        let quoter = fun s -> $"\"{s}\""
-
-        let completionCaseMatching (term, (wordsAtPosition:string list), expectedCompletionLabel:string) = 
-            testCase $"Completion of \"{term}\" with {wordsAtPosition |> List.map quoter} at position, returns \"{expectedCompletionLabel}\"" <| fun () -> 
+        let completionCaseMatching (term, (wordAtPosition:string option), expectedCompletionLabel:string) = 
+            testCase $"Completion of \"{term}\" with {wordAtPosition} at position, returns \"{expectedCompletionLabel}\"" <| fun () -> 
                 let finder : Definitions.Finder = DH.mockTermsFinder Context.Default ([term])
 
-                let wordAndPartsAtPosition = wordsAtPosition |> List.map (fun w -> (w, seq { w }))
-                let wordGetter : TextDocument.WordGetter = fun _ _ -> wordAndPartsAtPosition
+                let wordGetter : TextDocument.WordGetter = fun _ _ -> wordAtPosition
 
                 let completionParams = CompletionParams(
                     TextDocument = TextDocumentIdentifier(Uri = new System.Uri("https://test")),
@@ -68,14 +65,14 @@ let completionTests =
 
                 test <@ (completionLabels, seq {expectedCompletionLabel}) ||> Seq.compareWith compare = 0 @>
         [
-            ("term", [""], "term")
-            ("Term", [""], "Term")
-            ("term", ["t"], "term")
-            ("Term", ["t"], "term")
-            ("term", ["T"], "Term")
-            ("term", ["Te"], "Term")
-            ("term", ["TE"],"TERM")
-            ("term", ["TEr"],"Term")
-            ("term", [], "term")
+            ("term", Some "", "term")
+            ("Term", Some "", "Term")
+            ("term", Some "t", "term")
+            ("Term", Some "t", "term")
+            ("term", Some "T", "Term")
+            ("term", Some "Te", "Term")
+            ("term", Some "TE","TERM")
+            ("term", Some "TEr","Term")
+            ("term", None, "term")
         ] |> List.map completionCaseMatching |> testList "Completion Case Matching"
     ]

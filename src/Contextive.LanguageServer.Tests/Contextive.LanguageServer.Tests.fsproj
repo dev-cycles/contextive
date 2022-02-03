@@ -6,6 +6,7 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="WordsTests.fs" />
     <Compile Include="Definitions.fs" />
     <Compile Include="Completion.fs" />
     <Compile Include="ConditionAwaiter.fs" />

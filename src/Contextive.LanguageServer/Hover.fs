@@ -17,15 +17,15 @@ let termEquals (term:Definitions.Term) (word:string) =
         .Replace(" ", "")
         .Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
 
-let termWordEquals (term:Definitions.Term) (word:TextDocument.WordAndParts) = fst word |> termEquals term
-let termInParts (term:Definitions.Term) (word:TextDocument.WordAndParts) = (snd word) |> Seq.exists (termEquals term)
+let termWordEquals (term:Definitions.Term) (word:Words.WordAndParts) = fst word |> termEquals term
+let termInParts (term:Definitions.Term) (word:Words.WordAndParts) = (snd word) |> Seq.exists (termEquals term)
 
 let private termFilterForWords words =
     fun (t:Definitions.Term) -> 
         let wordMatchesTerm = termWordEquals t
         words |> Seq.exists wordMatchesTerm
 
-let private filterRelevantTerms (terms: Definitions.Term seq) (words: TextDocument.WordAndParts seq) =
+let private filterRelevantTerms (terms: Definitions.Term seq) (words: Words.WordAndParts seq) =
     let exactTerms =
         words
         |> Seq.allPairs terms
@@ -44,9 +44,8 @@ let private filterRelevantTerms (terms: Definitions.Term seq) (words: TextDocume
 
 let private getWordAtPosition (p:HoverParams) (getWords: TextDocument.WordGetter) =
     match p.TextDocument with
-    | null -> []
+    | null -> None
     | document -> getWords (document.Uri.ToUri()) p.Position
-
 
 let emojify t = "📗 " + t
 let emphasise t = $"`{t}`"
@@ -84,7 +83,7 @@ let getContextDomainVisionStatement (context: Definitions.Context) =
     | null | "" -> None
     | _ -> Some $"_Vision: {context.DomainVisionStatement}_"
 
-let private getContextHover (words: TextDocument.WordAndParts seq) (context: Definitions.Context) =
+let private getContextHover (words: Words.WordAndParts seq) (context: Definitions.Context) =
     let relevantTerms = filterRelevantTerms context.Terms words
     if Seq.length relevantTerms = 0 then
         ""
@@ -98,18 +97,18 @@ let private getContextHover (words: TextDocument.WordAndParts seq) (context: Def
 
 let ContextSeparator = "\n\n***\n\n"
 
-let private getContextsHoverContent (words: TextDocument.WordAndParts seq) (contexts: Definitions.FindResult)  =
+let private getContextsHoverContent (words: Words.WordAndParts seq) (contexts: Definitions.FindResult)  =
     contexts
     |> Seq.map (getContextHover words)
     |> String.concat ContextSeparator
 
-let private hoverResult (words:  TextDocument.WordAndParts seq) (contexts: Definitions.FindResult) =
+let private hoverResult (words:  Words.WordAndParts seq) (contexts: Definitions.FindResult) =
     let content = getContextsHoverContent words contexts
     match content with
     | "" -> noHoverResult
     | _ -> Hover(Contents = (content |> markupContent))
 
-let private hoverContentForWords (uri:string) (termFinder:Definitions.Finder) (words: TextDocument.WordAndParts seq) = async {
+let private hoverContentForWords (uri:string) (termFinder:Definitions.Finder) (words: Words.WordAndParts seq) = async {
         let! findResult = termFinder uri (termFilterForWords words)
         return
             if Seq.isEmpty findResult then
@@ -120,11 +119,13 @@ let private hoverContentForWords (uri:string) (termFinder:Definitions.Finder) (w
 
 let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGetter) (p:HoverParams) (hc:HoverCapability) _ =
     async {
-        let wordsAtPosition = getWordAtPosition p wordsGetter
+        let wordAtPosition = getWordAtPosition p wordsGetter
         return!
-            match wordsAtPosition with
-            | [] -> async { return noHoverResult }
-            | words -> hoverContentForWords (p.TextDocument.Uri.ToString()) termFinder words
+            match wordAtPosition with
+            | None -> async { return noHoverResult }
+            | _ -> 
+                let words = Words.split wordAtPosition
+                hoverContentForWords (p.TextDocument.Uri.ToString()) termFinder words
                     
     } |> Async.StartAsTask
 

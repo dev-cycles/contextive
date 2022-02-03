@@ -69,23 +69,11 @@ type private Words =
                     Token(line, start, end')
                  | _ -> NoWord
 
-    static member getWord =
+    static member get =
         function | Token(line, start, _) as t when t.HasLength -> 
                     line.Substring(start, t.Length.Value) |> Some
                  | _ -> None
 
-    static member split =
-        function | None -> Words.Default
-                 | Some(Regex Words.wordSplitterRegex words) -> words
-                 | Some(w) -> seq {w}
-
-    static member combine wordList =
-        seq { 1 .. (Seq.length wordList) }
-        |> Seq.collect (fun chunkSize -> 
-            Seq.windowed chunkSize wordList
-            |> Seq.map (fun chunk -> (String.concat "" chunk, Seq.cast<string> chunk) ))
-    
-    static member get = Words.getWord >> Words.split >> Words.combine >> List.ofSeq
 
 let getWordAtPosition (lines:IList<string>) (position:Position) =
     Words.ofLine lines position.Line
@@ -93,12 +81,11 @@ let getWordAtPosition (lines:IList<string>) (position:Position) =
     |> Words.getEnd position.Character
     |> Words.get
 
-type WordAndParts = string * seq<string>
-type WordGetter = System.Uri -> Position -> WordAndParts list
+type WordGetter = System.Uri -> Position -> string option
 
-let getWords (documentUri: System.Uri) (position:Position) =
+let getWord (documentUri: System.Uri) (position:Position) =
     match getDocument documentUri with
-    | None -> []
+    | None -> None
     | Some(document) -> getWordAtPosition document position
 
 let private getLines (document:string) : IList<string> = document.Split(System.Environment.NewLine)

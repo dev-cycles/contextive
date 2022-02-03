@@ -12,49 +12,38 @@ open System.IO
 let textDocumentTests =
     testList "TextDocument Tests" [
 
-        let getWords = List.map fst
-
-        let testWordFinding (name, lines, position, (expectedWords: string list)) =
-            let expectedWordsList = sprintf "%A" expectedWords
-            testCase $"{name}: Can identify {expectedWordsList} at position {position}" <|
+        let testWordFinding (name, lines, position, expectedWord: string option) =
+            testCase $"{name}: finds {expectedWord} at position {position}" <|
                 fun () -> 
                     let lines = ResizeArray<string>(seq lines)
-                    let words = TextDocument.getWordAtPosition lines position |> getWords
-                    test <@ words = expectedWords @>
+                    let word = TextDocument.getWordAtPosition lines position
+                    test <@ word = expectedWord @>
 
         [
-            ("single word", ["firstword"; "secondword"], Position(0,0),  ["firstword"])
-            ("single word", ["firstword"; "secondword"], Position(1,0), ["secondword"])
-            ("multiple words", ["firstword secondword"], Position(0,0), ["firstword"])
-            ("multiple words", ["firstword secondword"], Position(0,10), ["secondword"])
-            ("multiple words", ["firstword secondword"], Position(0,15), ["secondword"])
-            ("position at end", ["firstword secondword"], Position(0,20), ["secondword"])
-            ("method", ["firstword()"], Position(0,1), ["firstword"])
-            ("object", ["firstword.method()"], Position(0,1), ["firstword"])
-            ("object arrow", ["firstword->method()"], Position(0,1), ["firstword"])
-            ("object property", ["firstWord.property"], Position(0,10), ["property"])
-            ("object arrow property", ["firstWord->property"], Position(0,11), ["property"])
-            ("object property in clause", ["firstWord.property "], Position(0,18), ["property"])
-            ("object method", ["firstWord.method()"], Position(0,10), ["method"])
-            ("array", ["[firstelement]"], Position(0,10), ["firstelement"])
-            ("array", ["[firstElement,secondelement]"], Position(0,15), ["secondelement"])
-            ("argument", ["(firstelement)"], Position(0,10), ["firstelement"])
-            ("braces", ["{firstelement}"], Position(0,10), ["firstelement"])
-            ("yaml key", ["key: value"], Position(0,1), ["key"])
-            ("sentence", ["word, something"], Position(0,1), ["word"])
-            ("position at end", ["firstWord secondWord"], Position(0,21), [])
-            ("position on space", ["firstword secondWord"], Position(0,9), ["firstword"])
-            ("out of range lines", ["firstWord secondWord"], Position(1,0), [])
-            ("out of range character", ["firstWord"], Position(0,50), [])
-            ("camelCase (first word)", ["camelCase"], Position(0,3), ["camel";"Case";"camelCase"])
-            ("camelCase2 (second word)", ["secondWord"], Position(0,6), ["second";"Word";"secondWord"])
-            ("PascalCase (first word)", ["PascalCase"], Position(0,3), ["Pascal";"Case";"PascalCase"])
-            ("PascalCase2 (second word)", ["SecondWord"], Position(0,6), ["Second";"Word";"SecondWord"])
-            ("snake_cake (first word)", ["snake_case"], Position(0,3), ["snake";"case";"snakecase"])
-            ("snake_case2 (second word)", ["second_word"], Position(0,6), ["second";"word";"secondword"])
-            ("PascalCase (three words)", ["PascalCaseId"], Position(0,3), ["Pascal";"Case";"Id";"PascalCase";"CaseId";"PascalCaseId"])
-        ]
-        |> List.map testWordFinding |> testList "Wordfinding Tests"
+            ("single word",       ["firstword"; "secondword"],      Position(0,0),  Some "firstword")
+            ("single word",       ["firstword"; "secondword"],      Position(1,0),  Some "secondword")
+            ("multiple words",    ["firstword secondword"],         Position(0,0),  Some "firstword")
+            ("multiple words",    ["firstword secondword"],         Position(0,10), Some "secondword")
+            ("multiple words",    ["firstword secondword"],         Position(0,15), Some "secondword")
+            ("position at end",   ["firstword secondword"],         Position(0,20), Some "secondword")
+            ("method",            ["firstword()"],                  Position(0,1),  Some "firstword")
+            ("object",            ["firstword.method()"],           Position(0,1),  Some "firstword")
+            ("object arrow",      ["firstword->method()"],          Position(0,1),  Some "firstword")
+            ("object property",   ["firstWord.property"],           Position(0,10), Some "property")
+            ("object arrow prop", ["firstWord->property"],          Position(0,11), Some "property")
+            ("object prop clause",["firstWord.property "],          Position(0,18), Some "property")
+            ("object method",     ["firstWord.method()"],           Position(0,10), Some "method")
+            ("array",             ["[firstelement]"],               Position(0,10), Some "firstelement")
+            ("array",             ["[firstElement,secondelement]"], Position(0,15), Some "secondelement")
+            ("argument",          ["(firstelement)"],               Position(0,10), Some "firstelement")
+            ("braces",            ["{firstelement}"],               Position(0,10), Some "firstelement")
+            ("yaml key",          ["key: value"],                   Position(0,1),  Some "key")
+            ("sentence",          ["word, something"],              Position(0,1),  Some "word")
+            ("position at end",   ["firstWord secondWord"],         Position(0,21), None)
+            ("position on space", ["firstword secondWord"],         Position(0,9),  Some "firstword")
+            ("out of range line", ["firstWord secondWord"],         Position(1,0),  None)
+            ("out of range char", ["firstWord"],                    Position(0,50), None)
+        ] |> List.map testWordFinding |> testList "Wordfinding Tests"
         
         testAsync "Server supports full sync" {
             let config = [
@@ -76,9 +65,9 @@ let textDocumentTests =
                 Uri = textDocumentUri
             )))
 
-            let words = TextDocument.getWords textDocumentUri <| Position(0, 0) |> getWords
+            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
 
-            test <@ words = ["firstterm"] @>
+            test <@ word.Value = "firstterm" @>
         }
         
         testAsync $"Given changed text document, can find text document" {
@@ -95,9 +84,9 @@ let textDocumentTests =
                 ContentChanges = Container(TextDocumentContentChangeEvent(Text = "secondterm"))
             ))
 
-            let words = TextDocument.getWords textDocumentUri <| Position(0, 0) |> getWords
+            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
 
-            test <@ words = ["secondterm"] @>
+            test <@ word.Value = "secondterm" @>
         }
 
         testAsync $"Given Saved document, can find text document" {
@@ -118,9 +107,9 @@ let textDocumentTests =
                 TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri)
             ))
 
-            let words = TextDocument.getWords textDocumentUri <| Position(0, 0) |> getWords
+            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
 
-            test <@ words = ["secondterm"] @>
+            test <@ word.Value = "secondterm" @>
         }
 
         testAsync $"Given Closed document, text document not found" {
@@ -136,9 +125,9 @@ let textDocumentTests =
                 TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri)
             ))
 
-            let words = TextDocument.getWords textDocumentUri <| Position(0, 0) |> getWords
+            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
 
-            test <@ words = [] @>
+            test <@ word.IsNone @>
         }
 
     ]
