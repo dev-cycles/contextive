@@ -16,9 +16,9 @@ let definitionsTests =
 
             use! client = TestClient(config) |> init
 
-            let! completionLabels = Completion.getCompletionLabels client
+            let! labels = Completion.getCompletionLabels client
 
-            test <@ (completionLabels, Fixtures.One.expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
+            test <@ (labels, Fixtures.One.expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
         }
 
         testAsync "Can handle configuration value changing" {
@@ -36,9 +36,9 @@ let definitionsTests =
             path <- "two.yml"
             ConfigurationSection.didChange client path
 
-            let! completionLabels = Completion.getCompletionLabels client
+            let! labels = Completion.getCompletionLabels client
 
-            test <@ (completionLabels, Fixtures.Two.expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
+            test <@ (labels, Fixtures.Two.expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
 
         }
              

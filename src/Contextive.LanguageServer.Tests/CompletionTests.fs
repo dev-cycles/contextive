@@ -16,13 +16,13 @@ let completionTests =
         testAsync "Given no contextive respond with empty completion list " {
             use! client = SimpleTestClient |> init
 
-            let! completionLabels = Completion.getCompletionLabels client
+            let! labels = Completion.getCompletionLabels client
 
-            test <@ Seq.length completionLabels = 0 @>
+            test <@ Seq.length labels = 0 @>
         }
 
 
-        let testFileReader (fileName, text, position, expectedList) =
+        let testFileReader (fileName, text, position, expectedCompletionLabels) =
             testAsync $"Given {fileName} contextive, in document {text} at position {position} respond with expected completion list " {
                 let config = [
                     Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
@@ -39,32 +39,27 @@ let completionTests =
 
                 let completionLabels = Completion.getLabels result
 
-                test <@ (completionLabels, expectedList) ||> Seq.compareWith compare = 0 @>
+                test <@ (completionLabels, expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
             }
 
         [
             ("one", "", Position(0, 0), Fixtures.One.expectedCompletionLabels)
             ("two", "", Position(0, 0), Fixtures.Two.expectedCompletionLabels)
-            //("two", "W", Position(0, 1), Fixtures.Two.expectedCompletionLabelsPascal)
-            //("two", "WO", Position(0, 2), Fixtures.Two.expectedCompletionLabelsUPPER)
+            ("two", "W", Position(0, 1), Fixtures.Two.expectedCompletionLabelsPascal)
+            ("two", "WO", Position(0, 2), Fixtures.Two.expectedCompletionLabelsUPPER)
         ] |> List.map testFileReader |> testList "File reading tests"
 
-        let completionCaseMatching (term, (wordAtPosition:string option), expectedCompletionLabel:string) = 
-            testCase $"Completion of \"{term}\" with {wordAtPosition} at position, returns \"{expectedCompletionLabel}\"" <| fun () -> 
+        let singleWordCompletion (term, (wordAtPosition:string option), expectedLabel:string) = 
+            testCase $"Completion of \"{term}\" with {wordAtPosition} at position, returns \"{expectedLabel}\"" <| fun () -> 
                 let finder : Definitions.Finder = DH.mockTermsFinder Context.Default ([term])
 
                 let wordGetter : TextDocument.WordGetter = fun _ _ -> wordAtPosition
 
-                let completionParams = CompletionParams(
-                    TextDocument = TextDocumentIdentifier(Uri = new System.Uri("https://test")),
-                    Position = Position()
-                )
-
                 let completionLabels =
-                    (Completion.handler finder wordGetter completionParams null null).Result
+                    (Completion.handler finder wordGetter Completion.defaultParams null null).Result
                     |> Completion.getLabels
 
-                test <@ (completionLabels, seq {expectedCompletionLabel}) ||> Seq.compareWith compare = 0 @>
+                test <@ (completionLabels, seq {expectedLabel}) ||> Seq.compareWith compare = 0 @>
         [
             ("term", Some "", "term")
             ("Term", Some "", "Term")
@@ -75,7 +70,7 @@ let completionTests =
             ("term", Some "TE","TERM")
             ("term", Some "TEr","Term")
             ("term", None, "term")
-        ] |> List.map completionCaseMatching |> testList "Completion Case Matching"
+        ] |> List.map singleWordCompletion |> testList "Single Word Completion"
 
 
         let multiWordCompletion (term, (wordAtPosition:string option), expectedCompletionLabels:string seq) = 
@@ -85,13 +80,8 @@ let completionTests =
 
                 let wordGetter : TextDocument.WordGetter = fun _ _ -> wordAtPosition
 
-                let completionParams = CompletionParams(
-                    TextDocument = TextDocumentIdentifier(Uri = new System.Uri("https://test")),
-                    Position = Position()
-                )
-
                 let completionLabels =
-                    (Completion.handler finder wordGetter completionParams null null).Result
+                    (Completion.handler finder wordGetter Completion.defaultParams null null).Result
                     |> Completion.getLabels
 
                 test <@ (completionLabels, expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
@@ -105,4 +95,17 @@ let completionTests =
             ("multi word", Some "M", seq {"MultiWord";"MULTI_WORD"})
             ("multi word", Some "MU", seq {"MULTIWORD";"MULTI_WORD"})
         ] |> List.map multiWordCompletion |> testList "Multi Word Completion"
+
+        let detailCompletion (contextName, expectedDetail) = 
+            testCase $"Context \"{contextName}\" has detail \"{expectedDetail}\"" <| fun () ->
+                let finder : Definitions.Finder = DH.mockTermsFinder {Context.Default with Name=contextName} (["term"])
+
+                let completionLabels =
+                    (Completion.handler finder Completion.emptyWordGetter Completion.defaultParams null null).Result
+
+                test <@ (completionLabels |> Seq.head).Detail = expectedDetail @>
+        [
+            (null, null)
+            ("context name", "context name Context")
+        ] |> List.map detailCompletion |> testList "Detail Completion"
     ]

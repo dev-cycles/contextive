@@ -3,6 +3,7 @@ module Contextive.LanguageServer.Tests.Completion
 open OmniSharp.Extensions.LanguageServer.Protocol.Client
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
+open Contextive.LanguageServer
 
 let getLabels (result:CompletionList) = 
     result.Items |> Seq.map (fun x -> x.Label)
@@ -29,3 +30,10 @@ let getCompletionLabels (client:ILanguageClient) = async {
     let! result = getCompletion client
     return getLabels result
 }
+
+let emptyWordGetter:TextDocument.WordGetter = fun _ _ -> None
+
+let defaultParams = CompletionParams(
+        TextDocument = TextDocumentIdentifier(Uri = new System.Uri("https://test")),
+        Position = Position()
+    )

@@ -106,11 +106,11 @@ let watchedFileTests =
 
             didChangeWatchedFiles client definitionsFileUri
             
-            let! completionLabels = Completion.getCompletionLabels client
+            let! labels = Completion.getCompletionLabels client
 
             File.Delete(definitionsFileUri)
 
-            test <@ completionLabels |> Seq.contains "anewterm" @>
+            test <@ labels |> Seq.contains "anewterm" @>
         }
 
         testAsync "Server reloads when the contextive file changes" {
@@ -134,10 +134,10 @@ let watchedFileTests =
             
             didChangeWatchedFiles client definitionsFileUri
 
-            let! completionLabels = Completion.getCompletionLabels client
+            let! labels = Completion.getCompletionLabels client
 
             File.WriteAllText(definitionsFileUri, existingContents)
 
-            test <@ completionLabels |> Seq.contains newTerm @>
+            test <@ labels |> Seq.contains newTerm @>
         }
     ]
