@@ -1,5 +1,19 @@
 # Change Log
 
+# [1.4.0](https://github.com/dev-cycles/contextive/compare/v1.3.1...v1.4.0) (2022-02-05)
+
+
+### Bug Fixes
+
+* **language-server:** include more useful auto-complete suggestions for multi-word terms ([7a1b4ea](https://github.com/dev-cycles/contextive/commit/7a1b4ea970bdcf3867f69e78990a3807a10a2357))
+* **language-server:** update completion item kind to be ([7552c16](https://github.com/dev-cycles/contextive/commit/7552c16de6f151e634e60959a60fd8971f5b47bd))
+
+
+### Features
+
+* **language-server:** show context name (if any) in auto-complete details ([8c221d1](https://github.com/dev-cycles/contextive/commit/8c221d1a3629b7a6561a54f697c9e416bc304d14))
+* **language-server:** show term hover panel content in auto complete documentation window ([4748c86](https://github.com/dev-cycles/contextive/commit/4748c863186b57ce50eb0e5e53d4a7efae8f127e))
+
 ## [1.3.1](https://github.com/dev-cycles/contextive/compare/v1.3.0...v1.3.1) (2022-02-01)
 
 
