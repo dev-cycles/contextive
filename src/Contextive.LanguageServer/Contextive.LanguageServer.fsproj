@@ -22,8 +22,8 @@
     <Compile Include="WatchedFiles.fs" />
     <Compile Include="Configuration.fs" />
     <Compile Include="TextDocument.fs" />
-    <Compile Include="Completion.fs" />
     <Compile Include="Hover.fs" />
+    <Compile Include="Completion.fs" />
     <Compile Include="Server.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

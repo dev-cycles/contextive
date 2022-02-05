@@ -4,21 +4,21 @@ open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 
-let (|EmptySeq|_|) a = if Seq.isEmpty a then Some () else None
+let private (|EmptySeq|_|) a = if Seq.isEmpty a then Some () else None
 
 let private markupContent content = 
     MarkedStringsOrMarkupContent(markupContent = MarkupContent(Kind = MarkupKind.Markdown, Value = content))
 
 let private noHoverResult = null
 
-let termEquals (term:Definitions.Term) (word:string) =
+let private termEquals (term:Definitions.Term) (word:string) =
     term
         .Name
         .Replace(" ", "")
         .Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
 
-let termWordEquals (term:Definitions.Term) (word:Words.WordAndParts) = fst word |> termEquals term
-let termInParts (term:Definitions.Term) (word:Words.WordAndParts) = (snd word) |> Seq.exists (termEquals term)
+let private termWordEquals (term:Definitions.Term) (word:Words.WordAndParts) = fst word |> termEquals term
+let private termInParts (term:Definitions.Term) (word:Words.WordAndParts) = (snd word) |> Seq.exists (termEquals term)
 
 let private termFilterForWords words =
     fun (t:Definitions.Term) -> 
@@ -47,12 +47,15 @@ let private getWordAtPosition (p:HoverParams) (getWords: TextDocument.WordGetter
     | null -> None
     | document -> getWords (document.Uri.ToUri()) p.Position
 
-let emojify t = "📗 " + t
-let emphasise t = $"`{t}`"
+let private emojify t = "📗 " + t
+let private emphasise t = $"`{t}`"
+let private define d =
+    match d with
+    | None -> "_undefined_"
+    | Some(def) -> def
 
 let private getHoverDefinition (term: Definitions.Term) =
-    [term.Name |> emphasise |> emojify |> Some; term.Definition]
-    |> Seq.choose id
+    [term.Name |> emphasise |> emojify; term.Definition |> define]
     |> String.concat ": "
     |> Some
     |> Seq.singleton
@@ -69,16 +72,24 @@ let private getHoverUsageExamples =
     function | {Definitions.Term.Examples = null} -> Seq.empty
              | t -> hoverUsageExamplesToMarkdown t
 
-let private getTermHoverContent (terms: Definitions.Term seq) =
+let concatIfExists (separator:string) (lines:string option seq) =
+    match lines |> Seq.choose id with
+    | EmptySeq -> None
+    | s -> s |> String.concat separator |> Some
+
+let concatWithNewLinesIfExists = concatIfExists "\n\n"
+
+let getTermHoverContent (terms: Definitions.Term seq) =
     [getHoverDefinition; getHoverUsageExamples]
     |> Seq.collect (fun p -> terms |> Seq.collect p)
+    |> concatWithNewLinesIfExists
 
-let getContextHeading (context: Definitions.Context) =
+let private getContextHeading (context: Definitions.Context) =
     match context.Name with
     | null | "" -> None
     | _ -> Some $"### 💠 {context.Name} Context"
 
-let getContextDomainVisionStatement (context: Definitions.Context) =
+let private getContextDomainVisionStatement (context: Definitions.Context) =
     match context.DomainVisionStatement with
     | null | "" -> None
     | _ -> Some $"_Vision: {context.DomainVisionStatement}_"
@@ -86,27 +97,26 @@ let getContextDomainVisionStatement (context: Definitions.Context) =
 let private getContextHover (wordsAndParts: Words.WordAndParts seq) (context: Definitions.Context) =
     let relevantTerms = filterRelevantTerms context.Terms wordsAndParts
     if Seq.length relevantTerms = 0 then
-        ""
+        None
     else
-        getTermHoverContent relevantTerms
+        [getTermHoverContent relevantTerms]
         |> Seq.append
             ([getContextHeading; getContextDomainVisionStatement]
             |> Seq.map (fun f -> f context))
-        |> Seq.choose id
-        |> String.concat "\n\n"
+        |> concatWithNewLinesIfExists
 
-let ContextSeparator = "\n\n***\n\n"
+let private ContextSeparator = "\n\n***\n\n"
 
 let private getContextsHoverContent (wordsAndParts: Words.WordAndParts seq) (contexts: Definitions.FindResult)  =
     contexts
     |> Seq.map (getContextHover wordsAndParts)
-    |> String.concat ContextSeparator
+    |> concatIfExists ContextSeparator
 
 let private hoverResult (wordsAndParts:  Words.WordAndParts seq) (contexts: Definitions.FindResult) =
     let content = getContextsHoverContent wordsAndParts contexts
     match content with
-    | "" -> noHoverResult
-    | _ -> Hover(Contents = (content |> markupContent))
+    | None -> noHoverResult
+    | Some(c) -> Hover(Contents = (c |> markupContent))
 
 let private hoverContentForWords (uri:string) (termFinder:Definitions.Finder) (wordsAndParts: Words.WordAndParts seq) = async {
         let! findResult = termFinder uri (termFilterForWords wordsAndParts)

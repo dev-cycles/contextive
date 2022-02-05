@@ -124,11 +124,11 @@ let hoverTests =
                 "📗 `firstTerm`: The first term in our definitions list")
             ([{Term.Default with Name = "SecondTerm"}],
                 "secondTerm",
-                "📗 `SecondTerm`")
+                "📗 `SecondTerm`: _undefined_")
             ([{Term.Default with Name = "ThirdTerm"; Examples = ResizeArray ["Do a thing"] }],
                 "thirdTerm",
                 "\
-📗 `ThirdTerm`
+📗 `ThirdTerm`: _undefined_
 
 #### `ThirdTerm` Usage Examples:
 
@@ -139,16 +139,16 @@ let hoverTests =
             ([{Term.Default with Name = "Second"}; {Term.Default with Name = "Term"}],
                 "secondTerm",
                 "\
-📗 `Second`
+📗 `Second`: _undefined_
 
-📗 `Term`\
+📗 `Term`: _undefined_\
                 ")
             ([{Term.Default with Name = "First"; Examples = ResizeArray ["Do a thing"] }; {Term.Default with Name = "Term"}],
                 "firstTerm",
                 "\
-📗 `First`
+📗 `First`: _undefined_
 
-📗 `Term`
+📗 `Term`: _undefined_
 
 #### `First` Usage Examples:
 
@@ -156,9 +156,9 @@ let hoverTests =
             ([{Term.Default with Name = "Third"; Examples = ResizeArray ["Do a thing"] }; {Term.Default with Name = "Term"; Examples = ResizeArray ["Do something else"]}],
                 "thirdTerm",
                 "\
-📗 `Third`
+📗 `Third`: _undefined_
 
-📗 `Term`
+📗 `Term`: _undefined_
 
 #### `Third` Usage Examples:
 
@@ -179,12 +179,12 @@ let hoverTests =
                 test <@ result.Contents.MarkupContent.Value = expectedHover @>
             }
         [
-            (["SecondTerm"],                 "SecondTerm",  "📗 `SecondTerm`")
-            (["Second Term"],                "SecondTerm",  "📗 `Second Term`")
-            (["Second"],                     "SecondTerm",  "📗 `Second`")
-            (["SecondTerm";"Second";"Term"], "SecondTerm",  "📗 `SecondTerm`")
-            (["ThirdTerm";"Third";"Term"],   "ThirdTerm",   "📗 `ThirdTerm`")
-            (["ThirdTerm";"Third";"Term"],   "ThirdTermId", "📗 `ThirdTerm`")
+            (["SecondTerm"],                 "SecondTerm",  "📗 `SecondTerm`: _undefined_")
+            (["Second Term"],                "SecondTerm",  "📗 `Second Term`: _undefined_")
+            (["Second"],                     "SecondTerm",  "📗 `Second`: _undefined_")
+            (["SecondTerm";"Second";"Term"], "SecondTerm",  "📗 `SecondTerm`: _undefined_")
+            (["ThirdTerm";"Third";"Term"],   "ThirdTerm",   "📗 `ThirdTerm`: _undefined_")
+            (["ThirdTerm";"Third";"Term"],   "ThirdTermId", "📗 `ThirdTerm`: _undefined_")
         ] |> List.map testHoverOverMultiWord |> testList "Term hover display over MultiWord"
 
         testAsync $"Test hover with context info" {
@@ -200,7 +200,7 @@ let hoverTests =
 
 _Vision: supporting the test_
 
-📗 `term`"
+📗 `term`: _undefined_"
 
             test <@ result.Contents.MarkupContent.Value = expectedHover @>
         }
@@ -222,13 +222,13 @@ _Vision: supporting the test_
 
             let expectedHover = "### 💠 Test Context
 
-📗 `term`
+📗 `term`: _undefined_
 
 ***
 
 ### 💠 Other Context
 
-📗 `term`"
+📗 `term`: _undefined_"
 
             test <@ result.Contents.MarkupContent.Value = expectedHover @>
         }

@@ -100,12 +100,30 @@ let completionTests =
             testCase $"Context \"{contextName}\" has detail \"{expectedDetail}\"" <| fun () ->
                 let finder : Definitions.Finder = DH.mockTermsFinder {Context.Default with Name=contextName} (["term"])
 
-                let completionLabels =
+                let completionItem =
                     (Completion.handler finder Completion.emptyWordGetter Completion.defaultParams null null).Result
+                    |> Seq.head
 
-                test <@ (completionLabels |> Seq.head).Detail = expectedDetail @>
+                test <@ completionItem.Detail = expectedDetail @>
         [
             (null, null)
             ("context name", "context name Context")
         ] |> List.map detailCompletion |> testList "Detail Completion"
+
+        let documentationCompletion (termName, termDefinition) = 
+            testCase $"Context \"{termName}\": \"{termDefinition}\" has expected documentation" <| fun () ->
+                let terms = [{Term.Default with Name = termName; Definition = termDefinition}]
+                let finder : Definitions.Finder = DH.mockDefinitionsFinder Context.Default (terms)
+
+                let completionItem =
+                    (Completion.handler finder Completion.emptyWordGetter Completion.defaultParams null null).Result
+                    |> Seq.head
+
+                let expectedDocumentation = Hover.getTermHoverContent terms
+                test <@ completionItem.Documentation.HasMarkupContent @>
+                test <@ completionItem.Documentation.MarkupContent.Value = expectedDocumentation.Value @>
+        [
+            ("term", None)
+            ("term", Some "some Definition")
+        ] |> List.map documentationCompletion |> testList "Documentation Completion"
     ]

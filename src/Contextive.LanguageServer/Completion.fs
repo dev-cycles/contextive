@@ -5,24 +5,32 @@ open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 
-type CompletionData = {ContextName: string; Labels: seq<string>}
+type CompletionItemData = {Label: string; Documentation: string option}
+
+type CompletionData = {ContextName: string; CompletionItems: CompletionItemData seq}
 
 let private getDetailFromContextName contextName = 
     match contextName with
     | null | "" -> null
     | _ -> $"{contextName} Context"
 
-let private toCompletionItem (detail: string) (label:string) =
+let private toMarkup str = 
+    match str with
+    | None -> null
+    | Some(s) -> StringOrMarkupContent(markupContent=MarkupContent(Kind=MarkupKind.Markdown,Value=s))
+
+let private toCompletionItem (detail: string) ({Label=label;Documentation=documentation}:CompletionItemData) =
     CompletionItem(
         Label=label,
-        Detail=detail
+        Detail=detail,
+        Documentation=toMarkup documentation
     )
 
-let private toCompletionItemList {ContextName=contextName; Labels=labels} =
+let private toCompletionItemList {ContextName=contextName; CompletionItems=completionItems} =
     let toCompletionItemWithDetail =
         getDetailFromContextName contextName
         |> toCompletionItem
-    labels
+    completionItems
     |> Seq.map toCompletionItemWithDetail
 
 let private toCompletionList (insertTexts:CompletionData seq) =
@@ -40,14 +48,20 @@ let private upper (s:string) = s.ToUpper()
 let private lower (s:string) = s.ToLower()
 let private title (s:string) = s.Substring(0,1).ToUpper() + s.Substring(1)
 
-let private wordToString (caseTemplate:string option) (word:string) = 
+let createCompletionItemData (term:Definitions.Term) label =
+    {
+        Label = label
+        Documentation = Hover.getTermHoverContent [term]
+    }
+
+let private wordToString (caseTemplate:string option) (word:string) (term:Definitions.Term)= 
     match caseTemplate with
     | None -> word
     | Some(UpperCase) -> word |> upper
     | Some(PascalCase) -> word |> title
     | Some(CamelCase) -> word |> lower
     | _ -> word
-
+    |> createCompletionItemData term
 
 let private transform ((separator, headTransformer, tailTransformer):(string * (string -> string) * (string -> string))) (words: string seq) =
     Seq.append
@@ -55,34 +69,38 @@ let private transform ((separator, headTransformer, tailTransformer):(string * (
         (words |> Seq.tail |> Seq.map tailTransformer)
     |> String.concat separator
 
-let private wordCombinations (transformers:(string * (string -> string) * (string -> string)) seq) (words:string seq) =
+let private wordCombinations (transformers:(string * (string -> string) * (string -> string)) seq) (words:string seq) (term:Definitions.Term)=
     transformers
-    |> Seq.map (fun transformer -> transform transformer words)
+    |> Seq.map (fun transformer -> 
+                    transform transformer words
+                    |> createCompletionItemData term)
 
-let private multiWordToString (caseTemplate: string option) (words:string seq) =
+let private multiWordToString (caseTemplate: string option) (words:string seq) (term: Definitions.Term)=
     let snakeCase = ("_", lower, lower)
     let upperSnakeCase = ("_", upper, upper)
     let upperCase = ("", upper, upper)
     let camelCase = ("", lower, title)
     let pascalCase = ("", title, title)
-    match caseTemplate with
-    | Some(UpperCase)  -> words |> wordCombinations [upperCase  ; upperSnakeCase ]
-    | Some(PascalCase) -> words |> wordCombinations [pascalCase ; upperSnakeCase ]
-    | Some(CamelCase)  -> words |> wordCombinations [camelCase  ; snakeCase      ]
-    | _                -> words |> wordCombinations [camelCase  ; pascalCase     ; snakeCase]
+    let wordCombinationGenerator =
+        match caseTemplate with
+        | Some(UpperCase)  -> words |> wordCombinations [upperCase  ; upperSnakeCase ]
+        | Some(PascalCase) -> words |> wordCombinations [pascalCase ; upperSnakeCase ]
+        | Some(CamelCase)  -> words |> wordCombinations [camelCase  ; snakeCase      ]
+        | _                -> words |> wordCombinations [camelCase  ; pascalCase     ; snakeCase]
+    wordCombinationGenerator term
 
-let private termToListOptions (caseTemplate: string option) (t:Definitions.Term) =
-    let word = t.Name
+let private termToListOptions (caseTemplate: string option) (term:Definitions.Term) : CompletionItemData seq =
+    let word = term.Name
     let words = Words.splitIntoParts <| Some word
     if (Seq.length words > 1) then
-        multiWordToString caseTemplate words
+        multiWordToString caseTemplate words term
     else
-        seq { wordToString caseTemplate word }
+        seq { wordToString caseTemplate word term}
 
 let private getContextCompletionLabelData (termToListOptionsWithCase) (context:Definitions.Context) =
     {
         ContextName=context.Name;
-        Labels=(context.Terms |> Seq.collect termToListOptionsWithCase)
+        CompletionItems=(context.Terms |> Seq.collect termToListOptionsWithCase)
     }
 
 let private getCaseTemplate (wordsGetter: TextDocument.WordGetter) (textDocument:TextDocumentIdentifier) (position) =
@@ -99,7 +117,7 @@ let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGett
             |> getContextCompletionLabelData
 
         let uri = p.TextDocument.Uri.ToString()
-        
+
         let! findResult = termFinder uri termFilter
 
         return
