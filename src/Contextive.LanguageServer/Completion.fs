@@ -23,7 +23,8 @@ let private toCompletionItem (detail: string) ({Label=label;Documentation=docume
     CompletionItem(
         Label=label,
         Detail=detail,
-        Documentation=toMarkup documentation
+        Documentation=toMarkup documentation,
+        Kind=CompletionItemKind.Reference
     )
 
 let private toCompletionItemList {ContextName=contextName; CompletionItems=completionItems} =

@@ -126,4 +126,14 @@ let completionTests =
             ("term", None)
             ("term", Some "some Definition")
         ] |> List.map documentationCompletion |> testList "Documentation Completion"
+
+        
+        testCase "Completion Kind Is Reference" <| fun () ->
+            let finder : Definitions.Finder = DH.mockDefinitionsFinder Context.Default ([Term.Default])
+
+            let completionItem =
+                (Completion.handler finder Completion.emptyWordGetter Completion.defaultParams null null).Result
+                |> Seq.head
+
+            test <@ completionItem.Kind = CompletionItemKind.Reference @>        
     ]
