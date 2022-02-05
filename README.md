@@ -1,6 +1,6 @@
 # Contextive
 
-![Example of hovering over a combined word containing a match.](images/contextive_banner.png)
+![Contextive Banner](images/contextive_banner.png)
 
 [![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Twitter](https://img.shields.io/twitter/follow/contextive_tech?label=Follow%20Contextive)](https://twitter.com/intent/follow?screen_name=contextive_tech)
 
@@ -12,9 +12,9 @@ Contextive is inspired by the concept of the [Ubiquitous Language](https://marti
 
 Even if you're not using Domain Driven Design, Contextive should still be very helpful in any software project where it's important that developers are aligned on the meaning of terms.
 
-By defining terms in a central definitions file, Contextive can surface definitions and usage examples in hover panels wherever the terms are used - in code (of any language across the stack), comments, config, and documentation (e.g. markdown).
+By defining terms in a central definitions file, Contextive can surface definitions and usage examples in auto-complete suggestions & hover panels wherever the terms are used - in code (of any language across the stack), comments, config, and documentation (e.g. markdown).
 
-![Example of hovering over a combined word containing a match.](src/vscode/contextive/images/cargo_id_example.png)
+![Example of Contextive in action.](src/vscode/contextive/images/simple-auto-complete-demo.gif)
 
 ## Proposed Features
 
