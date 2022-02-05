@@ -23,6 +23,7 @@ contexts:
       definition: A policy that helps the routing engine select the legs with the lowest magnitude.
       examples:
         - The leg magnitude policy is selecting the fastest leg, but we need it to select the cheapest leg.
+    - name: Vessel
   - name: Billing
     domainVisionStatement: Compute and levy charges for shipping
     paths:

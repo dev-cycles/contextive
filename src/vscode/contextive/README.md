@@ -4,7 +4,9 @@
 
 Contextive is a Visual Studio Code extension to assist developers in environments with a complex domain or project specific language, where words have a special meaning in the context of the project.
 
-It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages regularly updating the definitions as the team's understanding evolves.
+It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.
+
+![Example of Contextive in action.](images/simple-auto-complete-demo.gif)
 
 ## Getting Started
 
@@ -31,6 +33,7 @@ Even if you're not using Domain Driven Design, Contextive should still be very h
 * Currently configured to work in files of type: c, cpp, csharp, fsharp, go, groovy, html, java, javascript, javascriptreact, json, jsonc, markdown, perl, php, plaintext, powershell, python, ruby, rust, sql, typescript, typescriptreact, vb, xml, yaml
 * Support for word identification in combined usage such as camelCase, PascalCase and snake_case
 * Support for documenting combined words (e.g. verbNoun or noun_verbed)
+* Shows definitions in auto-complete details
 
 ### Examples
 
@@ -111,13 +114,13 @@ For the hover display, Contextive is able to identify the use of defined terms i
 
 It's quite common to combine a term from your language, such as `cargo` with a suffix such as `Id` (or `service`, or `factory`, etc.).  If your code includes `cargoId`, `CargoId` or `cargo_id`, Contextive will identify the defined term `cargo` and display the definition and usage examples:
 
-![Example of hovering over a combined word containing a match.](images/cargo_id_example.png)
+![Example of hovering over a combined word containing a match.](images/simple-auto-complete-demo.gif)
 
 ##### Combining two (or more) terms
 
 It's also common to end up with code elements (classes, variables or methods) that combine two or more terms from your language, such as `Leg` and `Policy`.  Even if you haven't explicitly created a term for `LegPolicy`, Contextive will identify both words and show you both definitions at the same time:
 
-![Example of hovering over a combined word with multiple matches.](images/leg_policy_example.png)
+![Example of hovering over a combined word with multiple matches.](images/multi-match-auto-complete-demo.gif)
 
 ##### Combined words as a single term
 
@@ -129,12 +132,26 @@ It can be added to your definitions file as either separate words (e.g. `Leg Mag
 
 This also now works for `snake_case` code:
 
-![Example of hovering over an exactly matching combined word in snake_case.](images/leg_magnitude_policy_snake_case_example.png)
+![Example of snake_case working in auto-complete and hover.](images/snake-case-auto-complete-demo.gif)
+
+### Smart Auto-Complete
+
+As the terms added to the auto-complete are from a definitions file, not from your code symbols, the auto-complete will work in any file of any language - including documentation, such as markdown.
+
+To ensure it's useful in a variety of scenarios, it includes a number of options to fit your required format:
+
+* camelCase
+* PascalCase
+* snake_case
+* UPPER_CASE
+
+The auto-complete options will adjust as you type - e.g. after typing a single lower-case letter, only `camelCase` and `snake_case` will be included.  After typing a single upper case letter, `PascalCase` and `UPPER_CASE` will be included.  After typing two upper case letters, single word, snake_case and combined words will all be in `UPPERCASE`.
+
+![Example of smart auto-complete.](images/markdown-demo.gif)
 
 #### Coming Soon
 
 * UI to edit/manage Contextive Definitions
-* Show definitions in auto-complete details
 * Internationalization support
 * Support for multiple contexts in separate repositories
 * Configurable list of language identifiers. The list is currently hard coded as above.
