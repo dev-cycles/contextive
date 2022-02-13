@@ -25,7 +25,8 @@ The following list of features is a draft proposal of the vision at the start of
   * [x] For each term, include a definition, and examples of usage in normal sentences
   * [ ] Link terms to each other (e.g. commands to the aggregates/entities they apply to; events to the aggregates/entities that publish them)
   * [x] Store Ubiquitous Language term definitions in a file in the repository (e.g. yml format)
-  * [x] Store terms by Bounded Context, and identify which repos/paths relate to each Bounded Context
+  * [x] Support a monorepo with multiple Bounded Contexts in one repo - identify which paths relate to each Bounded Context
+  * [x] Support a Bounded Context distributed across multiple repos (#36)
 * [ ] IDE Support
   * [x] Visual Studio Code
   * [ ] Visual Studio (2019/2022)

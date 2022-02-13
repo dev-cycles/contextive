@@ -30,6 +30,7 @@ Even if you're not using Domain Driven Design, Contextive should still be very h
 * Auto-complete from your Contextive Definitions
 * Hover to show definitions from your Contextive Definitions
 * Support for multiple contexts in the same repository (identified by path globs)
+* Support for a context distributed over multiple repositories (#36)
 * Currently configured to work in files of type: c, cpp, csharp, fsharp, go, groovy, html, java, javascript, javascriptreact, json, jsonc, markdown, perl, php, plaintext, powershell, python, ruby, rust, sql, typescript, typescriptreact, vb, xml, yaml
 * Support for word identification in combined usage such as camelCase, PascalCase and snake_case
 * Support for documenting combined words (e.g. verbNoun or noun_verbed)
@@ -79,7 +80,26 @@ contexts:
         - The billing policy is to send to collections after 90 days in arrears.
 ```
 
-### Multiple Contexts
+### Repository Organisation
+
+Contextive is designed to work with a variety of repository organisation schemes:
+
+#### Single Bounded Context, Multiple Repositories
+
+When a single context is comprised of services, each with their own repository, it's not ideal to have to maintain a copy of the context's language definitions in each repository.
+
+To facilitate this pattern, Contextive recommends storing the terms only once, in a central/common repository, and using native package management facilities to distribute the definitions file as part of any common code packages.
+
+For package managers that store the packages within the workspace, simply set `contextive.path` to the relative path of the downloaded package.  For package managers that store the packages in a global cache, Contextive allows the `contextive.path` setting to contain a shell escape code - `$(cmd)`. When `$(` is detected in the path setting, Contextive will execute `echo "%contextive.path%"` and use the result to `stdout` as the location of the definitions file.
+
+See https://github.com/dev-cycles/contextive-demo-go-service for an example of this in action using `golang` packages.
+
+
+#### Multiple Bounded Contexts, Repository per Context
+
+This is the simplest option - all you need to do is define the terms for that context in the relevant repository.
+
+#### Multiple Bounded Contexts, Single Repository (Monorepo)
 
 For projects utilising a [monorepo](https://en.wikipedia.org/wiki/Monorepo) it's not uncommon to have code relating to multiple [bounded contexts](https://martinfowler.com/bliki/BoundedContext.html) in the same repository.  At this time, Contextive tracks all definitions in the same file.  Each context has a `paths` property that defines a list of path [globs](https://en.wikipedia.org/wiki/Glob_(programming)).  When working on a file, any context with a matching path glob will be evaluated when finding matches for hover and auto-complete.
 
