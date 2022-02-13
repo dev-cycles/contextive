@@ -49,18 +49,24 @@ let private onStartup definitions = OnLanguageServerStartedDelegate(fun (s:ILang
         // Not sure if this is needed to ensure configuration is loaded, or allow a task/context switch
         // Either way, if it's not here, then getWorkspaceFolder returns null
         let! _ = configGetter() 
+        
         let workspaceFolder = getWorkspaceFolder s
 
         let definitionsLoader = Definitions.loader definitions
 
         let registerWatchedFiles = Some <| WatchedFiles.register s definitionsLoader
-       
-        Definitions.init definitions s.Window.LogInfo configGetter registerWatchedFiles s.Window.ShowWarning
-        Definitions.addFolder definitions workspaceFolder
+
+        let definitionsFileLoader =
+            PathResolver.resolvePath workspaceFolder
+            |> Configuration.resolvedPathGetter configGetter
+            |> FileLoader.loader
+
+        Definitions.init definitions s.Window.LogInfo definitionsFileLoader registerWatchedFiles s.Window.ShowWarning
       
         definitionsLoader()
 
     } |> Async.StartAsTask :> Task)
+
 
 let private configureServer (input: Stream) (output: Stream) (opts:LanguageServerOptions) =
     let definitions = Definitions.create()

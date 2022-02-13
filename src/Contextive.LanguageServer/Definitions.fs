@@ -3,8 +3,8 @@ module Contextive.LanguageServer.Definitions
 open YamlDotNet.Serialization
 open YamlDotNet.Serialization.NamingConventions
 open DotNet.Globbing
-open System.IO
 open System.Linq
+open FileLoader
 
 [<CLIMutable>]
 type Term =
@@ -36,17 +36,14 @@ type Definitions =
 type Filter = Term -> bool
 type FindResult = Context seq
 type Finder = string -> Filter -> Async<FindResult>
+
+type FileLoader = unit -> Async<Result<File, string>>
+
 type Reloader = unit -> unit
 type Unregisterer = unit -> unit
 
 module FindResult =
     let allTerms (contexts:FindResult) : Term seq = contexts |> Seq.collect(fun c -> c.Terms)
-
-let private tryReadFile path =
-    if File.Exists(path) then
-      File.ReadAllText(path) |> Some
-    else
-      None
 
 let private deserialize (yml:string) =
     try
@@ -63,34 +60,13 @@ let private deserialize (yml:string) =
         let msg = if e.InnerException = null then e.Message else e.InnerException.Message
         Error $"Error parsing definitions file:  Object starting line {e.Start.Line}, column {e.Start.Column} - {msg}"
 
-let private loadContextive path =
-    match tryReadFile path with
-    | None -> None
-    | Some(ymlText) -> deserialize ymlText |> Some
-
-let private getPath workspaceFolder (path: string option) =
-    match path with
-    | None -> None
-    | Some p -> 
-        if Path.IsPathRooted(p) then
-            path
-        else match workspaceFolder with
-             | Some wsf -> Path.Combine(wsf, p) |> Some
-             | None -> None
-
-let private loadFromPath (absolutePath:string option) =
-    match absolutePath with
-    | Some ap ->
-        loadContextive ap
-    | None -> None
-
 type private State =
     {
         WorkspaceFolder: string option
         Logger: (string -> unit)
         DefinitionsFilePath: string option
         Definitions: Definitions
-        ConfigGetter: (unit -> Async<string option>)
+        FileLoader: FileLoader
         RegisterWatchedFile: (string option -> Unregisterer) option
         UnregisterLastWatchedFile: Unregisterer option
         OnErrorLoading: (string -> unit)
@@ -99,8 +75,8 @@ type private State =
         WorkspaceFolder = None;
         Logger = fun _ -> ();
         DefinitionsFilePath = None;
+        FileLoader = fun _ -> async.Return <| Error("Path not yet defined.");
         Definitions = Definitions.Default;
-        ConfigGetter = fun () -> async.Return None;
         RegisterWatchedFile = None
         UnregisterLastWatchedFile = None
         OnErrorLoading = fun _ -> ();
@@ -110,7 +86,7 @@ type LoadReply = string option
 
 type InitPayload = {
     Logger: (string -> unit);
-    ConfigGetter: (unit -> Async<string option>);
+    FileLoader: FileLoader;
     RegisterWatchedFile: (string option -> Unregisterer) option;
     OnErrorLoading: (string -> unit);
 }
@@ -129,61 +105,61 @@ type FindPayload = {
  
 type Message =
     | Init of InitPayload
-    | AddFolder of AddFolderPayload
     | Load
     | Find of FindPayload
+
+let private loadFile (state: State) (file: Result<File, string>) =
+    match file with
+    | Error(e) -> Error(e)
+    | Ok({AbsolutePath=ap;Contents=contents}) -> 
+        state.Logger $"Loading contextive from {ap}..."
+        match contents with
+        | Ok(c) -> deserialize c
+        | Error(e) -> Error(e)
 
 module private Handle =
     let init state (initMsg:InitPayload) : State =
         { 
             state with
                 Logger = initMsg.Logger
-                ConfigGetter = initMsg.ConfigGetter
                 RegisterWatchedFile = initMsg.RegisterWatchedFile
                 OnErrorLoading = initMsg.OnErrorLoading
+                FileLoader = initMsg.FileLoader
         }
 
-    let addFolder state (addFolderMsg:AddFolderPayload) : State = 
-        { state with WorkspaceFolder = addFolderMsg.WorkspaceFolder }
-
-    let updateFileWatchers (state:State) (absolutePath:string option)=
-        match state.DefinitionsFilePath, absolutePath with
-        | Some existingPath, Some newPath when existingPath = newPath -> state
-        | _, _ -> 
+    let updateFileWatchers (state:State) (file:Result<File, string>)=
+        match state.DefinitionsFilePath, file with
+        | Some existingPath, Ok({AbsolutePath=newPath}) when existingPath = newPath -> state
+        | _, Ok({AbsolutePath=newPath}) -> 
             match state.UnregisterLastWatchedFile with
             | Some unregister -> unregister()
             | None -> ()
-
+            let path = Some newPath
             let unregisterer =
                 match state.RegisterWatchedFile with
-                | Some rwf -> rwf absolutePath |> Some
+                | Some rwf -> rwf path |> Some
                 | None -> None
 
-            { state with UnregisterLastWatchedFile = unregisterer; DefinitionsFilePath = absolutePath }
+            { state with UnregisterLastWatchedFile = unregisterer; DefinitionsFilePath = path }
+        | _, _ -> state
 
     let load (state:State) : Async<State> = async {
-            let! path = state.ConfigGetter()
-            let absolutePath = getPath state.WorkspaceFolder path
-
-            absolutePath |> Option.iter (fun ap -> state.Logger $"Loading contextive from {ap}...") 
-
-            let defs = loadFromPath absolutePath
+            let! file = state.FileLoader()
+            
+            let defs = loadFile state file
 
             let newState = match defs with
-                            | Some loadResult ->
-                                match loadResult with
-                                | Ok defs -> 
-                                    state.Logger "Succesfully loaded."
-                                    { state with Definitions = defs }
-                                | Error msg -> 
-                                    let msg = $"Error loading definitions: {msg}"
-                                    Serilog.Log.Logger.Error msg
-                                    state.Logger msg
-                                    state.OnErrorLoading msg
-                                    { state with Definitions = Definitions.Default }
-                            | None -> state
+                            | Ok defs -> 
+                                state.Logger "Succesfully loaded."
+                                { state with Definitions = defs }
+                            | Error msg -> 
+                                let msg = $"Error loading definitions: {msg}"
+                                Serilog.Log.Logger.Error msg
+                                state.Logger msg
+                                state.OnErrorLoading msg
+                                { state with Definitions = Definitions.Default }
 
-            return updateFileWatchers newState absolutePath
+            return updateFileWatchers newState file
         }
 
     let matchPreciseGlob (openFileUri:string) pathGlob =
@@ -223,7 +199,6 @@ let private handleMessage (state: State) (msg: Message) = async {
     return!
         match msg with
         | Init(initMsg) -> Handle.init state initMsg |> async.Return
-        | AddFolder(workspaceFolderMsg) -> Handle.addFolder state workspaceFolderMsg |> async.Return 
         | Load -> Handle.load state
         | Find(findMsg) -> Handle.find state findMsg |> async.Return
     }
@@ -245,12 +220,9 @@ let create() = MailboxProcessor.Start(fun inbox ->
     loop <| State.Initial()
 )
 
-let init (definitionsManager:MailboxProcessor<Message>) logger configGetter registerWatchedFile onErrorLoading = 
-    Init({Logger=logger; ConfigGetter=configGetter; RegisterWatchedFile=registerWatchedFile; OnErrorLoading=onErrorLoading})
+let init (definitionsManager:MailboxProcessor<Message>) logger fileLoader registerWatchedFile onErrorLoading = 
+    Init({Logger=logger; FileLoader=fileLoader; RegisterWatchedFile=registerWatchedFile; OnErrorLoading=onErrorLoading})
     |> definitionsManager.Post
-
-let addFolder (definitionsManager:MailboxProcessor<Message>) workspaceFolder = 
-    AddFolder({WorkspaceFolder=workspaceFolder}) |> definitionsManager.Post
 
 let loader (definitionsManager:MailboxProcessor<Message>) = fun () ->
     Load |> definitionsManager.Post

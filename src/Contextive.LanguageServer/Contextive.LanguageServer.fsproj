@@ -17,6 +17,8 @@
     <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="FileLoader.fs" />
+    <Compile Include="PathResolver.fs" />
     <Compile Include="Words.fs" />
     <Compile Include="Definitions.fs" />
     <Compile Include="WatchedFiles.fs" />

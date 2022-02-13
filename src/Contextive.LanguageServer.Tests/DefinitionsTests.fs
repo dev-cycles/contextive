@@ -14,8 +14,11 @@ let definitionsTests =
 
         let getDefinitionsWithErrorHandler onErrorAction configGetter workspaceFolder  = async {
             let definitions = Definitions.create()
-            Definitions.init definitions (fun _ -> ()) configGetter None onErrorAction
-            Definitions.addFolder definitions workspaceFolder
+            let definitionsFileLoader =
+                PathResolver.resolvePath workspaceFolder
+                |> Configuration.resolvedPathGetter configGetter
+                |> FileLoader.loader
+            Definitions.init definitions (fun _ -> ()) definitionsFileLoader None onErrorAction
             (Definitions.loader definitions)()
             return definitions
         }
