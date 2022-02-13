@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.5.0](https://github.com/dev-cycles/contextive/compare/v1.4.0...v1.5.0) (2022-02-13)
+
+
+### Features
+
+* **language-server:** allow contextive.path to contain shell commands to enable more complex location discovery scripts [#36](https://github.com/dev-cycles/contextive/issues/36) ([dc17612](https://github.com/dev-cycles/contextive/commit/dc176121a029d21ceb6ad8ee5d3bccb44772f9b2))
+
 # [1.4.0](https://github.com/dev-cycles/contextive/compare/v1.3.1...v1.4.0) (2022-02-05)
 
 
