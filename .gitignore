@@ -13,6 +13,7 @@ bld/
 [Pp]ublish/
 .fake
 .ionide
+Ionide.trx
 .paket
 paket-files/
 # Logging
