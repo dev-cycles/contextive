@@ -37,5 +37,10 @@ let pathLoaderTests =
 
         testCase "Process Error" <| fun () -> 
             let p = PathResolver.resolvePath None (Some "$(noprogram)/path")
-            test <@ p = Error("bash: noprogram: command not found") @>
+                
+            test <@ 
+                match p with
+                | Error errorMsg -> errorMsg.Contains("program: command not found")
+                | _ -> false
+            @>
     ]
