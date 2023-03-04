@@ -16,7 +16,7 @@ let getLabels (items:ResizeArray<CompletionItem>) =
 let expectCompletion path position expectedResults (onBeforeAssert : (unit -> JS.Promise<unit>) option)= promise {
     let! docUri = getDocUri path |> openDocument
 
-    let! result = VsCodeCommands.complete docUri <| position
+    let! result = VsCodeCommands.complete docUri position
 
     do! getDocUri path |> closeDocument
 
@@ -39,7 +39,7 @@ let tests =
 
         testCaseAsync "Completion returns expected list" <| async {
             let testDocPath = "../test/fixtures/simple_workspace/test.txt"
-            let position = vscode.Position.Create(0.0, 10.0)
+            let position = vscode.Position.Create(0, 10)
             do! expectCompletion testDocPath position DefaultExpectedTerms None
         }
     ]

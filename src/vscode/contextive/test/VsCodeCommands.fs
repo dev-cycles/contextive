@@ -1,12 +1,21 @@
 module Contextive.VsCodeExtension.Tests.VsCodeCommands
 
 open Fable.Import.VSCode.Vscode
+open Fable.Core.JS
 
-let complete docUri position = promise {
+let complete docUri position : Promise<CompletionList option> = promise {
     return! commands.executeCommand(
                 "vscode.executeCompletionItemProvider",
-                Some (docUri :> obj),
-                Some (position :> obj)
+                Some docUri,
+                Some position
+            )
+}
+
+let hover docUri position : Promise<ResizeArray<Hover option>> = promise {
+    return! commands.executeCommand(
+                "vscode.executeHoverProvider",
+                Some docUri,
+                Some position
             )
 }
 

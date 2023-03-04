@@ -13,8 +13,9 @@ Helpers.afterEach("reset config", fun () -> promise {
 
 Fable.Mocha.Mocha.runTests <| testList "All" [
     Extension.tests
-    Completion.tests
     Initialize.tests
+    Completion.tests
     InvalidSchema.tests
+    Hover.tests
 ] |> ignore
 
