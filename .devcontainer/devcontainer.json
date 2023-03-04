@@ -11,19 +11,21 @@
         }
     },
 
-    // Set *default* container specific settings.json values on container create.
-    "settings": {},
-
-    // Add the IDs of extensions you want installed when the container is created.
-    "extensions": [
-        "Ionide.Ionide-fsharp",
-        "ms-dotnettools.csharp",
-        "formulahendry.dotnet-test-explorer",
-        "hbenl.vscode-test-explorer",
-        "ionide.ionide-paket",
-        "streetsidesoftware.code-spell-checker",
-        "yzhang.markdown-all-in-one"
-    ],
+    "customizations": {
+        "vscode": {
+            // Set *default* container specific settings.json values on container create.
+            "settings": {},
+            // Add the IDs of extensions you want installed when the container is created.
+            "extensions": [
+                "Ionide.Ionide-fsharp",
+                "ms-dotnettools.csharp",
+                "formulahendry.dotnet-test-explorer",
+                "ionide.ionide-paket",
+                "streetsidesoftware.code-spell-checker",
+                "yzhang.markdown-all-in-one"
+            ]
+        }
+    },
 
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // "forwardPorts": [],

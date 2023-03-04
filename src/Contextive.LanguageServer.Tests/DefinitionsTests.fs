@@ -90,8 +90,8 @@ let definitionsTests =
         let invalidScenarios =
             [
                 ("invalid_empty","Error loading definitions: Definitions file is empty.")
-                ("invalid_schema","Error loading definitions: Error parsing definitions file:  Object starting line 4, column 7 - Property 'example' not found on type 'Contextive.LanguageServer.Definitions+Term'.")
-                ("invalid_schema2","Error loading definitions: Error parsing definitions file:  Object starting line 5, column 19 - (Line: 5, Col: 19, Idx: 131) - (Line: 5, Col: 19, Idx: 131): Mapping values are not allowed in this context.")
+                ("invalid_schema","Error loading definitions: Error parsing definitions file:  Object starting line 6, column 7 - Property 'example' not found on type 'Contextive.LanguageServer.Definitions+Term'.")
+                ("invalid_schema2","Error loading definitions: Error parsing definitions file:  Object starting line 5, column 19 - Mapping values are not allowed in this context.")
             ]
 
         let canRecoverFromInvalidDefinitions (fileName, expectedErrorMessage) =

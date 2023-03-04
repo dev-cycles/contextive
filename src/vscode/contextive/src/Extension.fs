@@ -17,7 +17,7 @@ module Extension =
     let private executable f = jsOptions<Executable>(f)
     let private executableOptions f = Some <| jsOptions<ExecutableOptions>(f)
     let private argsArray (f:string list) = Some <| new ResizeArray<string>(f)
-    let private documentSelectorList (x:string list) = Some !^(new ResizeArray<string>(x))
+    let private documentSelectorList (x:string list) : DocumentSelector option = Some !!(new ResizeArray<string>(x))
 
     let private debugServerOptions = executable(fun x -> 
         x.command <- "dotnet"
@@ -56,8 +56,8 @@ module Extension =
         Client: LanguageClient
     }
 
-    let private addDisposable (context: ExtensionContext) (disposable:Disposable) =
-        context.subscriptions.Add(disposable :?> ExtensionContextSubscriptions)
+    let private addDisposable (context: ExtensionContext) (disposable: Disposable) =
+        context.subscriptions.Add(!!disposable)
 
     let private registerCommand (context: ExtensionContext) (name: string) (handler) =
         commands.registerCommand(name, handler) |> addDisposable context 
