@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.5.1](https://github.com/dev-cycles/contextive/compare/v1.5.0...v1.5.1) (2023-03-24)
+
+
+### Bug Fixes
+
+* **vscode:** Ensure Contextive hover results appear below more relevant language feature results. ([2e9e40c](https://github.com/dev-cycles/contextive/commit/2e9e40ce77e2e7ce8fc542763712fbb94a3494db))
+
 # [1.5.0](https://github.com/dev-cycles/contextive/compare/v1.4.0...v1.5.0) (2022-02-13)
 
 
