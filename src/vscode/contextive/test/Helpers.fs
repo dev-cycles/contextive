@@ -50,6 +50,14 @@ let deleteDefinitionsFile() = promise {
     do! workspace.fs.delete fullPath
 }
 
+let util: obj = JsInterop.importAll "node:util"
+
+[<Emit("util.inspect($0, { showHidden: true, depth: null, getters: true })")>]
+let inspect (_: obj) = jsNative
+
+let logInspect o = JS.console.log(inspect(o))
+
+
 [<Emit("afterEach($0, $1)")>]
 let afterEach (name: string, callback: unit -> JS.Promise<unit>):unit = jsNative
 

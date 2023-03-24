@@ -9,8 +9,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PromiseUtils.fs" />
-    <Compile Include="ExpectExtensions.fs" />
     <Compile Include="Helpers.fs" />
+    <Compile Include="ExpectExtensions.fs" />
     <Compile Include="VsCodeCommands.fs" />
     <Compile Include="Hover.test.fs" />
     <Compile Include="Completion.test.fs" />

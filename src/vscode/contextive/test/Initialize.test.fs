@@ -40,7 +40,7 @@ let tests =
 
         let getContent (content:string) = System.Text.Encoding.UTF8.GetBytes(content) |> Fable.Core.JS.Constructors.Uint8Array.Create
 
-        testCaseAsync "New definitions file should work" <| async {
+        testCaseAsync "New definitions file should show new term in completion" <| async {
             let newPath = $"{System.Guid.NewGuid().ToString()}.yml"
             do! updateConfig newPath
 
@@ -54,13 +54,13 @@ let tests =
 
             do! workspace.fs.writeFile(fullPath, content)
 
-            do! Promise.sleep 500
+            do! Promise.sleep(500)
 
             let resetWorkspaceHook = Some deleteDefinitionsFile
 
             let testDocPath = "../test/fixtures/simple_workspace/test.txt"
             let position = vscode.Position.Create(0.0, 10.0)
-            let expectedResults = seq {"anewterm"}
+            let expectedResults = seq {"anewterm"; "some"; "text"}
             do! Completion.expectCompletion testDocPath position expectedResults resetWorkspaceHook
         }
     ]

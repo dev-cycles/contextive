@@ -92,6 +92,7 @@ let definitionsTests =
                 ("invalid_empty","Error loading definitions: Definitions file is empty.")
                 ("invalid_schema","Error loading definitions: Error parsing definitions file:  Object starting line 6, column 7 - Property 'example' not found on type 'Contextive.LanguageServer.Definitions+Term'.")
                 ("invalid_schema2","Error loading definitions: Error parsing definitions file:  Object starting line 5, column 19 - Mapping values are not allowed in this context.")
+                ("no_file", "Error loading definitions: Definitions file not found.")
             ]
 
         let canRecoverFromInvalidDefinitions (fileName, expectedErrorMessage) =
@@ -121,9 +122,11 @@ let definitionsTests =
                 test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>
             }
         
-        invalidScenarios |> List.map canRecoverFromInvalidDefinitions |> testList "Can recover from invalid definitions"
+        invalidScenarios
+        |> List.map canRecoverFromInvalidDefinitions
+        |> testList "Can recover from invalid definitions"
 
-        let canRecoverFromInvalidDefinitionsInNewConfig (fileName, _) =
+        let canRecoverFromInvalidDefinitionsWhenConfigChanges (fileName, _) =
             testAsync fileName {
                 let validPath = "one.yml"
                 let mutable path = validPath
@@ -153,5 +156,7 @@ let definitionsTests =
                 test <@ (termsWhenValidAtEnd, Fixtures.One.expectedCompletionLabels) ||> compareList = 0 @>
             }
         
-        invalidScenarios |> List.map canRecoverFromInvalidDefinitionsInNewConfig |> testList "Can recover from invalid definitions in fresh config"
+        invalidScenarios
+        |> List.map canRecoverFromInvalidDefinitionsWhenConfigChanges
+        |> testList "Can recover from invalid definitions when config changes"
     ]

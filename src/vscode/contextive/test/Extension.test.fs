@@ -6,8 +6,12 @@ open Contextive.VsCodeExtension.Extension
 
 let tests =
     testList "Contextive Activation Tests" [
-        testCase "Extension is Active" <| fun () ->
+        testCase "Contextive is Active" <| fun () ->
             let extension = extensions.all.Find(fun x -> x.id = "devcycles.contextive")
+            Expect.equal extension.isActive true "Extension is not active"
+
+        testCase "CSharp Extension is Active" <| fun () ->
+            let extension = extensions.all.Find(fun x -> x.id = "ms-dotnettools.csharp")
             Expect.equal extension.isActive true "Extension is not active"
 
         testCase "Extension has path config" <| fun () -> 
@@ -16,6 +20,7 @@ let tests =
             Expect.isSome path "contextive.path config is not present"
             Expect.equal path.Value ".contextive/definitions.yml" "contextive.path config is not the default value"
 
-        testCase "Language Client becomes Ready" <| fun () ->
+        testCaseAsync "Language Client becomes Ready" <| async {
             getLanguageClient() |> ignore
+        }
     ]

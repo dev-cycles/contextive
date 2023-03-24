@@ -63,7 +63,7 @@
 		"@semantic-release/git": "^10.0.1",
 		"@sinonjs/fake-timers": "^7.1.2",
 		"@types/vscode": "^1.76.0",
-		"@vscode/test-electron": "^1.6.2",
+		"@vscode/test-electron": "^2.2.3",
 		"@vscode/vsce": "^2.18.0",
 		"glob": "^7.2.3",
 		"jest": "^27.5.1",
