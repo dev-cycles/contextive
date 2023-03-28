@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.6.0](https://github.com/dev-cycles/contextive/compare/v1.5.1...v1.6.0) (2023-03-28)
+
+
+### Features
+
+* **language-server:** show hover panel for plural of defined terms ([d45095d](https://github.com/dev-cycles/contextive/commit/d45095d02fb04156eff0dfb081487cae54d2d4be))
+
 ## [1.5.1](https://github.com/dev-cycles/contextive/compare/v1.5.0...v1.5.1) (2023-03-24)
 
 
