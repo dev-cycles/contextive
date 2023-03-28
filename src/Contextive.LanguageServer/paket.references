@@ -7,3 +7,4 @@ Serilog.Sinks.File
 OmniSharp.Extensions.LanguageServer
 YamlDotNet
 DotNet.Glob
+Humanizer

@@ -3,3 +3,4 @@ contexts:
     - name: original
     - name: another
     - name: CombinedWord
+    - name: octopus

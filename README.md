@@ -42,8 +42,13 @@ The following list of features is a draft proposal of the vision at the start of
   * [ ] Problems/warnings if misuse of the Ubiquitous Language - e.g. use of Command/Event and aggregate in the same class or method name when they are not linked, or use of extra words next to an Aggregate that _isn't_ defined
   * [ ] In relevant places (e.g. hover), note the use of the term in other contexts to highlight the contrast and ensure clarity of which definition applies in the current context (e.g. '_THIS_ definition, _NOT_ that other definition that you might have been thinking of')
 * [ ] Ubiquitous Language Management Features
+  * [ ] Go To term definition (right-click menu, keyboard shortcut)
   * [ ] A UI widget to view the language terms in a TreeView and offer facilities for adding, updating & removing terms
   * [ ] Make it easy to add terms to the Ubiquitous Language from existing code e.g. by highlighting and using the right-click menu
+* [ ] Ubiquitous Language Sharing Features
+  * [ ] Render definitions into a human readable format - e.g. html, markdown etc.
+  * [ ] Sync definitions into a cloud storage, e.g. Notion database, or confluence page
+  * [ ] Above features might be well packaged as a CLI as well as extension features, for running in CI/CD
 
 ## Installation
 

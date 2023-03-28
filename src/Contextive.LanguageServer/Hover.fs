@@ -3,6 +3,7 @@ module Contextive.LanguageServer.Hover
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
+open Humanizer
 
 let private (|EmptySeq|_|) a = if Seq.isEmpty a then Some () else None
 
@@ -12,10 +13,11 @@ let private markupContent content =
 let private noHoverResult = null
 
 let private termEquals (term:Definitions.Term) (word:string) =
-    term
-        .Name
-        .Replace(" ", "")
-        .Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
+    let normalisedTerm = term.Name.Replace(" ", "")
+    let singularEquals = normalisedTerm.Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
+    let singularWord = word.Singularize(false, false)
+    let pluralEquals = normalisedTerm.Equals(singularWord, System.StringComparison.InvariantCultureIgnoreCase)
+    singularEquals || pluralEquals
 
 let private termWordEquals (term:Definitions.Term) (word:Words.WordAndParts) = fst word |> termEquals term
 let private termInParts (term:Definitions.Term) (word:Words.WordAndParts) = (snd word) |> Seq.exists (termEquals term)
