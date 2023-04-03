@@ -2,10 +2,12 @@
     "cSpell.words": [
         "amodio",
         "Contextive",
+        "danielsanmedium",
         "dbaeumer",
         "devcycles",
         "dorny",
         "dotnettools",
+        "dscodegpt",
         "Expecto",
         "formulahendry",
         "hbenl",
@@ -33,5 +35,6 @@
         "dist": true // set this to false to include "dist" folder in search results
     },
     "dotnet-test-explorer.autoWatch": true,
-    "dotnet-test-explorer.testProjectPath": "**/*.Tests.fsproj"
+    "dotnet-test-explorer.testProjectPath": "**/*.Tests.fsproj",
+    "FSharp.enableAdaptiveLspServer": true
 }
