@@ -31,7 +31,7 @@ Even if you're not using Domain Driven Design, Contextive should still be very h
 * Hover to show definitions from your Contextive Definitions
 * Support for multiple contexts in the same repository (identified by path globs)
 * Support for a context distributed over multiple repositories (#36)
-* Currently configured to work in files of type: c, cpp, csharp, fsharp, go, groovy, html, java, javascript, javascriptreact, json, jsonc, markdown, perl, php, plaintext, powershell, python, ruby, rust, sql, typescript, typescriptreact, vb, xml, yaml
+* Works in all files (uses the `*` document selector)
 * Support for word identification in combined usage such as camelCase, PascalCase and snake_case
 * Support for documenting combined words (e.g. verbNoun or noun_verbed)
 * Shows definitions in auto-complete details
@@ -154,6 +154,12 @@ This also now works for `snake_case` code:
 
 ![Example of snake_case working in auto-complete and hover.](images/snake-case-auto-complete-demo.gif)
 
+### Plural Words
+
+Contextive can detect a defined term even when it is defined in the singular and used in the plural.
+
+Coming Soon: Ability to detect a defined term when it is defined in the plural and used in the singular, and when individual words in a combined word term are pluralised or singularised.
+
 ### Smart Auto-Complete
 
 As the terms added to the auto-complete are from a definitions file, not from your code symbols, the auto-complete will work in any file of any language - including documentation, such as markdown.
@@ -174,9 +180,7 @@ The auto-complete options will adjust as you type - e.g. after typing a single l
 * UI to edit/manage Contextive Definitions
 * Internationalization support
 * Support for multiple contexts in separate repositories
-* Configurable list of language identifiers. The list is currently hard coded as above.
 * Better support for key word identification in different languages (e.g. different syntax delimiters)
-* Support for detecting plural or singular versions of terms
 
 ## Extension Settings
 

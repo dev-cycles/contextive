@@ -37,6 +37,9 @@ The following list of features is a draft proposal of the vision at the start of
   * [ ] emacs
 * [ ] Code-editing Features
   * [x] Show the term definitions & usage examples when hovering over the word in the editor 
+    * [x] Also when the word being hovered over is plural of the defined singular term
+    * [ ] Also when the word being hovered over is singular of the defined plural term
+    * [ ] Also when the combined word being hovered over is contains singular or plural of a word in a defined multi-word term
   * [x] Add Ubiquitous Language terms to the auto-complete list
   * [ ] Codelens to identify the number of Ubiquitous Language terms in a method or class
   * [ ] Problems/warnings if misuse of the Ubiquitous Language - e.g. use of Command/Event and aggregate in the same class or method name when they are not linked, or use of extra words next to an Aggregate that _isn't_ defined
