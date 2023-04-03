@@ -65,7 +65,7 @@ let tests =
 
             Expect.hasLength hoverContents 2 "Should have 2 hover results"
 
-            printfn "hoverContents: %A" hoverContents
+            // printfn "hoverContents: %A" hoverContents
 
             let firstHoverContent = Seq.tryHead hoverContents
             let secondHoverContent = hoverContents |> Seq.tail |> Seq.tryHead

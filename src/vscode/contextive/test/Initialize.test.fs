@@ -59,7 +59,7 @@ let tests =
             let resetWorkspaceHook = Some deleteDefinitionsFile
 
             let testDocPath = "../test/fixtures/simple_workspace/test.txt"
-            let position = vscode.Position.Create(0.0, 10.0)
+            let position = vscode.Position.Create(0, 10)
             let expectedResults = seq {"anewterm"; "some"; "text"}
             do! Completion.expectCompletion testDocPath position expectedResults resetWorkspaceHook
         }
