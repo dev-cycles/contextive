@@ -4,9 +4,10 @@ open Fable.Mocha
 open Fable.Core
 open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
+open Contextive.VsCodeExtension
 open Contextive.VsCodeExtension.Tests.Helpers
 
-let private getHoverContentValue (hoverContent : U2<MarkdownString, U2<string, {| language: string; value: string |}>>) =
+let private getHoverContentValue (hoverContent : HoverContent) =
     match hoverContent with
     | U2.Case1 hc -> hc.value
     | U2.Case2 hc -> 
