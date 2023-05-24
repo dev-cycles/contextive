@@ -19,23 +19,26 @@ type Message<'T> =
     | Clear
 
 
-let create<'T>() = MailboxProcessor.Start(fun inbox -> 
-    let rec loop (state: WaitState<'T>) = async {
-        let! (msg: Message<'T>) = inbox.Receive()
-        let newState =
-            match msg with
-            | Received msg ->
-                state.Conditions |> Seq.iter (fun w -> if w.Condition msg then w.ReplyChannel.Reply(msg))
-                { state with Messages = msg :: state.Messages }
-            | WaitFor waitFor ->
-                state.Messages |> Seq.iter (fun m -> if waitFor.Condition m then waitFor.ReplyChannel.Reply(m))
-                { state with Conditions = waitFor :: state.Conditions }
-            | Clear ->
-                { state with Messages = [] }
-        return! loop newState
-    }
-    loop WaitState<'T>.Initial
-)
+let create<'T>() = 
+    let awaiter = MailboxProcessor.Start(fun inbox -> 
+        let rec loop (state: WaitState<'T>) = async {
+            let! (msg: Message<'T>) = inbox.Receive()
+            let newState =
+                match msg with
+                | Received msg ->
+                    state.Conditions |> Seq.iter (fun w -> if w.Condition msg then w.ReplyChannel.Reply(msg))
+                    { state with Messages = msg :: state.Messages }
+                | WaitFor waitFor ->
+                    state.Messages |> Seq.iter (fun m -> if waitFor.Condition m then waitFor.ReplyChannel.Reply(m))
+                    { state with Conditions = waitFor :: state.Conditions }
+                | Clear ->
+                    { state with Messages = [] }
+            return! loop newState
+        }
+        loop WaitState<'T>.Initial
+    )
+    awaiter.Error.Add(fun e -> printfn "%A" e)
+    awaiter
 
 let received (awaiter: MailboxProcessor<Message<'T>>) msg =
     awaiter.Post(Received(msg))

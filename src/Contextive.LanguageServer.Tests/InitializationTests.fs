@@ -55,12 +55,12 @@ let initializationTests =
                 ConfigurationSection.contextivePathOptionsBuilder pathValue
             ]
 
-            let! (client, reply) = TestClient(config) |> initWithReply
+            let! (client, reply) = TestClientWithCustomInitWait(config, Some pathValue) |> initWithReply
 
             test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
             test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
             
-            test <@ reply.IsNone @>
+            test <@ reply = Some $"Error loading definitions: Unable to locate path '{pathValue}' as not in a workspace." @>
         }
 
     ]

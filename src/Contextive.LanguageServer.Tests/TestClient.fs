@@ -12,6 +12,7 @@ type ClientOptionsBuilder = LanguageClientOptions -> LanguageClientOptions
 type InitializationOptions =
     | SimpleTestClient
     | TestClient of ClientOptionsBuilder list
+    | TestClientWithCustomInitWait of ClientOptionsBuilder list * string option
 
 type private TestClient() =
     inherit LanguageServerTestBase(JsonRpcTestOptions())
@@ -37,7 +38,7 @@ let private createTestClient clientOptsBuilder = async {
     return client, None
 }
 
-let private initAndWaitForConfigLoaded testClientConfig = async {
+let private initAndWaitForConfigLoaded testClientConfig (loadMessage: string option) = async {
     let logAwaiter = ConditionAwaiter.create()
 
     let allBuilders = ServerLog.optionsBuilder logAwaiter :: testClientConfig
@@ -46,7 +47,7 @@ let private initAndWaitForConfigLoaded testClientConfig = async {
     
     let! (client, _) = Some clientOptionsBuilder |> createTestClient
 
-    let! reply = "Loading contextive" |> ServerLog.waitForLogMessage logAwaiter
+    let! reply = (defaultArg loadMessage "Loading contextive") |> ServerLog.waitForLogMessage logAwaiter
 
     return (client, reply)
 }
@@ -54,7 +55,8 @@ let private initAndWaitForConfigLoaded testClientConfig = async {
 let initWithReply initOptions = async {
     return! match initOptions with
             | SimpleTestClient -> createTestClient None
-            | TestClient(testClientConfig) -> initAndWaitForConfigLoaded testClientConfig
+            | TestClient(testClientConfig) -> initAndWaitForConfigLoaded testClientConfig None
+            | TestClientWithCustomInitWait(testClientConfig, loadMessage) -> initAndWaitForConfigLoaded testClientConfig loadMessage
 }
 
 let init o = async {
