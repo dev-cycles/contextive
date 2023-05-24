@@ -1,7 +1,7 @@
 # Using focal for now as the `adr` package upgrades depends on dotnet 3.1,
-# which depends on libssl1.1 which is not available in jammy
-# Once `adr` updates, should update to `jammy`
-FROM mcr.microsoft.com/vscode/devcontainers/dotnet:0-6.0-focal
+# which depends on libssl1.1 which is not available in `jammy/bookworm`
+# Once `adr` updates, should update to `jammy/bookworm`
+FROM mcr.microsoft.com/vscode/devcontainers/dotnet:0-6.0-bullseye
 
 # Install other dotnet versions (required for adr tool and dotnet suggest)
 RUN curl -sSL https://dot.net/v1/dotnet-install.sh > /tmp/dotnet-install.sh \

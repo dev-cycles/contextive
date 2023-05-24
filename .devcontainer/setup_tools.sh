@@ -8,7 +8,7 @@ echo "export PATH=$PATH:~/.dotnet/tools" >> /home/vscode/.bashrc
 PATH=$PATH:~/.dotnet/tools
 echo 
 dotnet new --install Fable.Template
-dotnet tool install dotnet-suggest --global
+dotnet tool install dotnet-suggest --global --version 1.1.327201 # Latest dotnet-suggest requires .net 7.0
 dotnet tool install paket --global
 dotnet tool install fable --global
 dotnet tool install femto --global
