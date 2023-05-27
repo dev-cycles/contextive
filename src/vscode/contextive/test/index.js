@@ -6,12 +6,7 @@ function run() {
 	const testsRoot = __dirname;
 
 	// Create the mocha test
-	const mocha = new Mocha({
-		ui: 'bdd', // Fable.Mocha uses `describe`, so we need to use the `bdd` API. See https://mochajs.org/#interfaces
-		color: true,
-		timeout: 30000, // 5000ms is typically enough locally, but 30,000 is safer in github actions CI.
-		parallel: false,
-	})
+	const mocha = new Mocha()
 	.reporter('mocha-multi-reporters', {
 		reporterEnabled: "list, mocha-junit-reporter",
 		mochaJunitReporterReporterOptions: {

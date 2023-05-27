@@ -3,7 +3,7 @@ on: push
     
 env:
   dotnet-version: '6.0.x'
-  CONTEXTIVE_CI: true
+  CONTEXTIVE_DEBUG: true
 jobs:
   build-and-test:
     name: 'Build and Test'

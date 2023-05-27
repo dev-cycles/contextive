@@ -15,8 +15,10 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/
 
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends git
-
+    && apt-get -y install --no-install-recommends \
+# These are for running vscode insiders in the background to execeute extension tests
+        xvfb libgtk-3-0 libnss3-dev libgbm-dev libasound2
+    
 # [Optional] Uncomment this line to install global node packages.
 # RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g <your-package-here>" 2>&1
 

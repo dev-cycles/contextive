@@ -68,6 +68,7 @@
 		"glob": "^7.2.3",
 		"jest": "^27.5.1",
 		"mocha": "^8.4.0",
+		"mocha-explorer-launcher-scripts": "^0.4.0",
 		"mocha-junit-reporter": "^2.2.0",
 		"mocha-multi-reporters": "^1.5.1",
 		"semantic-release": "^19.0.5",

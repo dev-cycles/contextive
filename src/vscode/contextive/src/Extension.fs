@@ -51,7 +51,7 @@ module Extension =
             "Contextive",
             serverOptions=serverOptions,
             clientOptions=clientOptions,
-            forceDebug=(process.env?CONTEXTIVE_CI="true")
+            forceDebug=Option.isSome process.env?CONTEXTIVE_DEBUG
         )
 
     type Api = {

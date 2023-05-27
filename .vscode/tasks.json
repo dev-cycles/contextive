@@ -87,6 +87,42 @@
             ]
         },
         {
+            "label": "watch: VsCode Extension",
+            "type": "npm",
+            "script": "watch",
+            "problemMatcher": "$msCompile",
+            "isBackground": false,
+            "presentation": {
+                "reveal": "never",
+                "group": "watchers"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/${config:vsCodeExtensionPath}"
+            },
+        },
+        {
+            "label": "watch: VsCode Extension Tests",
+            "type": "npm",
+            "script": "watch-tests",
+            "problemMatcher": "$msCompile",
+            "isBackground": false,
+            "presentation": {
+                "reveal": "never",
+                "group": "watchers"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/${config:vsCodeExtensionPath}"
+            },
+        },
+        {
+            "label": "watch: All",
+            "dependsOn": [
+                "watch: VsCode Extension",
+                "watch: VsCode Extension Tests"
+            ],
+            "problemMatcher": "$msCompile",
+        },
+        {
             "label": "build: All",
             "dependsOn": [
                 "build: VsCode Extension",

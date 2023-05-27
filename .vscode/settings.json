@@ -36,6 +36,21 @@
         "dist": true // set this to false to include "dist" folder in search results
     },
     "dotnet-test-explorer.autoWatch": true,
-    "dotnet-test-explorer.testProjectPath": "**/*.Tests.fsproj",
-    "FSharp.enableAdaptiveLspServer": true
+    "dotnet-test-explorer.testProjectPath": "**/Contextive.LanguageServer.Tests.fsproj",
+    "FSharp.enableAdaptiveLspServer": true,
+    "mochaExplorer.logpanel": true,
+    "mochaExplorer.files": "**/out/main.test.js",
+    "mochaExplorer.launcherScript": "src/vscode/contextive/out/runTest",
+    "mochaExplorer.autoload": true,
+    "mochaExplorer.ipcTimeout": 20000,
+    "mochaExplorer.ipcRole": "server",
+    "mochaExplorer.env": {
+        "VSCODE_VERSION": "insiders",
+        "ELECTRON_RUN_AS_NODE": null,
+        "DISPLAY": ":99.0",
+        "XDG_RUNTIME_DIR":"/tmp"
+    },
+    "testExplorer.useNativeTesting": false,
+    "testing.openTesting": "neverOpen",
+    "mochaExplorer.exit": true
 }
