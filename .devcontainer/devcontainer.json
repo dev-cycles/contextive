@@ -22,8 +22,7 @@
                 "formulahendry.dotnet-test-explorer",
                 "ionide.ionide-paket",
                 "streetsidesoftware.code-spell-checker",
-                "yzhang.markdown-all-in-one",
-                "danielsanmedium.dscodegpt"
+                "yzhang.markdown-all-in-one"
             ]
         }
     },

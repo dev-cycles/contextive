@@ -15,7 +15,7 @@
             "outFiles": [
                 "${workspaceFolder}/${config:vsCodeExtensionPath}/dist/**/*.js"
             ],
-            "preLaunchTask": "build: VsCode Extension"
+            "preLaunchTask": "build: All"
         },
         {
             "name": "Attach to Language Server",
@@ -46,7 +46,7 @@
                 "${workspaceFolder}/${config:vsCodeExtensionPath}/out/**/*.js",
                 "${workspaceFolder}/${config:vsCodeExtensionPath}/dist/**/*.js"
             ],
-            "preLaunchTask": "build: VsCode Extension Tests"
+            "preLaunchTask": "build: All Tests"
         }
     ],
     "compounds": [

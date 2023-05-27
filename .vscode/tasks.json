@@ -92,6 +92,13 @@
                 "build: VsCode Extension",
                 "build: Language Server"
             ]
+        },
+        {
+            "label": "build: All Tests",
+            "dependsOn": [
+                "build: Language Server Tests",
+                "build: VsCode Extension Tests"
+            ]
         }
     ]
 }
