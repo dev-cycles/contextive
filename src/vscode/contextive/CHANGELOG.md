@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.7.0](https://github.com/dev-cycles/contextive/compare/v1.6.0...v1.7.0) (2023-05-28)
+
+
+### Features
+
+* **vscode:** add support for multi-root workspaces with a shared definitions file ([#38](https://github.com/dev-cycles/contextive/issues/38)) ([99a4257](https://github.com/dev-cycles/contextive/commit/99a4257120d67fc1fb40f740a6b10310f9d5eada))
+
 # [1.6.0](https://github.com/dev-cycles/contextive/compare/v1.5.1...v1.6.0) (2023-03-28)
 
 
