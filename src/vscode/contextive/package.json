@@ -52,10 +52,13 @@
 		"compile": "fable src && webpack",
 		"watch": "fable watch src --runWatch webpack",
 		"package": "fable src && webpack --mode production --devtool hidden-source-map",
-		"compile-tests": "fable test && webpack -c webpack.test.config.js",
-		"watch-tests": "fable watch test --runWatch webpack -c webpack.test.config.js",
+		"compile-tests": "fable test/single-root && fable test/multi-root && webpack -c webpack.test.config.js",
+		"watch-single-root-tests": "fable watch test/single-root --runWatch webpack -c webpack.test.config.js",
+		"watch-multi-root-tests": "fable watch test/multi-root --runWatch webpack -c webpack.test.config.js",
 		"pretest": "npm run compile && npm run compile-tests",
-		"test": "node ./out/runTest.js"
+		"test-single-root": "MOCHA_FGREP=\"Single-Root\" node ./out/runTest.js",
+		"test-multi-root": "MOCHA_FGREP=\"Multi-Root\" node ./out/runTest.js",
+		"test": "npm run test-single-root && npm run test-multi-root"
 	},
 	"devDependencies": {
 		"@google/semantic-release-replace-plugin": "^1.2.0",

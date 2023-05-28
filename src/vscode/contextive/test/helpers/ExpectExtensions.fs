@@ -1,6 +1,5 @@
 namespace Fable.Mocha
 
-
 module Expect =
     
     let seqEqual (expected: seq<'a>) (actual: seq<'a>) (msg: string): unit =

@@ -29,6 +29,9 @@ The following list of features is a draft proposal of the vision at the start of
   * [x] Support a Bounded Context distributed across multiple repos (#36)
 * [ ] IDE Support
   * [x] Visual Studio Code
+    * [x] Support single-root workspaces
+    * [x] Support multi-root workspaces with a shared definitions file
+    * [ ] Support multi-root workspaces with a definitions file per root
   * [ ] Visual Studio (2019/2022)
   * [ ] Eclipse
   * [ ] NetBeans

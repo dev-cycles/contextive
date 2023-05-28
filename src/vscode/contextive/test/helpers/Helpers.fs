@@ -1,10 +1,11 @@
-module Contextive.VsCodeExtension.Tests.Helpers
+module Contextive.VsCodeExtension.TestHelpers.Helpers
 
 open Contextive.VsCodeExtension
 open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
 open Node.Api
 open Fable.Core
+open Fable.Mocha
 
 let getDocUri relativeFile =
     vscode.Uri.file(path.resolve(__dirname,relativeFile))
@@ -63,3 +64,9 @@ let afterEach (name: string, callback: unit -> JS.Promise<unit>):unit = jsNative
 
 [<Emit("after($0, $1)")>]
 let after (name: string, callback: unit -> JS.Promise<unit>):unit = jsNative
+
+[<Emit("beforeEach($0, $1)")>]
+let beforeEach (name: string, callback: unit -> JS.Promise<unit>):TestCase = jsNative
+
+[<Emit("before($0, $1)")>]
+let before (name: string, callback: unit -> JS.Promise<unit>):TestCase = jsNative

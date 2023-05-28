@@ -1,11 +1,12 @@
-module Contextive.VsCodeExtension.Tests.Hover
+module Contextive.VsCodeExtension.Tests.SingleRoot.Hover
 
 open Fable.Mocha
 open Fable.Core
 open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
 open Contextive.VsCodeExtension
-open Contextive.VsCodeExtension.Tests.Helpers
+open Contextive.VsCodeExtension.TestHelpers
+open Contextive.VsCodeExtension.TestHelpers.Helpers
 
 let private getHoverContentValue (hoverContent : HoverContent) =
     match hoverContent with
@@ -46,7 +47,7 @@ let tests =
     testList "Hover Tests" [
 
         testCaseAsync "Hover returns expected content" <| async {
-            let testDocPath = "../test/fixtures/simple_workspace/.contextive/definitions.yml"
+            let testDocPath = Paths.inWorkspace ".contextive/definitions.yml"
             let position = vscode.Position.Create(16, 9)
 
             let! hoverContents = getHover testDocPath position
@@ -59,7 +60,7 @@ let tests =
         testCaseAsync "Contextive Hover results appear last" <| async {
             do! updateConfig ".contextive/marketing.yml"
 
-            let testDocPath = "../test/fixtures/simple_workspace/MarketingDemo.cs"
+            let testDocPath = Paths.inWorkspace "MarketingDemo.cs"
             let position = vscode.Position.Create(0, 15)
 
             let! hoverContents = getHover testDocPath position

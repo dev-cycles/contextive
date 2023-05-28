@@ -3,7 +3,6 @@
 'use strict';
 
 const path = require('path');
-const nodeExternals = require('webpack-node-externals');
 
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/

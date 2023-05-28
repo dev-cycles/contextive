@@ -2,15 +2,25 @@ const path = require('path');
 const Mocha = require('mocha');
 const glob = require('glob');
 
+function getMochaOpts() {
+	if (process.env.MOCHA_FGREP) {
+		return {
+			fgrep: process.env.MOCHA_FGREP
+		};
+	}
+	return {};
+}
+
 function run() {
 	const testsRoot = __dirname;
 
+	const opts = getMochaOpts();
 	// Create the mocha test
-	const mocha = new Mocha()
+	const mocha = new Mocha(opts)
 	.reporter('mocha-multi-reporters', {
 		reporterEnabled: "list, mocha-junit-reporter",
 		mochaJunitReporterReporterOptions: {
-			mochaFile: path.resolve(testsRoot, `../TestResults/TestResults-${process.env.DOTNET_VERSION}.xml`)
+			mochaFile: path.resolve(testsRoot, `../TestResults/TestResults-${opts.fgrep}-${process.env.DOTNET_VERSION}.xml`)
 		}
 	});
 

@@ -1,0 +1,22 @@
+contexts:
+  - name: RootA
+    domainVisionStatement: To illustrate the use of the terms in RootA Context
+    paths:
+    # Globs are supported. Multiple paths may be included. If any match the currently open file, the context will be used.
+    - rootA # This is the default path glob if the `paths` key is excluded, and will match all files
+    terms:
+    - name: A
+      definition: A term that is only in rootA
+    - name: both
+      definition: A term found in both roots but in this case is in RootA
+  - name: RootB
+    domainVisionStatement: To illustrate the use of the terms in RootB Context
+    paths:
+    # Globs are supported. Multiple paths may be included. If any match the currently open file, the context will be used.
+    - rootB # This is the default path glob if the `paths` key is excluded, and will match all files
+    terms:
+    - name: B
+      definition: A term that is only in rootB
+    - name: both
+      definition: A term found in both roots but in this case is in RootB
+     

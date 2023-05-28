@@ -101,9 +101,23 @@
             },
         },
         {
-            "label": "watch: VsCode Extension Tests",
+            "label": "watch: VsCode Extension Tests (Single-Root)",
             "type": "npm",
-            "script": "watch-tests",
+            "script": "watch-single-root-tests",
+            "problemMatcher": "$msCompile",
+            "isBackground": false,
+            "presentation": {
+                "reveal": "never",
+                "group": "watchers"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/${config:vsCodeExtensionPath}"
+            },
+        },
+        {
+            "label": "watch: VsCode Extension Tests (Multi-Root)",
+            "type": "npm",
+            "script": "watch-multi-root-tests",
             "problemMatcher": "$msCompile",
             "isBackground": false,
             "presentation": {
@@ -118,7 +132,8 @@
             "label": "watch: All",
             "dependsOn": [
                 "watch: VsCode Extension",
-                "watch: VsCode Extension Tests"
+                "watch: VsCode Extension Tests (Single-Root)",
+                "watch: VsCode Extension Tests (Multi-Root)"
             ],
             "problemMatcher": "$msCompile",
         },

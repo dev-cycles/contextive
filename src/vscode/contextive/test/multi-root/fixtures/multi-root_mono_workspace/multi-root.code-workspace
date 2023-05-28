@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "rootA"
+		},
+		{
+			"path": "rootB"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+	}
+}

@@ -1,4 +1,4 @@
-module Contextive.VsCodeExtension.Tests.VsCodeCommands
+module Contextive.VsCodeExtension.TestHelpers.VsCodeCommands
 
 open Fable.Import.VSCode.Vscode
 open Fable.Core.JS
@@ -29,4 +29,9 @@ let closeActiveEditor() = promise {
 
 let closeAllEditors() = promise {
     return! commands.executeCommand("workbench.action.closeAllEditors")
+}
+
+let openFolder docUri = promise {
+    return! commands.executeCommand("vscode.openFolder",
+        Some docUri)
 }

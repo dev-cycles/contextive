@@ -99,7 +99,7 @@ See https://github.com/dev-cycles/contextive-demo-go-service for an example of t
 
 This is the simplest option - all you need to do is define the terms for that context in the relevant repository.
 
-#### Multiple Bounded Contexts, Single Repository (Monorepo)
+#### Multiple Bounded Contexts, Single Repository, Single-Root (Monorepo)
 
 For projects utilising a [monorepo](https://en.wikipedia.org/wiki/Monorepo) it's not uncommon to have code relating to multiple [bounded contexts](https://martinfowler.com/bliki/BoundedContext.html) in the same repository.  At this time, Contextive tracks all definitions in the same file.  Each context has a `paths` property that defines a list of path [globs](https://en.wikipedia.org/wiki/Glob_(programming)).  When working on a file, any context with a matching path glob will be evaluated when finding matches for hover and auto-complete.
 
@@ -125,6 +125,18 @@ When hovering over `CargoDemo/LegPolicy.cs` we get:
 When hovering over `BillingDemo/Policy.cs` we get:
 
 ![Example of hovering over policy in the Billing context.](images/billing_policy_example.png)
+
+#### Multiple Bounded Contexts, Multi-Root, Shared Definitions File
+
+Visual Studio Code supports a [multi-root workspace](https://code.visualstudio.com/docs/editor/multi-root-workspaces) configuration which allows separate folders to be selected as 'roots' of a workspace.
+
+Contextive supports this configuration as long as the definitions for all roots are in a shared file.  (Support for separate files per root is a future enhancement.)
+
+The Contextive definitions file is located at `.contextive/definitions.yml` by default - as this is a relative path, in a single-root configuration it is relative to the workspace root. In the multi-root configuration, the definitions file must be located relative to the folder of the `.code-workspaces` file to avoid ambiguity about which root it is relative to.
+
+The `paths` in the definitions file relate to the paths of the roots on disk, not to their names in the vscode multi-root configuration.
+
+If you'd like to store the definitions file in a different location, the appropriate settings location to use is the `settings` key in the `.code-workspaces` file itself, as this will apply in all roots.
 
 ### Combined Words
 

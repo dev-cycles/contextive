@@ -14,7 +14,8 @@ const extensionConfig = {
   mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
 
   entry: {
-    "main.test": './test/Main.test.fs.js', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
+    "multi-root.main.test": './test/multi-root/Main.test.fs.js',
+    "single-root.main.test": './test/single-root/Main.test.fs.js', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
     index: './test/index.js', // the Mocha test runner 📖 -> https://code.visualstudio.com/api/working-with-extensions/testing-extension
     runTest: './test/runTest.js' // the VSCode test runner that downloads and launches VsCode 📖 -> https://code.visualstudio.com/api/working-with-extensions/testing-extension
   },

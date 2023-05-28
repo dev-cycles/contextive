@@ -62,11 +62,11 @@ jobs:
         env:
           DISPLAY: ":99.0"
           DOTNET_VERSION: ${{ env.dotnet-version }}
-      - name: Upload vsCode Extension Test Results
+      - name: Upload VsCode Extension Test Results
         uses: actions/upload-artifact@v2
         with:
-          name: vscode-extension-results-${{ env.dotnet-version }}
-          path: "src/vscode/**/TestResults-${{ env.dotnet-version }}.xml"
+          name: vscode-extension-test-results-${{ env.dotnet-version }}
+          path: "src/vscode/**/TestResults-*-${{ env.dotnet-version }}.xml"
         if: always()
       - name: Upload All Test Logs
         uses: actions/upload-artifact@v2
@@ -79,6 +79,6 @@ jobs:
         if: always()
         with:
           name: VsCode Extension Tests
-          path: "src/vscode/**/TestResults-${{ env.dotnet-version }}.xml"
+          path: "src/vscode/**/TestResults-*-${{ env.dotnet-version }}.xml"
           reporter: java-junit
       - run: echo "🍏 This job's status is ${{ job.status }}."

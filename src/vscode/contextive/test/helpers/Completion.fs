@@ -1,10 +1,9 @@
-module Contextive.VsCodeExtension.Tests.Completion
+module Contextive.VsCodeExtension.TestHelpers.Completion
 
+open Helpers
 open Fable.Mocha
 open Fable.Core
-open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
-open Contextive.VsCodeExtension.Tests.Helpers
 
 let private getCompletionLabelsFromItems (items:ResizeArray<CompletionItem>) =
     items
@@ -37,15 +36,3 @@ let rec expectCompletion path position expectedResults (onBeforeAssert : (unit -
 
     Expect.seqEqual expectedResults labels "executeCompletionProvider should return expected completion items"
 }
-
-let DefaultExpectedTerms = seq {"context"; "definition"; "example"; "some"; "term"; "text"}
-
-let tests =
-    testList "Contextive Completion Tests" [
-
-        testCaseAsync "Completion returns expected list" <| async {
-            let testDocPath = "../test/fixtures/simple_workspace/test.txt"
-            let position = vscode.Position.Create(0, 10)
-            do! expectCompletion testDocPath position DefaultExpectedTerms None
-        }
-    ]

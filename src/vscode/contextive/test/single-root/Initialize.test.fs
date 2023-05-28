@@ -1,9 +1,10 @@
-module Contextive.VsCodeExtension.Tests.Initialize
+module Contextive.VsCodeExtension.Tests.SingleRoot.Initialize
 
 open Fable.Mocha
 open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
-open Contextive.VsCodeExtension.Tests.Helpers
+open Contextive.VsCodeExtension.TestHelpers
+open Contextive.VsCodeExtension.TestHelpers.Helpers
 
 let tests =
     testList "Initialize Tests" [
@@ -58,7 +59,7 @@ let tests =
 
             let resetWorkspaceHook = Some deleteDefinitionsFile
 
-            let testDocPath = "../test/fixtures/simple_workspace/test.txt"
+            let testDocPath = Paths.inWorkspace "test.txt"
             let position = vscode.Position.Create(0, 10)
             let expectedResults = seq {"anewterm"; "some"; "text"}
             do! Completion.expectCompletion testDocPath position expectedResults resetWorkspaceHook

@@ -34,18 +34,39 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "VsCode Extension Tests",
+            "name": "VsCode Extension Tests (Single-Root)",
             "type": "extensionHost",
             "request": "launch",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}/${config:vsCodeExtensionPath}",
                 "--extensionTestsPath=${workspaceFolder}/${config:vsCodeExtensionPath}/out/index",
-                "${workspaceRoot}/src/vscode/contextive/test/fixtures/simple_workspace"
+                "${workspaceRoot}/src/vscode/contextive/test/single-root/fixtures/simple_workspace"
             ],
             "outFiles": [
                 "${workspaceFolder}/${config:vsCodeExtensionPath}/out/**/*.js",
                 "${workspaceFolder}/${config:vsCodeExtensionPath}/dist/**/*.js"
             ],
+            "env": {
+                "MOCHA_FGREP": "Single-Root"
+            },
+            "preLaunchTask": "build: All Tests"
+        },
+        {
+            "name": "VsCode Extension Tests (Multi-Root)",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}/${config:vsCodeExtensionPath}",
+                "--extensionTestsPath=${workspaceFolder}/${config:vsCodeExtensionPath}/out/index",
+                "${workspaceRoot}/src/vscode/contextive/test/multi-root/fixtures/multi-root_mono_workspace/multi-root.code-workspace"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/${config:vsCodeExtensionPath}/out/**/*.js",
+                "${workspaceFolder}/${config:vsCodeExtensionPath}/dist/**/*.js"
+            ],
+            "env": {
+                "MOCHA_FGREP": "Multi-Root"
+            },
             "preLaunchTask": "build: All Tests"
         }
     ],

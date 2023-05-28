@@ -5,19 +5,15 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\Contextive.VsCodeExtension.fsproj" />
+    <ProjectReference Include="..\..\src\Contextive.VsCodeExtension.fsproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
     <Compile Include="PromiseUtils.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="ExpectExtensions.fs" />
     <Compile Include="VsCodeCommands.fs" />
-    <Compile Include="Hover.test.fs" />
-    <Compile Include="Completion.test.fs" />
-    <Compile Include="Initialize.test.fs" />
-    <Compile Include="InvalidSchema.test.fs" />
-    <Compile Include="Extension.test.fs" />
-    <Compile Include="Main.test.fs" />
+    <Compile Include="Completion.fs" />
   </ItemGroup>
-  <Import Project="..\..\..\.paket\Paket.Restore.targets" />
+  <Import Project="..\..\..\..\.paket\Paket.Restore.targets" />
 </Project>

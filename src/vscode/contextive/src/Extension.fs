@@ -17,7 +17,6 @@ module Extension =
     let private executable f = jsOptions<Executable>(f)
     let private executableOptions f = Some <| jsOptions<ExecutableOptions>(f)
     let private argsArray (f:string list) = Some <| new ResizeArray<string>(f)
-    let private documentSelectorList (x:string list) : DocumentSelector option = Some !!(new ResizeArray<string>(x))
 
     let private debugServerOptions = executable(fun x -> 
         x.command <- "dotnet"
@@ -39,11 +38,10 @@ module Extension =
             "run" ==> runServerOptions
             "debug" ==> debugServerOptions
         ] |> unbox<ServerOptions>
-          
+  
     let private clientOptions = languageClientOptions(fun x ->
-        x.documentSelector <- 
-            Some !!"*"
-            //documentSelectorList ["c"; "cpp"; "csharp"; "fsharp"; "go"; "groovy"; "html"; "java"; "javascript"; "javascriptreact"; "json"; "jsonc"; "markdown"; "perl"; "php"; "plaintext"; "powershell"; "python"; "ruby"; "rust"; "sql"; "typescript"; "typescriptreact"; "vb"; "xml"; "yaml"]
+        x.documentSelector <- Some !!"*"
+        x.middleware <- Some MultiRoot.middleware
     )
 
     let private clientFactory() =

@@ -1,4 +1,4 @@
-module Contextive.VsCodeExtension.Tests.Extension
+module Contextive.VsCodeExtension.Tests.SingleRoot.Extension
 
 open Fable.Mocha
 open Fable.Import.VSCode.Vscode

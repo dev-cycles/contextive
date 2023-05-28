@@ -1,17 +1,19 @@
-module Contextive.VsCodeExtension.Tests.Main
+module Contextive.VsCodeExtension.Tests.SingleRoot.Main
 
 open Fable.Mocha
 open Fable.Core
+open Contextive.VsCodeExtension.TestHelpers
+open Contextive.VsCodeExtension.TestHelpers.Helpers
 
 // Import mocha explicitly.  Fable.Mocha assumes running via the mocha CLI which imports mocha _implicitly_
 [<Import("*", from="mocha")>]
 let Mocha: obj = jsNative
 
-Helpers.afterEach("reset config", fun () -> promise {
-    do! Helpers.resetConfig()
+afterEach("reset config", fun () -> promise {
+    do! resetConfig()
 })
 
-Fable.Mocha.Mocha.runTests <| testList "All" [
+Fable.Mocha.Mocha.runTests <| testList "Single-Root Workspace" [
     Extension.tests
     Initialize.tests
     Completion.tests

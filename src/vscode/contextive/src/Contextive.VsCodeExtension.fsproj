@@ -14,6 +14,8 @@
       <Paket>True</Paket>
       <Link>paket-files/Fable.Import.VSCode.LanguageServer.fs</Link>
     </Compile>
+    <Compile Include="Middleware.fs" />
+    <Compile Include="MultiRoot.fs" />
     <Compile Include="HoverContent.fs" />
     <Compile Include="PromiseUtils.fs" />
     <Compile Include="PromiseBuilderUtils.fs" />
