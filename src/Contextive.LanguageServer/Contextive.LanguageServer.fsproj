@@ -19,7 +19,6 @@
   <ItemGroup>
     <Compile Include="FileLoader.fs" />
     <Compile Include="PathResolver.fs" />
-    <Compile Include="CandidateTerms.fs" />
     <Compile Include="Tokeniser.fs" />
     <Compile Include="Definitions.fs" />
     <Compile Include="WatchedFiles.fs" />
@@ -29,6 +28,9 @@
     <Compile Include="Completion.fs" />
     <Compile Include="Server.fs" />
     <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Contextive.Core\Contextive.Core.fsproj" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

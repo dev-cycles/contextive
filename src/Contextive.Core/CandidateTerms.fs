@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.CandidateTerms
+module Contextive.Core.CandidateTerms
 
 open System.Text.RegularExpressions
 open System.Linq

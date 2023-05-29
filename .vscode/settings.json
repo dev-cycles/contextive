@@ -37,7 +37,7 @@
         "dist": true // set this to false to include "dist" folder in search results
     },
     "dotnet-test-explorer.autoWatch": true,
-    "dotnet-test-explorer.testProjectPath": "**/Contextive.LanguageServer.Tests.fsproj",
+    "dotnet-test-explorer.testProjectPath": "src/Contextive.*/Contextive.*.Tests.fsproj",
     "FSharp.enableAdaptiveLspServer": true,
     "mochaExplorer.logpanel": true,
     "mochaExplorer.files": "**/out/*.main.test.js",

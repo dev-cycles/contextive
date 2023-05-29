@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.Core", "Contextive.Core\Contextive.Core.fsproj", "{53E24D0F-92AD-411B-B64D-1510E31D028D}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.Core.Tests", "Contextive.Core.Tests\Contextive.Core.Tests.fsproj", "{84BCC552-7CAE-4036-B3C0-5C524960D135}"
+EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.LanguageServer", "Contextive.LanguageServer\Contextive.LanguageServer.fsproj", "{662D5E4C-A0D9-46AA-A692-9D0B8156EC8D}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.LanguageServer.Tests", "Contextive.LanguageServer.Tests\Contextive.LanguageServer.Tests.fsproj", "{85E2E304-240D-4064-9933-3807E2D2B997}"
@@ -36,5 +40,13 @@ Global
 		{FB702083-5279-4BBF-88B4-260864DC647A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB702083-5279-4BBF-88B4-260864DC647A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB702083-5279-4BBF-88B4-260864DC647A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53E24D0F-92AD-411B-B64D-1510E31D028D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53E24D0F-92AD-411B-B64D-1510E31D028D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53E24D0F-92AD-411B-B64D-1510E31D028D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53E24D0F-92AD-411B-B64D-1510E31D028D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84BCC552-7CAE-4036-B3C0-5C524960D135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84BCC552-7CAE-4036-B3C0-5C524960D135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84BCC552-7CAE-4036-B3C0-5C524960D135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84BCC552-7CAE-4036-B3C0-5C524960D135}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

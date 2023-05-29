@@ -4,6 +4,7 @@ open System.Linq
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
+open Contextive.Core
 
 type CompletionItemData = {Label: string; Documentation: string option}
 

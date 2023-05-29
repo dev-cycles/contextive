@@ -1,6 +1,6 @@
-module Contextive.LanguageServer.Tests.CandidateTermsTests
+module Contextive.Core.Tests.CandidateTermsTests
 
-open Contextive.LanguageServer.CandidateTerms
+open Contextive.Core.CandidateTerms
 open Expecto
 open Swensen.Unquote
 

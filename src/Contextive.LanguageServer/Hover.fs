@@ -3,6 +3,7 @@ module Contextive.LanguageServer.Hover
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
+open Contextive.Core
 open Humanizer
 
 let private (|EmptySeq|_|) a = if Seq.isEmpty a then Some () else None
