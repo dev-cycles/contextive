@@ -1,64 +1,14 @@
 module Contextive.LanguageServer.Definitions
 
-open YamlDotNet.Serialization
-open YamlDotNet.Serialization.NamingConventions
 open DotNet.Globbing
-open System.Linq
-open FileLoader
 
-[<CLIMutable>]
-type Term =
-    {
-        Name: string
-        Definition: string option
-        Examples: ResizeArray<string>
-    }
-    static member Default = {Name = ""; Definition = None; Examples = null}
-
-[<CLIMutable>]
-type Context =
-    {
-        Name: string
-        DomainVisionStatement: string
-        Paths: ResizeArray<string>
-        Terms: ResizeArray<Term>
-    }
-    static member Default = { Name=""; DomainVisionStatement=""; Paths=new ResizeArray<string>(); Terms=new ResizeArray<Term>()}
-    member this.WithTerms (terms:Term seq) = { this with Terms = terms.ToList() }
-
-[<CLIMutable>]
-type Definitions =
-    {
-        Contexts: ResizeArray<Context>
-    }
-    static member Default = { Contexts = new ResizeArray<Context>() }
-
-type Filter = Term -> bool
-type FindResult = Context seq
-type Finder = string -> Filter -> Async<FindResult>
+open Contextive.Core.File
+open Contextive.Core.Definitions
 
 type FileLoader = unit -> Async<Result<File, string>>
 
 type Reloader = unit -> unit
 type Unregisterer = unit -> unit
-
-module FindResult =
-    let allTerms (contexts:FindResult) : Term seq = contexts |> Seq.collect(fun c -> c.Terms)
-
-let private deserialize (yml:string) =
-    try
-        let deserializer = 
-            (new DeserializerBuilder())
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                .Build()
-        let definitions = deserializer.Deserialize<Definitions>(yml)
-        match definitions |> box with
-        | null -> Error "Definitions file is empty."
-        | _ -> Ok definitions
-    with
-    | :? YamlDotNet.Core.YamlException as e -> 
-        let msg = if e.InnerException = null then e.Message else e.InnerException.Message
-        Error $"Error parsing definitions file:  Object starting line {e.Start.Line}, column {e.Start.Column} - {msg}"
 
 type private State =
     {

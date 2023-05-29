@@ -5,7 +5,7 @@ open Swensen.Unquote
 open System.IO
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open Contextive.LanguageServer
-open Contextive.LanguageServer.Definitions
+open Contextive.Core.Definitions
 open Contextive.LanguageServer.Tests.Helpers
 open Contextive.LanguageServer.Tests.Helpers.TestClient
 
@@ -52,7 +52,7 @@ let completionTests =
 
         let singleWordCompletion (term, (tokenAtPosition:string option), expectedLabel:string) = 
             testCase $"Completion of \"{term}\" with {tokenAtPosition} at position, returns \"{expectedLabel}\"" <| fun () -> 
-                let finder : Definitions.Finder = DH.mockTermsFinder Context.Default ([term])
+                let finder : Finder = DH.mockTermsFinder Context.Default ([term])
 
                 let tokenFinder : TextDocument.TokenFinder = fun _ _ -> tokenAtPosition
 
@@ -77,7 +77,7 @@ let completionTests =
         let multiWordCompletion (term, (tokenAtPosition:string option), expectedCompletionLabels:string seq) = 
             let expectedCompletionLabelsList = sprintf "%A" <| Seq.toList expectedCompletionLabels
             testCase $"Completion of \"{term}\" with {tokenAtPosition} at position, returns \"{expectedCompletionLabelsList}\"" <| fun () -> 
-                let finder : Definitions.Finder = DH.mockTermsFinder Context.Default ([term])
+                let finder : Finder = DH.mockTermsFinder Context.Default ([term])
 
                 let tokenFinder : TextDocument.TokenFinder = fun _ _ -> tokenAtPosition
 
@@ -99,7 +99,7 @@ let completionTests =
 
         let detailCompletion (contextName, expectedDetail) = 
             testCase $"Context \"{contextName}\" has detail \"{expectedDetail}\"" <| fun () ->
-                let finder : Definitions.Finder = DH.mockTermsFinder {Context.Default with Name=contextName} (["term"])
+                let finder : Finder = DH.mockTermsFinder {Context.Default with Name=contextName} (["term"])
 
                 let completionItem =
                     (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null).Result
@@ -114,7 +114,7 @@ let completionTests =
         let documentationCompletion (termName, termDefinition) = 
             testCase $"Context \"{termName}\": \"{termDefinition}\" has expected documentation" <| fun () ->
                 let terms = [{Term.Default with Name = termName; Definition = termDefinition}]
-                let finder : Definitions.Finder = DH.mockDefinitionsFinder Context.Default (terms)
+                let finder : Finder = DH.mockDefinitionsFinder Context.Default (terms)
 
                 let completionItem =
                     (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null).Result
@@ -130,7 +130,7 @@ let completionTests =
 
         
         testCase "Completion Kind Is Reference" <| fun () ->
-            let finder : Definitions.Finder = DH.mockDefinitionsFinder Context.Default ([Term.Default])
+            let finder : Finder = DH.mockDefinitionsFinder Context.Default ([Term.Default])
 
             let completionItem =
                 (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null).Result

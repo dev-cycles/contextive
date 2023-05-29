@@ -1,12 +1,7 @@
 module Contextive.LanguageServer.FileLoader
 
 open System.IO
-
-type File = 
-    {
-        AbsolutePath: string
-        Contents: Result<string, string>
-    }
+open Contextive.Core.File
 
 let private tryReadFile path =
     if File.Exists(path) then

@@ -5,6 +5,7 @@ open Swensen.Unquote
 open System.IO
 open Contextive.LanguageServer
 open Helpers.TestClient
+open Contextive.Core
 open Contextive.LanguageServer.Tests.Helpers
 
 [<Tests>]
@@ -91,7 +92,7 @@ let definitionsTests =
         let invalidScenarios =
             [
                 ("invalid_empty","Error loading definitions: Definitions file is empty.")
-                ("invalid_schema","Error loading definitions: Error parsing definitions file:  Object starting line 6, column 7 - Property 'example' not found on type 'Contextive.LanguageServer.Definitions+Term'.")
+                ("invalid_schema","Error loading definitions: Error parsing definitions file:  Object starting line 6, column 7 - Property 'example' not found on type 'Contextive.Core.Definitions+Term'.")
                 ("invalid_schema2","Error loading definitions: Error parsing definitions file:  Object starting line 5, column 19 - Mapping values are not allowed in this context.")
                 ("no_file", "Error loading definitions: Definitions file not found.")
             ]

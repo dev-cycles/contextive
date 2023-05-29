@@ -1,5 +1,6 @@
 module Contextive.LanguageServer.Tests.Helpers.Definitions
-open Contextive.LanguageServer.Definitions
+
+open Contextive.Core.Definitions
 
 let mockDefinitionsFinder (defaultContext:Context) (definitions:Term seq) = 
     (fun _ f -> async { return seq { defaultContext.WithTerms (Seq.filter f definitions)} })

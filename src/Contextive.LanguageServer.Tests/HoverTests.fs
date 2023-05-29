@@ -7,7 +7,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open System.IO
 open Contextive.LanguageServer
-open Contextive.LanguageServer.Definitions
+open Contextive.Core.Definitions
 open Helpers.TestClient
 open Contextive.LanguageServer.Tests.Helpers
 
