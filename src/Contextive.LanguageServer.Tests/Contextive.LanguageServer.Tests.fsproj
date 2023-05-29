@@ -6,18 +6,18 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Fixtures.fs" />
+    <Compile Include="Helpers/Fixtures.fs" />
+    <Compile Include="Helpers/Definitions.fs" />
+    <Compile Include="Helpers/Completion.fs" />
+    <Compile Include="Helpers/ConditionAwaiter.fs" />
+    <Compile Include="Helpers/WatchedFiles.fs" />
+    <Compile Include="Helpers/ServerLog.fs" />
+    <Compile Include="Helpers/Workspace.fs" />
+    <Compile Include="Helpers/TestClient.fs" />
+    <Compile Include="Helpers/ConfigurationSection.fs" />
     <Compile Include="FileLoaderTests.fs" />
     <Compile Include="WordsTests.fs" />
     <Compile Include="PathResolverTests.fs" />
-    <Compile Include="Definitions.fs" />
-    <Compile Include="Completion.fs" />
-    <Compile Include="ConditionAwaiter.fs" />
-    <Compile Include="WatchedFiles.fs" />
-    <Compile Include="ServerLog.fs" />
-    <Compile Include="Workspace.fs" />
-    <Compile Include="TestClient.fs" />
-    <Compile Include="ConfigurationSection.fs" />
     <Compile Include="ConfigurationTests.fs" />
     <Compile Include="DefinitionsTests.fs" />
     <Compile Include="WatchedFilesTests.fs" />

@@ -10,8 +10,9 @@ open Contextive.LanguageServer
 open OmniSharp.Extensions.LanguageServer.Protocol.Client
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
-open TestClient
-open WatchedFiles
+open Contextive.LanguageServer.Tests.Helpers
+open Helpers.TestClient
+open Helpers.WatchedFiles
 
 let didChangeWatchedFiles (client:ILanguageClient) (uri:string) = 
     client.SendNotification(WorkspaceNames.DidChangeWatchedFiles, DidChangeWatchedFilesParams(

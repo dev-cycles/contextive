@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.ServerLog
+module Contextive.LanguageServer.Tests.Helpers.ServerLog
 
 open System.Threading.Tasks
 open OmniSharp.Extensions.LanguageServer.Protocol.Models

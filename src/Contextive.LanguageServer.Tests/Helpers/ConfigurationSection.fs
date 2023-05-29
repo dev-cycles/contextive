@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.ConfigurationSection
+module Contextive.LanguageServer.Tests.Helpers.ConfigurationSection
 
 open Newtonsoft.Json.Linq
 open System.Linq

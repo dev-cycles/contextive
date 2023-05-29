@@ -5,8 +5,9 @@ open Swensen.Unquote
 open Contextive.LanguageServer
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities
-open TestClient
 open System.IO
+open Contextive.LanguageServer.Tests.Helpers
+open Helpers.TestClient
 
 [<Tests>]
 let textDocumentTests =

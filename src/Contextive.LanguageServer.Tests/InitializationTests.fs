@@ -3,7 +3,8 @@ module Contextive.LanguageServer.Tests.InitializationTests
 open System
 open Expecto
 open Swensen.Unquote
-open TestClient
+open Contextive.LanguageServer.Tests.Helpers
+open Helpers.TestClient
 
 [<Tests>]
 let initializationTests =

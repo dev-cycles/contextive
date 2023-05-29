@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.WatchedFiles
+module Contextive.LanguageServer.Tests.Helpers.WatchedFiles
 
 open System.Threading.Tasks
 open Newtonsoft.Json.Linq

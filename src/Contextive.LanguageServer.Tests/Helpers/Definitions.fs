@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.Definitions
+module Contextive.LanguageServer.Tests.Helpers.Definitions
 open Contextive.LanguageServer.Definitions
 
 let mockDefinitionsFinder (defaultContext:Context) (definitions:Term seq) = 

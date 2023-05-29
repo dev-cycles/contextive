@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.Fixtures
+module Contextive.LanguageServer.Tests.Helpers.Fixtures
 
 module One =
     let expectedTerms = seq ["firstTerm";"secondTerm";"thirdTerm"]

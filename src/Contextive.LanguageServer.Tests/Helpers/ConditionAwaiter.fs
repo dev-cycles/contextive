@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.ConditionAwaiter
+module Contextive.LanguageServer.Tests.Helpers.ConditionAwaiter
 
 type WaitForCondition<'T> = 
     {

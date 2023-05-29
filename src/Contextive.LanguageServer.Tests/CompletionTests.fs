@@ -6,9 +6,10 @@ open System.IO
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open Contextive.LanguageServer
 open Contextive.LanguageServer.Definitions
-open TestClient
+open Contextive.LanguageServer.Tests.Helpers
+open Contextive.LanguageServer.Tests.Helpers.TestClient
 
-module DH = Contextive.LanguageServer.Tests.Definitions
+module DH = Helpers.Definitions
 
 [<Tests>]
 let completionTests =

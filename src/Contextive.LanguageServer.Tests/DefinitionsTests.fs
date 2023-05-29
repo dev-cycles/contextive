@@ -4,7 +4,8 @@ open Expecto
 open Swensen.Unquote
 open System.IO
 open Contextive.LanguageServer
-open TestClient
+open Helpers.TestClient
+open Contextive.LanguageServer.Tests.Helpers
 
 [<Tests>]
 let definitionsTests =

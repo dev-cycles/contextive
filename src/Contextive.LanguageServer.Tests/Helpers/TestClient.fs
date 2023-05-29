@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.TestClient
+module Contextive.LanguageServer.Tests.Helpers.TestClient
 
 open System
 open System.IO.Pipelines

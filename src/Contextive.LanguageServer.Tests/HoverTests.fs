@@ -5,12 +5,13 @@ open Swensen.Unquote
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
+open System.IO
 open Contextive.LanguageServer
 open Contextive.LanguageServer.Definitions
-open TestClient
-open System.IO
+open Helpers.TestClient
+open Contextive.LanguageServer.Tests.Helpers
 
-module DH = Contextive.LanguageServer.Tests.Definitions
+module DH = Helpers.Definitions
 
 [<Tests>]
 let hoverTests =

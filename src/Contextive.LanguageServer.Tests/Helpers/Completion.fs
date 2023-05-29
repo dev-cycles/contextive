@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.Completion
+module Contextive.LanguageServer.Tests.Helpers.Completion
 
 open OmniSharp.Extensions.LanguageServer.Protocol.Client
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
