@@ -36,12 +36,12 @@ jobs:
       - name: Restore paket dependencies
         run: paket restore
         working-directory: ./src
+      - name: Build and Test Core
+        run: |
+          dotnet test ./src/Contextive.Core.Tests/Contextive.Core.Tests.fsproj --logger "trx;LogFileName=TestResults.Core-${{ env.dotnet-version }}.xml" -- Expecto.fail-on-focused-tests=true
       - name: Build and Test Language Server
         run: |
           dotnet test ./src/Contextive.LanguageServer.Tests/Contextive.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults.LanguageServer-${{ env.dotnet-version }}.xml" -- Expecto.fail-on-focused-tests=true
-      - name: Build and Test Language Server
-        run: |
-          dotnet test ./src/Contextive.Core.Tests/Contextive.Core.Tests.fsproj --logger "trx;LogFileName=TestResults.Core-${{ env.dotnet-version }}.xml" -- Expecto.fail-on-focused-tests=true
       - name: Upload Language Server Test Results
         uses: actions/upload-artifact@v2
         with:
