@@ -1,4 +1,4 @@
-name: Contextive Publish
+name: Contextive VSCode Publish
 on:
   release:
     types: [published]
