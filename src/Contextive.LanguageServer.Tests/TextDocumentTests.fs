@@ -13,12 +13,12 @@ open Helpers.TestClient
 let textDocumentTests =
     testList "TextDocument Tests" [
 
-        let testWordFinding (name, lines, position, expectedWord: string option) =
+        let testTokenFinding (name, lines, position, expectedWord: string option) =
             testCase $"{name}: finds {expectedWord} at position {position}" <|
                 fun () -> 
                     let lines = ResizeArray<string>(seq lines)
-                    let word = TextDocument.getWordAtPosition lines position
-                    test <@ word = expectedWord @>
+                    let token = TextDocument.getTokenAtPosition lines position
+                    test <@ token = expectedWord @>
 
         [
             ("single word",       ["firstword"; "secondword"],      Position(0,0),  Some "firstword")
@@ -44,7 +44,7 @@ let textDocumentTests =
             ("position on space", ["firstword secondWord"],         Position(0,9),  Some "firstword")
             ("out of range line", ["firstWord secondWord"],         Position(1,0),  None)
             ("out of range char", ["firstWord"],                    Position(0,50), None)
-        ] |> List.map testWordFinding |> testList "Wordfinding Tests"
+        ] |> List.map testTokenFinding |> testList "Wordfinding Tests"
         
         testAsync "Server supports full sync" {
             let config = [
@@ -66,9 +66,9 @@ let textDocumentTests =
                 Uri = textDocumentUri
             )))
 
-            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
+            let token = TextDocument.findToken textDocumentUri <| Position(0, 0)
 
-            test <@ word.Value = "firstterm" @>
+            test <@ token.Value = "firstterm" @>
         }
         
         testAsync $"Given changed text document, can find text document" {
@@ -85,9 +85,9 @@ let textDocumentTests =
                 ContentChanges = Container(TextDocumentContentChangeEvent(Text = "secondterm"))
             ))
 
-            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
+            let token = TextDocument.findToken textDocumentUri <| Position(0, 0)
 
-            test <@ word.Value = "secondterm" @>
+            test <@ token.Value = "secondterm" @>
         }
 
         testAsync $"Given Saved document, can find text document" {
@@ -108,9 +108,9 @@ let textDocumentTests =
                 TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri)
             ))
 
-            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
+            let token = TextDocument.findToken textDocumentUri <| Position(0, 0)
 
-            test <@ word.Value = "secondterm" @>
+            test <@ token.Value = "secondterm" @>
         }
 
         testAsync $"Given Closed document, text document not found" {
@@ -126,9 +126,9 @@ let textDocumentTests =
                 TextDocument = OptionalVersionedTextDocumentIdentifier(Uri = textDocumentUri)
             ))
 
-            let word = TextDocument.getWord textDocumentUri <| Position(0, 0)
+            let token = TextDocument.findToken textDocumentUri <| Position(0, 0)
 
-            test <@ word.IsNone @>
+            test <@ token.IsNone @>
         }
 
     ]

@@ -1,24 +1,24 @@
-module Contextive.LanguageServer.Tests.WordsTests
+module Contextive.LanguageServer.Tests.CandidateTermsTests
 
-open Contextive.LanguageServer
+open Contextive.LanguageServer.CandidateTerms
 open Expecto
 open Swensen.Unquote
 
 [<Tests>]
-let definitionsTests =
-    testList "Words  Tests" [
+let tokenAndPartsTests =
+    testList "Candidate Terms Tests" [
 
-        let compareWordAndParts (w1:Words.WordAndParts) (w2:Words.WordAndParts) =
-            ((fst w1, fst w2) ||> compare) +
-            ((snd w1, snd w2) ||> Seq.compareWith compare)
+        let compareTokenAndCandidateTerms (t1:TokenAndCandidateTerms) (t2:TokenAndCandidateTerms) =
+            ((fst t1, fst t2) ||> compare) +
+            ((snd t1, snd t2) ||> Seq.compareWith compare)
 
 
-        let testWordSplitting (word, (expectedWords: Words.WordAndParts seq)) =
-            let expectedWordsList = sprintf "%A" <| Seq.toList expectedWords
-            testCase $"{word}: splits to {expectedWordsList}" <|
+        let testCandidateTermFinding (token, (expectedCandidateTerms: TokenAndCandidateTerms seq)) =
+            let expectedCandidateTermsList = sprintf "%A" <| Seq.toList expectedCandidateTerms
+            testCase $"Token {token}: finds candidates {expectedCandidateTermsList}" <|
                 fun () -> 
-                    let words = Some word |> Words.splitIntoWordAndParts
-                    test <@ (words, expectedWords) ||> Seq.compareWith compareWordAndParts = 0 @>
+                    let tokenAndCandidateTerms = Some token |> tokenToTokenAndCandidateTerms
+                    test <@ (tokenAndCandidateTerms, expectedCandidateTerms) ||> Seq.compareWith compareTokenAndCandidateTerms = 0 @>
 
         [
             ("firstword",
@@ -53,7 +53,6 @@ let definitionsTests =
                     ("PascalCaseId", seq{"Pascal";"Case";"Id"});
                 })
         ]
-        |> List.map testWordSplitting |> testList "Wordfinding Tests"
-
+        |> List.map testCandidateTermFinding |> testList "Candidate Term Finding Tests"
 
     ]

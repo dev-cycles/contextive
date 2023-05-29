@@ -12,42 +12,42 @@ let private markupContent content =
 
 let private noHoverResult = null
 
-let private termEquals (term:Definitions.Term) (word:string) =
+let private termEquals (term:Definitions.Term) (candidateTerm:string) =
     let normalisedTerm = term.Name.Replace(" ", "")
-    let singularEquals = normalisedTerm.Equals(word, System.StringComparison.InvariantCultureIgnoreCase)
-    let singularWord = word.Singularize(false, false)
-    let pluralEquals = normalisedTerm.Equals(singularWord, System.StringComparison.InvariantCultureIgnoreCase)
+    let singularEquals = normalisedTerm.Equals(candidateTerm, System.StringComparison.InvariantCultureIgnoreCase)
+    let singularCandidate = candidateTerm.Singularize(false, false)
+    let pluralEquals = normalisedTerm.Equals(singularCandidate, System.StringComparison.InvariantCultureIgnoreCase)
     singularEquals || pluralEquals
 
-let private termWordEquals (term:Definitions.Term) (word:Words.WordAndParts) = fst word |> termEquals term
-let private termInParts (term:Definitions.Term) (word:Words.WordAndParts) = (snd word) |> Seq.exists (termEquals term)
+let private termEqualsCandidate (term:Definitions.Term) (tokenAndCandidateTerms:CandidateTerms.TokenAndCandidateTerms) = fst tokenAndCandidateTerms |> termEquals term
+let private termInCandidates (term:Definitions.Term) (tokenAndCandidateTerms:CandidateTerms.TokenAndCandidateTerms) = (snd tokenAndCandidateTerms) |> Seq.exists (termEquals term)
 
-let private termFilterForWords words =
+let private termFilterForCandidateTerms tokenAndCandidateTerms =
     fun (t:Definitions.Term) -> 
-        let wordMatchesTerm = termWordEquals t
-        words |> Seq.exists wordMatchesTerm
+        let candidateMatchesTerm = termEqualsCandidate t
+        tokenAndCandidateTerms |> Seq.exists candidateMatchesTerm
 
-let private filterRelevantTerms (terms: Definitions.Term seq) (wordsAndParts: Words.WordAndParts seq) =
+let private filterRelevantTerms (terms: Definitions.Term seq) (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq) =
     let exactTerms =
-        wordsAndParts
+        tokenAndCandidateTerms
         |> Seq.allPairs terms
-        |> Seq.filter (fun (t, w) -> termWordEquals t w)
+        |> Seq.filter (fun (t, w) -> termEqualsCandidate t w)
     let relevantTerms =
         exactTerms
         |> Seq.filter (fun (t, wAndP) -> 
             exactTerms
             |> Seq.except (seq {(t, wAndP)})
-            |> Seq.exists (fun (_, w) -> termInParts t w)
+            |> Seq.exists (fun (_, w) -> termInCandidates t w)
             |> not)
         |> Seq.map fst
     match relevantTerms with
     | EmptySeq -> terms
     | _ -> relevantTerms
 
-let private getWordAtPosition (p:HoverParams) (getWords: TextDocument.WordGetter) =
+let private getTokenAtPosition (p:HoverParams) (tokenFinder: TextDocument.TokenFinder) =
     match p.TextDocument with
     | null -> None
-    | document -> getWords (document.Uri.ToUri()) p.Position
+    | document -> tokenFinder (document.Uri.ToUri()) p.Position
 
 let private emojify t = "📗 " + t
 let private emphasise t = $"`{t}`"
@@ -96,8 +96,8 @@ let private getContextDomainVisionStatement (context: Definitions.Context) =
     | null | "" -> None
     | _ -> Some $"_Vision: {context.DomainVisionStatement}_"
 
-let private getContextHover (wordsAndParts: Words.WordAndParts seq) (context: Definitions.Context) =
-    let relevantTerms = filterRelevantTerms context.Terms wordsAndParts
+let private getContextHover (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq) (context: Definitions.Context) =
+    let relevantTerms = filterRelevantTerms context.Terms tokenAndCandidateTerms
     if Seq.length relevantTerms = 0 then
         None
     else
@@ -109,35 +109,35 @@ let private getContextHover (wordsAndParts: Words.WordAndParts seq) (context: De
 
 let private ContextSeparator = "\n\n***\n\n"
 
-let private getContextsHoverContent (wordsAndParts: Words.WordAndParts seq) (contexts: Definitions.FindResult)  =
+let private getContextsHoverContent (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq) (contexts: Definitions.FindResult)  =
     contexts
-    |> Seq.map (getContextHover wordsAndParts)
+    |> Seq.map (getContextHover tokenAndCandidateTerms)
     |> concatIfExists ContextSeparator
 
-let private hoverResult (wordsAndParts:  Words.WordAndParts seq) (contexts: Definitions.FindResult) =
-    let content = getContextsHoverContent wordsAndParts contexts
+let private hoverResult (tokensAndCandidateTerms:  CandidateTerms.TokenAndCandidateTerms seq) (contexts: Definitions.FindResult) =
+    let content = getContextsHoverContent tokensAndCandidateTerms contexts
     match content with
     | None -> noHoverResult
     | Some(c) -> Hover(Contents = (c |> markupContent))
 
-let private hoverContentForWords (uri:string) (termFinder:Definitions.Finder) (wordsAndParts: Words.WordAndParts seq) = async {
-        let! findResult = termFinder uri (termFilterForWords wordsAndParts)
+let private hoverContentForToken (uri:string) (termFinder:Definitions.Finder) (tokensAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq) = async {
+        let! findResult = termFinder uri (termFilterForCandidateTerms tokensAndCandidateTerms)
         return
             if Seq.isEmpty findResult then
                 noHoverResult
             else
-                hoverResult wordsAndParts findResult
+                hoverResult tokensAndCandidateTerms findResult
     }
 
-let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGetter) (p:HoverParams) (hc:HoverCapability) _ =
+let handler (termFinder: Definitions.Finder) (tokenFinder: TextDocument.TokenFinder) (p:HoverParams) (hc:HoverCapability) _ =
     async {
-        let wordAtPosition = getWordAtPosition p wordsGetter
+        let tokenAtPosition = getTokenAtPosition p tokenFinder
         return!
-            match wordAtPosition with
+            match tokenAtPosition with
             | None -> async { return noHoverResult }
             | _ -> 
-                let wordAndParts = Words.splitIntoWordAndParts wordAtPosition
-                hoverContentForWords (p.TextDocument.Uri.ToString()) termFinder wordAndParts
+                let tokensAndCandidateTerms = CandidateTerms.tokenToTokenAndCandidateTerms tokenAtPosition
+                hoverContentForToken (p.TextDocument.Uri.ToString()) termFinder tokensAndCandidateTerms
                     
     } |> Async.StartAsTask
 

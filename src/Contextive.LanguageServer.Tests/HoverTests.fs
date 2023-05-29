@@ -172,9 +172,9 @@ let hoverTests =
 💬 \"Do something else\"")
         ] |> List.map testHoverDisplay |> testList "Term hover display"
 
-        let testHoverOverMultiWord (terms: string list, wordAtPosition: string, expectedHover) =
-            testAsync $"Test hover result with terms {terms} over word split {wordAtPosition}" {
-                let hoverHandler = Hover.handler (DH.mockTermsFinder Context.Default terms) (fun _ _ -> Some wordAtPosition)
+        let testHoverOverMultiWord (terms: string list, tokenAtPosition: string, expectedHover) =
+            testAsync $"Test hover result with terms {terms} over token split {tokenAtPosition}" {
+                let hoverHandler = Hover.handler (DH.mockTermsFinder Context.Default terms) (fun _ _ -> Some tokenAtPosition)
 
                 let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
                 let! result = hoverHandler hoverParams null null |> Async.AwaitTask
@@ -192,9 +192,9 @@ let hoverTests =
 
         testAsync $"Test hover with context info" {
             let terms = ["term"]
-            let foundWord = Some "term"
+            let foundToken = Some "term"
             let hoverHandler =
-                Hover.handler (DH.mockTermsFinder ({Context.Default with Name = "TestContext"; DomainVisionStatement="supporting the test"}) terms) (fun _ _ -> foundWord)
+                Hover.handler (DH.mockTermsFinder ({Context.Default with Name = "TestContext"; DomainVisionStatement="supporting the test"}) terms) (fun _ _ -> foundToken)
 
             let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
             let! result = hoverHandler hoverParams null null |> Async.AwaitTask
@@ -208,17 +208,15 @@ _Vision: supporting the test_
             test <@ result.Contents.MarkupContent.Value = expectedHover @>
         }
 
-
-
         testAsync $"Test hover with multiple context info" {
             let terms = ["term"]
-            let foundWord = Some "term"
+            let foundToken = Some "term"
             let contexts = seq {
                 {Context.Default with Name = "Test"}
                 {Context.Default with Name = "Other"}
             }
 
-            let hoverHandler = Hover.handler (DH.mockMultiContextTermsFinder contexts terms) (fun _ _ -> foundWord)
+            let hoverHandler = Hover.handler (DH.mockMultiContextTermsFinder contexts terms) (fun _ _ -> foundToken)
 
             let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
             let! result = hoverHandler hoverParams null null |> Async.AwaitTask
@@ -238,9 +236,9 @@ _Vision: supporting the test_
 
         testAsync $"Test hover with context info and no match" {
             let terms = []
-            let foundWord = Some "term"
+            let foundToken = Some "term"
             let hoverHandler =
-                Hover.handler (DH.mockTermsFinder ({Context.Default with Name = "TestContext"}) terms) (fun _ _ -> foundWord)
+                Hover.handler (DH.mockTermsFinder ({Context.Default with Name = "TestContext"}) terms) (fun _ _ -> foundToken)
 
             let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
             let! result = hoverHandler hoverParams null null |> Async.AwaitTask

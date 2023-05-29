@@ -80,8 +80,8 @@ let private configureServer (input: Stream) (output: Stream) (opts:LanguageServe
         .WithServerInfo(ServerInfo(Name = name, Version = version))
 
         .OnDidChangeConfiguration(Configuration.handler <| Definitions.loader definitions)
-        .OnCompletion(Completion.handler <| Definitions.find definitions <| TextDocument.getWord, Completion.registrationOptions)
-        .OnHover(Hover.handler <| Definitions.find definitions <| TextDocument.getWord, Hover.registrationOptions)
+        .OnCompletion(Completion.handler <| Definitions.find definitions <| TextDocument.findToken, Completion.registrationOptions)
+        .OnHover(Hover.handler <| Definitions.find definitions <| TextDocument.findToken, Hover.registrationOptions)
 
         |> TextDocument.onSync
 

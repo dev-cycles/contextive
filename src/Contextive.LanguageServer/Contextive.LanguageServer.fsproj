@@ -19,7 +19,8 @@
   <ItemGroup>
     <Compile Include="FileLoader.fs" />
     <Compile Include="PathResolver.fs" />
-    <Compile Include="Words.fs" />
+    <Compile Include="CandidateTerms.fs" />
+    <Compile Include="Tokeniser.fs" />
     <Compile Include="Definitions.fs" />
     <Compile Include="WatchedFiles.fs" />
     <Compile Include="Configuration.fs" />

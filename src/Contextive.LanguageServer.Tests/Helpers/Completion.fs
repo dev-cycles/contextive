@@ -31,7 +31,7 @@ let getCompletionLabels (client:ILanguageClient) = async {
     return getLabels result
 }
 
-let emptyWordGetter:TextDocument.WordGetter = fun _ _ -> None
+let emptyTokenFinder:TextDocument.TokenFinder = fun _ _ -> None
 
 let defaultParams = CompletionParams(
         TextDocument = TextDocumentIdentifier(Uri = new System.Uri("https://test")),

@@ -50,14 +50,14 @@ let completionTests =
             ("two", "WO", Position(0, 2), Fixtures.Two.expectedCompletionLabelsUPPER)
         ] |> List.map testFileReader |> testList "File reading tests"
 
-        let singleWordCompletion (term, (wordAtPosition:string option), expectedLabel:string) = 
-            testCase $"Completion of \"{term}\" with {wordAtPosition} at position, returns \"{expectedLabel}\"" <| fun () -> 
+        let singleWordCompletion (term, (tokenAtPosition:string option), expectedLabel:string) = 
+            testCase $"Completion of \"{term}\" with {tokenAtPosition} at position, returns \"{expectedLabel}\"" <| fun () -> 
                 let finder : Definitions.Finder = DH.mockTermsFinder Context.Default ([term])
 
-                let wordGetter : TextDocument.WordGetter = fun _ _ -> wordAtPosition
+                let tokenFinder : TextDocument.TokenFinder = fun _ _ -> tokenAtPosition
 
                 let completionLabels =
-                    (Completion.handler finder wordGetter Completion.defaultParams null null).Result
+                    (Completion.handler finder tokenFinder Completion.defaultParams null null).Result
                     |> Completion.getLabels
 
                 test <@ (completionLabels, seq {expectedLabel}) ||> Seq.compareWith compare = 0 @>
@@ -74,15 +74,15 @@ let completionTests =
         ] |> List.map singleWordCompletion |> testList "Single Word Completion"
 
 
-        let multiWordCompletion (term, (wordAtPosition:string option), expectedCompletionLabels:string seq) = 
+        let multiWordCompletion (term, (tokenAtPosition:string option), expectedCompletionLabels:string seq) = 
             let expectedCompletionLabelsList = sprintf "%A" <| Seq.toList expectedCompletionLabels
-            testCase $"Completion of \"{term}\" with {wordAtPosition} at position, returns \"{expectedCompletionLabelsList}\"" <| fun () -> 
+            testCase $"Completion of \"{term}\" with {tokenAtPosition} at position, returns \"{expectedCompletionLabelsList}\"" <| fun () -> 
                 let finder : Definitions.Finder = DH.mockTermsFinder Context.Default ([term])
 
-                let wordGetter : TextDocument.WordGetter = fun _ _ -> wordAtPosition
+                let tokenFinder : TextDocument.TokenFinder = fun _ _ -> tokenAtPosition
 
                 let completionLabels =
-                    (Completion.handler finder wordGetter Completion.defaultParams null null).Result
+                    (Completion.handler finder tokenFinder Completion.defaultParams null null).Result
                     |> Completion.getLabels
 
                 test <@ (completionLabels, expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
@@ -102,7 +102,7 @@ let completionTests =
                 let finder : Definitions.Finder = DH.mockTermsFinder {Context.Default with Name=contextName} (["term"])
 
                 let completionItem =
-                    (Completion.handler finder Completion.emptyWordGetter Completion.defaultParams null null).Result
+                    (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null).Result
                     |> Seq.head
 
                 test <@ completionItem.Detail = expectedDetail @>
@@ -117,7 +117,7 @@ let completionTests =
                 let finder : Definitions.Finder = DH.mockDefinitionsFinder Context.Default (terms)
 
                 let completionItem =
-                    (Completion.handler finder Completion.emptyWordGetter Completion.defaultParams null null).Result
+                    (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null).Result
                     |> Seq.head
 
                 let expectedDocumentation = Hover.getTermHoverContent terms
@@ -133,7 +133,7 @@ let completionTests =
             let finder : Definitions.Finder = DH.mockDefinitionsFinder Context.Default ([Term.Default])
 
             let completionItem =
-                (Completion.handler finder Completion.emptyWordGetter Completion.defaultParams null null).Result
+                (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null).Result
                 |> Seq.head
 
             test <@ completionItem.Kind = CompletionItemKind.Reference @>        

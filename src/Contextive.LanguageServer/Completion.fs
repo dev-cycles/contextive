@@ -55,48 +55,48 @@ let createCompletionItemData (term:Definitions.Term) label =
         Documentation = Hover.getTermHoverContent [term]
     }
 
-let private wordToString (caseTemplate:string option) (word:string) (term:Definitions.Term)= 
+let private termToCaseMatchedCompletionData (caseTemplate:string option) (token:CandidateTerms.Token) (term:Definitions.Term)= 
     match caseTemplate with
-    | None -> word
-    | Some(UpperCase) -> word |> upper
-    | Some(PascalCase) -> word |> title
-    | Some(CamelCase) -> word |> lower
-    | _ -> word
+    | None -> token
+    | Some(UpperCase) -> token |> upper
+    | Some(PascalCase) -> token |> title
+    | Some(CamelCase) -> token |> lower
+    | _ -> token
     |> createCompletionItemData term
 
-let private transform ((separator, headTransformer, tailTransformer):(string * (string -> string) * (string -> string))) (words: string seq) =
+let private transform ((separator, headTransformer, tailTransformer):(string * (string -> string) * (string -> string))) (candidateTerms: CandidateTerms.CandidateTerms) =
     Seq.append
-        [words |> Seq.head |> headTransformer]
-        (words |> Seq.tail |> Seq.map tailTransformer)
+        [candidateTerms |> Seq.head |> headTransformer]
+        (candidateTerms |> Seq.tail |> Seq.map tailTransformer)
     |> String.concat separator
 
-let private wordCombinations (transformers:(string * (string -> string) * (string -> string)) seq) (words:string seq) (term:Definitions.Term)=
+let private tokenCombinations (transformers:(string * (string -> string) * (string -> string)) seq) (candidateTerms:CandidateTerms.CandidateTerms) (term:Definitions.Term)=
     transformers
     |> Seq.map (fun transformer -> 
-                    transform transformer words
+                    transform transformer candidateTerms
                     |> createCompletionItemData term)
 
-let private multiWordToString (caseTemplate: string option) (words:string seq) (term: Definitions.Term)=
+let private candidateTermsToCaseMatchedCompletionData (caseTemplate: string option) (candidateTerms:CandidateTerms.CandidateTerms) (term: Definitions.Term)=
     let snakeCase = ("_", lower, lower)
     let upperSnakeCase = ("_", upper, upper)
     let upperCase = ("", upper, upper)
     let camelCase = ("", lower, title)
     let pascalCase = ("", title, title)
-    let wordCombinationGenerator =
+    let tokenCombinationGenerator =
         match caseTemplate with
-        | Some(UpperCase)  -> words |> wordCombinations [upperCase  ; upperSnakeCase ]
-        | Some(PascalCase) -> words |> wordCombinations [pascalCase ; upperSnakeCase ]
-        | Some(CamelCase)  -> words |> wordCombinations [camelCase  ; snakeCase      ]
-        | _                -> words |> wordCombinations [camelCase  ; pascalCase     ; snakeCase]
-    wordCombinationGenerator term
+        | Some(UpperCase)  -> candidateTerms |> tokenCombinations [upperCase  ; upperSnakeCase ]
+        | Some(PascalCase) -> candidateTerms |> tokenCombinations [pascalCase ; upperSnakeCase ]
+        | Some(CamelCase)  -> candidateTerms |> tokenCombinations [camelCase  ; snakeCase      ]
+        | _                -> candidateTerms |> tokenCombinations [camelCase  ; pascalCase     ; snakeCase]
+    tokenCombinationGenerator term
 
 let private termToListOptions (caseTemplate: string option) (term:Definitions.Term) : CompletionItemData seq =
-    let word = term.Name
-    let words = Words.splitIntoParts <| Some word
-    if (Seq.length words > 1) then
-        multiWordToString caseTemplate words term
+    let token = term.Name
+    let candidateTerms = CandidateTerms.candidateTermsFromToken <| Some token
+    if (Seq.length candidateTerms > 1) then
+        candidateTermsToCaseMatchedCompletionData caseTemplate candidateTerms term
     else
-        seq { wordToString caseTemplate word term}
+        seq { termToCaseMatchedCompletionData caseTemplate token term}
 
 let private getContextCompletionLabelData (termToListOptionsWithCase) (context:Definitions.Context) =
     {
@@ -104,14 +104,14 @@ let private getContextCompletionLabelData (termToListOptionsWithCase) (context:D
         CompletionItems=(context.Terms |> Seq.collect termToListOptionsWithCase)
     }
 
-let private getCaseTemplate (wordsGetter: TextDocument.WordGetter) (textDocument:TextDocumentIdentifier) (position) =
+let private getCaseTemplate (tokenFinder: TextDocument.TokenFinder) (textDocument:TextDocumentIdentifier) (position) =
     match textDocument with
     | null -> None
-    | _ -> wordsGetter (textDocument.Uri.ToUri()) position
+    | _ -> tokenFinder (textDocument.Uri.ToUri()) position
 
-let handler (termFinder: Definitions.Finder) (wordsGetter: TextDocument.WordGetter) (p:CompletionParams) (hc:CompletionCapability) _ =
+let handler (termFinder: Definitions.Finder) (tokenFinder: TextDocument.TokenFinder) (p:CompletionParams) (hc:CompletionCapability) _ =
     async {
-        let caseTemplate = getCaseTemplate wordsGetter (p.TextDocument) p.Position
+        let caseTemplate = getCaseTemplate tokenFinder (p.TextDocument) p.Position
 
         let getCompletionLabelDataWithCase = 
             termToListOptions caseTemplate
