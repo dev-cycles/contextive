@@ -1,4 +1,4 @@
-module Contextive.VsCodeExtension.Tests.MultiRoot.Paths
+module Contextive.VsCodeExtension.Tests.E2E.MultiRoot.Paths
 
 let workspace = "../test/multi-root/fixtures/multi-root_mono_workspace"
 

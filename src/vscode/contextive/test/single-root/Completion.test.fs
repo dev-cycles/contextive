@@ -1,9 +1,9 @@
-module Contextive.VsCodeExtension.Tests.SingleRoot.Completion
+module Contextive.VsCodeExtension.Tests.E2E.SingleRoot.Completion
 
 open Fable.Mocha
 open Fable.Import.VSCode
-open Contextive.VsCodeExtension.TestHelpers
-open Contextive.VsCodeExtension.TestHelpers.Completion
+open Contextive.VsCodeExtension.Tests.E2E.Helpers
+open Contextive.VsCodeExtension.Tests.E2E.Helpers.Completion
 
 let DefaultExpectedTerms = seq {"context"; "definition"; "example"; "some"; "term"; "text"}
 

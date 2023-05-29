@@ -1,10 +1,10 @@
-module Contextive.VsCodeExtension.Tests.SingleRoot.Initialize
+module Contextive.VsCodeExtension.Tests.E2E.SingleRoot.Initialize
 
 open Fable.Mocha
 open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
-open Contextive.VsCodeExtension.TestHelpers
-open Contextive.VsCodeExtension.TestHelpers.Helpers
+open Contextive.VsCodeExtension.Tests.E2E.Helpers
+open Contextive.VsCodeExtension.Tests.E2E.Helpers.Helpers
 
 let tests =
     testList "Initialize Tests" [

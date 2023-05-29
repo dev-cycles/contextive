@@ -1,10 +1,10 @@
-module Contextive.VsCodeExtension.Tests.MultiRoot.Completion
+module Contextive.VsCodeExtension.Tests.E2E.MultiRoot.Completion
 
 open Fable.Mocha
 open Fable.Import.VSCode
-open Contextive.VsCodeExtension.TestHelpers
-open Contextive.VsCodeExtension.TestHelpers.Helpers
-open Contextive.VsCodeExtension.TestHelpers.Completion
+open Contextive.VsCodeExtension.Tests.E2E
+open Contextive.VsCodeExtension.Tests.E2E.Helpers
+open Contextive.VsCodeExtension.Tests.E2E.Helpers.Completion
 
 let tests =
 

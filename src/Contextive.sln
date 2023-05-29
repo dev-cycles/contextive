@@ -9,11 +9,7 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.LanguageServer.T
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension", "vscode\contextive\src\Contextive.VsCodeExtension.fsproj", "{8DA034DE-6B86-4843-9616-767DD40369B7}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension.TestHelpers", "vscode\contextive\test\helpers\Contextive.VsCodeExtension.TestHelpers.fsproj", "{2720E380-EA03-4756-A7AF-F5565FE76208}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension.Tests.SingleRoot", "vscode\contextive\test\single-root\Contextive.VsCodeExtension.Tests.SingleRoot.fsproj", "{5825CF5E-D7BF-4621-8D6F-4552DB21EF39}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension.Tests.MultiRoot", "vscode\contextive\test\multi-root\Contextive.VsCodeExtension.Tests.MultiRoot.fsproj", "{672BC5AD-B4BF-414A-A429-1E1480FC9227}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension.Tests.E2E", "vscode\contextive\test\Contextive.VsCodeExtension.Tests.E2E.fsproj", "{FB702083-5279-4BBF-88B4-260864DC647A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,17 +32,9 @@ Global
 		{8DA034DE-6B86-4843-9616-767DD40369B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DA034DE-6B86-4843-9616-767DD40369B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DA034DE-6B86-4843-9616-767DD40369B7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2720E380-EA03-4756-A7AF-F5565FE76208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2720E380-EA03-4756-A7AF-F5565FE76208}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2720E380-EA03-4756-A7AF-F5565FE76208}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2720E380-EA03-4756-A7AF-F5565FE76208}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5825CF5E-D7BF-4621-8D6F-4552DB21EF39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5825CF5E-D7BF-4621-8D6F-4552DB21EF39}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5825CF5E-D7BF-4621-8D6F-4552DB21EF39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5825CF5E-D7BF-4621-8D6F-4552DB21EF39}.Release|Any CPU.Build.0 = Release|Any CPU
-		{672BC5AD-B4BF-414A-A429-1E1480FC9227}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{672BC5AD-B4BF-414A-A429-1E1480FC9227}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{672BC5AD-B4BF-414A-A429-1E1480FC9227}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{672BC5AD-B4BF-414A-A429-1E1480FC9227}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB702083-5279-4BBF-88B4-260864DC647A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB702083-5279-4BBF-88B4-260864DC647A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB702083-5279-4BBF-88B4-260864DC647A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB702083-5279-4BBF-88B4-260864DC647A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

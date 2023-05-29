@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\Contextive.VsCodeExtension.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="helpers/PromiseUtils.fs" />
+    <Compile Include="helpers/Helpers.fs" />
+    <Compile Include="helpers/ExpectExtensions.fs" />
+    <Compile Include="helpers/VsCodeCommands.fs" />
+    <Compile Include="helpers/Completion.fs" />
+    <Compile Include="multi-root/Paths.fs" />
+    <Compile Include="multi-root/Completion.test.fs" />
+    <Compile Include="multi-root/Main.test.fs" />
+    <Compile Include="single-root/Paths.fs" />
+    <Compile Include="single-root/Hover.test.fs" />
+    <Compile Include="single-root/Completion.test.fs" />
+    <Compile Include="single-root/Initialize.test.fs" />
+    <Compile Include="single-root/InvalidSchema.test.fs" />
+    <Compile Include="single-root/Extension.test.fs" />
+    <Compile Include="single-root/Main.test.fs" />
+  </ItemGroup>
+  <Import Project="..\..\..\.paket\Paket.Restore.targets" />
+</Project>

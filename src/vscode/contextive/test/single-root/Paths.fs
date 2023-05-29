@@ -1,4 +1,4 @@
-module Contextive.VsCodeExtension.Tests.SingleRoot.Paths
+module Contextive.VsCodeExtension.Tests.E2E.SingleRoot.Paths
 
 let workspace = "../test/single-root/fixtures/simple_workspace"
 

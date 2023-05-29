@@ -1,4 +1,4 @@
-module Contextive.VsCodeExtension.TestHelpers.Completion
+module Contextive.VsCodeExtension.Tests.E2E.Helpers.Completion
 
 open Helpers
 open Fable.Mocha

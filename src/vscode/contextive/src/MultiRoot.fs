@@ -34,5 +34,5 @@ let private configurationMiddleware = {
     configuration = multiRootMiddleware
 }
 
-let middleware:Middleware = 
+let middleware:WorkspaceConfigurationMiddleware = 
     { workspace = configurationMiddleware }

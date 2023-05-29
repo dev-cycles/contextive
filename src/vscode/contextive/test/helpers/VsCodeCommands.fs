@@ -1,4 +1,4 @@
-module Contextive.VsCodeExtension.TestHelpers.VsCodeCommands
+module Contextive.VsCodeExtension.Tests.E2E.Helpers.VsCodeCommands
 
 open Fable.Import.VSCode.Vscode
 open Fable.Core.JS

@@ -1,9 +1,9 @@
-module Contextive.VsCodeExtension.Tests.SingleRoot.Main
+module Contextive.VsCodeExtension.Tests.E2E.SingleRoot.Main
 
 open Fable.Mocha
 open Fable.Core
-open Contextive.VsCodeExtension.TestHelpers
-open Contextive.VsCodeExtension.TestHelpers.Helpers
+open Contextive.VsCodeExtension.Tests.E2E.Helpers
+open Contextive.VsCodeExtension.Tests.E2E.Helpers.Helpers
 
 // Import mocha explicitly.  Fable.Mocha assumes running via the mocha CLI which imports mocha _implicitly_
 [<Import("*", from="mocha")>]

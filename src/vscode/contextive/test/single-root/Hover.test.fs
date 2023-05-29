@@ -1,12 +1,12 @@
-module Contextive.VsCodeExtension.Tests.SingleRoot.Hover
+module Contextive.VsCodeExtension.Tests.E2E.SingleRoot.Hover
 
 open Fable.Mocha
 open Fable.Core
 open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
 open Contextive.VsCodeExtension
-open Contextive.VsCodeExtension.TestHelpers
-open Contextive.VsCodeExtension.TestHelpers.Helpers
+open Contextive.VsCodeExtension.Tests.E2E.Helpers
+open Contextive.VsCodeExtension.Tests.E2E.Helpers.Helpers
 
 let private getHoverContentValue (hoverContent : HoverContent) =
     match hoverContent with

@@ -1,9 +1,9 @@
-module Contextive.VsCodeExtension.Tests.SingleRoot.InvalidSchema
+module Contextive.VsCodeExtension.Tests.E2E.SingleRoot.InvalidSchema
 
 open Fable.Mocha
 open Fable.Import.VSCode
-open Contextive.VsCodeExtension.TestHelpers
-open Contextive.VsCodeExtension.TestHelpers.Helpers
+open Contextive.VsCodeExtension.Tests.E2E.Helpers
+open Contextive.VsCodeExtension.Tests.E2E.Helpers.Helpers
 
 let tests =
     testList "Invalid Schema Tests" [

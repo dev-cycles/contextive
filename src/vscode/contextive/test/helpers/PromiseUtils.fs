@@ -1,5 +1,5 @@
 [<AutoOpen>]
-module Contextive.VsCodeExtension.TestHelpers.PromiseUtils
+module Contextive.VsCodeExtension.Tests.E2E.Helpers.PromiseUtils
 
 open Fable.Core
 open Fable.Import.VSCode
