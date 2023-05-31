@@ -3,17 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.Core", "Contextive.Core\Contextive.Core.fsproj", "{53E24D0F-92AD-411B-B64D-1510E31D028D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{D9988E20-7171-4142-9ED5-22CABE77932C}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.Core.Tests", "Contextive.Core.Tests\Contextive.Core.Tests.fsproj", "{84BCC552-7CAE-4036-B3C0-5C524960D135}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.Core", "Contextive.Core\Contextive.Core.fsproj", "{68C8C333-5530-460D-9152-4D5A8CFBC5E7}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.LanguageServer", "Contextive.LanguageServer\Contextive.LanguageServer.fsproj", "{662D5E4C-A0D9-46AA-A692-9D0B8156EC8D}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.Core.Tests", "Contextive.Core.Tests\Contextive.Core.Tests.fsproj", "{3C5E4E92-B2FC-4E72-BD08-45BA7E960C2A}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.LanguageServer.Tests", "Contextive.LanguageServer.Tests\Contextive.LanguageServer.Tests.fsproj", "{85E2E304-240D-4064-9933-3807E2D2B997}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LanguageServer", "LanguageServer", "{C47B4805-1EC9-4518-8BE7-6D8238B2513D}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension", "vscode\contextive\src\Contextive.VsCodeExtension.fsproj", "{8DA034DE-6B86-4843-9616-767DD40369B7}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.LanguageServer", "Contextive.LanguageServer\Contextive.LanguageServer.fsproj", "{47FE121D-F73F-40E7-9546-B9AAE7AE4AA4}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension.Tests.E2E", "vscode\contextive\test\Contextive.VsCodeExtension.Tests.E2E.fsproj", "{FB702083-5279-4BBF-88B4-260864DC647A}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.LanguageServer.Tests", "Contextive.LanguageServer.Tests\Contextive.LanguageServer.Tests.fsproj", "{23ABDCCB-6ACF-4DE0-A0C3-2FC9BC26C27E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VSCode", "VSCode", "{D4397B0F-EE1D-4BFD-8687-59E9F269A085}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension", "vscode\contextive\src\Contextive.VsCodeExtension.fsproj", "{7A19B8AD-9F80-42D2-8756-C561069F592B}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension.Tests.E2E", "vscode\contextive\test\Contextive.VsCodeExtension.Tests.E2E.fsproj", "{87851465-027B-4D5E-9F48-1CBB70E31F69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,29 +30,37 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{662D5E4C-A0D9-46AA-A692-9D0B8156EC8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{662D5E4C-A0D9-46AA-A692-9D0B8156EC8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{662D5E4C-A0D9-46AA-A692-9D0B8156EC8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{662D5E4C-A0D9-46AA-A692-9D0B8156EC8D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{85E2E304-240D-4064-9933-3807E2D2B997}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{85E2E304-240D-4064-9933-3807E2D2B997}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{85E2E304-240D-4064-9933-3807E2D2B997}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{85E2E304-240D-4064-9933-3807E2D2B997}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8DA034DE-6B86-4843-9616-767DD40369B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8DA034DE-6B86-4843-9616-767DD40369B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8DA034DE-6B86-4843-9616-767DD40369B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8DA034DE-6B86-4843-9616-767DD40369B7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB702083-5279-4BBF-88B4-260864DC647A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB702083-5279-4BBF-88B4-260864DC647A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB702083-5279-4BBF-88B4-260864DC647A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB702083-5279-4BBF-88B4-260864DC647A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{53E24D0F-92AD-411B-B64D-1510E31D028D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53E24D0F-92AD-411B-B64D-1510E31D028D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53E24D0F-92AD-411B-B64D-1510E31D028D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53E24D0F-92AD-411B-B64D-1510E31D028D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{84BCC552-7CAE-4036-B3C0-5C524960D135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{84BCC552-7CAE-4036-B3C0-5C524960D135}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{84BCC552-7CAE-4036-B3C0-5C524960D135}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{84BCC552-7CAE-4036-B3C0-5C524960D135}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68C8C333-5530-460D-9152-4D5A8CFBC5E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68C8C333-5530-460D-9152-4D5A8CFBC5E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68C8C333-5530-460D-9152-4D5A8CFBC5E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68C8C333-5530-460D-9152-4D5A8CFBC5E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C5E4E92-B2FC-4E72-BD08-45BA7E960C2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C5E4E92-B2FC-4E72-BD08-45BA7E960C2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C5E4E92-B2FC-4E72-BD08-45BA7E960C2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C5E4E92-B2FC-4E72-BD08-45BA7E960C2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47FE121D-F73F-40E7-9546-B9AAE7AE4AA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47FE121D-F73F-40E7-9546-B9AAE7AE4AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47FE121D-F73F-40E7-9546-B9AAE7AE4AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47FE121D-F73F-40E7-9546-B9AAE7AE4AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23ABDCCB-6ACF-4DE0-A0C3-2FC9BC26C27E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23ABDCCB-6ACF-4DE0-A0C3-2FC9BC26C27E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23ABDCCB-6ACF-4DE0-A0C3-2FC9BC26C27E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23ABDCCB-6ACF-4DE0-A0C3-2FC9BC26C27E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A19B8AD-9F80-42D2-8756-C561069F592B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A19B8AD-9F80-42D2-8756-C561069F592B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A19B8AD-9F80-42D2-8756-C561069F592B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A19B8AD-9F80-42D2-8756-C561069F592B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87851465-027B-4D5E-9F48-1CBB70E31F69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87851465-027B-4D5E-9F48-1CBB70E31F69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87851465-027B-4D5E-9F48-1CBB70E31F69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87851465-027B-4D5E-9F48-1CBB70E31F69}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{68C8C333-5530-460D-9152-4D5A8CFBC5E7} = {D9988E20-7171-4142-9ED5-22CABE77932C}
+		{3C5E4E92-B2FC-4E72-BD08-45BA7E960C2A} = {D9988E20-7171-4142-9ED5-22CABE77932C}
+		{47FE121D-F73F-40E7-9546-B9AAE7AE4AA4} = {C47B4805-1EC9-4518-8BE7-6D8238B2513D}
+		{23ABDCCB-6ACF-4DE0-A0C3-2FC9BC26C27E} = {C47B4805-1EC9-4518-8BE7-6D8238B2513D}
+		{7A19B8AD-9F80-42D2-8756-C561069F592B} = {D4397B0F-EE1D-4BFD-8687-59E9F269A085}
+		{87851465-027B-4D5E-9F48-1CBB70E31F69} = {D4397B0F-EE1D-4BFD-8687-59E9F269A085}
 	EndGlobalSection
 EndGlobal
