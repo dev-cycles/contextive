@@ -37,3 +37,6 @@ echo "export DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus" >> ~/.bash
 sudo mkdir $XDG_RUNTIME_DIR
 sudo chmod 700 $XDG_RUNTIME_DIR
 sudo chown $(id -un):$(id -gn) $XDG_RUNTIME_DIR
+
+# Add lambda templates
+dotnet new -i Amazon.Lambda.Templates

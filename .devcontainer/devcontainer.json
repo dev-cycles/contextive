@@ -43,5 +43,5 @@
 		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
         // See https://code.visualstudio.com/docs/remote/containers#_dev-container-features-preview
         // Prefer explicitly defining early in the Dockerfile to avoid re-installing features when adjusting the custom parts of the Dockerfile
-    }
+	}
 }
