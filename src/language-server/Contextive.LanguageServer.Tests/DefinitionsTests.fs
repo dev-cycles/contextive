@@ -10,7 +10,7 @@ open Contextive.LanguageServer.Tests.Helpers
 
 [<Tests>]
 let definitionsTests =
-    testList "Definitions File Tests" [
+    testList "LanguageServer.Definitions File Tests" [
 
         let getName (t:Definitions.Term) = t.Name
 

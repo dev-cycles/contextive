@@ -6,7 +6,7 @@ open Swensen.Unquote
 
 [<Tests>]
 let tokenAndPartsTests =
-    testList "Candidate Terms Tests" [
+    testList "Core.Candidate Terms Tests" [
 
         let compareTokenAndCandidateTerms (t1:TokenAndCandidateTerms) (t2:TokenAndCandidateTerms) =
             ((fst t1, fst t2) ||> compare) +

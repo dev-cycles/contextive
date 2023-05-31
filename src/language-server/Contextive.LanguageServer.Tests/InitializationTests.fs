@@ -8,7 +8,7 @@ open Helpers.TestClient
 
 [<Tests>]
 let initializationTests =
-    testList "Initialization Tests" [
+    testList "LanguageServer.Initialization Tests" [
 
         testAsync "Can Initialize Language Server" {
             use! client = SimpleTestClient |> init

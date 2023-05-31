@@ -6,7 +6,7 @@ open Swensen.Unquote
 
 [<Tests>]
 let pathLoaderTests =
-    testList "Path Resolver Tests" [
+    testList "LanguageServer.Path Resolver Tests" [
         testCase "No Workspace, non-root path" <| fun () -> 
             let p = PathResolver.resolvePath None (Some "path/to/file")
             test <@ p = Error("Unable to locate path 'path/to/file' as not in a workspace.") @>

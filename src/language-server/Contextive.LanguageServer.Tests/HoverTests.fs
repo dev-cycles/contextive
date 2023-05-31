@@ -15,7 +15,7 @@ module DH = Helpers.Definitions
 
 [<Tests>]
 let hoverTests =
-    testList "Hover Tests" [
+    testList "LanguageServer.Hover Tests" [
 
         testAsync "Given no definitions and no document sync, server response to hover request with empty result" {
             use! client = SimpleTestClient |> init

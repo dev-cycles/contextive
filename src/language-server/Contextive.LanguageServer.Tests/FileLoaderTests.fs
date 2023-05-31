@@ -7,7 +7,7 @@ open System.IO
 
 [<Tests>]
 let fileLoaderTests =
-    testList "File Loader Tests" [
+    testList "LanguageServer.File Loader Tests" [
 
         testAsync "Path is in error state" {
             let pathGetter() = async.Return <| Error("No path")

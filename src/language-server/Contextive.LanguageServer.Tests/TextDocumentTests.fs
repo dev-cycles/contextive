@@ -11,7 +11,7 @@ open Helpers.TestClient
 
 [<Tests>]
 let textDocumentTests =
-    testList "TextDocument Tests" [
+    testList "LanguageServer.TextDocument Tests" [
 
         let testTokenFinding (name, lines, position, expectedWord: string option) =
             testCase $"{name}: finds {expectedWord} at position {position}" <|

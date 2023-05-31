@@ -8,7 +8,7 @@ open Contextive.LanguageServer.Tests.Helpers
 
 [<Tests>]
 let definitionsTests =
-    testList "Configuration  Tests" [
+    testList "LanguageServer.Configuration Tests" [
         testAsync "Can receive configuration value" {         
             let config = [
                 Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")

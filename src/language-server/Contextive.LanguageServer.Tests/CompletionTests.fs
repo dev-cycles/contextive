@@ -13,7 +13,7 @@ module DH = Helpers.Definitions
 
 [<Tests>]
 let completionTests =
-    testSequenced <| testList "Completion Tests" [
+    testSequenced <| testList "LanguageServer.Completion Tests" [
         testAsync "Given no contextive respond with empty completion list " {
             use! client = SimpleTestClient |> init
 

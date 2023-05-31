@@ -24,7 +24,7 @@ let didChangeWatchedFiles (client:ILanguageClient) (uri:string) =
 
 [<Tests>]
 let watchedFileTests =
-    testList "Watched File Tests" [
+    testList "LanguageServer.Watched File Tests" [
 
         let watcherIsForFile (fileName:string) (watchers:IEnumerable<FileSystemWatcher>) =
             watchers.Any(fun watcher -> watcher.GlobPattern.Contains(fileName) && watcher.Kind = WatchKind.Change)

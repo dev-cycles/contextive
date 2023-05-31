@@ -11,7 +11,7 @@ let unwrapError =
 
 [<Tests>]
 let definitionsTests =
-    testList "Definitions Tests" [
+    testList "Core.Definitions Tests" [
 
         testCase "Term has default" <| fun () -> 
             let term = Term.Default
