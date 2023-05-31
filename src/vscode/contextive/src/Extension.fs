@@ -22,7 +22,7 @@ module Extension =
         x.command <- "dotnet"
         x.args <- argsArray ["run"]
         x.options <- executableOptions(fun x -> 
-            x.cwd <- Some <| path.resolve(__dirname, "../../../Contextive.LanguageServer")
+            x.cwd <- Some <| path.resolve(__dirname, "../../../language-server/Contextive.LanguageServer")
         )
     )
 

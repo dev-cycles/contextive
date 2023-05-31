@@ -9,11 +9,11 @@
         }],
         ["@google/semantic-release-replace-plugin",{
             "replacements": [{
-                "files": ["Contextive.LanguageServer/Contextive.LanguageServer.fsproj"],
+                "files": ["language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj"],
                 "from": "    <Version>.*</Version>",
                 "to": "    <Version>${nextRelease.version}</Version>",
                 "results": [{
-                    "file": "Contextive.LanguageServer/Contextive.LanguageServer.fsproj",
+                    "file": "language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj",
                     "hasChanged": true,
                     "numMatches": 1,
                     "numReplacements": 1
@@ -26,7 +26,7 @@
             "pkgRoot": "vscode/contextive"
         }],
         ["@semantic-release/git",{
-            "assets": ["Contextive.LanguageServer/Contextive.LanguageServer.fsproj", "vscode/contextive/CHANGELOG.md", "vscode/contextive/package.json", "vscode/contextive/package-lock.json", "vscode/contextive/npm-shrinkwrap.json"]
+            "assets": ["language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj", "vscode/contextive/CHANGELOG.md", "vscode/contextive/package.json", "vscode/contextive/package-lock.json", "vscode/contextive/npm-shrinkwrap.json"]
         }],
         "@semantic-release/github"
     ]

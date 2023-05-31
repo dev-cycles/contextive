@@ -54,10 +54,10 @@ jobs:
       - name: Build Language Server
         run: |
           dotnet publish -c Release -r ${{ matrix.dotnet_runtime }} -o publish --self-contained
-        working-directory: ./src/Contextive.LanguageServer
+        working-directory: ./src/language-server/Contextive.LanguageServer
       - name: Copy Language Server to VsCode Extension Folder
-        run: mkdir -p ../vscode/contextive/dist && cp publish/* ../vscode/contextive/dist
-        working-directory: ./src/Contextive.LanguageServer
+        run: mkdir -p ../../vscode/contextive/dist && cp publish/* ../../vscode/contextive/dist
+        working-directory: ./src/language-server/Contextive.LanguageServer
       - name: Restore npm dependencies
         run: npm install
         working-directory: ./src/vscode/contextive

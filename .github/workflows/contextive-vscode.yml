@@ -38,22 +38,22 @@ jobs:
         working-directory: ./src
       - name: Build and Test Core
         run: |
-          dotnet test ./src/Contextive.Core.Tests/Contextive.Core.Tests.fsproj --logger "trx;LogFileName=TestResults.Core-${{ env.dotnet-version }}.xml" -- Expecto.fail-on-focused-tests=true
+          dotnet test ./src/core/Contextive.Core.Tests/Contextive.Core.Tests.fsproj --logger "trx;LogFileName=TestResults.Core-${{ env.dotnet-version }}.xml" -- Expecto.fail-on-focused-tests=true
       - name: Build and Test Language Server
         run: |
-          dotnet test ./src/Contextive.LanguageServer.Tests/Contextive.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults.LanguageServer-${{ env.dotnet-version }}.xml" -- Expecto.fail-on-focused-tests=true
+          dotnet test ./src/language-server/Contextive.LanguageServer.Tests/Contextive.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults.LanguageServer-${{ env.dotnet-version }}.xml" -- Expecto.fail-on-focused-tests=true
       - name: Upload Language Server Test Results
         uses: actions/upload-artifact@v2
         with:
           name: language-server-results-${{ env.dotnet-version }}
-          path: "src/Contextive.*.Tests/TestResults/TestResults.*-${{ env.dotnet-version }}.xml"
+          path: "src/**/Contextive.*.Tests/TestResults/TestResults.*-${{ env.dotnet-version }}.xml"
         if: always()
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Language Server Tests
-          path: "src/Contextive.*.Tests/TestResults/TestResults.*-${{ env.dotnet-version }}.xml"
+          path: "src/**/Contextive.*.Tests/TestResults/TestResults.*-${{ env.dotnet-version }}.xml"
           reporter: dotnet-trx 
       - name: Restore npm dependencies
         run: npm install

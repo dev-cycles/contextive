@@ -26,8 +26,8 @@
     "FSharp.dotnetRoot": "/usr/share/dotnet",
     "FSharp.workspacePath": "./src/Contextive.sln",
     "vsCodeExtensionPath": "./src/vscode/contextive",
-    "languageServerPath": "./src/Contextive.LanguageServer",
-    "languageServerTestsPath": "./src/Contextive.LanguageServer.Tests",
+    "languageServerPath": "./src/language-server/Contextive.LanguageServer",
+    "languageServerTestsPath": "./src/language-server/Contextive.LanguageServer.Tests",
     "files.exclude": {
         "out": false, // set this to true to hide the "out" folder with the compiled JS files
         "dist": false // set this to true to hide the "dist" folder with the compiled JS files
@@ -37,7 +37,7 @@
         "dist": true // set this to false to include "dist" folder in search results
     },
     "dotnet-test-explorer.autoWatch": true,
-    "dotnet-test-explorer.testProjectPath": "src/Contextive.*/Contextive.*.Tests.fsproj",
+    "dotnet-test-explorer.testProjectPath": "src/**/Contextive.*/Contextive.*.Tests.fsproj",
     "FSharp.enableAdaptiveLspServer": true,
     "mochaExplorer.logpanel": true,
     "mochaExplorer.files": "**/out/*.main.test.js",
