@@ -21,6 +21,14 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Contextive.VsCodeExtension"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Contextive.VsCodeExtension.Tests.E2e", "vscode\contextive\test\Contextive.VsCodeExtension.Tests.E2e.fsproj", "{87851465-027B-4D5E-9F48-1CBB70E31F69}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cloud", "Cloud", "{4EEBB139-B366-43DD-8DB8-3658A99D50BF}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.Cloud.Api", "cloud\src\Contextive.Cloud.Api\Contextive.Cloud.Api.fsproj", "{1907CBA9-4C70-47DD-9915-B1D4652E2E40}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.Cloud.Api.Tests", "cloud\src\Contextive.Cloud.Api.Tests\Contextive.Cloud.Api.Tests.fsproj", "{4DAFAD29-AE26-49C5-91C4-AE2FED37FCF4}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.Cloud.Tests.E2e", "cloud\src\Contextive.Cloud.Tests.E2e\Contextive.Cloud.Tests.E2e.fsproj", "{31093B3E-B135-45AB-A9DA-329CEB896834}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -20,7 +20,11 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         xvfb libgtk-3-0 libnss3-dev libgbm-dev libasound2 libcanberra-gtk-module libcanberra-gtk3-module
      
 # [Optional] Uncomment this line to install global node packages.
-# RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g <your-package-here>" 2>&1
+RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g aws-cdk" 2>&1
+
+RUN sudo -c "curl \"https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip\" -o \"/tmp/awscliv2.zip\"" && \
+    sudo -c "unzip /tmp/awscliv2.zip -d /tmp" && \
+    sudo -c "/tmp/aws/install"
 
 COPY setup_tools.sh /tmp/setup_tools.sh
 RUN chmod +x /tmp/setup_tools.sh && su - vscode -c "/tmp/setup_tools.sh >> /tmp/setup_tools.log"

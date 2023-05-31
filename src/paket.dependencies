@@ -2,11 +2,16 @@ source https://api.nuget.org/v3/index.json
 
 storage: none
 framework: net8.0
+nuget Amazon.CDK.AWS.Apigatewayv2.Alpha
+nuget Amazon.CDK.AWS.Apigatewayv2.Integrations.Alpha
+nuget Amazon.CDK.Lib
+nuget Amazon.Jsii.Analyzers
 nuget DotNet.Glob
 nuget Expecto
 nuget Fable.Electron
 nuget Fable.Mocha
 nuget FSharp.Core
+nuget FSharp.Data
 nuget Humanizer
 nuget OmniSharp.Extensions.LanguageProtocol.Testing
 nuget OmniSharp.Extensions.LanguageServer

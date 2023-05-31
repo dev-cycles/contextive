@@ -1,0 +1,6 @@
+FSharp.Core
+Amazon.CDK.Lib
+Amazon.Jsii.Analyzers
+Constructs
+Amazon.CDK.AWS.Apigatewayv2.Alpha
+Amazon.CDK.AWS.Apigatewayv2.Integrations.Alpha
