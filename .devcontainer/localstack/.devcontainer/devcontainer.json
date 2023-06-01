@@ -1,0 +1,44 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.202.5/containers/dotnet-fsharp
+{
+    "name": "F# (.NET)",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
+
+    "workspaceFolder": "/workspace/contextive",
+
+    "customizations": {
+        "vscode": {
+            // Set *default* container specific settings.json values on container create.
+            "settings": {},
+            // Add the IDs of extensions you want installed when the container is created.
+            "extensions": [
+                "Ionide.Ionide-fsharp",
+                "ms-dotnettools.csharp",
+                "formulahendry.dotnet-test-explorer",
+                "ionide.ionide-paket",
+                "streetsidesoftware.code-spell-checker",
+                "yzhang.markdown-all-in-one",
+                "hbenl.vscode-mocha-test-adapter"
+            ]
+        }
+    },
+
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
+
+    // Use 'postCreateCommand' to run commands after the container is created.
+    // "postCreateCommand": "dotnet restore",
+    // Find all fsproj files and dotnet restore them
+    "postStartCommand": "/home/vscode/post_start_command.sh",
+
+    // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+    "remoteUser": "vscode",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+            
+        }
+        // See https://code.visualstudio.com/docs/remote/containers#_dev-container-features-preview
+        // Prefer explicitly defining early in the Dockerfile to avoid re-installing features when adjusting the custom parts of the Dockerfile
+	}
+}

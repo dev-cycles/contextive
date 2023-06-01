@@ -1,0 +1,50 @@
+version: "3.3"
+
+services:
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: localstack/localstack:latest
+    ports:
+      - "127.0.0.1:53:53" # only required for Pro (DNS)
+      - "127.0.0.1:53:53/udp" # only required for Pro (DNS)
+      - "127.0.0.1:443:443" # only required for Pro (LocalStack HTTPS Edge Proxy)
+      - "127.0.0.1:4510-4559:4510-4559" # external service port range
+      - "127.0.0.1:4566:4566" # LocalStack Edge Proxy
+    environment:
+      - DEBUG=${DEBUG-}
+      - DATA_DIR=${DATA_DIR-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY-} # only required for Pro
+      - HOST_TMP_FOLDER=${TMPDIR:-/tmp/}localstack
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DYNAMODB_SHARE_DB=1 # to allow use of nosql workbench
+      - LAMBDA_EXECUTOR=docker-reuse
+    volumes:
+      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - contextive
+  app:
+    container_name: devcontainer_contextive
+    build:
+      context: ../..
+      dockerfile: ./Dockerfile
+    volumes:
+      # Forwards the local Docker socket to the container.
+      - /var/run/docker.sock:/var/run/docker-host.sock
+      # Update this to wherever you want VS Code to mount the folder of your project
+      - ../../../:/workspace/contextive:cached
+      - ~/.aws:/home/vscode/.aws
+    environment:
+      - LOCALSTACK_HOST=localstack # for awslocal
+      - LOCALSTACK_HOSTNAME=localstack # for cdklocal. Why are they different? Who knows.
+      - AWS_PROFILE=dev-cycles-sandbox-$USER
+      - CI_JOB_STAGE=sandbox-$USER
+      - USER=$USER
+    networks:
+      - contextive
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+networks:
+  contextive:
