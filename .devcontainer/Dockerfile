@@ -16,15 +16,18 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
+        python3 python-is-python3 python3-pip python3-dev \
 # These are for running vscode insiders in the background to execeute extension tests
         xvfb libgtk-3-0 libnss3-dev libgbm-dev libasound2 libcanberra-gtk-module libcanberra-gtk3-module
      
 # [Optional] Uncomment this line to install global node packages.
-RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g aws-cdk" 2>&1
+RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g aws-cdk-local aws-cdk" 2>&1
 
-RUN sudo -c "curl \"https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip\" -o \"/tmp/awscliv2.zip\"" && \
-    sudo -c "unzip /tmp/awscliv2.zip -d /tmp" && \
-    sudo -c "/tmp/aws/install"
+RUN sudo curl https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip -o /tmp/awscliv2.zip && \
+    unzip /tmp/awscliv2.zip -d /tmp && \
+    /tmp/aws/install
+
+RUN su - vscode -c "pip install localstack awscli-local"
 
 COPY setup_tools.sh /tmp/setup_tools.sh
 RUN chmod +x /tmp/setup_tools.sh && su - vscode -c "/tmp/setup_tools.sh >> /tmp/setup_tools.log"

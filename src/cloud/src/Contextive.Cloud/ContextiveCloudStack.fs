@@ -17,9 +17,6 @@ type ContextiveCloudStack(scope, id, props) as this =
         let basePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
         System.IO.Path.Combine(basePath, relativePath)
 
-///workspaces/contextive/src/cloud/src/Contextive.Cloud.Api/bin/Debug/net6.0/linux-x64/publish
-///workspaces/contextive/src/cloud/Contextive.Cloud.Api/bin/Debug/net6.0/linux-x64/publish
-
     let definitions = Bucket(this, "Definitions", BucketProps())
 
     let apiFunctionProps =
@@ -32,19 +29,22 @@ type ContextiveCloudStack(scope, id, props) as this =
 
     let apiFunction = Function(this, "Api", apiFunctionProps)
 
-    let apiIntegration = HttpLambdaIntegration("ApiIntegration", apiFunction);
+    do match this.Node.TryGetContext("local") with
+        | null -> 
+            let apiIntegration = HttpLambdaIntegration("ApiIntegration", apiFunction)
 
-    let httpApi = HttpApi(this, "HttpApi");
+            let httpApi = HttpApi(this, "HttpApi");
 
-    do 
-        httpApi.AddRoutes(AddRoutesOptions(
-            Path = "/",
-            Methods = [| HttpMethod.ANY |],
-            Integration = apiIntegration
-        )) |> ignore
-        httpApi.AddRoutes(AddRoutesOptions(
-            Path = "/{proxy+}",
-            Methods = [| HttpMethod.ANY |],
-            Integration = apiIntegration
-        )) |> ignore
+            httpApi.AddRoutes(AddRoutesOptions(
+                Path = "/",
+                Methods = [| HttpMethod.ANY |],
+                Integration = apiIntegration
+            )) |> ignore
+            httpApi.AddRoutes(AddRoutesOptions(
+                Path = "/{proxy+}",
+                Methods = [| HttpMethod.ANY |],
+                Integration = apiIntegration
+            )) |> ignore
+        | _ -> ()
+        
 
