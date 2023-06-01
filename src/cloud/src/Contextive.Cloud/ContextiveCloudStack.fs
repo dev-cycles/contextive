@@ -38,13 +38,13 @@ type ContextiveCloudStack(scope, id, props) as this =
 
     do 
         httpApi.AddRoutes(AddRoutesOptions(
-            Path = "/definitions",
-            Methods = [| HttpMethod.GET |],
+            Path = "/",
+            Methods = [| HttpMethod.ANY |],
             Integration = apiIntegration
         )) |> ignore
         httpApi.AddRoutes(AddRoutesOptions(
-            Path = "/definitions/{proxy+}",
-            Methods = [| HttpMethod.GET; HttpMethod.PUT |],
+            Path = "/{proxy+}",
+            Methods = [| HttpMethod.ANY |],
             Integration = apiIntegration
         )) |> ignore
 
