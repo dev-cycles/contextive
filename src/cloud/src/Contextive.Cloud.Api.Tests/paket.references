@@ -1,0 +1,5 @@
+Amazon.Lambda.Core
+Amazon.Lambda.TestUtilities
+Amazon.Lambda.APIGatewayEvents
+Expecto
+Unquote
