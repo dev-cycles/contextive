@@ -1,3 +1,6 @@
 FSharp.Core
 Giraffe
 Amazon.Lambda.AspNetCoreServer
+AWSSDK.S3
+AWSSDK.SSO
+AWSSDK.SSOOIDC

@@ -10,6 +10,9 @@ nuget Amazon.Lambda.Core
 nuget Amazon.Lambda.TestUtilities
 nuget Amazon.Lambda.APIGatewayEvents
 nuget Amazon.Lambda.AspNetCoreServer
+nuget AWSSDK.S3
+nuget AWSSDK.SSO
+nuget AWSSDK.SSOOIDC
 nuget DotNet.Glob
 nuget Expecto
 nuget Fable.Electron

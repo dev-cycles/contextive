@@ -1,1 +1,1 @@
-cdklocal diff --context local=
+cdklocal deploy --context local=
