@@ -27,12 +27,17 @@ type ContextiveCloudStack(scope, id, props) as this =
                       MemorySize = Nullable<float>(256.0),
                       LogRetention = Option.toNullable (Some RetentionDays.ONE_WEEK))
 
+    do CfnOutput(this, "DefinitionsBucketName", CfnOutputProps(Value=definitions.BucketName)) |> ignore
+
     let apiFunction = Function(this, "Api", apiFunctionProps)
 
-    do match this.Node.TryGetContext("local") with
+    let isLocal = this.Node.TryGetContext("local")
+    do printfn "isLocal: %A" isLocal
+    do match isLocal with
         | null -> 
+            printfn "matched null"
             let apiIntegration = HttpLambdaIntegration("ApiIntegration", apiFunction)
-
+            printfn "Adding httpApi"
             let httpApi = HttpApi(this, "HttpApi");
 
             httpApi.AddRoutes(AddRoutesOptions(
@@ -45,6 +50,9 @@ type ContextiveCloudStack(scope, id, props) as this =
                 Methods = [| HttpMethod.ANY |],
                 Integration = apiIntegration
             )) |> ignore
-        | _ -> ()
+        | _ -> 
+            printfn "didn't match null"
+            printfn "Not adding http API"
+            ()
         
 

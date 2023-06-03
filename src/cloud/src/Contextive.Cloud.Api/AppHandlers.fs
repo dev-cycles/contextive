@@ -3,16 +3,12 @@
 open System
 open Microsoft.Extensions.Logging
 open Giraffe
-open Microsoft.AspNetCore.Http
 open Contextive.Cloud.Api
 
 let webApp:HttpHandler =
     choose [
-        PUT >=>
-            choose [
-                routef "/definitions/%s" Definitions.put
-            ]
-        //setStatusCode 404 >=> text "Not Found"
+        Definitions.routes
+        setStatusCode 404 >=> text "Not Found"
     ]
 
 // ---------------------------------

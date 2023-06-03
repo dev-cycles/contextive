@@ -12,9 +12,10 @@ let requestFactory method path body =
             Http = APIGatewayHttpApiV2ProxyRequest.HttpDescription(
                 Method = method,
                 Path = path
-            )
+            ),
+            DomainName = "localhost"
         ),
-        Body = body
+        Body = Option.defaultValue null body
     )
 
 let lambdaRequest (lambdaFunction:LambdaEntryPoint) method path body = async {
@@ -23,17 +24,13 @@ let lambdaRequest (lambdaFunction:LambdaEntryPoint) method path body = async {
     return! lambdaFunction.FunctionHandlerAsync(request, context) |> Async.AwaitTask
 }
 
-let simpleDefinitions = """
-contexts:
+let simpleDefinitions =Some """contexts:
     - terms:
-        - name: simpleName
-"""
+        - name: simpleName"""
 
-let invalidDefinitions = """
-contexts: :
+let invalidDefinitions = Some """contexts: :
     - term:
-    - name: wrong schema
-"""
+    - name: wrong schema"""
 
 [<Tests>]
 let definitionsHandlerTests = 
@@ -41,15 +38,21 @@ let definitionsHandlerTests =
 
         testAsync "Can PUT a valid definitions File" {
             let lambdaFunction = LambdaEntryPoint()
-            let! response = lambdaRequest lambdaFunction "PUT" "/definitions/someSlug" simpleDefinitions
-            test <@ response.StatusCode = 200 @>
-            test <@ response.Body = simpleDefinitions @>
+            let! response = lambdaRequest lambdaFunction "PUT" "/definitions/someSlug1" simpleDefinitions
+            test <@ (response.StatusCode,response.Body) = (200,simpleDefinitions.Value) @>
         }
 
         testAsync "Can't PUT an invalid definitions File" {
             let lambdaFunction = LambdaEntryPoint()
-            let! response = lambdaRequest lambdaFunction "PUT" "/definitions/someSlug" invalidDefinitions
-            test <@ response.StatusCode = 400 @>
-            test <@ response.Body = "Error parsing definitions file:  Object starting line 2, column 11 - Mapping values are not allowed in this context." @>
+            let! response = lambdaRequest lambdaFunction "PUT" "/definitions/someSlug2" invalidDefinitions
+            test <@ (response.StatusCode,response.Body) = (400,"Error parsing definitions file:  Object starting line 1, column 11 - Mapping values are not allowed in this context.") @>
+        }
+
+        testAsync "Can GET a definitions file that was previously PUT" {
+            let lambdaFunction = LambdaEntryPoint()
+            let! response = lambdaRequest lambdaFunction "PUT" "/definitions/someSlug3" simpleDefinitions
+            test <@ (response.StatusCode,response.Body) = (200, simpleDefinitions.Value) @>
+            let! getResponse = lambdaRequest lambdaFunction "GET" "/definitions/someSlug3" None
+            test <@ (getResponse.StatusCode,getResponse.Body) = (200,simpleDefinitions.Value) @>
         }
     ]
