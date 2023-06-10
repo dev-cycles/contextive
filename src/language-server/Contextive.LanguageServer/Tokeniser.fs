@@ -15,6 +15,8 @@ let private (|Regex|_|) pattern input =
     | EmptySeq -> None
     | _ -> res |> Some
 
+let private adjustCharacterForTrailingSpace character = System.Math.Max(0,character-1)
+
 type Lexer = 
     | Line of line: string
     | Start of line: string * start: int
@@ -38,10 +40,10 @@ type Lexer =
     static member getStart (character: int) =
         function | Line(line) when character < line.Length -> 
                     match line[character] with
-                    | ' ' -> Lexer.startOfToken line <| character-1
-                    | _ -> Lexer.startOfToken line character
+                    | ' ' -> adjustCharacterForTrailingSpace character |> Lexer.startOfToken line 
+                    | _ -> character |> Lexer.startOfToken line 
                  | Line(line) when character = line.Length -> 
-                    Lexer.startOfToken line <| character-1
+                    adjustCharacterForTrailingSpace character |> Lexer.startOfToken line
                  | _ -> NoToken
 
     static member getEnd (character: int) =

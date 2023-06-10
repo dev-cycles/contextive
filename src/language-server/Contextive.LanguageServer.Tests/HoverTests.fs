@@ -79,7 +79,7 @@ let hoverTests =
         ] |> List.map testHoverTermFound |> testList "Term found when hovering in opened docs at Positions"
 
         let testHoverTermNotFound (text, position: Position) = 
-            testAsync $"Given definitions and document open, server responds to hover request with no content in {position}" {
+            testAsync $"Given definitions '{text}' and document open, server responds to hover request with no content in {position}" {
                 let fileName = "one"
                 let config = [
                         Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
@@ -110,6 +110,8 @@ let hoverTests =
         [
             ("NotATerm", Position(0, 0))
             ("firstTerm NotATerm", Position(0, 10))
+            ("    anothernotterm", Position(0,0))
+            ("", Position(0,0))
         ] |> List.map testHoverTermNotFound |> testList "Term not found when hovering"
 
         let testHoverDisplay (terms: Term list, (wordAtPosition:string), (expectedHover:string)) =
