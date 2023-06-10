@@ -25,6 +25,7 @@ type ContextiveCloudStack(scope, id, props) as this =
                       Handler = "Contextive.Cloud.Api::Setup+LambdaEntryPoint::FunctionHandlerAsync",
                       Description = "Contextive Api",
                       MemorySize = Nullable<float>(256.0),
+                      Environment = Map [ "DEFINITIONS_BUCKET_NAME", definitions.BucketName ],
                       LogRetention = Option.toNullable (Some RetentionDays.ONE_WEEK))
 
     do CfnOutput(this, "DefinitionsBucketName", CfnOutputProps(Value=definitions.BucketName)) |> ignore
@@ -50,6 +51,8 @@ type ContextiveCloudStack(scope, id, props) as this =
                 Methods = [| HttpMethod.ANY |],
                 Integration = apiIntegration
             )) |> ignore
+
+            CfnOutput(this, "HttpApiEndpoint", CfnOutputProps(Value=httpApi.Url)) |> ignore
         | _ -> 
             printfn "didn't match null"
             printfn "Not adding http API"

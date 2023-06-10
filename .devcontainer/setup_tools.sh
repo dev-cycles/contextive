@@ -13,6 +13,7 @@ dotnet tool install paket --global
 dotnet tool install fable --global
 dotnet tool install femto --global
 dotnet tool install fantomas --global
+dotnet tool install fake-cli --global
 
 push src
 dotnet tool restore

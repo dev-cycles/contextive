@@ -10,12 +10,14 @@ open Amazon.S3.Model
 
 let clientError msg = setStatusCode 400 >=> setBodyFromString msg
 
+let bucketName() = System.Environment.GetEnvironmentVariable("DEFINITIONS_BUCKET_NAME")
+
 let saveDefinitions slug yml = task {
     use s3Client = new AmazonS3Client(
         AmazonS3Config(ServiceURL = "http://localstack:4566",ForcePathStyle=true)
     )
     let! _ = s3Client.PutObjectAsync(PutObjectRequest(
-        BucketName="contextivecloud-definitionse678edeb-c3c59b5c",
+        BucketName=bucketName(),
         Key=slug,
         ContentBody=yml
     ), Threading.CancellationToken.None)
@@ -27,7 +29,7 @@ let getDefinitions slug = task {
         AmazonS3Config(ServiceURL = "http://localstack:4566",ForcePathStyle=true)
     )
     use! response = s3Client.GetObjectAsync(GetObjectRequest(
-        BucketName="contextivecloud-definitionse678edeb-c3c59b5c",
+        BucketName=bucketName(),
         Key=slug
     ), Threading.CancellationToken.None)
     use reader = new IO.StreamReader(response.ResponseStream, Text.Encoding.UTF8)
