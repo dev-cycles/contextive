@@ -13,9 +13,10 @@ open Contextive.LanguageServer.Tokeniser
 
 let private documents = new ConcurrentDictionary<string, IList<string>>()
 
-let private getDocument (documentUri: System.Uri) =
+let private getDocument (documentUri: DocumentUri) =
     let mutable text = null :> IList<string>
-    match documents.TryGetValue(documentUri.ToString(), &text) with
+    let uriStr = documentUri.ToString()
+    match documents.TryGetValue(uriStr, &text) with
     | false -> None
     | true -> Some text
 
@@ -25,9 +26,9 @@ let getTokenAtPosition (lines:IList<string>) (position:Position) =
     |> Lexer.getEnd position.Character
     |> Lexer.get
 
-type TokenFinder = System.Uri -> Position -> string option
+type TokenFinder = DocumentUri -> Position -> string option
 
-let findToken (documentUri: System.Uri) (position:Position) =
+let findToken (documentUri: DocumentUri) (position:Position) =
     match getDocument documentUri with
     | None -> None
     | Some(documentLines) -> getTokenAtPosition documentLines position
@@ -42,7 +43,8 @@ let registrationOptions = RegistrationOptionsDelegate<TextDocumentSyncRegistrati
 module DidOpen = 
     let handler (p:DidOpenTextDocumentParams) =
         let lines = linesFromText p.TextDocument.Text
-        documents.AddOrUpdate(p.TextDocument.Uri.ToString(), lines, (fun _ _ -> lines)) |> ignore
+        let uriStr = p.TextDocument.Uri.ToString()
+        documents.AddOrUpdate(uriStr, lines, (fun _ _ -> lines)) |> ignore
 
 module DidChange =
     let handler (p:DidChangeTextDocumentParams) =

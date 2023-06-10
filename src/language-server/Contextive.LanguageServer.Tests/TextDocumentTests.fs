@@ -3,6 +3,7 @@ module Contextive.LanguageServer.Tests.TextDocumentTests
 open Expecto
 open Swensen.Unquote
 open Contextive.LanguageServer
+open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities
 open System.IO
@@ -56,23 +57,31 @@ let textDocumentTests =
             test <@ client.ServerSettings.Capabilities.TextDocumentSync.Options.Change = TextDocumentSyncKind.Full @>
         }
 
-        testAsync $"Given open text document, can find text document" {
-            let textDocumentUri = System.Uri($"file:///{System.Guid.NewGuid().ToString()}")
+        let openDocumentCanFindTextDoc (uri:string) = 
+            testAsync $"uri: {uri}" {
+                let textDocumentUri = DocumentUri.From(uri)
 
-            TextDocument.DidOpen.handler(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
-                LanguageId = "plaintext",
-                Version = 0,
-                Text = "firstterm",
-                Uri = textDocumentUri
-            )))
+                TextDocument.DidOpen.handler(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
+                    LanguageId = "plaintext",
+                    Version = 0,
+                    Text = "firstterm",
+                    Uri = textDocumentUri
+                )))
 
-            let token = TextDocument.findToken textDocumentUri <| Position(0, 0)
+                let token = TextDocument.findToken textDocumentUri <| Position(0, 0)
 
-            test <@ token.Value = "firstterm" @>
-        }
+                test <@ token.Value = "firstterm" @>
+            }
+
+        [
+            $"file:///{System.Guid.NewGuid().ToString()}";
+            $"file:///{System.Guid.NewGuid().ToString()}/Some- complex path&/file.txt"
+        ]
+        |> List.map openDocumentCanFindTextDoc
+        |> testList "Given open text document, can find text document"
         
         testAsync $"Given changed text document, can find text document" {
-            let textDocumentUri = System.Uri($"file:///{System.Guid.NewGuid().ToString()}")
+            let textDocumentUri = DocumentUri.From($"file:///{System.Guid.NewGuid().ToString()}")
 
             TextDocument.DidOpen.handler(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
                 LanguageId = "plaintext",
@@ -91,7 +100,7 @@ let textDocumentTests =
         }
 
         testAsync $"Given Saved document, can find text document" {
-            let textDocumentUri = System.Uri($"file:///{System.Guid.NewGuid().ToString()}")
+            let textDocumentUri = DocumentUri.From($"file:///{System.Guid.NewGuid().ToString()}")
 
             TextDocument.DidOpen.handler(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
                 LanguageId = "plaintext",
@@ -114,7 +123,7 @@ let textDocumentTests =
         }
 
         testAsync $"Given Closed document, text document not found" {
-            let textDocumentUri = System.Uri($"file:///{System.Guid.NewGuid().ToString()}")
+            let textDocumentUri = DocumentUri.From($"file:///{System.Guid.NewGuid().ToString()}")
 
             TextDocument.DidOpen.handler(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
                 LanguageId = "plaintext",
@@ -130,5 +139,4 @@ let textDocumentTests =
 
             test <@ token.IsNone @>
         }
-
     ]
