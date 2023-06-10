@@ -1,10 +1,11 @@
 {
     "cSpell.words": [
         "Contextive"
-    ]
+    ],
     // uncomment to enable logging protocol messages in vscode logs
     // logs can be found in:
     // ~/.vscode-server/data/logs/<datestamp>/exthost<??>/outputlogging_<datestamp>/<?>-Contextive.log
     // May want to disable Server `.AddLanguageProtocolLogging()` or the logs are very cluttered.
     //,"contextive.trace.server": "verbose" 
+    "contextive.path": ".contextive/cargo.yml"
 }

@@ -10,6 +10,7 @@ echo
 dotnet new install Fable.Template
 dotnet tool install dotnet-suggest --global
 dotnet tool install fantomas --global
+dotnet tool install fake-cli --global
 
 ## dotnet-adr
 # Currently non-functional due to https://github.com/endjin/dotnet-adr/issues/203
