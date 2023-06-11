@@ -48,7 +48,7 @@ let private filterRelevantTerms (terms: Definitions.Term seq) (tokenAndCandidate
 let private getTokenAtPosition (p:HoverParams) (tokenFinder: TextDocument.TokenFinder) =
     match p.TextDocument with
     | null -> None
-    | document -> tokenFinder (document.Uri.ToUri()) p.Position
+    | document -> tokenFinder (document.Uri) p.Position
 
 let private emojify t = "📗 " + t
 let private emphasise t = $"`{t}`"

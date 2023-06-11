@@ -108,7 +108,7 @@ let private getContextCompletionLabelData (termToListOptionsWithCase) (context:D
 let private getCaseTemplate (tokenFinder: TextDocument.TokenFinder) (textDocument:TextDocumentIdentifier) (position) =
     match textDocument with
     | null -> None
-    | _ -> tokenFinder (textDocument.Uri.ToUri()) position
+    | _ -> tokenFinder (textDocument.Uri) position
 
 let handler (termFinder: Definitions.Finder) (tokenFinder: TextDocument.TokenFinder) (p:CompletionParams) (hc:CompletionCapability) _ =
     async {
