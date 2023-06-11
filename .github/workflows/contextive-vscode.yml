@@ -17,13 +17,13 @@ jobs:
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           persist-credentials: false
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
       - name: Setup .NET Core SDK ${{ env.dotnet-version }}
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.dotnet-version }}
           include-prerelease: true
@@ -43,7 +43,7 @@ jobs:
         run: |
           dotnet test ./src/language-server/Contextive.LanguageServer.Tests/Contextive.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults.LanguageServer-${{ env.dotnet-version }}.xml" -- Expecto.fail-on-focused-tests=true
       - name: Upload Language Server Test Results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: language-server-results-${{ env.dotnet-version }}
           path: "src/**/Contextive.*.Tests/TestResults/TestResults.*-${{ env.dotnet-version }}.xml"
@@ -70,13 +70,13 @@ jobs:
           DISPLAY: ":99.0"
           DOTNET_VERSION: ${{ env.dotnet-version }}
       - name: Upload VsCode Extension Test Results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: vscode-extension-test-results-${{ env.dotnet-version }}
           path: "src/vscode/**/TestResults-*-${{ env.dotnet-version }}.xml"
         if: always()
       - name: Upload All Test Logs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: vscode-extension-logs-${{ env.dotnet-version }}
           path: "**/log*.txt"
