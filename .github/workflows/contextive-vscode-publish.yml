@@ -42,7 +42,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.dotnet-version }}
-          include-prerelease: true
       - name: Display dotnet version
         run: dotnet --version
       - name: Install Fable
