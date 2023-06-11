@@ -20,20 +20,36 @@ let ensureSuccess (p:ProcessResult) =
 
 type BucketResponse = JsonProvider<""" { "Buckets": [{"Name": "SampleName"}] } """>
 
-let getDefinitionsBucketName() =
-    CreateProcess.fromRawCommandLine "awslocal" "s3api list-buckets"
+let setLocal = Environment.setEnvironVar "AWS_PROFILE" "local"
+
+let cdkLocal cmd = 
+  setLocal
+  CreateProcess.fromRawCommandLine "cdklocal" $"{cmd} --context local="
+  |> CreateProcess.withWorkingDirectory "cloud"
+  |> CreateProcess.ensureExitCode
+  |> Proc.run
+  |> ignore
+
+let awsLocal cmd filter = 
+  CreateProcess.fromRawCommandLine "awslocal" cmd
       |> CreateProcess.redirectOutput
       |> CreateProcess.ensureExitCode
       |> Proc.run
-      |> fun (a) -> a.Result.Output
-      |> BucketResponse.Parse
-      |> fun (b) -> b.Buckets
-      |> Array.find (fun b -> b.Name.Contains("definitions"))
-      |> fun (b) -> b.Name
+      |> fun a -> a.Result.Output
+      |> filter
+
+let getDefinitionsBucketName() =
+    awsLocal "s3api list-buckets" (
+        fun output ->
+        BucketResponse.Parse output
+        |> fun b -> b.Buckets
+        |> Array.find (fun b -> b.Name.Contains("definitions"))
+        |> fun b -> b.Name
+    )
 
 // *** Define Targets ***
 Target.create "Cloud-Api-Test" (fun _ ->
-
+  setLocal
   Environment.setEnvironVar "DEFINITIONS_BUCKET_NAME" <| getDefinitionsBucketName()
   DotNet.exec (
         withWorkDir "cloud/src/Contextive.Cloud.Api.Tests"
@@ -42,12 +58,12 @@ Target.create "Cloud-Api-Test" (fun _ ->
   |> ensureSuccess
 )
 
+Target.create "Cdk-Bootstrap-Local" (fun _ ->
+  cdkLocal "bootstrap"
+)
+
 Target.create "Cloud-Deploy-Local" (fun _ ->
-  CreateProcess.fromRawCommandLine "cdklocal" "deploy --context local="
-  |> CreateProcess.withWorkingDirectory "cloud"
-  |> CreateProcess.ensureExitCode
-  |> Proc.run
-  |> ignore
+  cdkLocal "deploy"
 )
 
 Target.create "Cloud-Deploy" (fun _ ->

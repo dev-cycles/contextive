@@ -14,3 +14,7 @@ find ./ -type f -name "*.fsproj" -print0 | xargs -r0 /bin/bash -c 'for f in "$@"
 
 cd src/vscode/contextive
 npm install
+
+aws configure set aws_access_key_id 0000 --profile local
+aws configure set aws_secret_access_key 0000 --profile local
+aws configure set region us-east-1 --profile local
