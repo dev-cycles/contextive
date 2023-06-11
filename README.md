@@ -2,7 +2,7 @@
 
 ![Contextive Banner](images/contextive_banner.png)
 
-[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Twitter](https://img.shields.io/twitter/follow/contextive_tech?label=Follow%20Contextive)](https://twitter.com/intent/follow?screen_name=contextive_tech)
+[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive-vscode.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive-vscode.yml) [![Twitter](https://img.shields.io/twitter/follow/contextive_tech?label=Follow%20Contextive)](https://twitter.com/intent/follow?screen_name=contextive_tech)
 
 Contextive is a suite of tools to immerse developers in the language of their users' domains.
 
