@@ -1,5 +1,18 @@
 # Change Log
 
+# [1.8.0](https://github.com/dev-cycles/contextive/compare/v1.7.0...v1.8.0) (2023-06-11)
+
+
+### Bug Fixes
+
+* **language-server:** ensure hover works even if the file's path has special characters in it ([076a029](https://github.com/dev-cycles/contextive/commit/076a02918815823302ba464ec565301c237f8088))
+* **language-server:** resolve error notifications when hovering over a space in column 0 ([51936b8](https://github.com/dev-cycles/contextive/commit/51936b8d5bc1ae769ac86aa9ab8a29630ff9256d))
+
+
+### Features
+
+* **vscode:** Add support for linux-arm64 platform ([38d9afb](https://github.com/dev-cycles/contextive/commit/38d9afb54b637203541ae6973f6fe2f6b61e9ee5))
+
 # [1.7.0](https://github.com/dev-cycles/contextive/compare/v1.6.0...v1.7.0) (2023-05-28)
 
 
