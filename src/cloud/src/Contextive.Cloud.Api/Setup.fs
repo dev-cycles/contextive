@@ -35,8 +35,8 @@ let configureServices (services : IServiceCollection) =
 
     services.AddGiraffe() |> ignore
 
-let configureLogging (builder : ILoggingBuilder) =
-    let filter (l : LogLevel) = l.Equals LogLevel.Debug
+let configureLogging level (builder : ILoggingBuilder) =
+    let filter (l : LogLevel) = l.Equals level
     builder.AddFilter(filter).AddConsole().AddDebug() |> ignore
 
 let configureAppConfiguration (ctx:WebHostBuilderContext) (builder : IConfigurationBuilder) =
@@ -71,6 +71,7 @@ type LambdaEntryPoint() =
             .UseContentRoot(contentRoot) 
             .Configure(Action<IApplicationBuilder> configureApp)
             .ConfigureServices(configureServices)
+            .ConfigureLogging(configureLogging LogLevel.Warning)
             |> ignore
 
 // ---------------------------------
@@ -88,7 +89,7 @@ let main _ =
         .ConfigureAppConfiguration(Action<WebHostBuilderContext, IConfigurationBuilder> configureAppConfiguration)
         .Configure(Action<IApplicationBuilder> configureApp)
         .ConfigureServices(configureServices)
-        .ConfigureLogging(configureLogging)
+        .ConfigureLogging(configureLogging LogLevel.Debug)
         .Build()
         .Run()
     0

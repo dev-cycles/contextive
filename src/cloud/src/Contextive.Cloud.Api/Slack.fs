@@ -1,19 +1,28 @@
 module Contextive.Cloud.Api.Slack
 
-open Giraffe
-open FSharp.Data
 open Microsoft.Extensions.Logging
+open Giraffe
 
-type SlackChallenge = {
+type SlackMessage = {
+    Text: string
+}
+
+type SlackEvent = {
     Token: string
-    Challenge: string
+    Challenge: string 
     Type: string
+    Event: SlackMessage
 }
 
 let post : HttpHandler = 
     fun next ctx -> task {
-        let! challenge = ctx.BindJsonAsync<SlackChallenge>()
-        return! text challenge.Challenge next ctx
+        let! event = ctx.BindJsonAsync<SlackEvent>()
+        if event.Type = "url_verification" then 
+            return! text event.Challenge next ctx
+        else
+            let logger = ctx.GetLogger("slack")
+            logger.LogWarning $"Received text: {event.Event.Text}"
+            return! text "" next ctx
     }
 
 let routes:HttpHandler =

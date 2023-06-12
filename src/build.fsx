@@ -22,13 +22,21 @@ type BucketResponse = JsonProvider<""" { "Buckets": [{"Name": "SampleName"}] } "
 
 let setLocal = Environment.setEnvironVar "AWS_PROFILE" "local"
 
-let cdkLocal cmd = 
-  setLocal
-  CreateProcess.fromRawCommandLine "cdklocal" $"{cmd} --context local="
+let cdk' cdkType cmd args = 
+  let argString = Option.defaultValue "" args
+  CreateProcess.fromRawCommandLine cdkType $"{cmd} {argString}"
   |> CreateProcess.withWorkingDirectory "cloud"
   |> CreateProcess.ensureExitCode
   |> Proc.run
   |> ignore
+
+let cdkLocal cmd = 
+  setLocal
+  cdk' "cdklocal" cmd <| Some "--context local="
+
+let cdk cmd = 
+  Environment.setEnvironVar "AWS_PROFILE" "dev-cycles-sandbox-chris"
+  cdk' "cdk" cmd None
 
 let awsLocal cmd filter = 
   CreateProcess.fromRawCommandLine "awslocal" cmd
@@ -58,6 +66,15 @@ Target.create "Cloud-Api-Test" (fun _ ->
   |> ensureSuccess
 )
 
+Target.create "Cloud-Api-Publish" (fun _ ->
+  setLocal
+  DotNet.exec (
+        withWorkDir "cloud/src/Contextive.Cloud.Api"
+      )
+      "publish" "--runtime linux-x64 --no-self-contained"
+  |> ensureSuccess
+)
+
 Target.create "Cdk-Bootstrap-Local" (fun _ ->
   cdkLocal "bootstrap"
 )
@@ -67,19 +84,18 @@ Target.create "Cloud-Deploy-Local" (fun _ ->
 )
 
 Target.create "Cloud-Deploy" (fun _ ->
-  CreateProcess.fromRawCommandLine "cdk" "deploy"
-  |> CreateProcess.withWorkingDirectory "cloud"
-  |> CreateProcess.ensureExitCode
-  |> Proc.run
-  |> ignore
+  cdk "deploy"
 )
 
-// open Fake.Core.TargetOperators
+open Fake.Core.TargetOperators
 
 // // *** Define Dependencies ***
 // "Clean"
 //   ==> "Build"
 //   ==> "Deploy"
+
+"Cloud-Api-Publish"
+  ==> "Cloud-Deploy"
 
 // *** Start Build ***
 Target.runOrDefault "Cloud-Api-Test"
