@@ -1,7 +1,6 @@
 module Contextive.Cloud.Api.Definitions
 
 open System
-open Microsoft.Extensions.Logging
 open Giraffe
 open Microsoft.AspNetCore.Http
 open Contextive.Core.Definitions

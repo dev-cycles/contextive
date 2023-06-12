@@ -3,3 +3,5 @@ Amazon.Lambda.TestUtilities
 Amazon.Lambda.APIGatewayEvents
 Expecto
 Unquote
+FSharp.Data
+YoloDev.Expecto.TestSdk
