@@ -8,6 +8,7 @@ open Contextive.Cloud.Api
 let webApp:HttpHandler =
     choose [
         Definitions.routes
+        Slack.routes
         setStatusCode 404 >=> text "Not Found"
     ]
 
