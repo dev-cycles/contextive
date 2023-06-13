@@ -25,7 +25,11 @@ type ContextiveCloudStack(scope, id, props) as this =
                       Handler = "Contextive.Cloud.Api::Setup+LambdaEntryPoint::FunctionHandlerAsync",
                       Description = "Contextive Api",
                       MemorySize = Nullable<float>(256.0),
-                      Environment = Map [ "DEFINITIONS_BUCKET_NAME", definitions.BucketName ],
+                      Timeout = Duration.Seconds(15),
+                      Environment = Map [ 
+                        "DEFINITIONS_BUCKET_NAME", definitions.BucketName
+                        "SLACK_OAUTH_TOKEN", (System.Environment.GetEnvironmentVariable("SLACK_OAUTH_TOKEN"))
+                      ],
                       LogRetention = Option.toNullable (Some RetentionDays.ONE_WEEK))
 
     do CfnOutput(this, "DefinitionsBucketName", CfnOutputProps(Value=definitions.BucketName)) |> ignore
