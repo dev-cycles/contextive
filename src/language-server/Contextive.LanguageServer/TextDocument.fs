@@ -33,7 +33,7 @@ let findToken (documentUri: DocumentUri) (position:Position) =
     | None -> None
     | Some(documentLines) -> getTokenAtPosition documentLines position
 
-let private linesFromText (document:string) : IList<string> = document.Split(System.Environment.NewLine)
+let private linesFromText (document:string) : IList<string> = document.ReplaceLineEndings().Split(System.Environment.NewLine)
 
 let private registrationOptionsProvider (hc:SynchronizationCapability) (cc:ClientCapabilities) =
     TextDocumentSyncRegistrationOptions(Change = TextDocumentSyncKind.Full)
