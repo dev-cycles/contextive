@@ -84,7 +84,7 @@ jobs:
       - name: Upload VsCode Extension Test Results
         uses: actions/upload-artifact@v3
         with:
-          name: vscode-extension-test-results-${{ env.dotnet-version }}--${{ runner.os }}
+          name: vscode-extension-test-results-${{ env.dotnet-version }}-${{ runner.os }}
           path: "src/vscode/**/TestResults-*-${{ env.dotnet-version }}-${{ runner.os }}.xml"
         if: always() && runner.os == 'Linux'
       - name: Upload All Test Logs

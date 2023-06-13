@@ -33,22 +33,22 @@ jobs:
         working-directory: ./src
       - name: Build and Test Core
         run: |
-          dotnet test ./src/core/Contextive.Core.Tests/Contextive.Core.Tests.fsproj --logger "trx;LogFileName=TestResults.Core-${{ env.dotnet-version }}.xml" -- Expecto.fail-on-focused-tests=true
+          dotnet test ./src/core/Contextive.Core.Tests/Contextive.Core.Tests.fsproj --logger "trx;LogFileName=TestResults.Core-${{ env.dotnet-version }}-${{ runner.os }}.xml" -- Expecto.fail-on-focused-tests=true
       - name: Build and Test Language Server
         run: |
-          dotnet test ./src/language-server/Contextive.LanguageServer.Tests/Contextive.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults-${{ env.dotnet-version }}.xml" -- Expecto.fail-on-focused-tests=true
+          dotnet test ./src/language-server/Contextive.LanguageServer.Tests/Contextive.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults-${{ env.dotnet-version }}-${{ runner.os }}.xml" -- Expecto.fail-on-focused-tests=true
       - name: Upload Language Server Test Results
         uses: actions/upload-artifact@v3
         with:
-          name: language-server-results-${{ env.dotnet-version }}
-          path: "src/**/Contextive.*.Tests/TestResults/TestResults-${{ env.dotnet-version }}.xml"
+          name: language-server-results-${{ env.dotnet-version }}-${{ runner.os }}
+          path: "src/**/Contextive.*.Tests/TestResults/TestResults-${{ env.dotnet-version }}-${{ runner.os }}.xml"
         if: always()
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Language Server Tests
-          path: "src/**/Contextive.*.Tests/TestResults/TestResults-${{ env.dotnet-version }}.xml"
+          name: Language Server Tests ${{ runner.os }}
+          path: "src/**/Contextive.*.Tests/TestResults/TestResults-${{ env.dotnet-version }}-${{ runner.os }}.xml"
           reporter: dotnet-trx 
       - name: Restore npm dependencies
         run: npm install
@@ -67,21 +67,21 @@ jobs:
       - name: Upload vsCode Extension Test Results
         uses: actions/upload-artifact@v3
         with:
-          name: vscode-extension-results-${{ env.dotnet-version }}
-          path: "src/vscode/**/TestResults-*-${{ env.dotnet-version }}.xml"
+          name: vscode-extension-results-${{ env.dotnet-version }}-${{ runner.os }}
+          path: "src/vscode/**/TestResults-*-${{ env.dotnet-version }}-${{ runner.os }}.xml"
         if: always()
       - name: Upload All Test Logs
         uses: actions/upload-artifact@v3
         with:
-          name: vscode-extension-logs-${{ env.dotnet-version }}
+          name: vscode-extension-logs-${{ env.dotnet-version }}-${{ runner.os }}
           path: "**/log*.txt"
         if: always()
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: VsCode Extension Tests
-          path: "src/vscode/**/TestResults-*-${{ env.dotnet-version }}.xml"
+          name: VsCode Extension Tests ${{ runner.os }}
+          path: "src/vscode/**/TestResults-*-${{ env.dotnet-version }}-${{ runner.os }}.xml"
           reporter: java-junit
       - name: Release
         env:
