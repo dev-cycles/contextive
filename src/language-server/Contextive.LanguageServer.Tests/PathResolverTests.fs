@@ -3,6 +3,7 @@ module Contextive.LanguageServer.Tests.PathResolverTests
 open Expecto
 open Contextive.LanguageServer
 open Swensen.Unquote
+open System.Runtime.InteropServices
 
 [<Tests>]
 let pathLoaderTests =
@@ -17,7 +18,7 @@ let pathLoaderTests =
 
         testCase "Workspace, non-root path" <| fun () -> 
             let p = PathResolver.resolvePath (Some "/workspace") (Some "path")
-            test <@ p = Ok("/workspace/path") @>
+            test <@ p = Ok(System.IO.Path.Join("/workspace", "path")) @>
 
         testCase "No Workspace, Root path" <| fun () -> 
             let p = PathResolver.resolvePath None (Some "/path")
@@ -37,10 +38,14 @@ let pathLoaderTests =
 
         testCase "Process Error" <| fun () -> 
             let p = PathResolver.resolvePath None (Some "$(noprogram)/path")
-                
+            
             test <@ 
                 match p with
-                | Error errorMsg -> errorMsg.Contains("program: command not found")
+                | Error errorMsg -> 
+                    if RuntimeInformation.IsOSPlatform(OSPlatform.Windows) then
+                        errorMsg.Contains("noprogram : The term 'noprogram' is not recognized as the name of a cmdlet, function, script file")
+                    else
+                        errorMsg.Contains("noprogram: command not found")
                 | _ -> false
             @>
     ]

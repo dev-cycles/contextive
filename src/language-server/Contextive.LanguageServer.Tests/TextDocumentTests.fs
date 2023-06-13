@@ -57,8 +57,8 @@ let textDocumentTests =
             test <@ client.ServerSettings.Capabilities.TextDocumentSync.Options.Change = TextDocumentSyncKind.Full @>
         }
 
-        let openDocumentCanFindTextDoc (uri:string) = 
-            testAsync $"uri: {uri}" {
+        let openDocumentCanFindTextDoc (name:string,uri:string) = 
+            testAsync name {
                 let textDocumentUri = DocumentUri.From(uri)
 
                 TextDocument.DidOpen.handler(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
@@ -74,8 +74,8 @@ let textDocumentTests =
             }
 
         [
-            $"file:///{System.Guid.NewGuid().ToString()}";
-            $"file:///{System.Guid.NewGuid().ToString()}/Some- complex path&/file.txt"
+            "simple", $"file:///{System.Guid.NewGuid().ToString()}"
+            "complex", $"file:///{System.Guid.NewGuid().ToString()}/Some- complex path&/file.txt"
         ]
         |> List.map openDocumentCanFindTextDoc
         |> testList "Given open text document, can find text document"

@@ -20,7 +20,7 @@ function run() {
 	.reporter('mocha-multi-reporters', {
 		reporterEnabled: "list, mocha-junit-reporter",
 		mochaJunitReporterReporterOptions: {
-			mochaFile: path.resolve(testsRoot, `../TestResults/TestResults-${opts.fgrep}-${process.env.DOTNET_VERSION}.xml`)
+			mochaFile: path.resolve(testsRoot, `../TestResults/TestResults-${opts.fgrep}-${process.env.DOTNET_VERSION}-${process.env.RUNNER_OS}.xml`)
 		}
 	});
 

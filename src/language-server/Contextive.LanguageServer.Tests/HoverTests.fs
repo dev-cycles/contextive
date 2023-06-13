@@ -121,7 +121,7 @@ let hoverTests =
                 let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
                 let! result = hoverHandler hoverParams null null |> Async.AwaitTask
 
-                test <@ result.Contents.MarkupContent.Value.Contains(expectedHover) @>
+                test <@ result.Contents.MarkupContent.Value.ReplaceLineEndings().Contains(expectedHover) @>
             }
         [
             ([{Term.Default with Name = "firstTerm"; Definition = Some "The first term in our definitions list"}],
@@ -207,7 +207,7 @@ _Vision: supporting the test_
 
 📗 `term`: _undefined_"
 
-            test <@ result.Contents.MarkupContent.Value = expectedHover @>
+            test <@ result.Contents.MarkupContent.Value.ReplaceLineEndings() = expectedHover @>
         }
 
         testAsync $"Test hover with multiple context info" {
@@ -233,7 +233,7 @@ _Vision: supporting the test_
 
 📗 `term`: _undefined_"
 
-            test <@ result.Contents.MarkupContent.Value = expectedHover @>
+            test <@ result.Contents.MarkupContent.Value.ReplaceLineEndings() = expectedHover @>
         }
 
         testAsync $"Test hover with context info and no match" {

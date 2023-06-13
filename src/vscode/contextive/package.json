@@ -55,8 +55,8 @@
 		"compile-tests": "fable test && webpack -c webpack.test.config.js",
 		"watch-tests": "fable watch test --runWatch webpack -c webpack.test.config.js",
 		"pretest": "npm run compile && npm run compile-tests",
-		"test-single-root": "MOCHA_FGREP=\"Single-Root\" node ./out/runTest.js",
-		"test-multi-root": "MOCHA_FGREP=\"Multi-Root\" node ./out/runTest.js",
+		"test-single-root": "cross-env MOCHA_FGREP=\"Single-Root\" node ./out/runTest.js",
+		"test-multi-root": "cross-env MOCHA_FGREP=\"Multi-Root\" node ./out/runTest.js",
 		"test": "npm run test-single-root && npm run test-multi-root"
 	},
 	"devDependencies": {
@@ -67,6 +67,7 @@
 		"@types/vscode": "^1.63.0",
 		"@vscode/test-electron": "^2.2.3",
 		"@vscode/vsce": "^2.18.0",
+		"cross-env": "^7.0.3",
 		"glob": "^7.2.3",
 		"jest": "^27.5.1",
 		"mocha": "^8.4.0",
