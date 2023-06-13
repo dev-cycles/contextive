@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.8.1](https://github.com/dev-cycles/contextive/compare/v1.8.0...v1.8.1) (2023-06-13)
+
+
+### Bug Fixes
+
+* **language-server:** Ensure Contextive works with both CRLF and LF files on Windows ([#40](https://github.com/dev-cycles/contextive/issues/40)) ([9a4d248](https://github.com/dev-cycles/contextive/commit/9a4d24839888dced52a5403123d7bf372fed7622))
+
 # [1.8.0](https://github.com/dev-cycles/contextive/compare/v1.7.0...v1.8.0) (2023-06-11)
 
 
