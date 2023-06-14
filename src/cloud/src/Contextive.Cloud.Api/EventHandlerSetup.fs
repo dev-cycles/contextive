@@ -2,6 +2,8 @@ module EventHandlerSetup
 open Amazon.Lambda.Core
 open Amazon.Lambda.Serialization.SystemTextJson
 open Contextive.Cloud.Api.SlackModels
+open Contextive.Cloud.Api.DefinitionsRepository
+open Contextive.Core.Definitions
 
 [<assembly:LambdaSerializer(typeof<DefaultLambdaJsonSerializer>)>]
 do ()
@@ -29,22 +31,22 @@ let divider =
 
 let header text = 
     Sending.SlackMessage.Block(
-        ``type``="header",
+        ``type``="section",
         text=(Some <| Sending.SlackMessage.Text(
-            ``type``="plain_text",
-            text=text
+            ``type``="mrkdwn",
+            text=sprintf "*%s*" text
         )),
         elements=[||]
     )
 
-let termBlock termName description = 
+let termDefinitionBlock termName description = 
     Sending.SlackMessage.Block(
         ``type``="context",
         text=None,
         elements=[|
             Sending.SlackMessage.Element(
                 ``type``="mrkdwn",
-                text=Sending.SlackMessage.StringOrText(sprintf "*%s*\n%s" termName description),
+                text=Sending.SlackMessage.StringOrText(sprintf "*%s*\n%s" termName (defaultArg description "")),
                 value=None
             )
         |]
@@ -61,14 +63,34 @@ let termActionsBlock =
         |]
     )
 
+let termBlock (term:Term) =
+    [|
+        termDefinitionBlock term.Name term.Definition
+        termActionsBlock
+        divider
+    |]
+
 let frequencyFooter = 
-    Sending.SlackMessage.Block(
-        ``type``="actions",
-        text=None,
-        elements=[|
-            button "Change Reminder Frequency" "change_reminder_frequency"
-        |]
-    )
+    [|
+        Sending.SlackMessage.Block(
+            ``type``="context",
+            text=None,
+            elements=[|
+                Sending.SlackMessage.Element(
+                    ``type``="mrkdwn",
+                    text=Sending.SlackMessage.StringOrText("Reminders for these terms won't be sent for the next 2 weeks."),
+                    value=None
+                )
+            |]
+        )
+        Sending.SlackMessage.Block(
+            ``type``="actions",
+            text=None,
+            elements=[|
+                button "Change Reminder Frequency" "change_reminder_frequency"
+            |]
+        )
+    |]
 
 let shouldDrop = function
     | FSharp.Data.JsonValue.Array a when a.Length=0 -> true
@@ -86,33 +108,66 @@ let rec dropNullFields = function
       arr |> Array.map dropNullFields |> FSharp.Data.JsonValue.Array
   | json -> json
 
-let getBlocks termName = 
+let getBlocks context = 
+    let terms =
+        context.Terms
+        |> Seq.map termBlock
+        |> Seq.collect id 
     [|
-        header "Test Context Definition Reminders"
+        header $"{context.Name} Reminders"
         divider
-        termBlock termName "A description"
-        termActionsBlock
-        divider
-        frequencyFooter
+        yield! terms
+        yield! frequencyFooter
     |]
 
-let getMessage channel text =
+let getMessage channel definitions =
+    let context = definitions.Contexts[0]
     (Sending.SlackMessage.Root(
         channel=channel,
-        blocks=getBlocks text
+        blocks=getBlocks context
     )).JsonValue |> dropNullFields
 
-let FunctionHandlerAsync (evt : CloudWatchEvent<Receiving.SlackMessage>, context: ILambdaContext) = task {
-    let event = evt.Detail
-    let logger = context.Logger
-    logger.LogWarning <| sprintf "Event text: %A" event
-
-    let msg = getMessage event.Channel event.Text
-    
+let sendMessageToChannel (logger:ILambdaLogger) (msg: FSharp.Data.JsonValue) = task { 
     let slackOAuth_Token = System.Environment.GetEnvironmentVariable("SLACK_OAUTH_TOKEN")
     let! res = msg.RequestAsync(
         "https://slack.com/api/chat.postMessage",
         headers = [ "Authorization", $"Bearer {slackOAuth_Token}" ]
     )
     logger.LogWarning <| sprintf "Post Response: %A" res
+}
+
+let getCandidateTokens (msg:string) =
+    msg.Split(" ")
+    |> Seq.map (fun s -> (s, seq { s }))
+
+let filterContext tokens context =
+    let terms = Contextive.Core.CandidateTerms.filterRelevantTerms context.Terms tokens
+    { context with Terms = ResizeArray<Term>(terms) }
+
+let lookForMatchingTerms (msg:string) (definitions:Definitions) =
+    let tokens = getCandidateTokens msg
+    let contexts = Seq.map (filterContext tokens) definitions.Contexts
+    Ok { definitions with Contexts = ResizeArray<Context>(contexts) }
+    
+let formatMessage (channel:string) (definitions:Definitions) =
+    getMessage channel definitions
+    |> Ok
+
+let FunctionHandlerAsync (evt : CloudWatchEvent<Receiving.SlackMessage>, context: ILambdaContext) = task {
+    let event = evt.Detail
+    let logger = context.Logger
+    logger.LogWarning <| sprintf "Event text: %A" event
+
+    let! res = getDefinitions "demo"
+
+    let msg =
+        res
+        |> Result.bind deserialize
+        |> Result.bind (lookForMatchingTerms event.Text)
+        |> Result.bind (formatMessage event.Channel)
+
+    do!
+        match msg with
+        | Ok(m) -> sendMessageToChannel logger m
+        | Error(e) -> task {logger.LogError(e)}  
 }
