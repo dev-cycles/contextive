@@ -2,6 +2,7 @@ module Contextive.Core.CandidateTerms
 
 open System.Text.RegularExpressions
 open System.Linq
+open Humanizer
 
 // Token is a punctuation delimited text from a source file
 type Token = string
@@ -45,3 +46,37 @@ let private normalise tokenList : TokenAndCandidateTerms seq =
     tokenList |> chunkLengths |> Seq.collect gatherTokenChunks
 
 let tokenToTokenAndCandidateTerms = candidateTermsFromToken >> normalise
+
+let private termEquals (term:Definitions.Term) (candidateTerm:string) =
+    let normalisedTerm = term.Name.Replace(" ", "")
+    let singularEquals = normalisedTerm.Equals(candidateTerm, System.StringComparison.InvariantCultureIgnoreCase)
+    let singularCandidate = candidateTerm.Singularize(false, false)
+    let pluralEquals = normalisedTerm.Equals(singularCandidate, System.StringComparison.InvariantCultureIgnoreCase)
+    singularEquals || pluralEquals
+
+let private termEqualsCandidate (term:Definitions.Term) (tokenAndCandidateTerms:TokenAndCandidateTerms) = fst tokenAndCandidateTerms |> termEquals term
+let private termInCandidates (term:Definitions.Term) (tokenAndCandidateTerms:TokenAndCandidateTerms) = (snd tokenAndCandidateTerms) |> Seq.exists (termEquals term)
+
+let termFilterForCandidateTerms tokenAndCandidateTerms =
+    fun (t:Definitions.Term) -> 
+        let candidateMatchesTerm = termEqualsCandidate t
+        tokenAndCandidateTerms |> Seq.exists candidateMatchesTerm
+
+let filterRelevantTerms (terms: Definitions.Term seq) (tokenAndCandidateTerms: TokenAndCandidateTerms seq) =
+    let exactTerms =
+        tokenAndCandidateTerms
+        |> Seq.allPairs terms
+        |> Seq.filter (fun (t, w) -> termEqualsCandidate t w)
+    let relevantTerms =
+        exactTerms
+        |> Seq.filter (fun (t, wAndP) -> 
+            exactTerms
+            |> Seq.except (seq {(t, wAndP)})
+            |> Seq.exists (fun (_, w) -> termInCandidates t w)
+            |> not)
+        |> Seq.map fst
+    match relevantTerms with
+    | EmptySeq -> terms
+    | _ -> relevantTerms
+
+

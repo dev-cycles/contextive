@@ -40,6 +40,11 @@ module private Filtering =
         | Seq.Empty -> terms
         | _ -> relevantTerms
 
+let private getTokenAtPosition (p:HoverParams) (tokenFinder: TextDocument.TokenFinder) =
+    match p.TextDocument with
+    | null -> None
+    | document -> tokenFinder (document.Uri) p.Position
+
     let findMatchingTerms (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq) =
         Seq.filter (fun t ->
             let candidateMatchesTerm = termEqualsToken t
@@ -71,14 +76,42 @@ let private hoverResult (contexts: Definitions.FindResult) =
     | None -> Lsp.noHoverResult
     | Some(c) -> Hover(Contents = (c |> Lsp.markupContent))
 
-let private hoverContentForToken
-    (uri: string)
-    (termFinder: Definitions.Finder)
-    (tokensAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq)
-    =
-    async {
-        let! findResult = termFinder uri (Filtering.termFilterForCandidateTerms tokensAndCandidateTerms)
+let private getContextHeading (context: Definitions.Context) =
+    match context.Name with
+    | null | "" -> None
+    | _ -> Some $"### 💠 {context.Name} Context"
 
+let private getContextDomainVisionStatement (context: Definitions.Context) =
+    match context.DomainVisionStatement with
+    | null | "" -> None
+    | _ -> Some $"_Vision: {context.DomainVisionStatement}_"
+
+let private getContextHover (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq) (context: Definitions.Context) =
+    let relevantTerms = CandidateTerms.filterRelevantTerms context.Terms tokenAndCandidateTerms
+    if Seq.length relevantTerms = 0 then
+        None
+    else
+        [getTermHoverContent relevantTerms]
+        |> Seq.append
+            ([getContextHeading; getContextDomainVisionStatement]
+            |> Seq.map (fun f -> f context))
+        |> concatWithNewLinesIfExists
+
+let private ContextSeparator = "\n\n***\n\n"
+
+let private getContextsHoverContent (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq) (contexts: Definitions.FindResult)  =
+    contexts
+    |> Seq.map (getContextHover tokenAndCandidateTerms)
+    |> concatIfExists ContextSeparator
+
+let private hoverResult (tokensAndCandidateTerms:  CandidateTerms.TokenAndCandidateTerms seq) (contexts: Definitions.FindResult) =
+    let content = getContextsHoverContent tokensAndCandidateTerms contexts
+    match content with
+    | None -> noHoverResult
+    | Some(c) -> Hover(Contents = (c |> markupContent))
+
+let private hoverContentForToken (uri:string) (termFinder:Definitions.Finder) (tokensAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq) = async {
+        let! findResult = termFinder uri (CandidateTerms.termFilterForCandidateTerms tokensAndCandidateTerms)
         return
             if Seq.isEmpty findResult then
                 Lsp.noHoverResult

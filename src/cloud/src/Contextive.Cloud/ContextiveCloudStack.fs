@@ -67,6 +67,8 @@ type ContextiveCloudStack(scope, id, props) as this =
     let apiFunction = Function(this, "Api", apiFunctionProps)
     
     do eventBus.GrantPutEventsTo(apiFunction) |> ignore
+    do definitions.GrantReadWrite(apiFunction) |> ignore
+    do definitions.GrantRead(eventHandlerFunction) |> ignore
 
     do printfn "isLocal: %A" isLocal
     do match isLocal with

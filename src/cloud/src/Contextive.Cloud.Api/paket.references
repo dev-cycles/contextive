@@ -7,3 +7,4 @@ AWSSDK.SSOOIDC
 FSharp.Data
 Amazon.Lambda.CloudWatchEvents
 AWSSDK.EventBridge
+FsToolkit.ErrorHandling
