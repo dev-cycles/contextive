@@ -5,3 +5,5 @@ AWSSDK.S3
 AWSSDK.SSO
 AWSSDK.SSOOIDC
 FSharp.Data
+Amazon.Lambda.CloudWatchEvents
+AWSSDK.EventBridge
