@@ -40,6 +40,8 @@ RUN chmod +x /tmp/setup_tools.sh && su - vscode -c "/tmp/setup_tools.sh >> /tmp/
 # higher than 1.1.415701
 # RUN su - vscode -c "dotnet-suggest script bash | tr -d '\015' >> ~/.bashrc"
 
+RUN su - vscode -c "echo \"set -o allexport; source src/.env; set +o allexport\" >> /home/vscode/.bashrc"
+
 COPY post_start_command.sh /home/vscode/post_start_command.sh
 RUN chmod +x /home/vscode/post_start_command.sh
 
