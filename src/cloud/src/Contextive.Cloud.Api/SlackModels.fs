@@ -22,6 +22,7 @@ module Sending =
     open FSharp.Data
     type SlackMessage = JsonProvider<"""{
     "channel": "channel",
+	"thread_ts": "thread_ts",
 	"blocks": [
 		{
 			"type": "header",

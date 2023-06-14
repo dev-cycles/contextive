@@ -120,10 +120,11 @@ let getBlocks context =
         yield! frequencyFooter
     |]
 
-let getMessage channel definitions =
+let getMessage (channel:string) (thread_ts:string) definitions =
     let context = definitions.Contexts[0]
     (Sending.SlackMessage.Root(
         channel=channel,
+        threadTs=thread_ts,
         blocks=getBlocks context
     )).JsonValue |> dropNullFields
 
@@ -138,19 +139,22 @@ let sendMessageToChannel (logger:ILambdaLogger) (msg: FSharp.Data.JsonValue) = t
 
 let getCandidateTokens (msg:string) =
     msg.Split(" ")
-    |> Seq.map (fun s -> (s, seq { s }))
+    |> Seq.map (fun s -> (s, Some s |> Contextive.Core.CandidateTerms.candidateTermsFromToken))
 
 let filterContext tokens context =
-    let terms = Contextive.Core.CandidateTerms.filterRelevantTerms context.Terms tokens
+    let terms = context.Terms |> Seq.filter (Contextive.Core.CandidateTerms.termFilterForCandidateTerms tokens)
     { context with Terms = ResizeArray<Term>(terms) }
 
 let lookForMatchingTerms (msg:string) (definitions:Definitions) =
     let tokens = getCandidateTokens msg
     let contexts = Seq.map (filterContext tokens) definitions.Contexts
-    Ok { definitions with Contexts = ResizeArray<Context>(contexts) }
+    if (Seq.head contexts).Terms.Count = 0 then
+        Error("No terms found.")
+    else
+        Ok { definitions with Contexts = ResizeArray<Context>(contexts) }
     
-let formatMessage (channel:string) (definitions:Definitions) =
-    getMessage channel definitions
+let formatMessage (channel:string) (thread_ts: string) (definitions:Definitions) =
+    getMessage channel thread_ts definitions
     |> Ok
 
 let FunctionHandlerAsync (evt : CloudWatchEvent<Receiving.SlackMessage>, context: ILambdaContext) = task {
@@ -164,7 +168,7 @@ let FunctionHandlerAsync (evt : CloudWatchEvent<Receiving.SlackMessage>, context
         res
         |> Result.bind deserialize
         |> Result.bind (lookForMatchingTerms event.Text)
-        |> Result.bind (formatMessage event.Channel)
+        |> Result.bind (formatMessage event.Channel event.Ts)
 
     do!
         match msg with
