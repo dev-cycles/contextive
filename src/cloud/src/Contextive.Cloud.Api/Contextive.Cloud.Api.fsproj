@@ -12,9 +12,12 @@
     <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AwsHelpers.fs" />
+    <Compile Include="SlackModels.fs" />
     <Compile Include="Definitions.fs" />
     <Compile Include="Slack.fs" />
     <Compile Include="AppHandlers.fs" />
+    <Compile Include="EventHandlerSetup.fs" />
     <Compile Include="Setup.fs" />
   </ItemGroup>
   <ItemGroup>

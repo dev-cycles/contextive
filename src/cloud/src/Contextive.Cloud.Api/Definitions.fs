@@ -6,6 +6,7 @@ open Microsoft.AspNetCore.Http
 open Contextive.Core.Definitions
 open Amazon.S3
 open Amazon.S3.Model
+open AwsHelpers
 
 let clientError msg = setStatusCode 400 >=> setBodyFromString msg
 
@@ -13,7 +14,7 @@ let bucketName() = System.Environment.GetEnvironmentVariable("DEFINITIONS_BUCKET
 
 let saveDefinitions slug yml = task {
     use s3Client = new AmazonS3Client(
-        AmazonS3Config(ServiceURL = "http://localstack:4566",ForcePathStyle=true)
+        AmazonS3Config(ForcePathStyle=true) |> forEnvironment
     )
     let! _ = s3Client.PutObjectAsync(PutObjectRequest(
         BucketName=bucketName(),
@@ -25,7 +26,7 @@ let saveDefinitions slug yml = task {
 
 let getDefinitions slug = task {
     use s3Client = new AmazonS3Client(
-        AmazonS3Config(ServiceURL = "http://localstack:4566",ForcePathStyle=true)
+        AmazonS3Config(ForcePathStyle=true) |> forEnvironment
     )
     use! response = s3Client.GetObjectAsync(GetObjectRequest(
         BucketName=bucketName(),
@@ -36,7 +37,7 @@ let getDefinitions slug = task {
     return Ok(content)
 }
 
-let put  (slug:string) =
+let put (slug:string) =
     fun (next : HttpFunc) (ctx : HttpContext) -> task {
         let! yml = ctx.ReadBodyFromRequestAsync()
         let definitions = deserialize yml

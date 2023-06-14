@@ -10,13 +10,9 @@ open Microsoft.Extensions.Logging
 open Microsoft.Extensions.Hosting
 open Giraffe
 
-
-
 // ---------------------------------
 // Config and Main
 // ---------------------------------
-
-
 let configureApp (app : IApplicationBuilder) =
     let env = app.ApplicationServices.GetService<IWebHostEnvironment>()
     (match env.IsDevelopment() with
@@ -36,7 +32,7 @@ let configureServices (services : IServiceCollection) =
     services.AddGiraffe() |> ignore
 
 let configureLogging level (builder : ILoggingBuilder) =
-    let filter (l : LogLevel) = l.Equals level
+    let filter (l : LogLevel) = l >= level
     builder.AddFilter(filter).AddConsole().AddDebug() |> ignore
 
 let configureAppConfiguration (ctx:WebHostBuilderContext) (builder : IConfigurationBuilder) =
@@ -71,7 +67,6 @@ type LambdaEntryPoint() =
             .UseContentRoot(contentRoot) 
             .Configure(Action<IApplicationBuilder> configureApp)
             .ConfigureServices(configureServices)
-            .ConfigureLogging(configureLogging LogLevel.Warning)
             |> ignore
 
 // ---------------------------------

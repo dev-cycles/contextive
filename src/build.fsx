@@ -19,6 +19,7 @@ let ensureSuccess (p:ProcessResult) =
     | p -> failwith (String.concat (System.Environment.NewLine) p.Errors) 
 
 type BucketResponse = JsonProvider<""" { "Buckets": [{"Name": "SampleName"}] } """>
+type EventBusResponse = JsonProvider<""" { "EventBuses": [{"Name": "SampleName"}] } """>
 
 let setLocal = Environment.setEnvironVar "AWS_PROFILE" "local"
 
@@ -32,7 +33,7 @@ let cdk' cdkType cmd args =
 
 let cdkLocal cmd = 
   setLocal
-  cdk' "cdklocal" cmd <| Some "--context local="
+  cdk' "cdklocal" cmd <| Some "--context local= --require-approval never"
 
 let cdk cmd = 
   Environment.setEnvironVar "AWS_PROFILE" "dev-cycles-sandbox-chris"
@@ -55,10 +56,21 @@ let getDefinitionsBucketName() =
         |> fun b -> b.Name
     )
 
+let getEventBusName() =
+    awsLocal "events list-event-buses" (
+        fun output ->
+        EventBusResponse.Parse output
+        |> fun b -> b.EventBuses
+        |> Array.find (fun b -> b.Name.Contains("Slack"))
+        |> fun b -> b.Name
+    )
+
 // *** Define Targets ***
 Target.create "Cloud-Api-Test" (fun _ ->
   setLocal
   Environment.setEnvironVar "DEFINITIONS_BUCKET_NAME" <| getDefinitionsBucketName()
+  Environment.setEnvironVar "EVENT_BUS_NAME" <| getEventBusName()
+  Environment.setEnvironVar "IS_LOCAL" "True"
   DotNet.exec (
         withWorkDir "cloud/src/Contextive.Cloud.Api.Tests"
       )
@@ -87,15 +99,23 @@ Target.create "Cloud-Deploy" (fun _ ->
   cdk "deploy"
 )
 
-open Fake.Core.TargetOperators
+Target.create "Cloud-Synth" (fun _ ->
+  cdk "synth"
+)
 
-// // *** Define Dependencies ***
-// "Clean"
-//   ==> "Build"
-//   ==> "Deploy"
+open Fake.Core.TargetOperators
 
 "Cloud-Api-Publish"
   ==> "Cloud-Deploy"
+
+"Cloud-Api-Publish"
+  ==> "Cdk-Bootstrap-Local"
+
+"Cloud-Api-Publish"
+  ==> "Cloud-Deploy-Local"
+
+"Cloud-Deploy-Local"
+  ==> "Cloud-Api-Test"
 
 // *** Start Build ***
 Target.runOrDefault "Cloud-Api-Test"
