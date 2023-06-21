@@ -84,6 +84,12 @@ async function main() {
 				...ipcOpts,
 			}
 		});
+
+		// Temporary: see https://github.com/dev-cycles/contextive/issues/44
+		cp.spawnSync("bash", ["-c", "pkill -f \"dotnet run\""], {
+			encoding: 'utf-8',
+			stdio: 'inherit',
+		});
 	} catch (err) {
 		console.error('Failed to run tests', err);
 		process.exit(1);
