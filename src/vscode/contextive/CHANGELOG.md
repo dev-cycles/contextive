@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.9.0](https://github.com/dev-cycles/contextive/compare/v1.8.1...v1.9.0) (2023-06-21)
+
+
+### Features
+
+* **language-server:** add support for term aliases and show term definition when hovering over an alias ([28103de](https://github.com/dev-cycles/contextive/commit/28103deff1e491455a1660571b999bccc437378f))
+
 ## [1.8.1](https://github.com/dev-cycles/contextive/compare/v1.8.0...v1.8.1) (2023-06-13)
 
 
