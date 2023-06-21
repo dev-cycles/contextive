@@ -7,19 +7,18 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Window
 
 type LogHandler = LogMessageParams -> Task
 
-let private createHandler logAwaiter (l:LogMessageParams) =
-    l.Message |> ConditionAwaiter.received logAwaiter 
+let private createHandler logAwaiter (l: LogMessageParams) =
+    l.Message |> ConditionAwaiter.received logAwaiter
     Task.CompletedTask
 
-let waitForLogMessage logAwaiter (logMessage:string) = async {
-    let logCondition = fun (m:string) -> m.Contains(logMessage)
+let waitForLogMessage logAwaiter (logMessage: string) =
+    async {
+        let logCondition = fun (m: string) -> m.Contains(logMessage)
 
-    return! ConditionAwaiter.waitFor logAwaiter logCondition 25000
-}
+        return! ConditionAwaiter.waitFor logAwaiter logCondition 25000
+    }
 
-let optionsBuilder logAwaiter (b:LanguageClientOptions) =
+let optionsBuilder logAwaiter (b: LanguageClientOptions) =
     let handler = createHandler logAwaiter
-    b.EnableWorkspaceFolders()
-        .OnLogMessage(handler)
-        |> ignore
+    b.EnableWorkspaceFolders().OnLogMessage(handler) |> ignore
     b

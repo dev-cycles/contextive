@@ -9,13 +9,16 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Client
 open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open System.Threading.Tasks
 
-let jTokenFromMap values = 
+let jTokenFromMap values =
     let configValue = JObject()
-    values |> Map.iter (fun k (v:obj) ->
-        configValue.[k] <- 
+
+    values
+    |> Map.iter (fun k (v: obj) ->
+        configValue.[k] <-
             match v with
             | :? JToken as jv -> jv
             | _ -> JValue(v))
+
     configValue
 
 let private configSectionResultFromMap values =
@@ -23,37 +26,41 @@ let private configSectionResultFromMap values =
     results.Add(jTokenFromMap values)
     Container(results)
 
-let private includesSection section (configRequest:ConfigurationParams) =
+let private includesSection section (configRequest: ConfigurationParams) =
     configRequest.Items |> Seq.map (fun ci -> ci.Section) |> Seq.contains section
 
 let private createHandler section configValuesLoader =
-    fun (configRequest:ConfigurationParams) ->
-        let configSectionResult = configSectionResultFromMap <| configValuesLoader()
+    fun (configRequest: ConfigurationParams) ->
+        let configSectionResult = configSectionResultFromMap <| configValuesLoader ()
+
         if configRequest.Items.Count() = 0 || configRequest |> includesSection section then
             Task.FromResult(configSectionResult)
         else
-            Task.FromResult(configSectionResultFromMap <| Map[])
+            Task.FromResult(configSectionResultFromMap <| Map [])
 
-let optionsBuilder section configValuesLoader (b:LanguageClientOptions) =
+let optionsBuilder section configValuesLoader (b: LanguageClientOptions) =
     let handler = createHandler section configValuesLoader
-    b.WithCapability(Capabilities.DidChangeConfigurationCapability(DynamicRegistration=true))
+
+    b
+        .WithCapability(Capabilities.DidChangeConfigurationCapability(DynamicRegistration = true))
         .OnConfiguration(handler)
-        |> ignore
+    |> ignore
+
     b
 
 type PathLoader = unit -> obj
 
-let mapLoader (pathLoader:PathLoader) () = Map[("path", pathLoader())]
+let mapLoader (pathLoader: PathLoader) () = Map[("path", pathLoader ())]
 
-let contextivePathLoaderOptionsBuilder (pathLoader:PathLoader) = optionsBuilder "contextive" <| mapLoader pathLoader
+let contextivePathLoaderOptionsBuilder (pathLoader: PathLoader) =
+    optionsBuilder "contextive" <| mapLoader pathLoader
 
-let contextivePathOptionsBuilder path = contextivePathLoaderOptionsBuilder (fun () -> path)
+let contextivePathOptionsBuilder path =
+    contextivePathLoaderOptionsBuilder (fun () -> path)
 
-let didChange (client:ILanguageClient) path =
+let didChange (client: ILanguageClient) path =
     let setting = jTokenFromMap <| Map[("path", path)]
     let configSection = jTokenFromMap <| Map[("contextive", setting)]
 
-    let didChangeConfig = DidChangeConfigurationParams(
-        Settings = configSection
-    )
+    let didChangeConfig = DidChangeConfigurationParams(Settings = configSection)
     client.Workspace.DidChangeConfiguration(didChangeConfig)

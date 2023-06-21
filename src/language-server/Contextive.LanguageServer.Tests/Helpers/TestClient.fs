@@ -20,46 +20,56 @@ type private TestClient() =
     override _.SetupServer() =
         let clientPipe = Pipe()
         let serverPipe = Pipe()
+
         setupAndStartLanguageServer (serverPipe.Reader.AsStream()) (clientPipe.Writer.AsStream())
-            |> Async.Ignore
-            |> Async.Start
+        |> Async.Ignore
+        |> Async.Start
+
         (clientPipe.Reader.AsStream(), serverPipe.Writer.AsStream())
 
     member _.Initialize clientOptsBuilder =
         match clientOptsBuilder with
-            | Some b -> base.InitializeClient(Action<LanguageClientOptions>(b >> ignore))
-            | _ -> base.InitializeClient(null)
+        | Some b -> base.InitializeClient(Action<LanguageClientOptions>(b >> ignore))
+        | _ -> base.InitializeClient(null)
 
-let private createTestClient clientOptsBuilder = async {
-    let testClient = new TestClient()
-    
-    let! client = testClient.Initialize(clientOptsBuilder) |> Async.AwaitTask
+let private createTestClient clientOptsBuilder =
+    async {
+        let testClient = new TestClient()
 
-    return client, None
-}
+        let! client = testClient.Initialize(clientOptsBuilder) |> Async.AwaitTask
 
-let private initAndWaitForConfigLoaded testClientConfig (loadMessage: string option) = async {
-    let logAwaiter = ConditionAwaiter.create()
+        return client, None
+    }
 
-    let allBuilders = ServerLog.optionsBuilder logAwaiter :: testClientConfig
+let private initAndWaitForConfigLoaded testClientConfig (loadMessage: string option) =
+    async {
+        let logAwaiter = ConditionAwaiter.create ()
 
-    let clientOptionsBuilder = List.fold (>>) id allBuilders
-    
-    let! (client, _) = Some clientOptionsBuilder |> createTestClient
+        let allBuilders = ServerLog.optionsBuilder logAwaiter :: testClientConfig
 
-    let! reply = (defaultArg loadMessage "Loading contextive") |> ServerLog.waitForLogMessage logAwaiter
+        let clientOptionsBuilder = List.fold (>>) id allBuilders
 
-    return (client, reply)
-}
+        let! (client, _) = Some clientOptionsBuilder |> createTestClient
 
-let initWithReply initOptions = async {
-    return! match initOptions with
+        let! reply =
+            (defaultArg loadMessage "Loading contextive")
+            |> ServerLog.waitForLogMessage logAwaiter
+
+        return (client, reply)
+    }
+
+let initWithReply initOptions =
+    async {
+        return!
+            match initOptions with
             | SimpleTestClient -> createTestClient None
             | TestClient(testClientConfig) -> initAndWaitForConfigLoaded testClientConfig None
-            | TestClientWithCustomInitWait(testClientConfig, loadMessage) -> initAndWaitForConfigLoaded testClientConfig loadMessage
-}
+            | TestClientWithCustomInitWait(testClientConfig, loadMessage) ->
+                initAndWaitForConfigLoaded testClientConfig loadMessage
+    }
 
-let init o = async {
-    let! result = initWithReply o
-    return fst result
-}
+let init o =
+    async {
+        let! result = initWithReply o
+        return fst result
+    }

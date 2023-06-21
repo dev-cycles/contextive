@@ -15,53 +15,58 @@ module DH = Helpers.Definitions
 
 [<Tests>]
 let hoverTests =
-    testList "LanguageServer.Hover Tests" [
-
-        testAsync "Given no definitions and no document sync, server response to hover request with empty result" {
-            use! client = SimpleTestClient |> init
-
-            let hoverParams = HoverParams()
-
-            let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
-
-            test <@ hover = null @>
-        }
-
-        let multiLineToSingleLine (t:string) = t.Replace("\n", "\\n").Replace("\r", "\\r")
-
-        let testHoverTermFound (text, position: Position, expectedTerm: string) = 
-            testAsync $"Given definitions and text '{multiLineToSingleLine text}', server responds to hover request with {expectedTerm} in {position}" {
-                let fileName = "three"
-                let config = [
-                        Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                        ConfigurationSection.contextivePathOptionsBuilder $"{fileName}.yml"
-                    ]
-
-                use! client = TestClient(config) |> init
-
-                let textDocumentUri = $"file:///{System.Guid.NewGuid().ToString()}"
-
-                client.TextDocument.DidOpenTextDocument(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
-                    LanguageId = "plaintext",
-                    Version = 0,
-                    Text = text,
-                    Uri = textDocumentUri
-                )))
-
-                let hoverParams = HoverParams(
-                    TextDocument = textDocumentUri,
-                    Position = position
-                )
-
-                let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
-
-                test <@ hover.Contents.HasMarkupContent @>
-                test <@ hover.Contents.MarkupContent.Kind = MarkupKind.Markdown @>
-                test <@ hover.Contents.MarkupContent.Value.Contains(expectedTerm) @>
-            }
-
+    testList
+        "LanguageServer.Hover Tests"
         [
-            ("original", Position(0, 0), "original")
+
+          testAsync "Given no definitions and no document sync, server response to hover request with empty result" {
+              use! client = SimpleTestClient |> init
+
+              let hoverParams = HoverParams()
+
+              let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
+
+              test <@ hover = null @>
+          }
+
+          let multiLineToSingleLine (t: string) =
+              t.Replace("\n", "\\n").Replace("\r", "\\r")
+
+          let testHoverTermFound (text, position: Position, expectedTerm: string) =
+              testAsync
+                  $"Given definitions and text '{multiLineToSingleLine text}', server responds to hover request with {expectedTerm} in {position}" {
+                  let fileName = "three"
+
+                  let config =
+                      [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
+                        ConfigurationSection.contextivePathOptionsBuilder $"{fileName}.yml" ]
+
+                  use! client = TestClient(config) |> init
+
+                  let textDocumentUri = $"file:///{System.Guid.NewGuid().ToString()}"
+
+                  client.TextDocument.DidOpenTextDocument(
+                      DidOpenTextDocumentParams(
+                          TextDocument =
+                              TextDocumentItem(
+                                  LanguageId = "plaintext",
+                                  Version = 0,
+                                  Text = text,
+                                  Uri = textDocumentUri
+                              )
+                      )
+                  )
+
+                  let hoverParams = HoverParams(TextDocument = textDocumentUri, Position = position)
+
+                  let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
+
+                  test <@ hover.Contents.HasMarkupContent @>
+                  test <@ hover.Contents.MarkupContent.Kind = MarkupKind.Markdown @>
+                  test <@ hover.Contents.MarkupContent.Value.Contains(expectedTerm) @>
+              }
+
+          [ ("original", Position(0, 0), "original")
             ("Original", Position(0, 0), "original")
             ("original another", Position(0, 10), "another")
             ("original another word", Position(0, 11), "another")
@@ -75,82 +80,100 @@ let hoverTests =
             ("AnotherCombinedWord", Position(0, 1), "another")
             ("AnotherCombinedWord", Position(0, 1), "CombinedWord")
             ("originals", Position(0, 0), "original")
-            ("octopi", Position(0, 0), "octopus")
-        ] |> List.map testHoverTermFound |> testList "Term found when hovering in opened docs at Positions"
+            ("octopi", Position(0, 0), "octopus") ]
+          |> List.map testHoverTermFound
+          |> testList "Term found when hovering in opened docs at Positions"
 
-        let testHoverTermNotFound (text, position: Position) = 
-            testAsync $"Given definitions '{text}' and document open, server responds to hover request with no content in {position}" {
-                let fileName = "one"
-                let config = [
-                        Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                        ConfigurationSection.contextivePathOptionsBuilder $"{fileName}.yml"
-                    ]
+          let testHoverTermNotFound (text, position: Position) =
+              testAsync
+                  $"Given definitions '{text}' and document open, server responds to hover request with no content in {position}" {
+                  let fileName = "one"
 
-                use! client = TestClient(config) |> init
+                  let config =
+                      [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
+                        ConfigurationSection.contextivePathOptionsBuilder $"{fileName}.yml" ]
 
-                let textDocumentUri = $"file:///{System.Guid.NewGuid().ToString()}"
+                  use! client = TestClient(config) |> init
 
-                client.TextDocument.DidOpenTextDocument(DidOpenTextDocumentParams(TextDocument = TextDocumentItem(
-                    LanguageId = "plaintext",
-                    Version = 0,
-                    Text = text,
-                    Uri = textDocumentUri
-                )))
+                  let textDocumentUri = $"file:///{System.Guid.NewGuid().ToString()}"
 
-                let hoverParams = HoverParams(
-                    TextDocument = textDocumentUri,
-                    Position = position
-                )
+                  client.TextDocument.DidOpenTextDocument(
+                      DidOpenTextDocumentParams(
+                          TextDocument =
+                              TextDocumentItem(
+                                  LanguageId = "plaintext",
+                                  Version = 0,
+                                  Text = text,
+                                  Uri = textDocumentUri
+                              )
+                      )
+                  )
 
-                let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
+                  let hoverParams = HoverParams(TextDocument = textDocumentUri, Position = position)
 
-                test <@ hover = null @>
-            }
+                  let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
 
-        [
-            ("NotATerm", Position(0, 0))
+                  test <@ hover = null @>
+              }
+
+          [ ("NotATerm", Position(0, 0))
             ("firstTerm NotATerm", Position(0, 10))
-            ("    anothernotterm", Position(0,0))
-            ("", Position(0,0))
-        ] |> List.map testHoverTermNotFound |> testList "Term not found when hovering"
+            ("    anothernotterm", Position(0, 0))
+            ("", Position(0, 0)) ]
+          |> List.map testHoverTermNotFound
+          |> testList "Term not found when hovering"
 
-        let testHoverDisplay (terms: Term list, (wordAtPosition:string), (expectedHover:string)) =
-            testAsync $"Test hover format when hovering over {wordAtPosition} and definitions are {terms |> List.map (fun t -> t.Name)}" { 
-                let hoverHandler = Hover.handler (DH.mockDefinitionsFinder Context.Default terms) (fun _ _ -> Some wordAtPosition)
+          let testHoverDisplay (terms: Term list, (wordAtPosition: string), (expectedHover: string)) =
+              testAsync
+                  $"Test hover format when hovering over {wordAtPosition} and definitions are {terms |> List.map (fun t -> t.Name)}" {
+                  let hoverHandler =
+                      Hover.handler (DH.mockDefinitionsFinder Context.Default terms) (fun _ _ -> Some wordAtPosition)
 
-                let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
-                let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+                  let hoverParams =
+                      HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
 
-                test <@ result.Contents.MarkupContent.Value.ReplaceLineEndings().Contains(expectedHover) @>
-            }
-        [
-            ([{Term.Default with Name = "firstTerm"; Definition = Some "The first term in our definitions list"}],
-                "firstTerm",
-                "📗 `firstTerm`: The first term in our definitions list")
-            ([{Term.Default with Name = "SecondTerm"}],
-                "secondTerm",
-                "📗 `SecondTerm`: _undefined_")
-            ([{Term.Default with Name = "ThirdTerm"; Examples = ResizeArray ["Do a thing"] }],
-                "thirdTerm",
-                "\
+                  let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+
+                  test <@ result.Contents.MarkupContent.Value.ReplaceLineEndings().Contains(expectedHover) @>
+              }
+
+          [ ([ { Term.Default with
+                   Name = "firstTerm"
+                   Definition = Some "The first term in our definitions list" } ],
+             "firstTerm",
+             "📗 `firstTerm`: The first term in our definitions list")
+            ([ { Term.Default with
+                   Name = "SecondTerm" } ],
+             "secondTerm",
+             "📗 `SecondTerm`: _undefined_")
+            ([ { Term.Default with
+                   Name = "ThirdTerm"
+                   Examples = ResizeArray [ "Do a thing" ] } ],
+             "thirdTerm",
+             "\
 📗 `ThirdTerm`: _undefined_
 
 #### `ThirdTerm` Usage Examples:
 
 💬 \"Do a thing\"")
-            ([{Term.Default with Name = "SecondTerm"}; {Term.Default with Name = "ThirdTerm"}],
-                "secondTerm",
-                "📗 `SecondTerm`")
-            ([{Term.Default with Name = "Second"}; {Term.Default with Name = "Term"}],
-                "secondTerm",
-                "\
+            ([ { Term.Default with
+                   Name = "SecondTerm" }
+               { Term.Default with Name = "ThirdTerm" } ],
+             "secondTerm",
+             "📗 `SecondTerm`")
+            ([ { Term.Default with Name = "Second" }; { Term.Default with Name = "Term" } ],
+             "secondTerm",
+             "\
 📗 `Second`: _undefined_
 
 📗 `Term`: _undefined_\
                 ")
-            ([{Term.Default with Name = "First"; Examples = ResizeArray ["Do a thing"] }; {Term.Default with Name = "Term"}],
-                "firstTerm",
-                "\
+            ([ { Term.Default with
+                   Name = "First"
+                   Examples = ResizeArray [ "Do a thing" ] }
+               { Term.Default with Name = "Term" } ],
+             "firstTerm",
+             "\
 📗 `First`: _undefined_
 
 📗 `Term`: _undefined_
@@ -158,9 +181,14 @@ let hoverTests =
 #### `First` Usage Examples:
 
 💬 \"Do a thing\"")
-            ([{Term.Default with Name = "Third"; Examples = ResizeArray ["Do a thing"] }; {Term.Default with Name = "Term"; Examples = ResizeArray ["Do something else"]}],
-                "thirdTerm",
-                "\
+            ([ { Term.Default with
+                   Name = "Third"
+                   Examples = ResizeArray [ "Do a thing" ] }
+               { Term.Default with
+                   Name = "Term"
+                   Examples = ResizeArray [ "Do something else" ] } ],
+             "thirdTerm",
+             "\
 📗 `Third`: _undefined_
 
 📗 `Term`: _undefined_
@@ -171,59 +199,80 @@ let hoverTests =
 
 #### `Term` Usage Examples:
 
-💬 \"Do something else\"")
-        ] |> List.map testHoverDisplay |> testList "Term hover display"
+💬 \"Do something else\"") ]
+          |> List.map testHoverDisplay
+          |> testList "Term hover display"
 
-        let testHoverOverMultiWord (terms: string list, tokenAtPosition: string, expectedHover) =
-            testAsync $"Test hover result with terms {terms} over token split {tokenAtPosition}" {
-                let hoverHandler = Hover.handler (DH.mockTermsFinder Context.Default terms) (fun _ _ -> Some tokenAtPosition)
+          let testHoverOverMultiWord (terms: string list, tokenAtPosition: string, expectedHover) =
+              testAsync $"Test hover result with terms {terms} over token split {tokenAtPosition}" {
+                  let hoverHandler =
+                      Hover.handler (DH.mockTermsFinder Context.Default terms) (fun _ _ -> Some tokenAtPosition)
 
-                let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
-                let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+                  let hoverParams =
+                      HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
 
-                test <@ result.Contents.MarkupContent.Value = expectedHover @>
-            }
-        [
-            (["SecondTerm"],                 "SecondTerm",  "📗 `SecondTerm`: _undefined_")
-            (["Second Term"],                "SecondTerm",  "📗 `Second Term`: _undefined_")
-            (["Second"],                     "SecondTerm",  "📗 `Second`: _undefined_")
-            (["SecondTerm";"Second";"Term"], "SecondTerm",  "📗 `SecondTerm`: _undefined_")
-            (["ThirdTerm";"Third";"Term"],   "ThirdTerm",   "📗 `ThirdTerm`: _undefined_")
-            (["ThirdTerm";"Third";"Term"],   "ThirdTermId", "📗 `ThirdTerm`: _undefined_")
-        ] |> List.map testHoverOverMultiWord |> testList "Term hover display over MultiWord"
+                  let! result = hoverHandler hoverParams null null |> Async.AwaitTask
 
-        testAsync $"Test hover with context info" {
-            let terms = ["term"]
-            let foundToken = Some "term"
-            let hoverHandler =
-                Hover.handler (DH.mockTermsFinder ({Context.Default with Name = "TestContext"; DomainVisionStatement="supporting the test"}) terms) (fun _ _ -> foundToken)
+                  test <@ result.Contents.MarkupContent.Value = expectedHover @>
+              }
 
-            let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
-            let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+          [ ([ "SecondTerm" ], "SecondTerm", "📗 `SecondTerm`: _undefined_")
+            ([ "Second Term" ], "SecondTerm", "📗 `Second Term`: _undefined_")
+            ([ "Second" ], "SecondTerm", "📗 `Second`: _undefined_")
+            ([ "SecondTerm"; "Second"; "Term" ], "SecondTerm", "📗 `SecondTerm`: _undefined_")
+            ([ "ThirdTerm"; "Third"; "Term" ], "ThirdTerm", "📗 `ThirdTerm`: _undefined_")
+            ([ "ThirdTerm"; "Third"; "Term" ], "ThirdTermId", "📗 `ThirdTerm`: _undefined_") ]
+          |> List.map testHoverOverMultiWord
+          |> testList "Term hover display over MultiWord"
 
-            let expectedHover = "### 💠 TestContext Context
+          testAsync $"Test hover with context info" {
+              let terms = [ "term" ]
+              let foundToken = Some "term"
+
+              let hoverHandler =
+                  Hover.handler
+                      (DH.mockTermsFinder
+                          ({ Context.Default with
+                              Name = "TestContext"
+                              DomainVisionStatement = "supporting the test" })
+                          terms)
+                      (fun _ _ -> foundToken)
+
+              let hoverParams =
+                  HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
+
+              let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+
+              let expectedHover =
+                  "### 💠 TestContext Context
 
 _Vision: supporting the test_
 
 📗 `term`: _undefined_"
 
-            test <@ result.Contents.MarkupContent.Value.ReplaceLineEndings() = expectedHover @>
-        }
+              test <@ result.Contents.MarkupContent.Value.ReplaceLineEndings() = expectedHover @>
+          }
 
-        testAsync $"Test hover with multiple context info" {
-            let terms = ["term"]
-            let foundToken = Some "term"
-            let contexts = seq {
-                {Context.Default with Name = "Test"}
-                {Context.Default with Name = "Other"}
-            }
+          testAsync $"Test hover with multiple context info" {
+              let terms = [ "term" ]
+              let foundToken = Some "term"
 
-            let hoverHandler = Hover.handler (DH.mockMultiContextTermsFinder contexts terms) (fun _ _ -> foundToken)
+              let contexts =
+                  seq {
+                      { Context.Default with Name = "Test" }
+                      { Context.Default with Name = "Other" }
+                  }
 
-            let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
-            let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+              let hoverHandler =
+                  Hover.handler (DH.mockMultiContextTermsFinder contexts terms) (fun _ _ -> foundToken)
 
-            let expectedHover = "### 💠 Test Context
+              let hoverParams =
+                  HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
+
+              let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+
+              let expectedHover =
+                  "### 💠 Test Context
 
 📗 `term`: _undefined_
 
@@ -233,19 +282,27 @@ _Vision: supporting the test_
 
 📗 `term`: _undefined_"
 
-            test <@ result.Contents.MarkupContent.Value.ReplaceLineEndings() = expectedHover @>
-        }
+              test <@ result.Contents.MarkupContent.Value.ReplaceLineEndings() = expectedHover @>
+          }
 
-        testAsync $"Test hover with context info and no match" {
-            let terms = []
-            let foundToken = Some "term"
-            let hoverHandler =
-                Hover.handler (DH.mockTermsFinder ({Context.Default with Name = "TestContext"}) terms) (fun _ _ -> foundToken)
+          testAsync $"Test hover with context info and no match" {
+              let terms = []
+              let foundToken = Some "term"
 
-            let hoverParams = HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
-            let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+              let hoverHandler =
+                  Hover.handler
+                      (DH.mockTermsFinder
+                          ({ Context.Default with
+                              Name = "TestContext" })
+                          terms)
+                      (fun _ _ -> foundToken)
 
-            test <@ result = null @>
-        }
+              let hoverParams =
+                  HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
 
-    ]
+              let! result = hoverHandler hoverParams null null |> Async.AwaitTask
+
+              test <@ result = null @>
+          }
+
+          ]

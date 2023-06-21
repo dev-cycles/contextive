@@ -4,29 +4,30 @@ open Contextive.LanguageServer.Server
 open Serilog
 open System
 
-let setupLogging = 
+let setupLogging =
 #if DEBUG
-    Log.Logger <- LoggerConfiguration()
-        .MinimumLevel.Verbose()
-        .Enrich.FromLogContext()
-        .WriteTo.File("log.txt", rollingInterval = RollingInterval.Day)
-        .CreateLogger();
+    Log.Logger <-
+        LoggerConfiguration()
+            .MinimumLevel.Verbose()
+            .Enrich.FromLogContext()
+            .WriteTo.File("log.txt", rollingInterval = RollingInterval.Day)
+            .CreateLogger()
 #else
     ()
 #endif
 
-let private startWithConsole = 
+let private startWithConsole =
     setupAndStartLanguageServer (Console.OpenStandardInput()) (Console.OpenStandardOutput())
 
-let startAndWaitForExit = async {
-    let! server = startWithConsole
-    do! server.WaitForExit |> Async.AwaitTask
-    Log.Logger.Information "Server exited."
-}
+let startAndWaitForExit =
+    async {
+        let! server = startWithConsole
+        do! server.WaitForExit |> Async.AwaitTask
+        Log.Logger.Information "Server exited."
+    }
 
 [<EntryPoint>]
 let main argv =
     setupLogging
-    startAndWaitForExit
-    |> Async.RunSynchronously
+    startAndWaitForExit |> Async.RunSynchronously
     0 // return an integer exit code

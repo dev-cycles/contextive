@@ -11,48 +11,42 @@ type Reloader = unit -> unit
 type Unregisterer = unit -> unit
 
 type private State =
-    {
-        WorkspaceFolder: string option
-        Logger: (string -> unit)
-        DefinitionsFilePath: string option
-        Definitions: Definitions
-        FileLoader: FileLoader
-        RegisterWatchedFile: (string option -> Unregisterer) option
-        UnregisterLastWatchedFile: Unregisterer option
-        OnErrorLoading: (string -> unit)
-    }
-    static member Initial() = { 
-        WorkspaceFolder = None;
-        Logger = fun _ -> ();
-        DefinitionsFilePath = None;
-        FileLoader = fun _ -> async.Return <| Error("Path not yet defined.");
-        Definitions = Definitions.Default;
-        RegisterWatchedFile = None
-        UnregisterLastWatchedFile = None
-        OnErrorLoading = fun _ -> ();
-    }
+    { WorkspaceFolder: string option
+      Logger: (string -> unit)
+      DefinitionsFilePath: string option
+      Definitions: Definitions
+      FileLoader: FileLoader
+      RegisterWatchedFile: (string option -> Unregisterer) option
+      UnregisterLastWatchedFile: Unregisterer option
+      OnErrorLoading: (string -> unit) }
+
+    static member Initial() =
+        { WorkspaceFolder = None
+          Logger = fun _ -> ()
+          DefinitionsFilePath = None
+          FileLoader = fun _ -> async.Return <| Error("Path not yet defined.")
+          Definitions = Definitions.Default
+          RegisterWatchedFile = None
+          UnregisterLastWatchedFile = None
+          OnErrorLoading = fun _ -> () }
 
 type LoadReply = string option
 
-type InitPayload = {
-    Logger: (string -> unit);
-    FileLoader: FileLoader;
-    RegisterWatchedFile: (string option -> Unregisterer) option;
-    OnErrorLoading: (string -> unit);
-}
+type InitPayload =
+    { Logger: (string -> unit)
+      FileLoader: FileLoader
+      RegisterWatchedFile: (string option -> Unregisterer) option
+      OnErrorLoading: (string -> unit) }
 
-type AddFolderPayload = {
-    WorkspaceFolder: string option
-}
+type AddFolderPayload = { WorkspaceFolder: string option }
 
 type FindReplyChannel = AsyncReplyChannel<FindResult>
 
-type FindPayload = {
-    OpenFileUri: string;
-    Filter: Filter;
-    ReplyChannel: FindReplyChannel
-}
- 
+type FindPayload =
+    { OpenFileUri: string
+      Filter: Filter
+      ReplyChannel: FindReplyChannel }
+
 type Message =
     | Init of InitPayload
     | Load
@@ -61,122 +55,144 @@ type Message =
 let private loadFile (state: State) (file: Result<File, string>) =
     match file with
     | Error(e) -> Error(e)
-    | Ok({AbsolutePath=ap;Contents=contents}) -> 
+    | Ok({ AbsolutePath = ap
+           Contents = contents }) ->
         state.Logger $"Loading contextive from {ap}..."
+
         match contents with
         | Ok(c) -> deserialize c
         | Error(e) -> Error(e)
 
 module private Handle =
-    let init state (initMsg:InitPayload) : State =
-        { 
-            state with
-                Logger = initMsg.Logger
-                RegisterWatchedFile = initMsg.RegisterWatchedFile
-                OnErrorLoading = initMsg.OnErrorLoading
-                FileLoader = initMsg.FileLoader
-        }
+    let init state (initMsg: InitPayload) : State =
+        { state with
+            Logger = initMsg.Logger
+            RegisterWatchedFile = initMsg.RegisterWatchedFile
+            OnErrorLoading = initMsg.OnErrorLoading
+            FileLoader = initMsg.FileLoader }
 
-    let updateFileWatchers (state:State) (file:Result<File, string>)=
+    let updateFileWatchers (state: State) (file: Result<File, string>) =
         match state.DefinitionsFilePath, file with
-        | Some existingPath, Ok({AbsolutePath=newPath}) when existingPath = newPath -> state
-        | _, Ok({AbsolutePath=newPath}) -> 
+        | Some existingPath, Ok({ AbsolutePath = newPath }) when existingPath = newPath -> state
+        | _, Ok({ AbsolutePath = newPath }) ->
             match state.UnregisterLastWatchedFile with
-            | Some unregister -> unregister()
+            | Some unregister -> unregister ()
             | None -> ()
+
             let path = Some newPath
+
             let unregisterer =
                 match state.RegisterWatchedFile with
                 | Some rwf -> rwf path |> Some
                 | None -> None
 
-            { state with UnregisterLastWatchedFile = unregisterer; DefinitionsFilePath = path }
+            { state with
+                UnregisterLastWatchedFile = unregisterer
+                DefinitionsFilePath = path }
         | _, _ -> state
 
-    let load (state:State) : Async<State> = async {
+    let load (state: State) : Async<State> =
+        async {
             let! file = state.FileLoader()
-            
+
             let defs = loadFile state file
 
-            let newState = match defs with
-                            | Ok defs -> 
-                                state.Logger "Succesfully loaded."
-                                { state with Definitions = defs }
-                            | Error msg -> 
-                                let msg = $"Error loading definitions: {msg}"
-                                Serilog.Log.Logger.Error msg
-                                state.Logger msg
-                                state.OnErrorLoading msg
-                                { state with Definitions = Definitions.Default }
+            let newState =
+                match defs with
+                | Ok defs ->
+                    state.Logger "Succesfully loaded."
+                    { state with Definitions = defs }
+                | Error msg ->
+                    let msg = $"Error loading definitions: {msg}"
+                    Serilog.Log.Logger.Error msg
+                    state.Logger msg
+                    state.OnErrorLoading msg
+
+                    { state with
+                        Definitions = Definitions.Default }
 
             return updateFileWatchers newState file
         }
 
-    let matchPreciseGlob (openFileUri:string) pathGlob =
-        Glob.Parse(pathGlob)
-            .IsMatch(openFileUri)
+    let matchPreciseGlob (openFileUri: string) pathGlob =
+        Glob.Parse(pathGlob).IsMatch(openFileUri)
 
-    let matchGlob (openFileUri:string) pathGlob =
-        let formats: Printf.StringFormat<string->string> list =
-            [
-                "%s"
-                "**%s"
-                "**%s*"
-                "**%s**"
-            ]
+    let matchGlob (openFileUri: string) pathGlob =
+        let formats: Printf.StringFormat<string -> string> list =
+            [ "%s"; "**%s"; "**%s*"; "**%s**" ]
+
         formats
         |> List.map (fun s -> sprintf s pathGlob)
         |> List.exists (matchPreciseGlob openFileUri)
 
-    let matchGlobs openFileUri (context:Context) =
+    let matchGlobs openFileUri (context: Context) =
         let matchOpenFileUri = matchGlob openFileUri
+
         match context.Paths with
         | null -> true
         | _ -> context.Paths |> Seq.exists matchOpenFileUri
-    
+
     let extractTerms t = t.Terms
-    
+
     let find (state: State) (findMsg: FindPayload) : State =
         let matchOpenFileUri = matchGlobs findMsg.OpenFileUri
+
         let foundContexts =
             state.Definitions.Contexts
             |> Seq.filter matchOpenFileUri
             |> Seq.map (fun c -> c.WithTerms(c.Terms |> Seq.filter findMsg.Filter))
+
         findMsg.ReplyChannel.Reply foundContexts
         state
 
-let private handleMessage (state: State) (msg: Message) = async {
-    return!
-        match msg with
-        | Init(initMsg) -> Handle.init state initMsg |> async.Return
-        | Load -> Handle.load state
-        | Find(findMsg) -> Handle.find state findMsg |> async.Return
+let private handleMessage (state: State) (msg: Message) =
+    async {
+        return!
+            match msg with
+            | Init(initMsg) -> Handle.init state initMsg |> async.Return
+            | Load -> Handle.load state
+            | Find(findMsg) -> Handle.find state findMsg |> async.Return
     }
 
 
-let create() = MailboxProcessor.Start(fun inbox -> 
-    let rec loop (state: State) = async {
-        let! (msg: Message) = inbox.Receive()
-        let! newState =
-            try
-                handleMessage state msg
-            with
-                | e -> 
-                    printfn "%A" e
-                    state.Logger <| e.ToString()
-                    async.Return state
-        return! loop newState
-    }
-    loop <| State.Initial()
-)
+let create () =
+    MailboxProcessor.Start(fun inbox ->
+        let rec loop (state: State) =
+            async {
+                let! (msg: Message) = inbox.Receive()
 
-let init (definitionsManager:MailboxProcessor<Message>) logger fileLoader registerWatchedFile onErrorLoading = 
-    Init({Logger=logger; FileLoader=fileLoader; RegisterWatchedFile=registerWatchedFile; OnErrorLoading=onErrorLoading})
+                let! newState =
+                    try
+                        handleMessage state msg
+                    with e ->
+                        printfn "%A" e
+                        state.Logger <| e.ToString()
+                        async.Return state
+
+                return! loop newState
+            }
+
+        loop <| State.Initial())
+
+let init (definitionsManager: MailboxProcessor<Message>) logger fileLoader registerWatchedFile onErrorLoading =
+    Init(
+        { Logger = logger
+          FileLoader = fileLoader
+          RegisterWatchedFile = registerWatchedFile
+          OnErrorLoading = onErrorLoading }
+    )
     |> definitionsManager.Post
 
-let loader (definitionsManager:MailboxProcessor<Message>) = fun () ->
-    Load |> definitionsManager.Post
+let loader (definitionsManager: MailboxProcessor<Message>) =
+    fun () -> Load |> definitionsManager.Post
 
-let find (definitionsManager:MailboxProcessor<Message>) (openFileUri:string) (filter:Filter) =
-    let msgBuilder = fun rc -> Find({OpenFileUri=openFileUri;Filter=filter;ReplyChannel=rc})
+let find (definitionsManager: MailboxProcessor<Message>) (openFileUri: string) (filter: Filter) =
+    let msgBuilder =
+        fun rc ->
+            Find(
+                { OpenFileUri = openFileUri
+                  Filter = filter
+                  ReplyChannel = rc }
+            )
+
     definitionsManager.PostAndAsyncReply(msgBuilder, 1000)
