@@ -13,8 +13,8 @@ let private markupContent content =
 
 let private noHoverResult = null
 
-let private termEquals (term: Definitions.Term) (candidateTerm: string) =
-    let normalisedTerm = term.Name.Replace(" ", "")
+let private termNameEquals (candidateTerm: string) (termName: string) =
+    let normalisedTerm = termName.Replace(" ", "")
 
     let singularEquals =
         normalisedTerm.Equals(candidateTerm, System.StringComparison.InvariantCultureIgnoreCase)
@@ -25,6 +25,14 @@ let private termEquals (term: Definitions.Term) (candidateTerm: string) =
         normalisedTerm.Equals(singularCandidate, System.StringComparison.InvariantCultureIgnoreCase)
 
     singularEquals || pluralEquals
+
+let private termAliasesEqual (term: Definitions.Term) (candidateTerm: string) =
+    match term.Aliases with
+    | null -> false
+    | _ -> Seq.exists (termNameEquals candidateTerm) term.Aliases
+
+let private termEquals (term: Definitions.Term) (candidateTerm: string) =
+    termNameEquals candidateTerm term.Name || termAliasesEqual term candidateTerm
 
 let private termEqualsCandidate
     (term: Definitions.Term)

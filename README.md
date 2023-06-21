@@ -27,6 +27,9 @@ The following list of features is a draft proposal of the vision at the start of
   * [x] Store Ubiquitous Language term definitions in a file in the repository (e.g. yml format)
   * [x] Support a monorepo with multiple Bounded Contexts in one repo - identify which paths relate to each Bounded Context
   * [x] Support a Bounded Context distributed across multiple repos (#36)
+  * [x] Support aliases of terms, hovering over the alias shows the term definition
+    * [ ] Add details of the alias in the hover
+    * [ ] Add ability to define an alias as deprecated and warn as such
 * [ ] IDE Support
   * [x] Visual Studio Code
     * [x] Support single-root workspaces

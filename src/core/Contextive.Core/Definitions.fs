@@ -8,12 +8,14 @@ open System.Linq
 type Term =
     { Name: string
       Definition: string option
-      Examples: ResizeArray<string> }
+      Examples: ResizeArray<string>
+      Aliases: ResizeArray<string> }
 
     static member Default =
         { Name = ""
           Definition = None
-          Examples = null }
+          Examples = null
+          Aliases = null }
 
 [<CLIMutable>]
 type Context =

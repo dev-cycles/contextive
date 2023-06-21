@@ -142,6 +142,13 @@ let hoverTests =
                    Definition = Some "The first term in our definitions list" } ],
              "firstTerm",
              "📗 `firstTerm`: The first term in our definitions list")
+
+            ([ { Term.Default with
+                   Name = "termWithAlias"
+                   Aliases = ResizeArray [ "aliasOfTerm" ] } ],
+             "aliasOfTerm",
+             "📗 `termWithAlias`: _undefined_")
+
             ([ { Term.Default with
                    Name = "SecondTerm" } ],
              "secondTerm",

@@ -81,6 +81,24 @@ contexts:
 
                     test <@ definitions.Contexts[0].Terms[0].Name = "firstTerm" @>
 
+                testCase "Can Parse Term Aliases"
+                <| fun () ->
+                    let definitions =
+                        unwrap
+                        <| deserialize
+                            """
+contexts:
+  - terms:
+    - name: firstTerm
+      aliases: 
+      - "aliasOfFirstTerm"
+      - "secondAlias"
+"""
+
+                    let aliases = definitions.Contexts[0].Terms[0].Aliases
+                    test <@ aliases.Count = 2 @>
+                    test <@ List.ofSeq <| aliases = [ "aliasOfFirstTerm"; "secondAlias" ] @>
+
 
                 testCase "Can Parse Term Definition"
                 <| fun () ->
