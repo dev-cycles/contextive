@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - '**LanguageServer**'
-      - '**VsCodeExtension**'
+      - '**vscode**'
       - '**Core**'
       - '.github/**vscode**'
 env:
