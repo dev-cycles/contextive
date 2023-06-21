@@ -10,7 +10,7 @@
             "request": "launch",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}/${config:vsCodeExtensionPath}",
-                "${workspaceRoot}/src/vscode/contextive/test/fixtures/simple_workspace"
+                "${workspaceRoot}/src/vscode/contextive/test/single-root/fixtures/simple_workspace"
             ],
             "outFiles": [
                 "${workspaceFolder}/${config:vsCodeExtensionPath}/dist/**/*.js"
