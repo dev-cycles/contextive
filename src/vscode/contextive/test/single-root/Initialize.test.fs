@@ -7,61 +7,76 @@ open Contextive.VsCodeExtension.Tests.E2E.Helpers
 open Contextive.VsCodeExtension.Tests.E2E.Helpers.Helpers
 
 let tests =
-    testList "Initialize Tests" [
-        testCaseAsync "Extension has Initialize Project Command" <| async {
-            let! registeredCommands = commands.getCommands(false)
-            Expect.exists registeredCommands (fun c -> c = "contextive.initialize") "Initialize command doesn't exist"
-        }
+    testList
+        "Initialize Tests"
+        [ testCaseAsync "Extension has Initialize Project Command"
+          <| async {
+              let! registeredCommands = commands.getCommands (false)
+              Expect.exists registeredCommands (fun c -> c = "contextive.initialize") "Initialize command doesn't exist"
+          }
 
-        testCaseAsync "Initialize Command should open existing definitions.yml" <| async {
-            do! VsCodeCommands.initialize() |> Promise.Ignore
+          testCaseAsync "Initialize Command should open existing definitions.yml"
+          <| async {
+              do! VsCodeCommands.initialize () |> Promise.Ignore
 
-            let fullPath = getFullPathFromConfig()
+              let fullPath = getFullPathFromConfig ()
 
-            let editor = findUriInVisibleEditors fullPath
+              let editor = findUriInVisibleEditors fullPath
 
-            do! closeDocument fullPath |> Promise.Ignore
+              do! closeDocument fullPath |> Promise.Ignore
 
-            Expect.isNotNull editor "Existing definitions.yml isn't open"
-        }
+              Expect.isNotNull editor "Existing definitions.yml isn't open"
+          }
 
-        testCaseAsync "Initialize Command should open new definitions.yml" <| async {
-            let newPath = $"{System.Guid.NewGuid().ToString()}.yml"
-            do! updateConfig newPath
+          testCaseAsync "Initialize Command should open new definitions.yml"
+          <| async {
+              let newPath = $"{System.Guid.NewGuid().ToString()}.yml"
+              do! updateConfig newPath
 
-            do! VsCodeCommands.initialize() |> Promise.Ignore
-            
-            let fullPath = getFullPathFromConfig()
-            let editor = findUriInVisibleEditors fullPath
+              do! VsCodeCommands.initialize () |> Promise.Ignore
 
-            do! deleteDefinitionsFile()
+              let fullPath = getFullPathFromConfig ()
+              let editor = findUriInVisibleEditors fullPath
 
-            Expect.isNotNull editor "New definitions.yml isn't open"
-        }
+              do! deleteDefinitionsFile ()
 
-        let getContent (content:string) = System.Text.Encoding.UTF8.GetBytes(content) |> Fable.Core.JS.Constructors.Uint8Array.Create
+              Expect.isNotNull editor "New definitions.yml isn't open"
+          }
 
-        testCaseAsync "New definitions file should show new term in completion" <| async {
-            let newPath = $"{System.Guid.NewGuid().ToString()}.yml"
-            do! updateConfig newPath
+          let getContent (content: string) =
+              System.Text.Encoding.UTF8.GetBytes(content)
+              |> Fable.Core.JS.Constructors.Uint8Array.Create
 
-            do! VsCodeCommands.initialize() |> Promise.Ignore
-            
-            let fullPath = getFullPathFromConfig()
+          testCaseAsync "New definitions file should show new term in completion"
+          <| async {
+              let newPath = $"{System.Guid.NewGuid().ToString()}.yml"
+              do! updateConfig newPath
 
-            let content = getContent """contexts:
+              do! VsCodeCommands.initialize () |> Promise.Ignore
+
+              let fullPath = getFullPathFromConfig ()
+
+              let content =
+                  getContent
+                      """contexts:
   - terms:
     - name: anewterm"""
 
-            do! workspace.fs.writeFile(fullPath, content)
+              do! workspace.fs.writeFile (fullPath, content)
 
-            do! Promise.sleep(500)
+              do! Promise.sleep (500)
 
-            let resetWorkspaceHook = Some deleteDefinitionsFile
+              let resetWorkspaceHook = Some deleteDefinitionsFile
 
-            let testDocPath = Paths.inWorkspace "test.txt"
-            let position = vscode.Position.Create(0, 10)
-            let expectedResults = seq {"anewterm"; "some"; "text"}
-            do! Completion.expectCompletion testDocPath position expectedResults resetWorkspaceHook
-        }
-    ]
+              let testDocPath = Paths.inWorkspace "test.txt"
+              let position = vscode.Position.Create(0, 10)
+
+              let expectedResults =
+                  seq {
+                      "anewterm"
+                      "some"
+                      "text"
+                  }
+
+              do! Completion.expectCompletion testDocPath position expectedResults resetWorkspaceHook
+          } ]

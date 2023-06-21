@@ -3,7 +3,8 @@ module Contextive.VsCodeExtension.Initialize
 open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
 
-let private defaultDefinitions = """# Welcome to Contextive!
+let private defaultDefinitions =
+    """# Welcome to Contextive!
 #
 # This initial definitions file illustrates the syntax of the file by providing definitions and examples of the terms
 # used in schema of the definitions file.
@@ -40,34 +41,43 @@ contexts:
 
 let private fileExists uri =
     promise {
-        let! _ = workspace.fs.stat(uri)
+        let! _ = workspace.fs.stat (uri)
         return true
-    } |> Promise.catch(fun _ -> false)
+    }
+    |> Promise.catch (fun _ -> false)
 
-let initializeHandler (definitionsUri:Uri) = promise {
-      let! exists = fileExists definitionsUri
-      do! match exists with
-          | true -> promise {
-                  do! window.showTextDocument(definitionsUri) |> Thenable.Ignore
-                  ()
-              }
-          | false -> promise {
-                  let edit = vscode.WorkspaceEdit.Create()
-                  edit.createFile(definitionsUri)
-                  edit.insert(definitionsUri, vscode.Position.Create(0, 0), defaultDefinitions)
-                  do! workspace.applyEdit(edit) |> Thenable.Ignore
-                  let! document = workspace.openTextDocument(definitionsUri)
-                  do! document.save() |> Thenable.Ignore
-                  do! window.showTextDocument(definitionsUri) |> Thenable.Ignore
-                  ()
-              }
+let initializeHandler (definitionsUri: Uri) =
+    promise {
+        let! exists = fileExists definitionsUri
+
+        do!
+            match exists with
+            | true ->
+                promise {
+                    do! window.showTextDocument (definitionsUri) |> Thenable.Ignore
+                    ()
+                }
+            | false ->
+                promise {
+                    let edit = vscode.WorkspaceEdit.Create()
+                    edit.createFile (definitionsUri)
+                    edit.insert (definitionsUri, vscode.Position.Create(0, 0), defaultDefinitions)
+                    do! workspace.applyEdit (edit) |> Thenable.Ignore
+                    let! document = workspace.openTextDocument (definitionsUri)
+                    do! document.save () |> Thenable.Ignore
+                    do! window.showTextDocument (definitionsUri) |> Thenable.Ignore
+                    ()
+                }
     }
 
-let handler (definitionsUriLoader: unit -> Uri option) _ : obj option = 
+let handler (definitionsUriLoader: unit -> Uri option) _ : obj option =
     promise {
-        let definitionsUriSetting = definitionsUriLoader()
-        do! match definitionsUriSetting with
+        let definitionsUriSetting = definitionsUriLoader ()
+
+        do!
+            match definitionsUriSetting with
             | Some definitionsUri -> initializeHandler definitionsUri
             | None -> promise { return () }
-    } :> obj |> Some
-    
+    }
+    :> obj
+    |> Some

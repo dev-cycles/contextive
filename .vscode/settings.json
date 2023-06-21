@@ -54,5 +54,9 @@
     },
     "mochaExplorer.exit": true,
     "testExplorer.useNativeTesting": false,
-    "testing.openTesting": "neverOpen"
+    "testing.openTesting": "neverOpen",
+    "[fsharp]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "Ionide.Ionide-fsharp"
+    }
 }

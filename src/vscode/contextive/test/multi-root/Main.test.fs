@@ -5,9 +5,9 @@ open Fable.Core
 open Contextive.VsCodeExtension.Tests.E2E.Helpers
 
 // Import mocha explicitly.  Fable.Mocha assumes running via the mocha CLI which imports mocha _implicitly_
-[<Import("*", from="mocha")>]
+[<Import("*", from = "mocha")>]
 let Mocha: obj = jsNative
 
-Fable.Mocha.Mocha.runTests <| testList "Multi-Root Workspace" [
-    Completion.tests
-] |> ignore
+Fable.Mocha.Mocha.runTests
+<| testList "Multi-Root Workspace" [ Completion.tests ]
+|> ignore
