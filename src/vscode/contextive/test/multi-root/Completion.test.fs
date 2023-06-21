@@ -2,7 +2,6 @@ module Contextive.VsCodeExtension.Tests.E2E.MultiRoot.Completion
 
 open Fable.Mocha
 open Fable.Import.VSCode
-open Contextive.VsCodeExtension.Tests.E2E
 open Contextive.VsCodeExtension.Tests.E2E.Helpers
 open Contextive.VsCodeExtension.Tests.E2E.Helpers.Completion
 

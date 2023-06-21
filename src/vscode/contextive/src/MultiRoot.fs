@@ -3,7 +3,6 @@ module Contextive.VsCodeExtension.MultiRoot
 open Middleware
 open Fable.Core.JsInterop
 open Fable.Import.VSCode.Vscode
-open Fable.Import.LanguageServer.Client
 open Node.Api
 
 let private getMultiRootRelativePath configuredPath =
