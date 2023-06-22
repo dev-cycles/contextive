@@ -2,6 +2,7 @@ name: Contextive VSCode Publish
 on:
   release:
     types: [published]
+  workflow_dispatch:
   
 env:
   dotnet-version: '6.0.x'
@@ -15,18 +16,18 @@ jobs:
           - dotnet_runtime: win-x64
             vsce_platform: win32-x64
             os: windows-latest
-          - dotnet_runtime: linux-x64
-            vsce_platform: linux-x64
-            os: ubuntu-latest
-          - dotnet_runtime: linux-arm64
-            vsce_platform: linux-arm64
-            os: ubuntu-latest
-          - dotnet_runtime: osx-x64
-            vsce_platform: darwin-x64
-            os: macos-latest
-          - dotnet_runtime: osx-arm64
-            vsce_platform: darwin-arm64
-            os: macos-latest
+          # - dotnet_runtime: linux-x64
+          #   vsce_platform: linux-x64
+          #   os: ubuntu-latest
+          # - dotnet_runtime: linux-arm64
+          #   vsce_platform: linux-arm64
+          #   os: ubuntu-latest
+          # - dotnet_runtime: osx-x64
+          #   vsce_platform: darwin-x64
+          #   os: macos-latest
+          # - dotnet_runtime: osx-arm64
+          #   vsce_platform: darwin-arm64
+          #   os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
@@ -67,6 +68,7 @@ jobs:
       - name: Get Package Version
         run: echo "VERSION=$(jq .version package.json -r)" >> $GITHUB_OUTPUT
         id: get-version
+        shell: bash
         working-directory: ./src/vscode/contextive
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
