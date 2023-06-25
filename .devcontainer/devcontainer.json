@@ -23,7 +23,8 @@
                 "ionide.ionide-paket",
                 "streetsidesoftware.code-spell-checker",
                 "yzhang.markdown-all-in-one",
-                "hbenl.vscode-mocha-test-adapter"
+                "hbenl.vscode-mocha-test-adapter",
+                "ms-azuretools.vscode-docker"
             ]
         }
     },
@@ -38,7 +39,8 @@
 
     // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
     "remoteUser": "vscode",
-    "features": {
+	"features": {
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
         // See https://code.visualstudio.com/docs/remote/containers#_dev-container-features-preview
         // Prefer explicitly defining early in the Dockerfile to avoid re-installing features when adjusting the custom parts of the Dockerfile
     }

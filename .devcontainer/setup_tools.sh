@@ -12,6 +12,7 @@ dotnet tool install dotnet-suggest --global --version 1.1.327201 # Latest dotnet
 dotnet tool install paket --global
 dotnet tool install fable --global
 dotnet tool install femto --global
+dotnet tool install fantomas --global
 
 # ADR tool
 # no stable version of the adr tool available yet
