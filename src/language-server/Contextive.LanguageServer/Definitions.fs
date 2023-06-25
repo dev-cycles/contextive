@@ -132,15 +132,13 @@ module private Handle =
         | null -> true
         | _ -> context.Paths |> Seq.exists matchOpenFileUri
 
-    let extractTerms t = t.Terms
-
     let find (state: State) (findMsg: FindPayload) : State =
         let matchOpenFileUri = matchGlobs findMsg.OpenFileUri
 
         let foundContexts =
             state.Definitions.Contexts
             |> Seq.filter matchOpenFileUri
-            |> Seq.map (fun c -> c.WithTerms(c.Terms |> Seq.filter findMsg.Filter))
+            |> Seq.map (fun c -> Context.withTerms (c.Terms |> Seq.filter findMsg.Filter) c)
 
         findMsg.ReplyChannel.Reply foundContexts
         state

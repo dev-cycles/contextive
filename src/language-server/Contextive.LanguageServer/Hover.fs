@@ -4,7 +4,6 @@ open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 open Contextive.Core
-open Humanizer
 
 let private (|EmptySeq|_|) a = if Seq.isEmpty a then Some() else None
 
@@ -13,35 +12,14 @@ let private markupContent content =
 
 let private noHoverResult = null
 
-let private termNameEquals (candidateTerm: string) (termName: string) =
-    let normalisedTerm = termName.Replace(" ", "")
-
-    let singularEquals =
-        normalisedTerm.Equals(candidateTerm, System.StringComparison.InvariantCultureIgnoreCase)
-
-    let singularCandidate = candidateTerm.Singularize(false, false)
-
-    let pluralEquals =
-        normalisedTerm.Equals(singularCandidate, System.StringComparison.InvariantCultureIgnoreCase)
-
-    singularEquals || pluralEquals
-
-let private termAliasesEqual (term: Definitions.Term) (candidateTerm: string) =
-    match term.Aliases with
-    | null -> false
-    | _ -> Seq.exists (termNameEquals candidateTerm) term.Aliases
-
-let private termEquals (term: Definitions.Term) (candidateTerm: string) =
-    termNameEquals candidateTerm term.Name || termAliasesEqual term candidateTerm
-
 let private termEqualsCandidate
     (term: Definitions.Term)
     (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms)
     =
-    fst tokenAndCandidateTerms |> termEquals term
+    fst tokenAndCandidateTerms |> Definitions.Term.equals term
 
 let private termInCandidates (term: Definitions.Term) (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms) =
-    (snd tokenAndCandidateTerms) |> Seq.exists (termEquals term)
+    (snd tokenAndCandidateTerms) |> Seq.exists (Definitions.Term.equals term)
 
 let private termFilterForCandidateTerms tokenAndCandidateTerms =
     fun (t: Definitions.Term) ->

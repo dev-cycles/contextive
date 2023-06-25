@@ -39,7 +39,7 @@ let definitionsTests =
 
           testCase "Context with new terms has new terms"
           <| fun () ->
-              let context = Context.Default.WithTerms(seq { Term.Default })
+              let context = seq { Term.Default } |> Context.defaultWithTerms
               test <@ context.Terms.Count = 1 @>
               test <@ context.Terms[0] = Term.Default @>
 
