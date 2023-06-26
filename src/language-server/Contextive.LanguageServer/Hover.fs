@@ -40,7 +40,7 @@ module private Filtering =
         | Seq.Empty -> terms
         | _ -> relevantTerms
 
-let private getTokenAtPosition (p:HoverParams) (tokenFinder: TextDocument.TokenFinder) =
+let private getTokenAtPosition (p: HoverParams) (tokenFinder: TextDocument.TokenFinder) =
     match p.TextDocument with
     | null -> None
     | document -> tokenFinder (document.Uri) p.Position
