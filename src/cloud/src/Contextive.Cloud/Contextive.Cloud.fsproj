@@ -7,6 +7,9 @@
     <RollForward>Major</RollForward>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Context.fs" />
+    <Compile Include="HttpApi.fs" />
+    <Compile Include="LambdaFunctions.fs" />
     <Compile Include="ContextiveCloudStack.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
