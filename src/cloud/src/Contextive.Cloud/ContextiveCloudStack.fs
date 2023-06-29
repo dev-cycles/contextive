@@ -18,7 +18,7 @@ type ContextiveCloudStack(scope, id, props) as this =
     let eventBus = EventBus(this, "SlackEvents", EventBusProps())
 
     let eventHandlerFunctionProps =
-        LambdaFunctions.props this "Event Handler" "EventHandlerSetup" definitions
+        LambdaFunctions.props this "Event Handler" "EventHandlerSetup" definitions eventBus
 
     let eventHandlerFunction = Function(this, "EventHandler", eventHandlerFunctionProps)
 
@@ -35,7 +35,7 @@ type ContextiveCloudStack(scope, id, props) as this =
         |> ignore
 
     let apiFunctionProps =
-        LambdaFunctions.props this "Api" "Setup+LambdaEntryPoint" definitions
+        LambdaFunctions.props this "Api" "Setup+LambdaEntryPoint" definitions eventBus
 
     let apiFunction = Function(this, "Api", apiFunctionProps)
 

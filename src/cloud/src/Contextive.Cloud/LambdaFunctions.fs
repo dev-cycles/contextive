@@ -4,9 +4,10 @@ open System
 open Amazon.CDK
 open Amazon.CDK.AWS.Lambda
 open Amazon.CDK.AWS.Logs
+open Amazon.CDK.AWS.Events
 open Amazon.CDK.AWS.S3
 
-let props construct name entryPointModule (definitions: IBucket) =
+let props construct name entryPointModule (definitions: IBucket) (eventBus: IEventBus) =
     let assemblyPath relativePath =
         let basePath =
             System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
@@ -24,6 +25,7 @@ let props construct name entryPointModule (definitions: IBucket) =
             Map
                 [ "DEFINITIONS_BUCKET_NAME", definitions.BucketName
                   "SLACK_OAUTH_TOKEN", (System.Environment.GetEnvironmentVariable("SLACK_OAUTH_TOKEN"))
-                  "IS_LOCAL", (Context.isLocal construct).ToString() ],
+                  "IS_LOCAL", (Context.isLocal construct).ToString()
+                  "EVENT_BUS_NAME", eventBus.EventBusName ],
         LogRetention = Option.toNullable (Some RetentionDays.ONE_WEEK)
     )
