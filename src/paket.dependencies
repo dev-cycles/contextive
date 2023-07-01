@@ -22,5 +22,4 @@ nuget Fable.Promise
 nuget Fable.Node
 nuget Fable.Core
 github ionide/ionide-vscode-helpers src/Fable.Import.VSCode.fs
-github ionide/ionide-vscode-helpers src/Fable.Import.VSCode.LanguageServer.fs
 github ionide/ionide-vscode-helpers src/Helpers.fs
