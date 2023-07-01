@@ -325,8 +325,7 @@ module rec LanguageServer =
         member __.error(message: string, ?data: obj) : unit = jsNative
         member __.needsStart() : bool = jsNative
         member __.needsStop() : bool = jsNative
-        member __.onReady() : Promise<unit> = jsNative
-        member __.start() : Disposable = jsNative
+        member __.start() : Promise<unit> = jsNative
         member __.logFailedRequest(``type``: Client.RPCMessageType, error: obj option) : unit = jsNative
 
         //LanguageClient

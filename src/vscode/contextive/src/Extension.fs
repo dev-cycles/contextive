@@ -79,9 +79,7 @@ let activate (context: ExtensionContext) =
     promise {
         let client = clientFactory ()
 
-        client.start () |> addDisposable context
-
-        do! client.onReady ()
+        do! client.start ()
 
         Initialize.handler getPath |> registerCommand context "contextive.initialize"
 
