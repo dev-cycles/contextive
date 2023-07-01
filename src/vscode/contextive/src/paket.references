@@ -2,4 +2,4 @@ FSharp.Core
 Fable.Node
 Fable.Promise
 File:Fable.Import.VSCode.fs
-File:Fable.Import.VSCode.LanguageServer.fs
+# File:Fable.Import.VSCode.LanguageServer.fs
