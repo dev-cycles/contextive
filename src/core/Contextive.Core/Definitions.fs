@@ -66,13 +66,9 @@ type Definitions = { Contexts: ResizeArray<Context> }
 module Definitions =
     let Default = { Contexts = new ResizeArray<Context>() }
 
-type Filter = Term -> bool
 type FindResult = Context seq
+type Filter = FindResult -> FindResult
 type Finder = string -> Filter -> Async<FindResult>
-
-module FindResult =
-    let allTerms (contexts: FindResult) : Term seq =
-        contexts |> Seq.collect (fun c -> c.Terms)
 
 let deserialize (yml: string) =
     try

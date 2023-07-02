@@ -67,7 +67,7 @@ let private (|UpperCase|_|) (ct: string) =
     else
         None
 
-let private termFilter _ = true
+let private termFilter = id
 
 let private upper (s: string) = s.ToUpper()
 let private lower (s: string) = s.ToLower()
@@ -77,7 +77,7 @@ let private title (s: string) =
 
 let createCompletionItemData (term: Definitions.Term) label =
     { Label = label
-      Documentation = Hover.getTermHoverContent [ term ] }
+      Documentation = Hover.Formatting.getTermHoverContent [ term ] }
 
 let private termToCaseMatchedCompletionData
     (caseTemplate: string option)

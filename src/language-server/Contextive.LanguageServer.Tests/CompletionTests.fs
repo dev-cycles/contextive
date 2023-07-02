@@ -178,14 +178,14 @@ let completionTests =
                             Name = termName
                             Definition = termDefinition } ]
 
-                  let finder: Finder = DH.mockDefinitionsFinder Context.Default (terms)
+                  let finder: Finder = DH.mockDefinitionsFinder Context.Default terms
 
                   let completionItem =
                       (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null)
                           .Result
                       |> Seq.head
 
-                  let expectedDocumentation = Hover.getTermHoverContent terms
+                  let expectedDocumentation = Hover.Formatting.getTermHoverContent terms
                   test <@ completionItem.Documentation.HasMarkupContent @>
                   test <@ completionItem.Documentation.MarkupContent.Value = expectedDocumentation.Value @>
 
@@ -196,7 +196,7 @@ let completionTests =
 
           testCase "Completion Kind Is Reference"
           <| fun () ->
-              let finder: Finder = DH.mockDefinitionsFinder Context.Default ([ Term.Default ])
+              let finder: Finder = DH.mockDefinitionsFinder Context.Default [ Term.Default ]
 
               let completionItem =
                   (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null)

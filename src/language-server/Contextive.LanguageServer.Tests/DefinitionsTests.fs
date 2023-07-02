@@ -42,7 +42,7 @@ let definitionsTests =
                   let workspaceFolder = Some ""
                   let configGetter = (fun _ -> async.Return definitionsPath)
                   let! definitions = getDefinitions configGetter workspaceFolder
-                  let! contexts = Definitions.find definitions termFileUri (fun _ -> true)
+                  let! contexts = Definitions.find definitions termFileUri id
                   return contexts |> Definitions.FindResult.allTerms
               }
 
@@ -135,7 +135,7 @@ let definitionsTests =
                   let onErrorLoading = fun msg -> ConditionAwaiter.received errorMessageAwaiter msg
 
                   let! definitions = getDefinitionsWithErrorHandler onErrorLoading configGetter workspaceFolder
-                  let! termsWhenInvalid = Definitions.find definitions "" (fun _ -> true)
+                  let! termsWhenInvalid = Definitions.find definitions "" id
 
                   let! errorMessage = ConditionAwaiter.waitForAny errorMessageAwaiter 500
                   test <@ errorMessage.Value = expectedErrorMessage @>
@@ -144,7 +144,7 @@ let definitionsTests =
                   path <- getFileName "one"
                   (Definitions.loader definitions) ()
 
-                  let! contexts = Definitions.find definitions "" (fun _ -> true)
+                  let! contexts = Definitions.find definitions "" id
                   let foundNames = contexts |> Definitions.FindResult.allTerms |> Seq.map getName
 
                   test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>

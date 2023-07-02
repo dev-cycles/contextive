@@ -138,7 +138,7 @@ module private Handle =
         let foundContexts =
             state.Definitions.Contexts
             |> Seq.filter matchOpenFileUri
-            |> Seq.map (fun c -> Context.withTerms (c.Terms |> Seq.filter findMsg.Filter) c)
+            |> findMsg.Filter
 
         findMsg.ReplyChannel.Reply foundContexts
         state
