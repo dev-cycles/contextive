@@ -15,6 +15,7 @@
     <Compile Include="Helpers/Workspace.fs" />
     <Compile Include="Helpers/TestClient.fs" />
     <Compile Include="Helpers/ConfigurationSection.fs" />
+    <Compile Include="RenderingTests.fs" />
     <Compile Include="FileLoaderTests.fs" />
     <Compile Include="PathResolverTests.fs" />
     <Compile Include="ConfigurationTests.fs" />

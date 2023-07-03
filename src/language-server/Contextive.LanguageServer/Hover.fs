@@ -5,86 +5,6 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 open Contextive.Core
 
-let private (|EmptySeq|_|) a = if Seq.isEmpty a then Some() else None
-
-module Formatting =
-    let private emojify t = "📗 " + t
-    let private emphasise t = $"`{t}`"
-
-    let private define d =
-        match d with
-        | None -> "_undefined_"
-        | Some(def) -> def
-
-    let private getHoverDefinition (term: Definitions.Term) =
-        [ term.Name |> emphasise |> emojify; term.Definition |> define ]
-        |> String.concat ": "
-        |> Some
-        |> Seq.singleton
-
-    let private speechify usageExample = $"💬 \"{usageExample}\""
-
-    let private hoverUsageExamplesToMarkdown (t: Definitions.Term) =
-        t.Examples
-        |> Seq.map speechify
-        |> Seq.append (Seq.singleton $"#### {emphasise t.Name} Usage Examples:")
-        |> Seq.map Some
-
-    let private getHoverUsageExamples =
-        function
-        | { Definitions.Term.Examples = null } -> Seq.empty
-        | t -> hoverUsageExamplesToMarkdown t
-
-    let private concatIfExists (separator: string) (lines: string option seq) =
-        match lines |> Seq.choose id with
-        | EmptySeq -> None
-        | s -> s |> String.concat separator |> Some
-
-    let private concatWithNewLinesIfExists = concatIfExists "\n\n"
-
-    let getTermHoverContent (terms: Definitions.Term seq) =
-        [ getHoverDefinition; getHoverUsageExamples ]
-        |> Seq.collect (fun p -> terms |> Seq.collect p)
-        |> concatWithNewLinesIfExists
-
-    let private getContextHeading (context: Definitions.Context) =
-        match context.Name with
-        | null
-        | "" -> None
-        | _ -> Some $"### 💠 {context.Name} Context"
-
-    let private getContextDomainVisionStatement (context: Definitions.Context) =
-        match context.DomainVisionStatement with
-        | null
-        | "" -> None
-        | _ -> Some $"_Vision: {context.DomainVisionStatement}_"
-
-    let private getContextHover
-        (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq)
-        (context: Definitions.Context)
-        =
-        let terms = context.Terms
-
-        if Seq.length terms = 0 then
-            None
-        else
-            [ getTermHoverContent terms ]
-            |> Seq.append (
-                [ getContextHeading; getContextDomainVisionStatement ]
-                |> Seq.map (fun f -> f context)
-            )
-            |> concatWithNewLinesIfExists
-
-    let private ContextSeparator = "\n\n***\n\n"
-
-    let getContextsHoverContent
-        (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq)
-        (contexts: Definitions.FindResult)
-        =
-        contexts
-        |> Seq.map (getContextHover tokenAndCandidateTerms)
-        |> concatIfExists ContextSeparator
-
 module private Filtering =
     let private termEqualsCandidate
         (term: Definitions.Term)
@@ -117,7 +37,7 @@ module private Filtering =
             |> Seq.map fst
 
         match relevantTerms with
-        | EmptySeq -> terms
+        | Seq.Empty -> terms
         | _ -> relevantTerms
 
     let termFilterForCandidateTerms tokenAndCandidateTerms =
@@ -145,11 +65,8 @@ module private Lsp =
 
     let noHoverResult = null
 
-let private hoverResult
-    (tokensAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq)
-    (contexts: Definitions.FindResult)
-    =
-    let content = Formatting.getContextsHoverContent tokensAndCandidateTerms contexts
+let private hoverResult (contexts: Definitions.FindResult) =
+    let content = Rendering.getContextsHoverContent contexts
 
     match content with
     | None -> Lsp.noHoverResult
@@ -167,7 +84,7 @@ let private hoverContentForToken
             if Seq.isEmpty findResult then
                 Lsp.noHoverResult
             else
-                hoverResult tokensAndCandidateTerms findResult
+                hoverResult findResult
     }
 
 let handler

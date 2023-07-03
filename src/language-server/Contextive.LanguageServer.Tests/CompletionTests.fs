@@ -55,7 +55,7 @@ let completionTests =
           let singleWordCompletion (term, (tokenAtPosition: string option), expectedLabel: string) =
               testCase $"Completion of \"{term}\" with {tokenAtPosition} at position, returns \"{expectedLabel}\""
               <| fun () ->
-                  let finder: Finder = DH.mockTermsFinder Context.Default ([ term ])
+                  let finder: Finder = DH.mockTermNamesFinder Context.Default ([ term ])
 
                   let tokenFinder: TextDocument.TokenFinder = fun _ _ -> tokenAtPosition
 
@@ -86,7 +86,7 @@ let completionTests =
               testCase
                   $"Completion of \"{term}\" with {tokenAtPosition} at position, returns \"{expectedCompletionLabelsList}\""
               <| fun () ->
-                  let finder: Finder = DH.mockTermsFinder Context.Default ([ term ])
+                  let finder: Finder = DH.mockTermNamesFinder Context.Default ([ term ])
 
                   let tokenFinder: TextDocument.TokenFinder = fun _ _ -> tokenAtPosition
 
@@ -154,7 +154,7 @@ let completionTests =
               testCase $"Context \"{contextName}\" has detail \"{expectedDetail}\""
               <| fun () ->
                   let finder: Finder =
-                      DH.mockTermsFinder
+                      DH.mockTermNamesFinder
                           { Context.Default with
                               Name = contextName }
                           ([ "term" ])
@@ -185,7 +185,7 @@ let completionTests =
                           .Result
                       |> Seq.head
 
-                  let expectedDocumentation = Hover.Formatting.getTermHoverContent terms
+                  let expectedDocumentation = Rendering.getTermHoverContent terms
                   test <@ completionItem.Documentation.HasMarkupContent @>
                   test <@ completionItem.Documentation.MarkupContent.Value = expectedDocumentation.Value @>
 

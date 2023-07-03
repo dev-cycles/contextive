@@ -17,6 +17,8 @@
     <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Seq.fs" />
+    <Compile Include="Rendering.fs" />
     <Compile Include="FileLoader.fs" />
     <Compile Include="PathResolver.fs" />
     <Compile Include="Tokeniser.fs" />
