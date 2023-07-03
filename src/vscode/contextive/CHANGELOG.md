@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.1](https://github.com/dev-cycles/contextive/compare/v1.9.0...v1.9.1) (2023-07-03)
+
+
+### Bug Fixes
+
+* **vscode:** ensure the language server process stops when vscode stops the extension. Bug in dependency `vscode-languageclient` fixed by update. (fixes [#44](https://github.com/dev-cycles/contextive/issues/44)) ([a3f7ed8](https://github.com/dev-cycles/contextive/commit/a3f7ed84f5c22d5ffa899dc033ee6076d8bc54ff))
+
 # [1.9.0](https://github.com/dev-cycles/contextive/compare/v1.8.1...v1.9.0) (2023-06-21)
 
 
