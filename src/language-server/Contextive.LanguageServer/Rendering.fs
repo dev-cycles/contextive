@@ -5,6 +5,8 @@ open Contextive.Core
 let private emojify t = "📗 " + t
 let private emphasise t = $"`{t}`"
 
+let private doubleBlankLine = $"\n\n"
+
 let private define d =
     match d with
     | None -> "_undefined_"
@@ -34,7 +36,7 @@ let private concatIfExists (separator: string) (lines: string option seq) =
     | Seq.Empty -> None
     | s -> s |> String.concat separator |> Some
 
-let private concatWithNewLinesIfExists = concatIfExists "\n\n"
+let private concatWithNewLinesIfExists = concatIfExists doubleBlankLine
 
 let getTermHoverContent (terms: Definitions.Term seq) =
     [ getHoverDefinition; getHoverUsageExamples ]
@@ -66,7 +68,7 @@ let private getContextHover (context: Definitions.Context) =
         )
         |> concatWithNewLinesIfExists
 
-let private ContextSeparator = "\n\n***\n\n"
+let private ContextSeparator = $"{doubleBlankLine}***{doubleBlankLine}"
 
 let getContextsHoverContent (contexts: Definitions.FindResult) =
     contexts |> Seq.map getContextHover |> concatIfExists ContextSeparator

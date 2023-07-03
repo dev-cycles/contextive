@@ -21,7 +21,7 @@ let renderingTests =
 
                   let rendering = Rendering.getContextsHoverContent contexts
 
-                  test <@ rendering.Value = expectedHover.ReplaceLineEndings() @>
+                  test <@ rendering.Value.ReplaceLineEndings() = expectedHover @>
 
 
           [ ([ { Term.Default with
@@ -110,7 +110,7 @@ _Vision: supporting the test_
 
 📗 `term`: _undefined_"
 
-              test <@ rendering.Value = expectedHover.ReplaceLineEndings() @>
+              test <@ rendering.Value.ReplaceLineEndings() = expectedHover @>
 
           testCase "Render multiple Contexts"
           <| fun _ ->
@@ -135,4 +135,4 @@ _Vision: supporting the test_
 
 📗 `term`: _undefined_"
 
-              test <@ rendering.Value = expectedHover.ReplaceLineEndings() @> ]
+              test <@ rendering.Value.ReplaceLineEndings() = expectedHover @> ]
