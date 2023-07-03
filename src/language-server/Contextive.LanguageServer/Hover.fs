@@ -6,7 +6,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 open Contextive.Core
 
 module private Filtering =
-    let private termEqualsCandidate
+    let private termEqualsToken
         (term: Definitions.Term)
         (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms)
         =
@@ -18,20 +18,20 @@ module private Filtering =
         =
         (snd tokenAndCandidateTerms) |> Seq.exists (Definitions.Term.equals term)
 
-    let private filterRelevantTerms
+    let private removeLessRelevantTerms
         (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq)
         (terms: Definitions.Term seq)
         =
         let exactTerms =
             tokenAndCandidateTerms
             |> Seq.allPairs terms
-            |> Seq.filter (fun (t, w) -> termEqualsCandidate t w)
+            |> Seq.filter (fun (t, tokenAndCandidates) -> termEqualsToken t tokenAndCandidates)
 
         let relevantTerms =
             exactTerms
-            |> Seq.filter (fun (t, wAndP) ->
+            |> Seq.filter (fun (t, tokenAndCandidates) ->
                 exactTerms
-                |> Seq.except (seq { (t, wAndP) })
+                |> Seq.except (seq { (t, tokenAndCandidates) })
                 |> Seq.exists (fun (_, w) -> termInCandidates t w)
                 |> not)
             |> Seq.map fst
@@ -40,17 +40,18 @@ module private Filtering =
         | Seq.Empty -> terms
         | _ -> relevantTerms
 
+    let findMatchingTerms (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq) =
+        Seq.filter (fun t ->
+            let candidateMatchesTerm = termEqualsToken t
+            tokenAndCandidateTerms |> Seq.exists candidateMatchesTerm)
+
     let termFilterForCandidateTerms tokenAndCandidateTerms =
-        fun (contexts: Definitions.FindResult) ->
-            contexts
-            |> Seq.map (fun c ->
-                Definitions.Context.withTerms
-                    (c.Terms
-                     |> Seq.filter (fun t ->
-                         let candidateMatchesTerm = termEqualsCandidate t
-                         tokenAndCandidateTerms |> Seq.exists candidateMatchesTerm)
-                     |> filterRelevantTerms tokenAndCandidateTerms)
-                    c)
+        Seq.map (fun (c: Definitions.Context) ->
+            Definitions.Context.withTerms
+                (c.Terms
+                 |> findMatchingTerms tokenAndCandidateTerms
+                 |> removeLessRelevantTerms tokenAndCandidateTerms)
+                c)
 
 module private TextDocument =
 
