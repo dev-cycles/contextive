@@ -28,13 +28,17 @@ Even if you're not using Domain Driven Design, Contextive should still be very h
 
 * Initialize your Contextive Definitions
 * Auto-complete from your Contextive Definitions
+  * Shows definitions in auto-complete details
 * Hover to show definitions from your Contextive Definitions
-* Support for multiple contexts in the same repository (identified by path globs)
-* Support for a context distributed over multiple repositories (#36)
+  * Hover over usage of multiple terms combined using camelCase, PascalCase and snake_case
+  * Hover over multi-word terms
+  * Hover over plural of defined terms
+  * Hover over aliases of defined terms
+* Supported Repository Layouts:
+  * A repository per context
+  * Multiple contexts in the same repository (monorepo) (identified by path globs)
+  * Context distributed over multiple repositories (#36)
 * Works in all files (uses the `*` document selector)
-* Support for word identification in combined usage such as camelCase, PascalCase and snake_case
-* Support for documenting combined words (e.g. verbNoun or noun_verbed)
-* Shows definitions in auto-complete details
 
 ### Examples
 
@@ -56,6 +60,8 @@ contexts:
       examples:
         - Multiple Customers are involved with a Cargo, each playing a different role.
         - The Cargo delivery goal is specified.
+      aliases:
+        - unit
     - name: Leg
       definition: The movement of a Cargo on a specific vessel from load location to unload location.
       examples:
@@ -79,6 +85,61 @@ contexts:
       examples:
         - The billing policy is to send to collections after 90 days in arrears.
 ```
+
+### Combined Words
+
+For the hover display, Contextive is able to identify the use of defined terms in combined words - where terms are combined using `camelCase`, `PascalCase` or `snake_case`, or defined terms that _are_ combined words.
+
+##### Suffixes and Prefixes
+
+It's quite common to combine a term from your language, such as `cargo` with a suffix such as `Id` (or `service`, or `factory`, etc.).  If your code includes `cargoId`, `CargoId` or `cargo_id`, Contextive will identify the defined term `cargo` and display the definition and usage examples:
+
+![Example of hovering over a combined word containing a match.](images/simple-auto-complete-demo.gif)
+
+##### Combining two (or more) terms
+
+It's also common to end up with code elements (classes, variables or methods) that combine two or more terms from your language, such as `Leg` and `Policy`.  Even if you haven't explicitly created a term for `LegPolicy`, Contextive will identify both words and show you both definitions at the same time:
+
+![Example of hovering over a combined word with multiple matches.](images/multi-match-auto-complete-demo.gif)
+
+##### Multi-word terms
+
+Sometimes, the combined term needs its own unique definition - just add it to your definitions file, and Contextive will work out that the more precise match is the one you want, decluttering your hover panel.  
+
+It can be added to your definitions file as either separate words (e.g. `Leg Magnitude Policy`) or as `PascalCase` or `camelCase` (e.g. `LegMagnitudePolicy`).  Either way, once it's defined, the definitions of `Leg` and `Policy` will no longer be shown:
+
+![Example of hovering over an exactly matching combined word.](images/leg_magnitude_policy_example.png)
+
+This also now works for `snake_case` code:
+
+![Example of snake_case working in auto-complete and hover.](images/snake-case-auto-complete-demo.gif)
+
+### Plural Words
+
+Contextive can detect a defined term even when it is defined in the singular and used in the plural.
+
+Coming Soon: Ability to detect a defined term when it is defined in the plural and used in the singular, and when individual words in a multi-word term are pluralised or singularised.
+
+### Term Aliases
+
+Contextive supports defining a list of aliases for a given term.  These can be acronyms or just alternative words that are sometimes used interchangeably.  For example, in the cargo domain above, `unit` is an alias of `cargo`.
+
+When hovering over the word `unit`, the definition of `cargo` will be displayed.
+
+### Smart Auto-Complete
+
+As the terms added to the auto-complete are from a definitions file, not from your code symbols, the auto-complete will work in any file of any language - including documentation, such as markdown.
+
+To ensure it's useful in a variety of scenarios, it includes a number of options to fit your required format:
+
+* camelCase
+* PascalCase
+* snake_case
+* UPPER_CASE
+
+The auto-complete options will adjust as you type - e.g. after typing a single lower-case letter, only `camelCase` and `snake_case` will be included.  After typing a single upper case letter, `PascalCase` and `UPPER_CASE` will be included.  After typing two upper case letters, single word, snake_case and combined words will all be in `UPPERCASE`.
+
+![Example of smart auto-complete.](images/markdown-demo.gif)
 
 ### Repository Organisation
 
@@ -138,56 +199,7 @@ The `paths` in the definitions file relate to the paths of the roots on disk, no
 
 If you'd like to store the definitions file in a different location, the appropriate settings location to use is the `settings` key in the `.code-workspaces` file itself, as this will apply in all roots.
 
-### Combined Words
-
-For the hover display, Contextive is able to identify the use of defined terms in combined words - where terms are combined using `camelCase`, `PascalCase` or `snake_case`, or defined terms that _are_ combined words.
-
-##### Suffixes and Prefixes
-
-It's quite common to combine a term from your language, such as `cargo` with a suffix such as `Id` (or `service`, or `factory`, etc.).  If your code includes `cargoId`, `CargoId` or `cargo_id`, Contextive will identify the defined term `cargo` and display the definition and usage examples:
-
-![Example of hovering over a combined word containing a match.](images/simple-auto-complete-demo.gif)
-
-##### Combining two (or more) terms
-
-It's also common to end up with code elements (classes, variables or methods) that combine two or more terms from your language, such as `Leg` and `Policy`.  Even if you haven't explicitly created a term for `LegPolicy`, Contextive will identify both words and show you both definitions at the same time:
-
-![Example of hovering over a combined word with multiple matches.](images/multi-match-auto-complete-demo.gif)
-
-##### Combined words as a single term
-
-Sometimes, the combined term needs its own unique definition - just add it to your definitions file, and Contextive will work out that the more precise match is the one you want, decluttering your hover panel.  
-
-It can be added to your definitions file as either separate words (e.g. `Leg Magnitude Policy`) or as `PascalCase` or `camelCase` (e.g. `LegMagnitudePolicy`).  Either way, once it's defined, the definitions of `Leg` and `Policy` will no longer be shown:
-
-![Example of hovering over an exactly matching combined word.](images/leg_magnitude_policy_example.png)
-
-This also now works for `snake_case` code:
-
-![Example of snake_case working in auto-complete and hover.](images/snake-case-auto-complete-demo.gif)
-
-### Plural Words
-
-Contextive can detect a defined term even when it is defined in the singular and used in the plural.
-
-Coming Soon: Ability to detect a defined term when it is defined in the plural and used in the singular, and when individual words in a combined word term are pluralised or singularised.
-
-### Smart Auto-Complete
-
-As the terms added to the auto-complete are from a definitions file, not from your code symbols, the auto-complete will work in any file of any language - including documentation, such as markdown.
-
-To ensure it's useful in a variety of scenarios, it includes a number of options to fit your required format:
-
-* camelCase
-* PascalCase
-* snake_case
-* UPPER_CASE
-
-The auto-complete options will adjust as you type - e.g. after typing a single lower-case letter, only `camelCase` and `snake_case` will be included.  After typing a single upper case letter, `PascalCase` and `UPPER_CASE` will be included.  After typing two upper case letters, single word, snake_case and combined words will all be in `UPPERCASE`.
-
-![Example of smart auto-complete.](images/markdown-demo.gif)
-
-#### Coming Soon
+### Coming Soon
 
 * UI to edit/manage Contextive Definitions
 * Internationalization support
