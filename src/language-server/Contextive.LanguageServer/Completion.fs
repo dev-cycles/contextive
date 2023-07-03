@@ -77,7 +77,7 @@ let private title (s: string) =
 
 let createCompletionItemData (term: Definitions.Term) label =
     { Label = label
-      Documentation = Rendering.getTermHoverContent [ term ] }
+      Documentation = Rendering.renderTerm [ term ] }
 
 let private termToCaseMatchedCompletionData
     (caseTemplate: string option)

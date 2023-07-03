@@ -66,9 +66,7 @@ module private Lsp =
     let noHoverResult = null
 
 let private hoverResult (contexts: Definitions.FindResult) =
-    let content = Rendering.getContextsHoverContent contexts
-
-    match content with
+    match Rendering.renderContexts contexts with
     | None -> Lsp.noHoverResult
     | Some(c) -> Hover(Contents = (c |> Lsp.markupContent))
 
@@ -91,21 +89,17 @@ let handler
     (termFinder: Definitions.Finder)
     (tokenFinder: TextDocument.TokenFinder)
     (p: HoverParams)
-    (hc: HoverCapability)
+    (_: HoverCapability)
     _
     =
     async {
-        let tokenAtPosition = TextDocument.getTokenAtPosition p tokenFinder
-
         return!
-            match tokenAtPosition with
+            match TextDocument.getTokenAtPosition p tokenFinder with
             | None -> async { return Lsp.noHoverResult }
-            | _ ->
-                let tokensAndCandidateTerms =
-                    CandidateTerms.tokenToTokenAndCandidateTerms tokenAtPosition
-
-                hoverContentForToken (p.TextDocument.Uri.ToString()) termFinder tokensAndCandidateTerms
-
+            | tokenAtPosition ->
+                tokenAtPosition
+                |> CandidateTerms.tokenToTokenAndCandidateTerms
+                |> hoverContentForToken (p.TextDocument.Uri.ToString()) termFinder
     }
     |> Async.StartAsTask
 

@@ -2,34 +2,35 @@ module Contextive.LanguageServer.Rendering
 
 open Contextive.Core
 
-let private emojify t = "📗 " + t
+let private emojifyTerm t = "📗 " + t
 let private emphasise t = $"`{t}`"
 
 let private doubleBlankLine = $"\n\n"
 
-let private define d =
+let private renderDefinition d =
     match d with
     | None -> "_undefined_"
     | Some(def) -> def
 
-let private getHoverDefinition (term: Definitions.Term) =
-    [ term.Name |> emphasise |> emojify; term.Definition |> define ]
-    |> String.concat ": "
+let private renderName name = name |> emphasise |> emojifyTerm
+
+let private renderTermDefinition (term: Definitions.Term) =
+    $"{renderName term.Name}: {renderDefinition term.Definition}"
     |> Some
     |> Seq.singleton
 
 let private speechify usageExample = $"💬 \"{usageExample}\""
 
-let private hoverUsageExamplesToMarkdown (t: Definitions.Term) =
+let private renderTermUsageExamples (t: Definitions.Term) =
     t.Examples
     |> Seq.map speechify
     |> Seq.append (Seq.singleton $"#### {emphasise t.Name} Usage Examples:")
     |> Seq.map Some
 
-let private getHoverUsageExamples =
+let private renderUsageExamples =
     function
     | { Definitions.Term.Examples = null } -> Seq.empty
-    | t -> hoverUsageExamplesToMarkdown t
+    | t -> renderTermUsageExamples t
 
 let private concatIfExists (separator: string) (lines: string option seq) =
     match lines |> Seq.choose id with
@@ -38,37 +39,37 @@ let private concatIfExists (separator: string) (lines: string option seq) =
 
 let private concatWithNewLinesIfExists = concatIfExists doubleBlankLine
 
-let getTermHoverContent (terms: Definitions.Term seq) =
-    [ getHoverDefinition; getHoverUsageExamples ]
+let renderTerm (terms: Definitions.Term seq) =
+    [ renderTermDefinition; renderUsageExamples ]
     |> Seq.collect (fun p -> terms |> Seq.collect p)
     |> concatWithNewLinesIfExists
 
-let private getContextHeading (context: Definitions.Context) =
+let private renderContextHeading (context: Definitions.Context) =
     match context.Name with
     | null
     | "" -> None
     | _ -> Some $"### 💠 {context.Name} Context"
 
-let private getContextDomainVisionStatement (context: Definitions.Context) =
+let private renderContextDomainVisionStatement (context: Definitions.Context) =
     match context.DomainVisionStatement with
     | null
     | "" -> None
     | _ -> Some $"_Vision: {context.DomainVisionStatement}_"
 
-let private getContextHover (context: Definitions.Context) =
+let private renderContext (context: Definitions.Context) =
     let terms = context.Terms
 
     if Seq.length terms = 0 then
         None
     else
-        [ getTermHoverContent terms ]
+        [ renderTerm terms ]
         |> Seq.append (
-            [ getContextHeading; getContextDomainVisionStatement ]
+            [ renderContextHeading; renderContextDomainVisionStatement ]
             |> Seq.map (fun f -> f context)
         )
         |> concatWithNewLinesIfExists
 
 let private ContextSeparator = $"{doubleBlankLine}***{doubleBlankLine}"
 
-let getContextsHoverContent (contexts: Definitions.FindResult) =
-    contexts |> Seq.map getContextHover |> concatIfExists ContextSeparator
+let renderContexts (contexts: Definitions.FindResult) =
+    contexts |> Seq.map renderContext |> concatIfExists ContextSeparator

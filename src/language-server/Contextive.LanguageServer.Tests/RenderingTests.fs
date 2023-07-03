@@ -19,7 +19,7 @@ let renderingTests =
               <| fun _ ->
                   let contexts = seq { Context.defaultWithTerms terms }
 
-                  let rendering = Rendering.getContextsHoverContent contexts
+                  let rendering = Rendering.renderContexts contexts
 
                   test <@ rendering.Value.ReplaceLineEndings() = expectedHover @>
 
@@ -100,7 +100,7 @@ let renderingTests =
                   }
                   |> DH.allContextsWithTermNames [ "term" ]
 
-              let rendering = Rendering.getContextsHoverContent contexts
+              let rendering = Rendering.renderContexts contexts
 
               let expectedHover =
                   "\
@@ -121,7 +121,7 @@ _Vision: supporting the test_
                   }
                   |> DH.allContextsWithTermNames [ "term" ]
 
-              let rendering = Rendering.getContextsHoverContent contexts
+              let rendering = Rendering.renderContexts contexts
 
               let expectedHover =
                   "\

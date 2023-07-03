@@ -185,7 +185,7 @@ let completionTests =
                           .Result
                       |> Seq.head
 
-                  let expectedDocumentation = Rendering.getTermHoverContent terms
+                  let expectedDocumentation = Rendering.renderTerm terms
                   test <@ completionItem.Documentation.HasMarkupContent @>
                   test <@ completionItem.Documentation.MarkupContent.Value = expectedDocumentation.Value @>
 
