@@ -2,7 +2,7 @@
 	"name": "contextive",
 	"displayName": "Contextive",
 	"description": "Supports developers where a complex domain or project specific language is in use by surfacing definitions everywhere specific words are used - code, comments, config or documentation.",
-	"version": "1.9.1",
+	"version": "1.9.2",
 	"publisher": "devcycles",
 	"license": "SEE LICENSE IN LICENSE",
 	"icon": "images/contextive.png",

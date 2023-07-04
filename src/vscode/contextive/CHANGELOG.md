@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.2](https://github.com/dev-cycles/contextive/compare/v1.9.1...v1.9.2) (2023-07-04)
+
+
+### Bug Fixes
+
+* **language-server:** display aliases in the hover panel ([6ba291b](https://github.com/dev-cycles/contextive/commit/6ba291b317fee542f4297e6f096693022ad73420))
+
 ## [1.9.1](https://github.com/dev-cycles/contextive/compare/v1.9.0...v1.9.1) (2023-07-03)
 
 
