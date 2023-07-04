@@ -32,7 +32,14 @@ let renderingTests =
             ([ { Term.Default with
                    Name = "termWithAlias"
                    Aliases = ResizeArray [ "aliasOfTerm" ] } ],
-             "📗 `termWithAlias`: _undefined_")
+             """📗 `termWithAlias`: _undefined_  
+_Aliases_: _aliasOfTerm_""")
+
+            ([ { Term.Default with
+                   Name = "termWithAliases"
+                   Aliases = ResizeArray [ "aliasOfTerm"; "anotherAlias" ] } ],
+             """📗 `termWithAliases`: _undefined_  
+_Aliases_: _aliasOfTerm_, _anotherAlias_""")
 
             ([ { Term.Default with
                    Name = "SecondTerm" } ],
