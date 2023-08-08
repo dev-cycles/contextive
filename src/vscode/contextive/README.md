@@ -127,7 +127,9 @@ Coming Soon: Ability to detect a defined term when it is defined in the plural a
 
 Contextive supports defining a list of aliases for a given term.  These can be acronyms or just alternative words that are sometimes used interchangeably.  For example, in the cargo domain above, `unit` is an alias of `cargo`.
 
-When hovering over the word `unit`, the definition of `cargo` will be displayed.
+When hovering over the word `unit`, the definition of `cargo` will be displayed:
+
+![Example of hovering over the alias 'unit' for the term 'cargo'.](images/alias.png)
 
 ### Multiline YAML
 
