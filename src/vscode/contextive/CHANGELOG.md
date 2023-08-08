@@ -1,5 +1,14 @@
 # Change Log
 
+## [1.9.3](https://github.com/dev-cycles/contextive/compare/v1.9.2...v1.9.3) (2023-08-08)
+
+
+### Bug Fixes
+
+* **language-server:** ensure rendering the domain vision statement is correct even with trailing whitespace/newline. (fixes [#47](https://github.com/dev-cycles/contextive/issues/47)) ([27f86c1](https://github.com/dev-cycles/contextive/commit/27f86c1f7ed909c5609bf0349e641d3a57b302a0))
+* **language-server:** term usage examples render within double-quotes correctly even with leading and trailing whitespace/newlines. ([292553f](https://github.com/dev-cycles/contextive/commit/292553fc23b85b2c69af0758f8a8f447dd08c6ad))
+* **vscode:** the default definitions file includes a definition of the 'aliases' key ([a983db2](https://github.com/dev-cycles/contextive/commit/a983db2ec66368073c60cce0424650714a632e2d))
+
 ## [1.9.2](https://github.com/dev-cycles/contextive/compare/v1.9.1...v1.9.2) (2023-07-04)
 
 
