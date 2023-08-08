@@ -23,6 +23,14 @@ contexts:
       examples:
         - _Order_ is a term that is meaningful in the _Sales_ context.
         - What term should we use to describe what happens when a customer buys something from us?
+      aliases:
+        - word
+    - name: alias
+      definition: >
+        An alternative word for the same concept.
+        It might be a legacy term, or an alternative term that is in common use while the ubiquitous language is still being adopted.
+      examples:
+        - _Product_ is an alias of _Item_ in the Sales context.
     - name: definition
       definition: A short summary defining the meaning of a term in a context.
       examples:

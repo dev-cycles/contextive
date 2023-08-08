@@ -7,6 +7,7 @@ open Contextive.VsCodeExtension.Tests.E2E.Helpers.Completion
 
 let DefaultExpectedTerms =
     seq {
+        "alias"
         "context"
         "definition"
         "example"
