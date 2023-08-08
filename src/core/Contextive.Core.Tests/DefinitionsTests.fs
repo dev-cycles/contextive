@@ -171,7 +171,96 @@ contexts:
 """
 
                     let context = definitions.Contexts[0]
-                    test <@ List.ofSeq <| context.Paths = [ "path1"; "path2" ] @> ]
+                    test <@ List.ofSeq <| context.Paths = [ "path1"; "path2" ] @>
+
+                testList
+                    "Multi-line context name"
+                    [
+
+                      let testContextName name yml expectedName =
+                          testCase name
+                          <| fun () ->
+                              let definitions = unwrap <| deserialize yml
+
+                              let context = definitions.Contexts[0]
+                              test <@ context.Name = expectedName @>
+
+                      testContextName
+                          "Folded, Clip"
+                          """
+contexts:
+  - name: >
+      this name has a single
+      newline at the end
+
+"""
+                          ("this name has a single newline at the end" + System.Environment.NewLine)
+
+                      testContextName
+                          "Folded, Chomp"
+                          """
+contexts:
+  - name: >-
+      this name has no
+      newline at the end
+
+"""
+                          "this name has no newline at the end"
+
+                      testContextName
+                          "Folded, Keep"
+                          """
+contexts:
+  - name: >+
+      this name has two
+      newlines at the end
+
+"""
+                          ("this name has two newlines at the end"
+                           + System.Environment.NewLine
+                           + System.Environment.NewLine)
+
+                      testContextName
+                          "Literal, Clip"
+                          """
+contexts:
+  - name: |
+      this name has a single
+      newline in the middle and one at the end
+
+"""
+                          ("this name has a single"
+                           + System.Environment.NewLine
+                           + "newline in the middle and one at the end"
+                           + System.Environment.NewLine)
+
+                      testContextName
+                          "Literal, Chomp"
+                          """
+contexts:
+  - name: |-
+      this name has a single
+      newline in the middle and none at the end
+
+"""
+                          ("this name has a single"
+                           + System.Environment.NewLine
+                           + "newline in the middle and none at the end")
+
+                      testContextName
+                          "Literal, Keep"
+                          """
+contexts:
+  - name: |+
+      this name has a single
+      newline in the middle and two at the end
+
+"""
+                          ("this name has a single"
+                           + System.Environment.NewLine
+                           + "newline in the middle and two at the end"
+                           + System.Environment.NewLine
+                           + System.Environment.NewLine) ] ]
 
           testList
               "Parsing Errors"
