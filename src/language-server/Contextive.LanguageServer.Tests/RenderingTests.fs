@@ -142,4 +142,48 @@ _Vision: supporting the test_
 
 📗 `term`: _undefined_"
 
+              test <@ rendering.Value.ReplaceLineEndings() = expectedHover @>
+
+          testCase "Render vision statement with newline at the end"
+          <| fun _ ->
+              let contexts =
+                  seq {
+                      { Context.Default with
+                          Name = "Test"
+                          DomainVisionStatement = "vision statement should still be italic" + System.Environment.NewLine }
+                  }
+                  |> DH.allContextsWithTermNames [ "term" ]
+
+              let rendering = Rendering.renderContexts contexts
+
+              let expectedHover =
+                  "\
+### 💠 Test Context
+
+_Vision: vision statement should still be italic_
+
+📗 `term`: _undefined_"
+
+              test <@ rendering.Value.ReplaceLineEndings() = expectedHover @>
+
+          testCase "Render vision statement with whitespace at the end"
+          <| fun _ ->
+              let contexts =
+                  seq {
+                      { Context.Default with
+                          Name = "Test"
+                          DomainVisionStatement = "vision statement should still be italic " }
+                  }
+                  |> DH.allContextsWithTermNames [ "term" ]
+
+              let rendering = Rendering.renderContexts contexts
+
+              let expectedHover =
+                  "\
+### 💠 Test Context
+
+_Vision: vision statement should still be italic_
+
+📗 `term`: _undefined_"
+
               test <@ rendering.Value.ReplaceLineEndings() = expectedHover @> ]

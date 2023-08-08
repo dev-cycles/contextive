@@ -67,7 +67,7 @@ let private renderContextDomainVisionStatement (context: Definitions.Context) =
     match context.DomainVisionStatement with
     | null
     | "" -> None
-    | _ -> Some $"_Vision: {context.DomainVisionStatement}_"
+    | _ -> Some $"_Vision: {context.DomainVisionStatement.TrimEnd()}_"
 
 let private renderContext (context: Definitions.Context) =
     let terms = context.Terms
