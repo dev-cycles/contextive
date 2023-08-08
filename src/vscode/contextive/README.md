@@ -68,13 +68,16 @@ contexts:
         - Operations will need to contract handling work based on the expected times for each leg
         - For each leg we'd like to see the vessel voyage, the load and unload location, and time.
     - name: Policy
-      definition: A set of rules that the routing service must follow when evaluating legs that confirm to the desired routing specification.
+      definition: |
+        A set of rules that the routing service must follow
+        when evaluating legs that confirm to the desired routing specification.
       examples:
         - We need to configure the set of policies that will apply for a specific customer.
-    - name: LegMagnitudePolicy
+    - name: Leg Magnitude Policy
       definition: A policy that helps the routing engine select the legs with the lowest magnitude.
       examples:
         - The leg magnitude policy is selecting the fastest leg, but we need it to select the cheapest leg.
+    - name: Vessel
   - name: Billing
     domainVisionStatement: Compute and levy charges for shipping
     paths:
@@ -125,6 +128,68 @@ Coming Soon: Ability to detect a defined term when it is defined in the plural a
 Contextive supports defining a list of aliases for a given term.  These can be acronyms or just alternative words that are sometimes used interchangeably.  For example, in the cargo domain above, `unit` is an alias of `cargo`.
 
 When hovering over the word `unit`, the definition of `cargo` will be displayed.
+
+### Multiline YAML
+
+As some of the fields in the definitions file could have long text, it may be helpful to use multi-line yaml. Because the fields are interpreted as markdown, there are some special considerations to be aware of.  The site https://yaml-multiline.info/ is a great resource for multi-line yaml fields.
+
+The following common scenarios are more fully explored in the [multiline sample file](test/single-root/fixtures/simple_workspace/.contextive/multiline.yml) and apply to all fields, but are most likely useful for the `domainVisionStatement`, `terms.definition` and `terms.examples` fields.
+
+#### Multiline with Line Break
+
+If a definition (or domain vision statement) is quite long, and you would like to include linebreaks (but not new paragraphs), you need to use one of the yaml multi-line options that ensures at least one newline is parsed, AND to render a markdown linebreak you need to add two `<SPACE>` characters at the end of the line:
+
+```yaml
+contexts:
+  - name: Demo Multiline Options
+    terms:
+      - name: LiteralLineBreak
+        definition: |
+          This definition has multiple lines with a linebreak  
+          achieved using the literal block indicator, a single newline, and two spaces at the end of the first line
+```
+
+Renders to:
+
+![Example of literal multi-line with linebreak.](images/multiline_literal_linebreak.png)
+
+#### Multiline with New Paragraph
+
+To achieve a new paragraph, use a yaml option that parses multiple newlines, e.g.:
+
+```yaml
+contexts:
+  - name: Demo Multiline Options
+    terms:
+      - name: LiteralNewParagraph
+        definition: |
+          This definition has multiple paragraphs
+
+          achieved using the literal block indicator and two newlines
+```
+
+Renders to:
+
+![Example of literal multi-line with new paragraph.](images/multiline_literal_newpara.png)
+
+#### Multiline in No Newline in Hover
+
+Sometimes you may want to break over multiple lines to make it easier to read the raw yaml, but don't want the newlines to appear in the hover.  In this case, just don't use any Markdown linebreak or new para features.  e.g.:
+
+```yaml
+contexts:
+  - name: Demo Multiline Options
+      - name: LiteralMultilineNoBreak
+        definition: |
+          This definition has no break in the hover panel
+          Even though it's over multiple lines, because there are neither 2 spaces (linebreak) nor two newlines (new paragraph)
+```
+
+Renders to:
+
+![Example of literal multi-line with no break.](images/multiline_literal_nobreak.png)
+
+The line will still wrap according to the width of the hover panel.
 
 ### Smart Auto-Complete
 

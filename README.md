@@ -24,12 +24,14 @@ The following list of features is a draft proposal of the vision at the start of
   * [ ] Classify terms as aggregates/entities, attributes, commands and events
   * [x] For each term, include a definition, and examples of usage in normal sentences
   * [ ] Link terms to each other (e.g. commands to the aggregates/entities they apply to; events to the aggregates/entities that publish them)
+  * [ ] Define relationships between contexts (e.g. a Context Map definition)
   * [x] Store Ubiquitous Language term definitions in a file in the repository (e.g. yml format)
   * [x] Support a monorepo with multiple Bounded Contexts in one repo - identify which paths relate to each Bounded Context
   * [x] Support a Bounded Context distributed across multiple repos (#36)
   * [x] Support aliases of terms, hovering over the alias shows the term definition
     * [x] Add details of the alias in the hover
     * [ ] Add ability to define an alias as deprecated and warn as such
+  * [x] Support multiline domain vision statements, definitions and usage examples
 * [ ] IDE Support
   * [x] Visual Studio Code
     * [x] Support single-root workspaces

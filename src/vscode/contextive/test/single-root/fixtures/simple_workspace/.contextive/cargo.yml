@@ -10,13 +10,17 @@ contexts:
       examples:
         - Multiple Customers are involved with a Cargo, each playing a different role.
         - The Cargo delivery goal is specified.
+      aliases:
+        - unit
     - name: Leg
       definition: The movement of a Cargo on a specific vessel from load location to unload location.
       examples:
         - Operations will need to contract handling work based on the expected times for each leg
         - For each leg we'd like to see the vessel voyage, the load and unload location, and time.
     - name: Policy
-      definition: A set of rules that the routing service must follow when evaluating legs that confirm to the desired routing specification.
+      definition: |
+        A set of rules that the routing service must follow
+        when evaluating legs that confirm to the desired routing specification.
       examples:
         - We need to configure the set of policies that will apply for a specific customer.
     - name: Leg Magnitude Policy

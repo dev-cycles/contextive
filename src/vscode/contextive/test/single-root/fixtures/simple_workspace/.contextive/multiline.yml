@@ -1,0 +1,32 @@
+contexts:
+  - name: Demo Multiline Options
+    terms:
+      - name: LiteralLineBreak
+        definition: |
+          This definition has multiple lines with a linebreak  
+          achieved using the literal block indicator, a single newline, and two spaces at the end of the first line
+      - name: FoldedLineBreak
+        definition: >
+          This definition has multiple lines with a linebreak  
+
+          achieved using the folded block indicator, two newlines, and two spaces at the end of the first line
+      - name: LiteralNewParagraph
+        definition: |
+          This definition has multiple paragraphs
+
+          achieved using the literal block indicator and two newlines
+      - name: FoldedNewParagraph
+        definition: >
+          This definition has multiple paragraphs
+
+
+
+          achieved using the folded block indicator and four newlines (2 newlines in yml -> 1 newline in markdown.  Markdown needs 2 newlines to create a new paragraph)
+      - name: LiteralMultilineNoBreak
+        definition: |
+          This definition has no break in the hover panel
+          Even though it's over multiple lines, because there are neither 2 spaces (linebreak) nor two newlines (new paragraph)
+      - name: FlowMultilineNoBreak
+        definition: >
+          This definition has no break in the hover panel
+          Even though it's over multiple lines, because there are neither 2 spaces (linebreak) nor two newlines (new paragraph)
