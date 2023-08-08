@@ -39,7 +39,7 @@ let private renderTermDefinition (term: Definitions.Term) =
     |> concatIfExists "  \n"
     |> Seq.singleton
 
-let private speechify usageExample = $"💬 \"{usageExample}\""
+let private speechify (usageExample: string) = $"💬 \"{usageExample.Trim()}\""
 
 let private renderTermUsageExamples (t: Definitions.Term) =
     t.Examples

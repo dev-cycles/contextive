@@ -55,6 +55,37 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_""")
 
 💬 \"Do a thing\"")
 
+            ([ { Term.Default with
+                   Name = "ThirdTermWithTrailingNewLineInUsage"
+                   Examples = ResizeArray [ "Do a thing" + System.Environment.NewLine ] } ],
+             "\
+📗 `ThirdTermWithTrailingNewLineInUsage`: _undefined_
+
+#### `ThirdTermWithTrailingNewLineInUsage` Usage Examples:
+
+💬 \"Do a thing\"")
+
+            ([ { Term.Default with
+                   Name = "ThirdTermWithTrailingWhitespaceInUsage"
+                   Examples = ResizeArray [ "Do a thing " ] } ],
+             "\
+📗 `ThirdTermWithTrailingWhitespaceInUsage`: _undefined_
+
+#### `ThirdTermWithTrailingWhitespaceInUsage` Usage Examples:
+
+💬 \"Do a thing\"")
+
+            ([ { Term.Default with
+                   Name = "ThirdTermWithLeadingWhitespaceInUsage"
+                   Examples = ResizeArray [ " Do a thing" ] } ],
+             "\
+📗 `ThirdTermWithLeadingWhitespaceInUsage`: _undefined_
+
+#### `ThirdTermWithLeadingWhitespaceInUsage` Usage Examples:
+
+💬 \"Do a thing\"")
+
+
             ([ { Term.Default with Name = "Second" }; { Term.Default with Name = "Term" } ],
              "\
 📗 `Second`: _undefined_
