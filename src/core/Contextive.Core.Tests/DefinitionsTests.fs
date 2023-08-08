@@ -183,7 +183,7 @@ contexts:
                               let definitions = unwrap <| deserialize yml
 
                               let context = definitions.Contexts[0]
-                              test <@ context.Name = expectedName @>
+                              test <@ context.Name.ReplaceLineEndings() = expectedName @>
 
                       testContextName
                           "Folded, Clip"
