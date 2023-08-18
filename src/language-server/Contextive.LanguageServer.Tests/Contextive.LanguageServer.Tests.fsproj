@@ -28,6 +28,9 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="fixtures/completion_tests/empty_terms_list.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="fixtures/completion_tests/one.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -158,6 +158,20 @@ contexts:
                     let context = definitions.Contexts[0]
                     test <@ context.DomainVisionStatement = "The Domain Vision Statement" @>
 
+                testCase "Empty List parses as empty list instead of null"
+                <| fun () ->
+                    let definitions =
+                        unwrap
+                        <| deserialize
+                            """
+contexts:
+  - terms:
+"""
+
+                    let context = definitions.Contexts[0]
+                    test <@ context.Terms.Count = 0 @>
+
+
                 testCase "Can Parse Context Paths"
                 <| fun () ->
                     let definitions =

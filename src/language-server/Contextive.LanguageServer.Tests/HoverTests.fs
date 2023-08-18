@@ -32,11 +32,9 @@ let hoverTests =
           let multiLineToSingleLine (t: string) =
               t.Replace("\n", "\\n").Replace("\r", "\\r")
 
-          let testHoverTermFound (text, position: Position, expectedTerm: string) =
+          let testHoverTermFound (text, position: Position, expectedTerm: string, fileName: string) =
               testAsync
-                  $"Given definitions and text '{multiLineToSingleLine text}', server responds to hover request with {expectedTerm} in {position}" {
-                  let fileName = "three"
-
+                  $"Given definitions file '{fileName}' and file contents '{multiLineToSingleLine text}', server responds to hover request at Position {position} with '{expectedTerm}'" {
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
                         ConfigurationSection.contextivePathOptionsBuilder $"{fileName}.yml" ]
@@ -66,28 +64,28 @@ let hoverTests =
                   test <@ hover.Contents.MarkupContent.Value.Contains(expectedTerm) @>
               }
 
-          [ ("original", Position(0, 0), "original")
-            ("Original", Position(0, 0), "original")
-            ("original another", Position(0, 10), "another")
-            ("original another word", Position(0, 11), "another")
-            ("original\nanother", Position(1, 5), "another")
-            ("original\nword\nanother", Position(2, 4), "another")
-            ("original\r\nanother", Position(1, 5), "another")
-            ("original\r\nword\r\nanother", Position(2, 5), "another")
-            ("anotherWord", Position(0, 1), "another")
-            ("combined_word", Position(0, 1), "CombinedWord")
-            ("CombinedWordId", Position(0, 1), "CombinedWord")
-            ("AnotherCombinedWord", Position(0, 1), "another")
-            ("AnotherCombinedWord", Position(0, 1), "CombinedWord")
-            ("originals", Position(0, 0), "original")
-            ("octopi", Position(0, 0), "octopus") ]
+          [ ("original", Position(0, 0), "original", "three")
+            ("Original", Position(0, 0), "original", "three")
+            ("original another", Position(0, 10), "another", "three")
+            ("original another word", Position(0, 11), "another", "three")
+            ("original\nanother", Position(1, 5), "another", "three")
+            ("original\nword\nanother", Position(2, 4), "another", "three")
+            ("original\r\nanother", Position(1, 5), "another", "three")
+            ("original\r\nword\r\nanother", Position(2, 5), "another", "three")
+            ("anotherWord", Position(0, 1), "another", "three")
+            ("combined_word", Position(0, 1), "CombinedWord", "three")
+            ("CombinedWordId", Position(0, 1), "CombinedWord", "three")
+            ("AnotherCombinedWord", Position(0, 1), "another", "three")
+            ("AnotherCombinedWord", Position(0, 1), "CombinedWord", "three")
+            ("originals", Position(0, 0), "original", "three")
+            ("octopi", Position(0, 0), "octopus", "three")
+            ("single", Position(0, 0), "single", "empty_terms_list") ]
           |> List.map testHoverTermFound
           |> testList "Term found when hovering in opened docs at Positions"
 
-          let testHoverTermNotFound (text, position: Position) =
+          let testHoverTermNotFound (text, position: Position, fileName: string) =
               testAsync
                   $"Given definitions '{text}' and document open, server responds to hover request with no content in {position}" {
-                  let fileName = "one"
 
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
@@ -116,10 +114,11 @@ let hoverTests =
                   test <@ hover = null @>
               }
 
-          [ ("NotATerm", Position(0, 0))
-            ("firstTerm NotATerm", Position(0, 10))
-            ("    anothernotterm", Position(0, 0))
-            ("", Position(0, 0)) ]
+          [ ("NotATerm", Position(0, 0), "one")
+            ("firstTerm NotATerm", Position(0, 10), "one")
+            ("    anothernotterm", Position(0, 0), "one")
+            ("", Position(0, 0), "one")
+            ("Something", Position(0, 0), "empty_terms_list") ]
           |> List.map testHoverTermNotFound
           |> testList "Nothing found when hovering"
 

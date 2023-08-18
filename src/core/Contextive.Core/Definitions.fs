@@ -49,7 +49,6 @@ type Context =
       Terms: ResizeArray<Term> }
 
 module Context =
-
     let withTerms (terms: Term seq) (context: Context) = { context with Terms = terms.ToList() }
 
     let Default =
@@ -60,6 +59,12 @@ module Context =
 
     let defaultWithTerms terms = Default |> withTerms terms
 
+    let withDefaultTermsIfNull context =
+        if (context.Terms <> null) then
+            context
+        else
+            withTerms (ResizeArray<Term>()) context
+
 [<CLIMutable>]
 type Definitions = { Contexts: ResizeArray<Context> }
 
@@ -69,6 +74,10 @@ module Definitions =
 type FindResult = Context seq
 type Filter = FindResult -> FindResult
 type Finder = string -> Filter -> Async<FindResult>
+
+let private replaceNullsWithEmptyLists (definitions: Definitions) =
+    { definitions with
+        Contexts = ResizeArray(Seq.map Context.withDefaultTermsIfNull definitions.Contexts) }
 
 let deserialize (yml: string) =
     try
@@ -81,7 +90,7 @@ let deserialize (yml: string) =
 
         match definitions |> box with
         | null -> Error "Definitions file is empty."
-        | _ -> Ok definitions
+        | _ -> Ok(definitions |> replaceNullsWithEmptyLists)
     with :? YamlDotNet.Core.YamlException as e ->
         let msg =
             if e.InnerException = null then
