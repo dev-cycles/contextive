@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.4](https://github.com/dev-cycles/contextive/compare/v1.9.3...v1.9.4) (2023-08-18)
+
+
+### Bug Fixes
+
+* **language-server:** improve resilience when terms is an empty list in the definitions file. (fixes: [#48](https://github.com/dev-cycles/contextive/issues/48)) ([65517ef](https://github.com/dev-cycles/contextive/commit/65517eff0e7f95088096d2bd914f814825504a20))
+
 ## [1.9.3](https://github.com/dev-cycles/contextive/compare/v1.9.2...v1.9.3) (2023-08-08)
 
 
