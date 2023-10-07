@@ -68,17 +68,16 @@ let initializationTests =
                   @>
           }
 
-          testAsync "Server fails to load contextive file with error when no configuration supplied" {
+          testAsync "Server loads contextive file from default location when no configuration supplied" {
               let config =
                   [ Workspace.optionsBuilder ""
                     ConfigurationSection.optionsBuilder "dummySection" (fun () -> Map []) ]
 
-              let! (client, reply) = TestClientWithCustomInitWait(config, Some "contextive") |> initAndWaitForReply
+              let defaultPath = ".contextive/definitions.yml"
 
-              test
-                  <@
-                      (defaultArg reply "") = "Error loading definitions: No path defined - please check \"contextive.path\" setting."
-                  @>
+              let! (client, reply) = TestClient(config) |> initAndWaitForReply
+
+              test <@ (defaultArg reply "").Contains(defaultPath) @>
           }
 
           ]
