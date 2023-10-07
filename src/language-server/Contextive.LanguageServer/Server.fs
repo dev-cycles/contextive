@@ -12,6 +12,9 @@ open Serilog
 open System.IO
 open System.Reflection
 
+[<Literal>]
+let defaultContextiveDefinitionsPath = ".contextive/definitions.yml"
+
 let configSection = "contextive"
 let pathKey = "path"
 let assembly = Assembly.GetExecutingAssembly()
@@ -33,10 +36,12 @@ let private getConfig (s: ILanguageServer) section key =
         let configValue = config.GetSection(section).Item(key)
 
         let value =
-            match configValue with
-            | ""
-            | null -> None
-            | _ -> Some configValue
+            if System.String.IsNullOrEmpty configValue then
+                match key with
+                | key when key = pathKey -> Some defaultContextiveDefinitionsPath
+                | _ -> None
+            else
+                Some configValue
 
         Log.Logger.Information $"Got {key} {value}"
         return value
