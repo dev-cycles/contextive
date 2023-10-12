@@ -58,7 +58,7 @@ let private initAndWaitForConfigLoaded testClientConfig (loadMessage: string opt
         return (client, reply)
     }
 
-let initWithReply initOptions =
+let initAndWaitForReply initOptions =
     async {
         return!
             match initOptions with
@@ -70,6 +70,6 @@ let initWithReply initOptions =
 
 let init o =
     async {
-        let! result = initWithReply o
+        let! result = initAndWaitForReply o
         return fst result
     }

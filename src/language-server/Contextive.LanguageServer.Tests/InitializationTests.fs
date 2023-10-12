@@ -30,7 +30,7 @@ let initializationTests =
                   [ Workspace.optionsBuilder ""
                     ConfigurationSection.contextivePathOptionsBuilder pathValue ]
 
-              let! (client, reply) = TestClient(config) |> initWithReply
+              let! (client, reply) = TestClient(config) |> initAndWaitForReply
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
               test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
@@ -44,7 +44,7 @@ let initializationTests =
               let config =
                   [ ConfigurationSection.contextivePathOptionsBuilder $"/tmp/{pathValue}" ]
 
-              let! (client, reply) = TestClient(config) |> initWithReply
+              let! (client, reply) = TestClient(config) |> initAndWaitForReply
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
               test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
@@ -56,7 +56,7 @@ let initializationTests =
               let pathValue = Guid.NewGuid().ToString()
               let config = [ ConfigurationSection.contextivePathOptionsBuilder pathValue ]
 
-              let! (client, reply) = TestClientWithCustomInitWait(config, Some pathValue) |> initWithReply
+              let! (client, reply) = TestClientWithCustomInitWait(config, Some pathValue) |> initAndWaitForReply
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
               test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
@@ -65,6 +65,19 @@ let initializationTests =
                   <@
                       reply = Some
                           $"Error loading definitions: Unable to locate path '{pathValue}' as not in a workspace."
+                  @>
+          }
+
+          testAsync "Server fails to load contextive file with error when no configuration supplied" {
+              let config =
+                  [ Workspace.optionsBuilder ""
+                    ConfigurationSection.optionsBuilder "dummySection" (fun () -> Map []) ]
+
+              let! (client, reply) = TestClientWithCustomInitWait(config, Some "contextive") |> initAndWaitForReply
+
+              test
+                  <@
+                      (defaultArg reply "") = "Error loading definitions: No path defined - please check \"contextive.path\" setting."
                   @>
           }
 

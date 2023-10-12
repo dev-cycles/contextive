@@ -25,3 +25,4 @@ node_modules
 fable_modules
 # VSCode Testing
 .vscode-test
+.DS_Store
