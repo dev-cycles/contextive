@@ -69,7 +69,17 @@ jobs:
         id: get-version
         shell: bash
         working-directory: ./src/vscode/contextive
-      - name: Upload binaries to release
+      - name: Zip Language Server
+        run: |
+          zip ../Contextive.LanguageServer-${{ matrix.dotnet_runtime }}-${{ steps.get-version.outputs.VERSION}}.zip * 
+        working-directory: ./src/language-server/Contextive.LanguageServer/publish
+      - name: Upload Language Server to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: "src/language-server/Contextive.LanguageServer/Contextive.LanguageServer-${{ matrix.dotnet_runtime }}-${{ steps.get-version.outputs.VERSION}}.zip"
+          tag: ${{ github.ref }} 
+      - name: Upload VsCode VSix to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
