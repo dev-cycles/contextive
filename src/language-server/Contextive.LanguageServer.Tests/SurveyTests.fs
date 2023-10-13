@@ -72,7 +72,7 @@ let initializationTests =
               let latchFile =
                   Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "survey-prompted.txt")
 
-              File.Create(latchFile) |> ignore
+              File.Create(latchFile).Close()
 
               let pathValue = Guid.NewGuid().ToString()
 

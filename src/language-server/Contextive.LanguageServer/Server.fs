@@ -62,7 +62,7 @@ let showSurveyPrompt (s: ILanguageServer) =
             Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "survey-prompted.txt")
 
         if not <| File.Exists(latchFile) then
-            File.Create(latchFile) |> ignore
+            File.Create(latchFile).Close()
 
             let goToSurveyAction = "Sure, I'll help"
             let surveyUri = "https://forms.gle/3pJSUYmLHv5RQ1m1A"
