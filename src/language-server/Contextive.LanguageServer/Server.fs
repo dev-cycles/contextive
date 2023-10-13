@@ -56,8 +56,41 @@ let private getWorkspaceFolder (s: ILanguageServer) =
     else
         None
 
+let showSurveyPrompt (s: ILanguageServer) =
+    task {
+        let latchFile =
+            Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "survey-prompted.txt")
+
+        if not <| File.Exists(latchFile) then
+            File.Create(latchFile) |> ignore
+
+            let goToSurveyAction = "Sure, I'll help"
+            let surveyUri = "https://forms.gle/3pJSUYmLHv5RQ1m1A"
+
+            let surveyPrompt =
+                ShowMessageRequestParams(
+                    Message =
+                        "Would you like to help shape the future of Contextive by completing a short (10min) survey?",
+                    Type = MessageType.Info,
+                    Actions =
+                        Container(
+                            [ MessageActionItem(Title = goToSurveyAction)
+                              MessageActionItem(Title = "No thanks") ]
+                        )
+                )
+
+            let! response = s.Window.ShowMessageRequest(surveyPrompt, System.Threading.CancellationToken.None)
+
+            if response <> null && response.Title = goToSurveyAction then
+                let! res = s.Window.ShowDocument(ShowDocumentParams(Uri = surveyUri, External = true))
+                ()
+
+    }
+
 let private onStartup definitions =
     OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
+        showSurveyPrompt (s) |> ignore
+
         async {
             s.Window.LogInfo $"Starting {name} v{version}..."
             let configGetter () = getConfig s configSection pathKey

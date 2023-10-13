@@ -25,6 +25,7 @@
     <Compile Include="CompletionTests.fs" />
     <Compile Include="HoverTests.fs" />
     <Compile Include="InitializationTests.fs" />
+    <Compile Include="SurveyTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
