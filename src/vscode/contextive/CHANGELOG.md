@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.10.1](https://github.com/dev-cycles/contextive/compare/v1.10.0...v1.10.1) (2023-10-14)
+
+
+### Bug Fixes
+
+* **language-server:** resolve issue with releasing v1.10.0 for macos and windows ([5042b5f](https://github.com/dev-cycles/contextive/commit/5042b5f2598d56c6b041360909da005f8eff2b02))
+
 # [1.10.0](https://github.com/dev-cycles/contextive/compare/v1.9.4...v1.10.0) (2023-10-14)
 
 
