@@ -66,13 +66,13 @@ jobs:
       - name: Zip Language Server (Ubuntu)
         run: |
           zip ../Contextive.LanguageServer-${{ matrix.dotnet_runtime }}.zip * 
-        working-directory: ./src/language-server/Contextive.LanguageServer/bin/debug/net-6.0
+        working-directory: ./src/language-server/Contextive.LanguageServer/bin/Debug/net-6.0
         if: ${{ contains(matrix.os, 'ubuntu') }}
 
       - name: Zip Language Server (Other)
         run: |
           7z a ../Contextive.LanguageServer-${{ matrix.dotnet_runtime }}.zip * 
-        working-directory: ./src/language-server/Contextive.LanguageServer/bin/debug/net-6.0
+        working-directory: ./src/language-server/Contextive.LanguageServer/bin/Debug/net-6.0
         if: ${{ contains(matrix.os, 'macos') || contains(matrix.os, 'windows') }} 
 
       - name: Upload Language Server Test Results
