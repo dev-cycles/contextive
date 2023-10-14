@@ -92,4 +92,4 @@ The Contextive logo is based (with extreme gratitude!) on the `Bibliophile` imag
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+This project is licensed under the [MIT](https://choosealicense.com/licenses/mit/) license.  See [LICENSE](LICENSE).
