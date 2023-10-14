@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.10.2](https://github.com/dev-cycles/contextive/compare/v1.10.1...v1.10.2) (2023-10-14)
+
+
+### Bug Fixes
+
+* **language-server:** fix issue with survey prompt ([7196e82](https://github.com/dev-cycles/contextive/commit/7196e822a73d7332024ff6fd94bf540cb503efc3))
+
 ## [1.10.1](https://github.com/dev-cycles/contextive/compare/v1.10.0...v1.10.1) (2023-10-14)
 
 
