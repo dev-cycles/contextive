@@ -1,5 +1,13 @@
 # Change Log
 
+# [1.10.0](https://github.com/dev-cycles/contextive/compare/v1.9.4...v1.10.0) (2023-10-14)
+
+
+### Features
+
+* **language-server:** includes a one-time invitation for users to complete a Contextive roadmap survey ([42272d0](https://github.com/dev-cycles/contextive/commit/42272d0221b6a79b0d2e025976aabe4cd02ba874))
+* **language-server:** Use the default path defined in contextive if it's not specified in the configuration. ([23f9049](https://github.com/dev-cycles/contextive/commit/23f9049a18c638be69a7a44d0a9cda121673703e))
+
 ## [1.9.4](https://github.com/dev-cycles/contextive/compare/v1.9.3...v1.9.4) (2023-08-18)
 
 
