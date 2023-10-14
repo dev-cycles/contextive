@@ -9,6 +9,14 @@ It should help new team members get up to speed more quickly in understanding do
 
 ![Example of Contextive in action.](images/simple-auto-complete-demo.gif)
 
+## SURVEY
+
+We're currently conducting a [survey](https://forms.gle/3pJSUYmLHv5RQ1m1A) for Contextive users (or folk interested in Contextive) to help shape the future roadmap and better understand how teams are using Contextive.
+
+It should only take around 10 minutes - we'd really appreciate your thoughts! [Click here](https://forms.gle/3pJSUYmLHv5RQ1m1A) to take the survey.
+
+While the survey is underway, you'll also notice a one-time unobtrusive popup when Contextive first starts (since v1.10.2).  This popup will be removed when we complete the survey.
+
 ## Getting Started
 
 Use the `Contextive: Initialize Definitions` command from the command palette to create a sample definitions file. A file will be created and opened with a sample set of definitions:

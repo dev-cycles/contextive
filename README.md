@@ -7,6 +7,14 @@
 
 Contextive is a suite of tools to immerse developers in the language of their users' domains.
 
+## SURVEY
+
+We're currently conducting a [survey](https://forms.gle/3pJSUYmLHv5RQ1m1A) for Contextive users (or folk interested in Contextive) to help shape the future roadmap and better understand how teams are using Contextive.
+
+It should only take around 10 minutes - we'd really appreciate your thoughts! [Click here](https://forms.gle/3pJSUYmLHv5RQ1m1A) to take the survey.
+
+While the survey is underway, you'll also notice a one-time unobtrusive popup when Contextive first starts (since v1.10.2).  This popup will be removed when we complete the survey.
+
 ## Inspiration
 
 Contextive is inspired by the concept of the [Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html) from the practice of [Domain Driven Design (DDD)](https://martinfowler.com/bliki/DomainDrivenDesign.html) and is intended to support ubiquitous language management practices on DDD projects.
