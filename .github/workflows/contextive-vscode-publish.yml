@@ -69,10 +69,16 @@ jobs:
         id: get-version
         shell: bash
         working-directory: ./src/vscode/contextive
-      - name: Zip Language Server
+      - name: Zip Language Server (Ubuntu)
         run: |
           zip ../Contextive.LanguageServer-${{ matrix.dotnet_runtime }}-${{ steps.get-version.outputs.VERSION}}.zip * 
         working-directory: ./src/language-server/Contextive.LanguageServer/publish
+        if: ${{ contains(matrix.os, 'ubuntu') }}
+      - name: Zip Language Server (Others)
+        run: |
+          7z a ../Contextive.LanguageServer-${{ matrix.dotnet_runtime }}-${{ steps.get-version.outputs.VERSION}}.zip * 
+        working-directory: ./src/language-server/Contextive.LanguageServer/publish
+        if: ${{ ! contains(matrix.os, 'ubuntu') }}
       - name: Upload Language Server to release
         uses: svenstaro/upload-release-action@v2
         with:
