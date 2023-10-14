@@ -56,10 +56,10 @@ let private getWorkspaceFolder (s: ILanguageServer) =
     else
         None
 
-let showSurveyPrompt (s: ILanguageServer) =
+let private showSurveyPrompt (s: ILanguageServer) =
     task {
         let latchFile =
-            Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "survey-prompted.txt")
+            Path.Combine(System.AppContext.BaseDirectory, "survey-prompted.txt")
 
         if not <| File.Exists(latchFile) then
             File.Create(latchFile).Close()
@@ -87,10 +87,13 @@ let showSurveyPrompt (s: ILanguageServer) =
 
     }
 
-let private onStartup definitions =
-    OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
-        showSurveyPrompt (s) |> ignore
+let private onStartupShowSurveyPrompt = 
+    OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken -> 
+        showSurveyPrompt (s)
+    )
 
+let private onStartupConfigureServer definitions =
+    OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
         async {
             s.Window.LogInfo $"Starting {name} v{version}..."
             let configGetter () = getConfig s configSection pathKey
@@ -130,7 +133,8 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
         .WithInput(input)
         .WithOutput(output)
 
-        .OnStarted(onStartup definitions)
+        .OnStarted(onStartupConfigureServer definitions)
+        .OnStarted(onStartupShowSurveyPrompt)
         .WithConfigurationSection(configSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z ->
             z

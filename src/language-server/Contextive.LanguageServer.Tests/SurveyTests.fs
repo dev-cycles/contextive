@@ -31,6 +31,8 @@ let showMessageRequestHandlerBuilder: HandlerBuilder<ShowMessageRequestParams, M
 let showDocumentRequestHandlerBuilder: HandlerBuilder<ShowDocumentParams, ShowDocumentResult> =
     handlerBuilder "window/showDocument"
 
+let latchFile = Path.Combine(System.AppContext.BaseDirectory, "survey-prompted.txt")
+
 [<Tests>]
 let initializationTests =
     testSequenced
@@ -38,9 +40,6 @@ let initializationTests =
         "LanguageServer.Survey Prompt Tests"
         [ testAsync "Server shows survey prompt and creates latch file, if latch-file doesn't exit" {
               let messageAwaiter = ConditionAwaiter.create ()
-
-              let latchFile =
-                  Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "survey-prompted.txt")
 
               File.Delete(latchFile)
 
@@ -69,9 +68,6 @@ let initializationTests =
           testAsync "Server does not show prompt if latch-file already exists" {
               let messageAwaiter = ConditionAwaiter.create ()
 
-              let latchFile =
-                  Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "survey-prompted.txt")
-
               File.Create(latchFile).Close()
 
               let pathValue = Guid.NewGuid().ToString()
@@ -94,9 +90,6 @@ let initializationTests =
 
               let messageAwaiter = ConditionAwaiter.create ()
               let showDocAwaiter = ConditionAwaiter.create ()
-
-              let latchFile =
-                  Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "survey-prompted.txt")
 
               File.Delete(latchFile)
 
