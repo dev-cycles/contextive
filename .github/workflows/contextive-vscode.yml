@@ -21,6 +21,16 @@ jobs:
           - dotnet_runtime: linux-x64
             vsce_platform: linux-x64
             os: ubuntu-latest
+          # temporary for testing cross-platform zipping
+          - dotnet_runtime: linux-arm64
+            vsce_platform: linux-arm64
+            os: ubuntu-latest
+          - dotnet_runtime: osx-x64
+            vsce_platform: darwin-x64
+            os: macos-latest
+          - dotnet_runtime: osx-arm64
+            vsce_platform: darwin-arm64
+            os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
@@ -51,6 +61,20 @@ jobs:
       - name: Build and Test Language Server
         run: |
           dotnet test ./src/language-server/Contextive.LanguageServer.Tests/Contextive.LanguageServer.Tests.fsproj --logger "trx;LogFileName=TestResults.LanguageServer-${{ env.dotnet-version }}-${{ runner.os }}.xml" -- Expecto.fail-on-focused-tests=true
+      
+      # temporary for testing cross-platform zipping
+      - name: Zip Language Server (Ubuntu)
+        run: |
+          zip ../Contextive.LanguageServer-${{ matrix.dotnet_runtime }}.zip * 
+        working-directory: ./src/language-server/Contextive.LanguageServer/publish
+        if: ${{ contains(matrix.os, 'ubuntu') }}
+
+      - name: Zip Language Server (Other)
+        run: |
+          7z a ../Contextive.LanguageServer-${{ matrix.dotnet_runtime }}.zip * 
+        working-directory: ./src/language-server/Contextive.LanguageServer/publish
+        if: ${{ contains(matrix.os, 'macos') || contains(matrix.os, 'windows') }} 
+
       - name: Upload Language Server Test Results
         uses: actions/upload-artifact@v3
         with:
