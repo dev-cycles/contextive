@@ -86,13 +86,7 @@ Coming soon!
 
 ## Contributing
 
-If you have ideas for features or implementation, please open an issue to record your thoughts.
-
-PRs welcome, but as things are evolving rapidly, a conversation before any major changes is probably worthwhile.
-
-Key architectural decisions are tracked using ADRs (Architectural Decision Records) which can be found in the [docs/adr](docs/adr) folder.  The [MADR](https://adr.github.io/madr/) format is the current default.
-
-Development is being done using [Visual Studio Code Dev Containers](https://code.visualstudio.com/docs/remote/containers). After cloning the repository and opening in Visual Studio Code, choose the "Reopen in Container" option to work in the dev environment. See the Visual Studio Code documentation for more details on setting up your docker environment.
+See [CONTRIBUTING](./CONTRIBUTING.md) for details.
 
 ## Logo
 
