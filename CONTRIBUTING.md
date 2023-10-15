@@ -6,11 +6,23 @@ If you have ideas for features or implementation, please open an issue to record
 
 PRs welcome, but as things are evolving rapidly, a conversation before any major changes is probably worthwhile.
 
+### Testing
+
 For the most part, Contextive has been developed using Test-Driven Development.  This maintains a high quality test suite with minimal manual regression testing when releasing new versions. 
 
 Although contributors are not required to use Test-Driven Development, we do request appropriate tests be included in any PRs.
 
+### Formatting
+
+All F# code should be formatted with [Fantomas](https://github.com/fsprojects/fantomas).  If you use Visual Studio Code with the DevContainer (see below) this should happen automatically on save.
+
 ## Documentation
+
+### IDE Plugins
+
+Each IDE that Contextive supports (either with a plugin, or with a raw language server) has a folder in the (src)[./src] folder.  Please ensure the appropriate `README.md` is updated if your change affects a particular IDE.
+
+### ADRs
 
 Key architectural decisions are tracked using ADRs (Architectural Decision Records) which can be found in the [docs/adr](docs/adr) folder.  The [MADR](https://adr.github.io/madr/) format is the current default.
 
