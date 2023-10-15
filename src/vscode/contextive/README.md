@@ -15,7 +15,7 @@ We're currently conducting a [survey](https://forms.gle/3pJSUYmLHv5RQ1m1A) for C
 
 It should only take around 10 minutes - we'd really appreciate your thoughts! [Click here](https://forms.gle/3pJSUYmLHv5RQ1m1A) to take the survey.
 
-While the survey is underway, you'll also notice a one-time unobtrusive popup when Contextive first starts (since v1.10.2).  This popup will be removed when we complete the survey.
+While the survey is underway, you'll also notice a one-time unobtrusive popup inviting users to help shape the future of Contextive when it is loaded (since v1.10.2).  This popup will be removed when we complete the survey.
 
 ## Getting Started
 
