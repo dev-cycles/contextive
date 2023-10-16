@@ -11,7 +11,7 @@ let handler (reloader: Definitions.Reloader) (p: DidChangeWatchedFilesParams) _ 
     reloader ()
     Task.CompletedTask
 
-let private registrationOptionsProvider path _ _ =
+let private registrationOptionsProvider (path: string option) _ _ =
     match path with
     | Some pathValue ->
         DidChangeWatchedFilesRegistrationOptions(

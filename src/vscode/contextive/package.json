@@ -74,7 +74,7 @@
 		"mocha-explorer-launcher-scripts": "^0.4.0",
 		"mocha-junit-reporter": "^2.2.0",
 		"mocha-multi-reporters": "^1.5.1",
-		"semantic-release": "^19.0.5",
+		"semantic-release": "^20.1.0",
 		"webpack": "^5.75.0",
 		"webpack-cli": "^4.10.0",
 		"webpack-node-externals": "^3.0.0"

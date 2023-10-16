@@ -28,7 +28,7 @@ let watchedFileTests =
 
           let watcherIsForFile (fileName: string) (watchers: IEnumerable<FileSystemWatcher>) =
               watchers.Any(fun watcher ->
-                  watcher.GlobPattern.Contains(fileName)
+                  watcher.GlobPattern.Pattern.Contains(fileName)
                   && watcher.Kind = WatchKind.Change + WatchKind.Create)
 
           testAsync "Server registers to receive watched file changes" {

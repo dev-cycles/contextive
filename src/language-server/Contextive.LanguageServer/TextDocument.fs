@@ -37,11 +37,11 @@ let findToken (documentUri: DocumentUri) (position: Position) =
 let private linesFromText (document: string) : IList<string> =
     document.ReplaceLineEndings().Split(System.Environment.NewLine)
 
-let private registrationOptionsProvider (hc: SynchronizationCapability) (cc: ClientCapabilities) =
+let private registrationOptionsProvider (hc: TextSynchronizationCapability) (cc: ClientCapabilities) =
     TextDocumentSyncRegistrationOptions(Change = TextDocumentSyncKind.Full)
 
 let registrationOptions =
-    RegistrationOptionsDelegate<TextDocumentSyncRegistrationOptions, SynchronizationCapability>(
+    RegistrationOptionsDelegate<TextDocumentSyncRegistrationOptions, TextSynchronizationCapability>(
         registrationOptionsProvider
     )
 
