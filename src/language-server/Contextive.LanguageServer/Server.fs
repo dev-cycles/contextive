@@ -58,8 +58,7 @@ let private getWorkspaceFolder (s: ILanguageServer) =
 
 let private showSurveyPrompt (s: ILanguageServer) =
     task {
-        let latchFile =
-            Path.Combine(System.AppContext.BaseDirectory, "survey-prompted.txt")
+        let latchFile = Path.Combine(System.AppContext.BaseDirectory, "survey-prompted.txt")
 
         if not <| File.Exists(latchFile) then
             File.Create(latchFile).Close()
@@ -87,10 +86,8 @@ let private showSurveyPrompt (s: ILanguageServer) =
 
     }
 
-let private onStartupShowSurveyPrompt = 
-    OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken -> 
-        showSurveyPrompt (s)
-    )
+let private onStartupShowSurveyPrompt =
+    OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken -> showSurveyPrompt (s))
 
 let private onStartupConfigureServer definitions =
     OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
