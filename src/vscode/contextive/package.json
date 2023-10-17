@@ -80,6 +80,6 @@
 		"webpack-node-externals": "^3.0.0"
 	},
 	"dependencies": {
-		"vscode-languageclient": "^8.1.0"
+		"vscode-languageclient": "^9.0.1"
 	}
 }
