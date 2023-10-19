@@ -25,7 +25,7 @@ let version =
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
         .InformationalVersion
 
-let private getConfig (s: ILanguageServer) section key =
+let private getConfig (s: ILanguageServer) (contextiveConfig: Configuration.Config) section key =
     async {
         Log.Logger.Information $"Getting {section} {key} config..."
 
@@ -38,7 +38,7 @@ let private getConfig (s: ILanguageServer) section key =
         let value =
             if System.String.IsNullOrEmpty configValue then
                 match key with
-                | key when key = pathKey -> Some defaultContextiveDefinitionsPath
+                | key when key = pathKey -> contextiveConfig.Path
                 | _ -> None
             else
                 Some configValue
@@ -89,11 +89,13 @@ let private showSurveyPrompt (s: ILanguageServer) =
 let private onStartupShowSurveyPrompt =
     OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken -> showSurveyPrompt (s))
 
-let private onStartupConfigureServer definitions =
+let private onStartupConfigureServer definitions config =
     OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
         async {
             s.Window.LogInfo $"Starting {name} v{version}..."
-            let configGetter () = getConfig s configSection pathKey
+
+            let configGetter () =
+                getConfig s config configSection pathKey
             // Not sure if this is needed to ensure configuration is loaded, or allow a task/context switch
             // Either way, if it's not here, then getWorkspaceFolder returns null
             let! _ = configGetter ()
@@ -122,15 +124,16 @@ let private onStartupConfigureServer definitions =
         |> Async.StartAsTask
         :> Task)
 
-
 let private configureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
     let definitions = Definitions.create ()
+
+    let contextiveConfig: Configuration.Config =
+        { Path = Some defaultContextiveDefinitionsPath }
 
     opts
         .WithInput(input)
         .WithOutput(output)
-
-        .OnStarted(onStartupConfigureServer definitions)
+        .OnStarted(onStartupConfigureServer definitions contextiveConfig)
         .OnStarted(onStartupShowSurveyPrompt)
         .WithConfigurationSection(configSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z ->
@@ -141,7 +144,7 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
             |> ignore)
         .WithServerInfo(ServerInfo(Name = name, Version = version))
 
-        .OnDidChangeConfiguration(Configuration.handler <| Definitions.loader definitions)
+        .OnDidChangeConfiguration((Configuration.handler (contextiveConfig)) <| Definitions.loader definitions)
         .OnCompletion(
             Completion.handler <| Definitions.find definitions <| TextDocument.findToken,
             Completion.registrationOptions

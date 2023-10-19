@@ -1,6 +1,7 @@
 module Contextive.LanguageServer.Configuration
 
 open System.Threading.Tasks
+open OmniSharp.Extensions.LanguageServer.Protocol.Models
 
 let resolvedPathGetter configGetter pathResolver () =
     async {
@@ -8,6 +9,10 @@ let resolvedPathGetter configGetter pathResolver () =
         return pathResolver path
     }
 
-let handler (definitionsLoader: Definitions.Reloader) _ =
+type Config = { mutable Path: string option }
+
+let handler (config: Config) (definitionsLoader: Definitions.Reloader) (configParams: DidChangeConfigurationParams) =
+    let path = configParams.Settings.Item("contextive").Item("path")
+    config.Path <- Some(path.ToString())
     definitionsLoader ()
     Task.CompletedTask

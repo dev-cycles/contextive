@@ -136,9 +136,7 @@ module private Handle =
         let matchOpenFileUri = matchGlobs findMsg.OpenFileUri
 
         let foundContexts =
-            state.Definitions.Contexts
-            |> Seq.filter matchOpenFileUri
-            |> findMsg.Filter
+            state.Definitions.Contexts |> Seq.filter matchOpenFileUri |> findMsg.Filter
 
         findMsg.ReplyChannel.Reply foundContexts
         state
