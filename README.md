@@ -107,6 +107,25 @@ Visit the [Contextive Marketplace](https://marketplace.visualstudio.com/items?it
 
 Check the extension [README](src/vscode/contextive/README.md) for usage instructions.
 
+### Neovim
+
+Use lspconfig to create a custom contextive language server configuration and initialize the language server by calling the setup function.
+
+```lua
+local lspconfig = require("lspconfig")
+
+local lspconfig_configs = require("lspconfig.configs")
+
+lspconfig_configs.contextive = {
+  default_config = {
+    cmd = { "Contextive.LanguageServer" },
+    root_dir = lspconfig.util.root_pattern('.contextive', '.git'),
+  },
+}
+
+lspconfig.contextive.setup {}
+```
+
 ### Others
 
 Coming soon!
