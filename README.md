@@ -72,17 +72,31 @@ The following list of features is a draft proposal of the vision at the start of
 
 ## Installation
 
-### Language Server
+### All in one IDE Plugins
+
+Contextive language server does not need to be installed separately.
+
+#### Visual Studio Code
+
+Open Visual Studio Code, launch the quick open (`Ctrl+P`) and then enter `ext install devcycles.contextive`.  OR, search `contextive` in the extensions side-bar.
+
+Visit the [Contextive Marketplace](https://marketplace.visualstudio.com/items?itemName=devcycles.contextive) page for details.
+
+Check the extension [README](src/vscode/contextive/README.md) for usage instructions.
+
+### Language Server Configurations
+
+#### Installing Contextive Language Server
 
 To install the language server, you need to do it manually from GitHub releases assets. This is necessary for users who are not using the Contextive VSCode extension and Visual Studio Code.
 
-#### 1. Download the appropriate zip file for your operating system and architecture:
+##### 1. Download the appropriate zip file for your operating system and architecture:
 
 ```shell
 curl -L https://github.com/dev-cycles/contextive/releases/download/<version>/Contextive.LanguageServer-<os>-<arch>-<version>.zip -o Contextive.LanguageServer-<os>-<arch>-<version>.zip
 ```
 
-#### 2. Unzip the Contextive.LanguageServer and copy the file into a folder that is included in your system's PATH:
+##### 2. Unzip the Contextive.LanguageServer and copy the file into a folder that is included in your system's PATH:
 
 The $HOME/bin directory has been created beforehand and is included in the system's PATH.
 
@@ -91,21 +105,13 @@ unzip Contextive.LanguageServer-<os>-<arch>-<version>.zip -d contextive-language
 cp contextive-language-server/Contextive.LanguageServer $HOME/bin
 ```
 
-#### 3. Verify that Contextive.LanguageServer is found in the PATH. A non-zero exit code indicates that the language server was not found in the PATH:
+##### 3. Verify that Contextive.LanguageServer is found in the PATH. A non-zero exit code indicates that the language server was not found in the PATH:
 
 ```shell
 command -v Contextive.LanguageServer
 ```
 
 The command should return the absolute path to the binary if it's found in the system PATH.
-
-### Visual Studio Code
-
-Open Visual Studio Code, launch the quick open (`Ctrl+P`) and then enter `ext install devcycles.contextive`.  OR, search `contextive` in the extensions side-bar.
-
-Visit the [Contextive Marketplace](https://marketplace.visualstudio.com/items?itemName=devcycles.contextive) page for details.
-
-Check the extension [README](src/vscode/contextive/README.md) for usage instructions.
 
 ### Neovim
 
