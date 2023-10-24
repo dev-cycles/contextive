@@ -113,9 +113,11 @@ command -v Contextive.LanguageServer
 
 The command should return the absolute path to the binary if it's found in the system PATH.
 
-### Neovim
+#### Neovim
 
-Use lspconfig to create a custom contextive language server configuration and initialize the language server by calling the setup function.
+How to configure Neovim with lua modules: https://neovim.io/doc/user/lua-guide.html#lua-guide-config
+
+Use lspconfig to create a custom contextive language server configuration and initialize the language server by calling the setup function. The following lua snippet needs to be included in the `init.lua` file either directly or from another lua module like `lspconfigs.lua`.
 
 ```lua
 local lspconfig = require("lspconfig")
