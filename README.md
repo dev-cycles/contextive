@@ -50,7 +50,7 @@ The following list of features is a draft proposal of the vision at the start of
   * [ ] Eclipse
   * [ ] NetBeans
   * [ ] JetBrains
-  * [ ] vim
+  * [x] neovim
   * [ ] emacs
 * [ ] Code-editing Features
   * [x] Show the term definitions & usage examples when hovering over the word in the editor 
@@ -128,6 +128,7 @@ lspconfig_configs.contextive = {
   default_config = {
     cmd = { "Contextive.LanguageServer" },
     root_dir = lspconfig.util.root_pattern('.contextive', '.git'),
+    --settings={contextive={path="./path/to/definitions.yml"} -- uncomment this line to nominate a custom definitions.yml file location
   },
 }
 
