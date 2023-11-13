@@ -163,7 +163,7 @@ let definitionsTests =
 
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                        ConfigurationSection.contextivePathLoaderOptionsBuilder pathLoader ]
+                        ConfigurationSection.contextivePathLoaderBuilder pathLoader ]
 
                   use! client = TestClient(config) |> init
 
@@ -171,13 +171,13 @@ let definitionsTests =
                   test <@ (termsWhenValidAtStart, Fixtures.One.expectedCompletionLabels) ||> compareList = 0 @>
 
                   path <- $"{fileName}.yml"
-                  ConfigurationSection.didChange client path
+                  ConfigurationSection.didChangePath client path
 
                   let! termsWhenInvalid = Completion.getCompletionLabels client
                   test <@ Seq.length termsWhenInvalid = 0 @>
 
                   path <- validPath
-                  ConfigurationSection.didChange client path
+                  ConfigurationSection.didChangePath client path
 
                   let! termsWhenValidAtEnd = Completion.getCompletionLabels client
                   test <@ (termsWhenValidAtEnd, Fixtures.One.expectedCompletionLabels) ||> compareList = 0 @>

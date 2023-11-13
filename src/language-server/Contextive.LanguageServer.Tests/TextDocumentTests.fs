@@ -52,7 +52,7 @@ let textDocumentTests =
           testAsync "Server supports full sync" {
               let config =
                   [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                    ConfigurationSection.contextivePathOptionsBuilder $"one.yml" ]
+                    ConfigurationSection.contextivePathBuilder $"one.yml" ]
 
               use! client = TestClient(config) |> init
               test <@ client.ServerSettings.Capabilities.TextDocumentSync.Options.Change = TextDocumentSyncKind.Full @>

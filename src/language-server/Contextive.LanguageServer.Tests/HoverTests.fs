@@ -37,7 +37,7 @@ let hoverTests =
                   $"Given definitions file '{fileName}' and file contents '{multiLineToSingleLine text}', server responds to hover request at Position {position} with '{expectedTerm}'" {
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                        ConfigurationSection.contextivePathOptionsBuilder $"{fileName}.yml" ]
+                        ConfigurationSection.contextivePathBuilder $"{fileName}.yml" ]
 
                   use! client = TestClient(config) |> init
 
@@ -89,7 +89,7 @@ let hoverTests =
 
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                        ConfigurationSection.contextivePathOptionsBuilder $"{fileName}.yml" ]
+                        ConfigurationSection.contextivePathBuilder $"{fileName}.yml" ]
 
                   use! client = TestClient(config) |> init
 
@@ -129,7 +129,7 @@ let hoverTests =
 
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                        ConfigurationSection.contextivePathOptionsBuilder $"{fileName}.yml" ]
+                        ConfigurationSection.contextivePathBuilder $"{fileName}.yml" ]
 
                   use! client = TestClient(config) |> init
 

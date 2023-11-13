@@ -30,7 +30,10 @@ let private getConfig (s: ILanguageServer) section key =
         Log.Logger.Information $"Getting {section} {key} config..."
 
         let! config =
-            s.Configuration.GetConfiguration(ConfigurationItem(Section = configSection))
+            // We need to use `GetScopedConfiguration` because of https://github.com/OmniSharp/csharp-language-server-protocol/issues/1101
+            // We can revert to `GetConfiguration` when that bug is fixed.
+            s.Configuration.GetScopedConfiguration("file:///", System.Threading.CancellationToken.None)
+            //s.Configuration.GetConfiguration(ConfigurationItem(Section = configSection))
             |> Async.AwaitTask
 
         let configValue = config.GetSection(section).Item(key)

@@ -36,7 +36,7 @@ let watchedFileTests =
 
               let config =
                   [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                    ConfigurationSection.contextivePathOptionsBuilder $"one.yml"
+                    ConfigurationSection.contextivePathBuilder $"one.yml"
                     WatchedFiles.optionsBuilder registrationAwaiter ]
 
               let! client = TestClient(config) |> init
@@ -62,7 +62,7 @@ let watchedFileTests =
 
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                        ConfigurationSection.contextivePathLoaderOptionsBuilder pathLoader
+                        ConfigurationSection.contextivePathLoaderBuilder pathLoader
                         WatchedFiles.optionsBuilder registrationAwaiter ]
 
                   let! client = TestClient(config) |> init
@@ -72,7 +72,7 @@ let watchedFileTests =
                   ConditionAwaiter.clear registrationAwaiter 500
 
                   definitionsFile <- newDefinitionsFile
-                  ConfigurationSection.didChange client definitionsFile
+                  ConfigurationSection.didChangePath client definitionsFile
 
                   let! secondRegistrationMsg =
                       ConditionAwaiter.waitFor
@@ -113,7 +113,7 @@ let watchedFileTests =
 
               let config =
                   [ Workspace.optionsBuilder relativePath
-                    ConfigurationSection.contextivePathOptionsBuilder definitionsFile ]
+                    ConfigurationSection.contextivePathBuilder definitionsFile ]
 
               let! client = TestClient(config) |> init
 
@@ -153,7 +153,7 @@ let watchedFileTests =
 
               let config =
                   [ Workspace.optionsBuilder relativePath
-                    ConfigurationSection.contextivePathOptionsBuilder definitionsFile ]
+                    ConfigurationSection.contextivePathBuilder definitionsFile ]
 
               let! client = TestClient(config) |> init
 

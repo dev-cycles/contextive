@@ -30,7 +30,7 @@ let completionTests =
                   $"Given {fileName} contextive, in document {text} at position {position} respond with expected completion list " {
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                        ConfigurationSection.contextivePathOptionsBuilder $"{fileName}.yml" ]
+                        ConfigurationSection.contextivePathBuilder $"{fileName}.yml" ]
 
                   use! client = TestClient(config) |> init
 

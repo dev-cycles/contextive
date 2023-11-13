@@ -28,12 +28,11 @@ let initializationTests =
 
               let config =
                   [ Workspace.optionsBuilder ""
-                    ConfigurationSection.contextivePathOptionsBuilder pathValue ]
+                    ConfigurationSection.contextivePathBuilder pathValue ]
 
               let! (client, reply) = TestClient(config) |> initAndWaitForReply
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
-              test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
 
               test <@ (defaultArg reply "").Contains(pathValue) @>
           }
@@ -41,25 +40,22 @@ let initializationTests =
           testAsync "Server loads contextive file from absolute location without workspace" {
               let pathValue = Guid.NewGuid().ToString()
 
-              let config =
-                  [ ConfigurationSection.contextivePathOptionsBuilder $"/tmp/{pathValue}" ]
+              let config = [ ConfigurationSection.contextivePathBuilder $"/tmp/{pathValue}" ]
 
               let! (client, reply) = TestClient(config) |> initAndWaitForReply
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
-              test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
 
               test <@ (defaultArg reply "").Contains(pathValue) @>
           }
 
           testAsync "Server does NOT load contextive file from relative location without workspace" {
               let pathValue = Guid.NewGuid().ToString()
-              let config = [ ConfigurationSection.contextivePathOptionsBuilder pathValue ]
+              let config = [ ConfigurationSection.contextivePathBuilder pathValue ]
 
               let! (client, reply) = TestClientWithCustomInitWait(config, Some pathValue) |> initAndWaitForReply
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
-              test <@ client.ClientSettings.Capabilities.Workspace.DidChangeConfiguration.IsSupported @>
 
               test
                   <@
@@ -71,7 +67,7 @@ let initializationTests =
           testAsync "Server loads contextive file from default location when no configuration supplied" {
               let config =
                   [ Workspace.optionsBuilder ""
-                    ConfigurationSection.optionsBuilder "dummySection" (fun () -> Map []) ]
+                    ConfigurationSection.configurationHandlerBuilder "dummySection" (fun () -> Map []) ]
 
               let defaultPath = ".contextive/definitions.yml"
 
