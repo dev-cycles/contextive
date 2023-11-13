@@ -48,7 +48,7 @@ let initializationTests =
               let config =
                   [ showMessageRequestHandlerBuilder <| handler messageAwaiter null
                     Workspace.optionsBuilder ""
-                    ConfigurationSection.contextivePathOptionsBuilder pathValue ]
+                    ConfigurationSection.contextivePathBuilder pathValue ]
 
               let! (client, reply) = TestClient(config) |> initAndWaitForReply
 
@@ -75,7 +75,7 @@ let initializationTests =
               let config =
                   [ showMessageRequestHandlerBuilder <| handler messageAwaiter null
                     Workspace.optionsBuilder ""
-                    ConfigurationSection.contextivePathOptionsBuilder pathValue ]
+                    ConfigurationSection.contextivePathBuilder pathValue ]
 
               let! (client, reply) = TestClient(config) |> initAndWaitForReply
 
@@ -102,7 +102,7 @@ let initializationTests =
                   [ showMessageRequestHandlerBuilder <| handler messageAwaiter response
                     showDocumentRequestHandlerBuilder <| handler showDocAwaiter showDocResponse
                     Workspace.optionsBuilder ""
-                    ConfigurationSection.contextivePathOptionsBuilder pathValue ]
+                    ConfigurationSection.contextivePathBuilder pathValue ]
 
               let! (client, reply) = TestClient(config) |> initAndWaitForReply
 

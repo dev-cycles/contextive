@@ -9,7 +9,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Client
 open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open System.Threading.Tasks
 
-let jTokenFromMap values =
+let private jTokenFromMap values =
     let configValue = JObject()
 
     values
@@ -38,27 +38,50 @@ let private createHandler section configValuesLoader =
         else
             Task.FromResult(configSectionResultFromMap <| Map [])
 
-let optionsBuilder section configValuesLoader (b: LanguageClientOptions) =
+let configurationHandlerBuilder section configValuesLoader (b: LanguageClientOptions) =
     let handler = createHandler section configValuesLoader
-
+    b.OnConfiguration(handler) |> ignore
     b
-        .WithCapability(Capabilities.DidChangeConfigurationCapability(DynamicRegistration = true))
-        .OnConfiguration(handler)
+
+let private didChangeConfigurationBuilder (b: LanguageClientOptions) =
+    b.WithCapability(Capabilities.DidChangeConfigurationCapability(DynamicRegistration = true))
     |> ignore
 
     b
 
-type PathLoader = unit -> obj
+type ValueLoader = unit -> obj
 
-let mapLoader (pathLoader: PathLoader) () = Map[("path", pathLoader ())]
+let private mapLoader (key: string) (valueLoader: ValueLoader) () = Map[(key, valueLoader ())]
 
-let contextivePathLoaderOptionsBuilder (pathLoader: PathLoader) =
-    optionsBuilder "contextive" <| mapLoader pathLoader
+let private mapPathLoader = mapLoader "path"
 
-let contextivePathOptionsBuilder path =
-    contextivePathLoaderOptionsBuilder (fun () -> path)
+let private contextivePathConfigurationHandlerBuilder (pathLoader: ValueLoader) =
+    configurationHandlerBuilder "contextive" <| mapPathLoader pathLoader
 
-let didChange (client: ILanguageClient) path =
+/// <summary>
+///     <para>Use when you have a setting value that needs to change during the test.</para>
+///     <para>The test client will support `workspace/configuration` AND `workspace/didChangeConfiguration`.</para>
+///     <para>When a `workspace/configuration` request is received, the `pathLoader` function will be invoked to get the current value.</para>
+///     <para>To trigger a `workspace/didChangeConfiguration` notification, use <see cref="didChangePath">didChangePath</see>.</para>
+/// </summary>
+let contextivePathLoaderBuilder (pathLoader: ValueLoader) =
+    contextivePathConfigurationHandlerBuilder pathLoader
+    >> didChangeConfigurationBuilder
+
+/// <summary>
+///     <para>Use when you have a fixed setting value.</para>
+///     <para>The test client will ONLY support `workspace/configuration` and will always supply this fixed value</para>
+///     <para>Using <see cref="didChangePath">didChangePath</see> will have no impact as the server will not support the `workspace/didChangeConfiguration` notification</para>
+/// </summary>
+let contextivePathBuilder path =
+    contextivePathConfigurationHandlerBuilder (fun () -> path)
+
+/// <summary>
+///     <para>Trigger a `workspace/didChangeConfiguration` notification with the new value.</para>
+///     <para>This will only work if the TestClient was created with the <see cref="contextivePathLoaderBuilder">contextivePathLoaderBuilder</see>.</para>
+///     <para>Ensure this method is invoked with the same path value as will be returned from the `pathLoader` registered with the TestClient.</para>
+/// </summary>
+let didChangePath (client: ILanguageClient) path =
     let setting = jTokenFromMap <| Map[("path", path)]
     let configSection = jTokenFromMap <| Map[("contextive", setting)]
 
