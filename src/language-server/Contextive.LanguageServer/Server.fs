@@ -59,38 +59,6 @@ let private getWorkspaceFolder (s: ILanguageServer) =
     else
         None
 
-let private showSurveyPrompt (s: ILanguageServer) =
-    task {
-        let latchFile = Path.Combine(System.AppContext.BaseDirectory, "survey-prompted.txt")
-
-        if not <| File.Exists(latchFile) then
-            File.Create(latchFile).Close()
-
-            let goToSurveyAction = "Sure, I'll help"
-            let surveyUri = "https://forms.gle/3pJSUYmLHv5RQ1m1A"
-
-            let surveyPrompt =
-                ShowMessageRequestParams(
-                    Message =
-                        "Would you like to help shape the future of Contextive by completing a short (10min) survey?",
-                    Type = MessageType.Info,
-                    Actions =
-                        Container(
-                            [ MessageActionItem(Title = goToSurveyAction)
-                              MessageActionItem(Title = "No thanks") ]
-                        )
-                )
-
-            let! response = s.Window.ShowMessageRequest(surveyPrompt, System.Threading.CancellationToken.None)
-
-            if response <> null && response.Title = goToSurveyAction then
-                let! res = s.Window.ShowDocument(ShowDocumentParams(Uri = surveyUri, External = true))
-                ()
-
-    }
-
-let private onStartupShowSurveyPrompt =
-    OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken -> showSurveyPrompt (s))
 
 let private onStartupConfigureServer definitions =
     OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
@@ -134,7 +102,7 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
         .WithOutput(output)
 
         .OnStarted(onStartupConfigureServer definitions)
-        .OnStarted(onStartupShowSurveyPrompt)
+        .OnStarted(Survey.onStartupShowSurveyPrompt)
         .WithConfigurationSection(configSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z ->
             z

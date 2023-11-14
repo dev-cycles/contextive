@@ -9,7 +9,6 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Client
 open OmniSharp.Extensions.JsonRpc
 open System.IO
-open System.Reflection
 open System.Linq
 
 type Handler<'TRequest, 'TResponse> = 'TRequest -> Threading.Tasks.Task<'TResponse>
@@ -33,12 +32,14 @@ let showDocumentRequestHandlerBuilder: HandlerBuilder<ShowDocumentParams, ShowDo
 
 let latchFile = Path.Combine(System.AppContext.BaseDirectory, "survey-prompted.txt")
 
+let okActionTitle = "OK, I'll help!"
+
 [<Tests>]
 let initializationTests =
     testSequenced
     <| testList
         "LanguageServer.Survey Prompt Tests"
-        [ testAsync "Server shows survey prompt and creates latch file, if latch-file doesn't exit" {
+        [ testAsync "Server shows survey prompt if latch-file doesn't exist" {
               let messageAwaiter = ConditionAwaiter.create ()
 
               File.Delete(latchFile)
@@ -56,13 +57,14 @@ let initializationTests =
 
               let receivedMsg = msg.Value
 
+              File.Delete(latchFile)
+
               test <@ receivedMsg.Message.Contains("survey") @>
               test <@ receivedMsg.Type = MessageType.Info @>
               test <@ receivedMsg.Actions.Count() = 2 @>
-              test <@ receivedMsg.Actions.First().Title = "Sure, I'll help" @>
-              test <@ receivedMsg.Actions.Skip(1).First().Title = "No thanks" @>
-              test <@ File.Exists(latchFile) @>
-              File.Delete(latchFile)
+              test <@ receivedMsg.Actions.First().Title = okActionTitle @>
+              test <@ receivedMsg.Actions.Skip(1).First().Title = "No (and don't bother me again)" @>
+
           }
 
           testAsync "Server does not show prompt if latch-file already exists" {
@@ -86,6 +88,47 @@ let initializationTests =
               test <@ msg.IsNone @>
           }
 
+          testAsync "Server creates latch file if user doesn't ignore the prompt" {
+
+              let messageAwaiter = ConditionAwaiter.create ()
+
+              File.Delete(latchFile)
+
+              let pathValue = Guid.NewGuid().ToString()
+
+              let response = MessageActionItem(Title = okActionTitle)
+
+              let config =
+                  [ showMessageRequestHandlerBuilder <| handler messageAwaiter response
+                    Workspace.optionsBuilder ""
+                    ConfigurationSection.contextivePathBuilder pathValue ]
+
+              let! _ = TestClient(config) |> initAndWaitForReply
+
+              let fileExists = File.Exists(latchFile)
+              File.Delete(latchFile)
+
+              test <@ fileExists @>
+          }
+
+          testAsync "Server DOESN'T create latch file if user ignores the prompt" {
+
+              let messageAwaiter = ConditionAwaiter.create ()
+
+              File.Delete(latchFile)
+
+              let pathValue = Guid.NewGuid().ToString()
+
+              let config =
+                  [ showMessageRequestHandlerBuilder <| handler messageAwaiter null
+                    Workspace.optionsBuilder ""
+                    ConfigurationSection.contextivePathBuilder pathValue ]
+
+              let! _ = TestClient(config) |> initAndWaitForReply
+
+              test <@ not <| File.Exists(latchFile) @>
+          }
+
           testAsync "Server opens form when user says they'll help" {
 
               let messageAwaiter = ConditionAwaiter.create ()
@@ -95,7 +138,7 @@ let initializationTests =
 
               let pathValue = Guid.NewGuid().ToString()
 
-              let response = MessageActionItem(Title = "Sure, I'll help")
+              let response = MessageActionItem(Title = okActionTitle)
               let showDocResponse = ShowDocumentResult(Success = true)
 
               let config =
