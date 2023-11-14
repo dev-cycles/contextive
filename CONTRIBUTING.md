@@ -2,9 +2,15 @@
 
 If you have ideas for features or implementation, please open an issue to record your thoughts.
 
+## Commits
+
+Commits follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.  These are used to automatically generate release notes.
+
 ## Pull Requests
 
 PRs welcome, but as things are evolving rapidly, a conversation before any major changes is probably worthwhile.
+
+If your PR involves multiple commits, they will most likely be squashed into a single commit so that there is a single line in the release notes, so please title the PR using the conventional commit message that should be used for that single commit.
 
 ### Testing
 
