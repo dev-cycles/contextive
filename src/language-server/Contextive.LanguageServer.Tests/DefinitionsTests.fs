@@ -9,7 +9,7 @@ open Contextive.Core
 open Contextive.LanguageServer.Tests.Helpers
 
 [<Tests>]
-let definitionsTests =
+let tests =
     testList
         "LanguageServer.Definitions File Tests"
         [

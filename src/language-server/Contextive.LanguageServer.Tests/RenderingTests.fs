@@ -9,7 +9,7 @@ open Contextive.LanguageServer.Tests.Helpers
 module DH = Helpers.Definitions
 
 [<Tests>]
-let renderingTests =
+let tests =
     testList
         "LanguageServer.Rendering Tests"
         [

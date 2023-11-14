@@ -12,9 +12,8 @@ open Contextive.LanguageServer.Tests.Helpers.TestClient
 module DH = Helpers.Definitions
 
 [<Tests>]
-let completionTests =
-    testSequenced
-    <| testList
+let tests =
+    testList
         "LanguageServer.Completion Tests"
         [ testAsync "Given no contextive respond with empty completion list " {
               use! client = SimpleTestClient |> init

@@ -14,7 +14,7 @@ open Contextive.LanguageServer.Tests.Helpers
 module DH = Helpers.Definitions
 
 [<Tests>]
-let hoverTests =
+let tests =
     testList
         "LanguageServer.Hover Tests"
         [

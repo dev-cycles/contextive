@@ -6,7 +6,7 @@ open Swensen.Unquote
 open System.Runtime.InteropServices
 
 [<Tests>]
-let pathLoaderTests =
+let tests =
     testList
         "LanguageServer.Path Resolver Tests"
         [ testCase "No Workspace, non-root path"

@@ -6,7 +6,7 @@ open Swensen.Unquote
 open System.IO
 
 [<Tests>]
-let fileLoaderTests =
+let tests =
     testList
         "LanguageServer.File Loader Tests"
         [

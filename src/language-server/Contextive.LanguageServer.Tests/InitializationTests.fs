@@ -7,7 +7,7 @@ open Contextive.LanguageServer.Tests.Helpers
 open Helpers.TestClient
 
 [<Tests>]
-let initializationTests =
+let tests =
     testList
         "LanguageServer.Initialization Tests"
         [

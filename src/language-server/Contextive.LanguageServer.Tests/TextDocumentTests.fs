@@ -11,7 +11,7 @@ open Contextive.LanguageServer.Tests.Helpers
 open Helpers.TestClient
 
 [<Tests>]
-let textDocumentTests =
+let tests =
     testList
         "LanguageServer.TextDocument Tests"
         [

@@ -21,7 +21,7 @@ let didChangeWatchedFiles (client: ILanguageClient) (uri: string) =
     )
 
 [<Tests>]
-let watchedFileTests =
+let tests =
     testList
         "LanguageServer.Watched File Tests"
         [
@@ -122,8 +122,6 @@ let watchedFileTests =
 
               if (File.Exists(definitionsFileUri)) then
                   File.Delete(definitionsFileUri)
-
-              didChangeWatchedFiles client definitionsFileUri
 
               didChangeWatchedFiles client definitionsFileUri
 

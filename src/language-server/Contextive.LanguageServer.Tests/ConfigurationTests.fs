@@ -7,7 +7,7 @@ open Helpers.TestClient
 open Contextive.LanguageServer.Tests.Helpers
 
 [<Tests>]
-let definitionsTests =
+let tests =
     testList
         "LanguageServer.Configuration Tests"
         [ testAsync "Can receive configuration value" {

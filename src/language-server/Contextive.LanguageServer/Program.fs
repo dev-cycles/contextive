@@ -10,7 +10,11 @@ let setupLogging =
         LoggerConfiguration()
             .MinimumLevel.Verbose()
             .Enrich.FromLogContext()
-            .WriteTo.File("log.txt", rollingInterval = RollingInterval.Day)
+            .WriteTo.File(
+                // formatter = Formatting.Json.JsonFormatter(), // uncomment to enable detailed logging of protocol messages
+                path = "log.txt",
+                rollingInterval = RollingInterval.Day
+            )
             .CreateLogger()
 #else
     ()

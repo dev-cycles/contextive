@@ -4,8 +4,10 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Server
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Window
 open System.IO
+open System.Threading
+open System.Threading.Tasks
 
-let private showSurveyPrompt (s: ILanguageServer) =
+let private showSurveyPrompt (s: ILanguageServer) (cancellationToken: CancellationToken) =
     task {
         let latchFile = Path.Combine(System.AppContext.BaseDirectory, "survey-prompted.txt")
 
@@ -26,15 +28,20 @@ let private showSurveyPrompt (s: ILanguageServer) =
                         )
                 )
 
-            let! response = s.Window.ShowMessageRequest(surveyPrompt, System.Threading.CancellationToken.None)
+            let! response = s.Window.ShowMessageRequest(surveyPrompt, cancellationToken)
 
             if response <> null then
                 File.Create(latchFile).Close()
 
                 if response.Title = goToSurveyAction then
-                    let! res = s.Window.ShowDocument(ShowDocumentParams(Uri = surveyUri, External = true))
+                    let! res =
+                        s.Window.ShowDocument(ShowDocumentParams(Uri = surveyUri, External = true), cancellationToken)
+
                     ()
     }
+    :> Task
+
+let private nonBlockingShowSurveyPrompt s c = Task.Run(fun _ -> showSurveyPrompt s c)
 
 let public onStartupShowSurveyPrompt =
-    OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken -> showSurveyPrompt (s))
+    OnLanguageServerStartedDelegate(nonBlockingShowSurveyPrompt)

@@ -35,8 +35,8 @@ let latchFile = Path.Combine(System.AppContext.BaseDirectory, "survey-prompted.t
 let okActionTitle = "OK, I'll help!"
 
 [<Tests>]
-let initializationTests =
-    testSequenced
+let tests =
+    testSequencedGroup "Survey Prompt Tests"
     <| testList
         "LanguageServer.Survey Prompt Tests"
         [ testAsync "Server shows survey prompt if latch-file doesn't exist" {
