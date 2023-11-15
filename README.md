@@ -119,6 +119,14 @@ How to configure Neovim with lua modules: https://neovim.io/doc/user/lua-guide.h
 
 Contextive Language Server is also provided with [Mason](https://github.com/williamboman/mason.nvim).
 
+To install Contextive with Mason, execute the Mason install command in Neovim.
+
+```
+:MasonInstall contextive
+```
+
+The following configuration requires the `neovim/nvim-lspconfig` plugin, which can be installed and set up by following this [install guide](https://github.com/neovim/nvim-lspconfig#install).
+
 Use lspconfig to setup and initialize the Contextive Language Server configuration. The following lua snippet needs to be included in the `init.lua` file either directly or from another lua module like `lspconfigs.lua`.
 
 ```lua
