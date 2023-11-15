@@ -117,22 +117,34 @@ The command should return the absolute path to the binary if it's found in the s
 
 How to configure Neovim with lua modules: https://neovim.io/doc/user/lua-guide.html#lua-guide-config
 
-Use lspconfig to create a custom contextive language server configuration and initialize the language server by calling the setup function. The following lua snippet needs to be included in the `init.lua` file either directly or from another lua module like `lspconfigs.lua`.
+Contextive Language Server is also provided with [Mason](https://github.com/williamboman/mason.nvim).
+
+To install Contextive with Mason, execute the Mason install command in Neovim.
+
+```
+:MasonInstall contextive
+```
+
+The following configuration requires the `neovim/nvim-lspconfig` plugin, which can be installed and set up by following this [install guide](https://github.com/neovim/nvim-lspconfig#install).
+
+Use lspconfig to setup and initialize the Contextive Language Server configuration. The following lua snippet needs to be included in the `init.lua` file either directly or from another lua module like `lspconfigs.lua`.
 
 ```lua
 local lspconfig = require("lspconfig")
 
-local lspconfig_configs = require("lspconfig.configs")
-
-lspconfig_configs.contextive = {
-  default_config = {
-    cmd = { "Contextive.LanguageServer" },
-    root_dir = lspconfig.util.root_pattern('.contextive', '.git'),
-    --settings={contextive={path="./path/to/definitions.yml"} -- uncomment this line to nominate a custom definitions.yml file location
-  },
-}
-
 lspconfig.contextive.setup {}
+```
+
+To enable a custom path for contextive terms, include these settings in the language server setup configuration.
+
+```lua
+lspconfig.contextive.setup {
+  settings = {
+    contextive = {
+      path = "./path/to/definitions.yml"
+    }
+  }
+}
 ```
 
 ### Others
