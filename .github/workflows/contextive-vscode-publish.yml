@@ -4,7 +4,7 @@ on:
     types: [published]
   
 env:
-  dotnet-version: '6.0.x'
+  dotnet-version: '7.0.x'
   CONTEXTIVE_DEBUG: true
 jobs:
   publish:

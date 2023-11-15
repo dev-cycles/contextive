@@ -1,13 +1,13 @@
-# Using focal for now as the `adr` package upgrades depends on dotnet 3.1,
-# which depends on libssl1.1 which is not available in `jammy/bookworm`
-# Once `adr` updates, should update to `jammy/bookworm`
-FROM mcr.microsoft.com/vscode/devcontainers/dotnet:0-6.0-bullseye
+# For details on usage and latest versions, see:
+# https://mcr.microsoft.com/en-us/product/devcontainers/dotnet/about
+FROM mcr.microsoft.com/vscode/devcontainers/dotnet:7.0-bookworm
 
-# Install other dotnet versions (required for adr tool and dotnet suggest)
-RUN curl -sSL https://dot.net/v1/dotnet-install.sh > /tmp/dotnet-install.sh \
-    && chmod u+x /tmp/dotnet-install.sh
-RUN sudo /tmp/dotnet-install.sh --install-dir /usr/share/dotnet --channel 5.0 --runtime dotnet
-RUN sudo /tmp/dotnet-install.sh --install-dir /usr/share/dotnet --channel 3.1 --runtime dotnet
+# For dotnet-adr - currently non-functional due to https://github.com/endjin/dotnet-adr/issues/203
+# # Install other dotnet versions (required for adr tool and dotnet suggest)
+# RUN curl -sSL https://dot.net/v1/dotnet-install.sh > /tmp/dotnet-install.sh \
+#     && chmod u+x /tmp/dotnet-install.sh
+
+# RUN sudo /tmp/dotnet-install.sh --install-dir /usr/share/dotnet --channel 6.0 --runtime dotnet
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="lts/*"
@@ -26,8 +26,7 @@ COPY setup_tools.sh /tmp/setup_tools.sh
 RUN chmod +x /tmp/setup_tools.sh && su - vscode -c "/tmp/setup_tools.sh"
 
 # This must be last in the .bashrc to ensure the paths are adjusted earlier
-COPY _dotnet_bash_complete.sh /tmp/_dotnet_bash_complete.sh
-RUN su - vscode -c "cat /tmp/_dotnet_bash_complete.sh >> /home/vscode/.bashrc"
+RUN su - vscode -c "dotnet-suggest script bash >> ~/.bashrc"
 
 COPY post_start_command.sh /home/vscode/post_start_command.sh
 RUN chmod +x /home/vscode/post_start_command.sh
