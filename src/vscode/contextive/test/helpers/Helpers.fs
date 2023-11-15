@@ -29,14 +29,19 @@ let closeDocument (docUri: Uri) =
         return ()
     }
 
+let pathInWorkspace path =
+    let wsf = workspace.workspaceFolders.Value[0]
+    vscode.Uri.joinPath (wsf.uri, [| path |])
+
 let getConfig () =
     workspace.getConfiguration ("contextive")
 
+let getDefaultPath () =
+    pathInWorkspace ".contextive/definitions.yml"
+
 let getFullPathFromConfig () =
     let config = getConfig ()
-    let path = config["path"].Value :?> string
-    let wsf = workspace.workspaceFolders.Value[0]
-    vscode.Uri.joinPath (wsf.uri, [| path |])
+    config["path"].Value :?> string |> pathInWorkspace
 
 let findUriInVisibleEditors (path: Uri) =
     window.visibleTextEditors.Find(fun te -> te.document.uri.path = path.path)
@@ -54,12 +59,14 @@ let resetConfig () =
         do! config.update ("path", None)
     }
 
-let deleteDefinitionsFile () =
+let deleteFile fullPath =
     promise {
-        let fullPath = getFullPathFromConfig ()
         do! closeDocument fullPath |> Promise.Ignore
         do! workspace.fs.delete fullPath
     }
+
+let deleteConfiguredDefinitionsFile () =
+    promise { do! deleteFile <| getFullPathFromConfig () }
 
 let util: obj = JsInterop.importAll "node:util"
 
