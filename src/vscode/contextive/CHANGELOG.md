@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.10.3](https://github.com/dev-cycles/contextive/compare/v1.10.2...v1.10.3) (2023-11-15)
+
+
+### Bug Fixes
+
+* **language-server:** support LSP clients that only support `workspace/configuration` ([#58](https://github.com/dev-cycles/contextive/issues/58)) ([7e06396](https://github.com/dev-cycles/contextive/commit/7e0639694982e2db1d51b7965429e4d05c3c69f5))
+* **language-server:** survey prompt more resilient to accidentally missing the first prompt ([7acd140](https://github.com/dev-cycles/contextive/commit/7acd1401ee057071f2ca6aaa9d7dba2c73eabd32))
+
 ## [1.10.2](https://github.com/dev-cycles/contextive/compare/v1.10.1...v1.10.2) (2023-10-14)
 
 
