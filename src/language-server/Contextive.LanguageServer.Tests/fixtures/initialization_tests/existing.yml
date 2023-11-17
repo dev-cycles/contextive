@@ -1,0 +1,4 @@
+contexts:
+  - terms:
+    - name: aTerm
+      definition: Should not be overwritten by the contextive/initialize request

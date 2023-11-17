@@ -12,9 +12,11 @@
     <Compile Include="Helpers/ConditionAwaiter.fs" />
     <Compile Include="Helpers/WatchedFiles.fs" />
     <Compile Include="Helpers/ServerLog.fs" />
+    <Compile Include="Helpers/Window.fs" />
     <Compile Include="Helpers/Workspace.fs" />
     <Compile Include="Helpers/TestClient.fs" />
     <Compile Include="Helpers/ConfigurationSection.fs" />
+    <Compile Include="DefinitionsInitializationTests.fs" />
     <Compile Include="RenderingTests.fs" />
     <Compile Include="FileLoaderTests.fs" />
     <Compile Include="PathResolverTests.fs" />
@@ -51,6 +53,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="fixtures/completion_tests/multi.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fixtures/initialization_tests/existing.yml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

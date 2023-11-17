@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "amodio",
+        "awaiter",
         "azuretools",
         "Contextive",
         "danielsanmedium",
@@ -21,6 +22,7 @@
         "parens",
         "singularised",
         "sinonjs",
+        "Swensen",
         "vimscript",
         "xvfb",
         "yzhang"
@@ -40,6 +42,7 @@
     },
     "dotnet-test-explorer.autoWatch": true,
     "dotnet-test-explorer.testProjectPath": "src/**/Contextive.*/Contextive.*.Tests.fsproj",
+    "dotnet-test-explorer.runInParallel": true,
     "mochaExplorer.logpanel": true,
     "mochaExplorer.files": "**/out/*.main.test.js",
     "mochaExplorer.launcherScript": "src/vscode/contextive/out/runTest",

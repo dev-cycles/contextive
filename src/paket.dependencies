@@ -16,6 +16,7 @@ nuget Serilog.Sinks.Console
 nuget Serilog.Sinks.File
 nuget MediatR 8.1.0
 nuget Unquote
+nuget Verify.Expecto
 nuget YamlDotNet
 nuget YoloDev.Expecto.TestSdk
 nuget Fable.Promise

@@ -23,6 +23,7 @@
     <Compile Include="PathResolver.fs" />
     <Compile Include="Tokeniser.fs" />
     <Compile Include="Definitions.fs" />
+    <Compile Include="DefinitionsInitializer.fs" />
     <Compile Include="WatchedFiles.fs" />
     <Compile Include="Configuration.fs" />
     <Compile Include="TextDocument.fs" />

@@ -4,31 +4,11 @@ open System
 open Expecto
 open Swensen.Unquote
 open Contextive.LanguageServer.Tests.Helpers
+open Contextive.LanguageServer.Tests.Helpers.Window
 open Helpers.TestClient
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
-open OmniSharp.Extensions.LanguageServer.Client
-open OmniSharp.Extensions.JsonRpc
 open System.IO
 open System.Linq
-
-type Handler<'TRequest, 'TResponse> = 'TRequest -> Threading.Tasks.Task<'TResponse>
-
-let handler<'TRequest, 'TResponse> awaiter (response: 'TResponse) : Handler<'TRequest, 'TResponse> =
-    fun (msg: 'TRequest) ->
-        ConditionAwaiter.received awaiter msg
-        Threading.Tasks.Task.FromResult(response)
-
-let handlerBuilder method (handler: Handler<'TRequest, 'TResponse>) (opts: LanguageClientOptions) =
-    opts.OnRequest(method, handler, JsonRpcHandlerOptions())
-
-type HandlerBuilder<'TRequest, 'TResponse> =
-    Handler<'TRequest, 'TResponse> -> LanguageClientOptions -> LanguageClientOptions
-
-let showMessageRequestHandlerBuilder: HandlerBuilder<ShowMessageRequestParams, MessageActionItem> =
-    handlerBuilder "window/showMessageRequest"
-
-let showDocumentRequestHandlerBuilder: HandlerBuilder<ShowDocumentParams, ShowDocumentResult> =
-    handlerBuilder "window/showDocument"
 
 let latchFile = Path.Combine(System.AppContext.BaseDirectory, "survey-prompted.txt")
 

@@ -71,14 +71,25 @@ let private onStartupConfigureServer definitions =
 
             let workspaceFolder = getWorkspaceFolder s
 
+            let pathGetter =
+                PathResolver.resolvePath workspaceFolder
+                |> Configuration.resolvedPathGetter configGetter
+
             let definitionsLoader = Definitions.loader definitions
 
             let registerWatchedFiles = Some <| WatchedFiles.register s definitionsLoader
 
-            let definitionsFileLoader =
-                PathResolver.resolvePath workspaceFolder
-                |> Configuration.resolvedPathGetter configGetter
-                |> FileLoader.loader
+            let definitionsFileLoader = pathGetter |> FileLoader.loader
+
+            Serilog.Log.Logger.Information
+                $"ShowDocumentIsSupported: {s.ClientSettings.Capabilities.Window.ShowDocument.IsSupported}"
+
+            let showDocument =
+                match s.ClientSettings.Capabilities.Window.ShowDocument.IsSupported with
+                | true -> s.Window.ShowDocument
+                | false -> fun _ -> Task.FromResult(ShowDocumentResult())
+
+            DefinitionsInitializer.registerHandler s pathGetter showDocument
 
             Definitions.init
                 definitions

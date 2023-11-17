@@ -99,3 +99,32 @@ let deserialize (yml: string) =
                 e.InnerException.Message
 
         Error $"Error parsing definitions file:  Object starting line {e.Start.Line}, column {e.Start.Column} - {msg}"
+
+open YamlDotNet.Core
+open YamlDotNet.Core.Events
+
+type OptionStringTypeConverter() =
+    interface IYamlTypeConverter with
+        member this.Accepts(``type``: System.Type) : bool =
+            ``type``.FullName = (typeof<option<string>>).FullName
+
+        member this.ReadYaml(parser: YamlDotNet.Core.IParser, ``type``: System.Type) : obj =
+            let value = parser.Consume<Scalar>().Value
+            if value = null then None else Some value
+
+        member this.WriteYaml(emitter: YamlDotNet.Core.IEmitter, value: obj, ``type``: System.Type) : unit =
+            match (value :?> option<string>) with
+            | None -> emitter.Emit(new Scalar(""))
+            | Some v -> emitter.Emit(new Scalar(v))
+
+
+let serialize (definitions: Definitions) =
+    let serializer =
+        (new SerializerBuilder())
+            .WithNamingConvention(CamelCaseNamingConvention.Instance)
+            .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitEmptyCollections)
+            .WithTypeConverter(OptionStringTypeConverter())
+            .WithIndentedSequences()
+            .Build()
+
+    serializer.Serialize definitions
