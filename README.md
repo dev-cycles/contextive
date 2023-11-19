@@ -15,11 +15,26 @@ Even if you're not using Domain Driven Design, Contextive should still be very h
 
 By defining terms in a central definitions file, Contextive can surface definitions and usage examples in auto-complete suggestions & hover panels wherever the terms are used - in code (of any language across the stack), comments, config, and documentation (e.g. markdown).
 
-![Example of Contextive in action.](src/vscode/contextive/images/simple-auto-complete-demo.gif)
+![Example of Contextive in action.](docs/wiki/images/simple-auto-complete-demo.gif)
 
-## Proposed Features
 
-The following list of features is a draft proposal of the vision at the start of the project.  It's expected that the list will evolve as a prototype is developed and experimented with and lessons are learnt.
+## Installation
+
+See our [Installation Guide](./docs/wiki/INSTALLATION.md) for details on how to install in a few different IDEs, or any IDE that supports the Language Server Protocol.
+
+Officially supported IDEs include:
+
+#### [VsCode](./docs/wiki/INSTALLATION.md#visual-studio-code)
+#### [Neovim](./docs/wiki/INSTALLATION.md#neovim)
+#### [Helix](./docs/wiki/INSTALLATION.md#helix)
+
+## Configuration & Usage
+
+See our [Usage Guide](./docs/wiki/USAGE.md) for details on configuring Contextive, setting up your definitions file, and the various features and options available to you in defining your domain-specific terminology.
+
+## Features
+
+The following list is a rough and evolving backlog/roadmap.  Checked items are completed, others are not a commitment, just ideas that have been suggested.
 
 * [ ] Ubiquitous Language Definition & Storage:
   * [ ] Classify terms as aggregates/entities, attributes, commands and events
@@ -27,11 +42,12 @@ The following list of features is a draft proposal of the vision at the start of
   * [ ] Link terms to each other (e.g. commands to the aggregates/entities they apply to; events to the aggregates/entities that publish them)
   * [ ] Define relationships between contexts (e.g. a Context Map definition)
   * [x] Store Ubiquitous Language term definitions in a file in the repository (e.g. yml format)
-  * [x] Support a monorepo with multiple Bounded Contexts in one repo - identify which paths relate to each Bounded Context
-  * [x] Support a Bounded Context distributed across multiple repos (#36)
+  * [x] Repository Layouts:
+    * [x] Support a monorepo with multiple Bounded Contexts in one repo - identify which paths relate to each Bounded Context
+    * [x] Support a Bounded Context distributed across multiple repos (#36)
   * [x] Support aliases of terms, hovering over the alias shows the term definition
-    * [x] Add details of the alias in the hover
-    * [ ] Add ability to define an alias as deprecated and warn as such
+  * [x] Add details of the alias in the hover
+  * [ ] Add ability to define an alias as deprecated and warn as such
   * [x] Support multiline domain vision statements, definitions and usage examples
 * [ ] IDE Support
   * [x] [Visual Studio Code](#visual-studio-code)
@@ -62,120 +78,6 @@ The following list of features is a draft proposal of the vision at the start of
   * [ ] Render definitions into a human readable format - e.g. html, markdown etc.
   * [ ] Sync definitions into a cloud storage, e.g. Notion database, or confluence page
   * [ ] Above features might be well packaged as a CLI as well as extension features, for running in CI/CD
-
-## Installation
-
-### IDE Plugins
-
-For the following IDEs, Contextive can be installed via their plugin marketplaces.
-
-#### Visual Studio Code
-
-Open Visual Studio Code, launch the quick open (`Ctrl+P`) and then enter `ext install devcycles.contextive`.  OR, search `contextive` in the extensions side-bar.
-
-Visit the [Contextive Marketplace](https://marketplace.visualstudio.com/items?itemName=devcycles.contextive) page for details.
-
-Check the extension [README](src/vscode/contextive/README.md) for usage instructions.
-
-### Language Server Configurations
-
-For the following IDEs, you will need to install the Contextive Language Server and then configure the IDE to use it.
-
-Note that the default location of the definitions file is `.contextive/definitions.yml`. Contextive currently relies on the configuration supplied by the IDE to determine if it should look in a different location - see each IDE's section below for details on how to change the `contextive.path` configuration setting.
-
-#### Neovim
-
-For [Neovim](https://neovim.io/), the Contextive Language Server can be installed via [Mason](https://github.com/williamboman/mason.nvim) by executing the Mason install command in Neovim.
-
-```
-:MasonInstall contextive
-```
-
-Alternatively, install manually as described [below](#installing-contextive-language-server).
-
-The following configuration requires the `neovim/nvim-lspconfig` plugin, which can be installed and set up by following this [install guide](https://github.com/neovim/nvim-lspconfig#install).
-
-Use lspconfig to setup and initialize the Contextive Language Server configuration. The following lua snippet needs to be included in the `init.lua` file either directly or from another lua module like `lspconfigs.lua`.
-
-```lua
-local lspconfig = require("lspconfig")
-
-lspconfig.contextive.setup {}
-```
-
-To enable a custom path for contextive terms, include these settings in the language server setup configuration.
-
-```lua
-lspconfig.contextive.setup {
-  settings = {
-    contextive = {
-      path = "./path/to/definitions.yml"
-    }
-  }
-}
-```
-
-For more information on configuring Neovim with Lua modules, see: https://neovim.io/doc/user/lua-guide.html#lua-guide-config
-
-### Helix
-
-For [Helix](https://helix-editor.com/), install the Contextive Language Server manually as described [below](#installing-contextive-language-server).
-
-Then add the following configuration to `~/.config/helix/languages.toml`:
-
-```
-[language-server.contextive]
-command = "Contextive.LanguageServer"
-```
-
-To enable a custom path for contextive terms, include a config parameter in the language server setup configuration:
-
-```
-[language-server.contextive]
-# The path can be an absolute path, or a path relative to the LSP workspace root.
-# See `workspace-lsp-roots` in https://docs.helix-editor.com/master/configuration.html#editor-section for details.
-config = { contextive = { path = "/path/to/definitions.yml" } }
-command = "Contextive.LanguageServer"
-```
-
-As Helix defines language servers on a language-by-language basis, with Contextive defined as a language sever, it can be added to specific languages, e.g.:
-
-```
-[[language]]
-name = "typescript"
-language-servers = [ { name = "typescript-language-server" }, { name = "contextive" } ]
-```
-
-### Others
-
-Coming soon!
-
-#### Installing Contextive Language Server
-
-To install the language server, you need to do it manually from GitHub releases assets. This is necessary for users who are not using the Contextive VSCode extension and Visual Studio Code.
-
-##### 1. Download the appropriate zip file for your operating system and architecture:
-
-```shell
-curl -L https://github.com/dev-cycles/contextive/releases/download/<version>/Contextive.LanguageServer-<os>-<arch>-<version>.zip -o Contextive.LanguageServer-<os>-<arch>-<version>.zip
-```
-
-##### 2. Unzip the Contextive.LanguageServer and copy the file into a folder that is included in your system's PATH:
-
-The $HOME/bin directory has been created beforehand and is included in the system's PATH.
-
-```shell
-unzip Contextive.LanguageServer-<os>-<arch>-<version>.zip -d contextive-language-server
-cp contextive-language-server/Contextive.LanguageServer $HOME/bin
-```
-
-##### 3. Verify that Contextive.LanguageServer is found in the PATH. A non-zero exit code indicates that the language server was not found in the PATH:
-
-```shell
-command -v Contextive.LanguageServer
-```
-
-The command should return the absolute path to the binary if it's found in the system PATH.
 
 ## Contributing
 
