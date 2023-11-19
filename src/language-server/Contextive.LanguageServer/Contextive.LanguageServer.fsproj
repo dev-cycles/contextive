@@ -6,7 +6,7 @@
     <WarnOn>3390;$(WarnOn)</WarnOn>
   </PropertyGroup>
   <PropertyGroup>
-    <Version>1.10.3</Version>
+    <Version>1.10.4</Version>
     <Authors>Chris Simon</Authors>
     <Company>Dev Cycles</Company>
   </PropertyGroup>

@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.10.4](https://github.com/dev-cycles/contextive/compare/v1.10.3...v1.10.4) (2023-11-19)
+
+
+### Bug Fixes
+
+* **language-server:** improve resilience when client doesn't support showMessageRequest (fixes [#60](https://github.com/dev-cycles/contextive/issues/60)) ([8a1e684](https://github.com/dev-cycles/contextive/commit/8a1e68469173ea737f8ddf91514f92fe83851c25))
+* **language-server:** language server now offers a custom lsp command to initialize the default definitions file ([9c7e8a5](https://github.com/dev-cycles/contextive/commit/9c7e8a59dfa179aba806fe183b161ac15df38978))
+
 ## [1.10.3](https://github.com/dev-cycles/contextive/compare/v1.10.2...v1.10.3) (2023-11-15)
 
 
