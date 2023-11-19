@@ -7,14 +7,6 @@
 
 Contextive is a suite of tools to immerse developers in the language of their users' domains.
 
-## SURVEY
-
-We're currently conducting a [survey](https://forms.gle/3pJSUYmLHv5RQ1m1A) for Contextive users (or folk interested in Contextive) to help shape the future roadmap and better understand how teams are using Contextive.
-
-It should only take around 10 minutes - we'd really appreciate your thoughts! [Click here](https://forms.gle/3pJSUYmLHv5RQ1m1A) to take the survey.
-
-While the survey is underway, you'll also notice a one-time unobtrusive popup inviting users to help shape the future of Contextive when it is loaded (since v1.10.2).  This popup will be removed when we complete the survey.
-
 ## Inspiration
 
 Contextive is inspired by the concept of the [Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html) from the practice of [Domain Driven Design (DDD)](https://martinfowler.com/bliki/DomainDrivenDesign.html) and is intended to support ubiquitous language management practices on DDD projects.
@@ -42,7 +34,7 @@ The following list of features is a draft proposal of the vision at the start of
     * [ ] Add ability to define an alias as deprecated and warn as such
   * [x] Support multiline domain vision statements, definitions and usage examples
 * [ ] IDE Support
-  * [x] Visual Studio Code
+  * [x] [Visual Studio Code](#visual-studio-code)
     * [x] Support single-root workspaces
     * [x] Support multi-root workspaces with a shared definitions file
     * [ ] Support multi-root workspaces with a definitions file per root
@@ -50,7 +42,8 @@ The following list of features is a draft proposal of the vision at the start of
   * [ ] Eclipse
   * [ ] NetBeans
   * [ ] JetBrains
-  * [x] neovim
+  * [x] [neovim](#neovim)
+  * [x] [helix](#helix)
   * [ ] emacs
 * [ ] Code-editing Features
   * [x] Show the term definitions & usage examples when hovering over the word in the editor 
@@ -87,6 +80,8 @@ Check the extension [README](src/vscode/contextive/README.md) for usage instruct
 ### Language Server Configurations
 
 For the following IDEs, you will need to install the Contextive Language Server and then configure the IDE to use it.
+
+Note that the default location of the definitions file is `.contextive/definitions.yml`. Contextive currently relies on the configuration supplied by the IDE to determine if it should look in a different location - see each IDE's section below for details on how to change the `contextive.path` configuration setting.
 
 #### Neovim
 
