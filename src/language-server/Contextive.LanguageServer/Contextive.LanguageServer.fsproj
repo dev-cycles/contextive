@@ -13,8 +13,9 @@
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <PublishTrimmed>true</PublishTrimmed>
+    <!--Restore after https://github.com/dev-cycles/contextive/issues/61 is resolved. -->
+    <!--<PublishReadyToRun>true</PublishReadyToRun>-->
+    <!--<PublishTrimmed>true</PublishTrimmed>-->
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Seq.fs" />

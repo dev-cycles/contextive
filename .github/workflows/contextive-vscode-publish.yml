@@ -53,7 +53,7 @@ jobs:
         working-directory: ./src
       - name: Build Language Server
         run: |
-          dotnet publish -c Release -r ${{ matrix.dotnet_runtime }} -o publish --self-contained
+          dotnet publish -c Release -r ${{ matrix.dotnet_runtime }} -o publish
         working-directory: ./src/language-server/Contextive.LanguageServer
       - name: Copy Language Server to VsCode Extension Folder
         run: mkdir -p ../../vscode/contextive/dist && cp publish/* ../../vscode/contextive/dist

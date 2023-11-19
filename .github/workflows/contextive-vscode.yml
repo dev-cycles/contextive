@@ -64,6 +64,17 @@ jobs:
           name: Language Server Tests ${{ runner.os }}
           path: "src/**/Contextive.*.Tests/TestResults/TestResults.*-${{ env.dotnet-version }}-${{ runner.os }}.xml"
           reporter: dotnet-trx 
+      - name: Publish Language Server
+        working-directory: ./src/language-server/Contextive.LanguageServer
+        run: |
+          dotnet publish -c Release -r ${{ matrix.dotnet_runtime }} -o publish
+      - name: Check Published Version
+        if: runner.os == 'Linux'
+        working-directory: ./src/language-server/Contextive.LanguageServer/publish
+        run: |
+          set +e
+          timeout -v 2 ./Contextive.LanguageServer
+          [ $? -eq 124 ]
       - name: Restore npm dependencies
         run: npm install
         working-directory: ./src/vscode/contextive
