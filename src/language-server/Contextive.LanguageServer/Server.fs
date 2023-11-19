@@ -110,7 +110,6 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
         .WithOutput(output)
 
         .OnStarted(onStartupConfigureServer definitions)
-        .OnStarted(Survey.onStartupShowSurveyPrompt)
         .WithConfigurationSection(configSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z ->
             z

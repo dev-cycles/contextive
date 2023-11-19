@@ -29,7 +29,6 @@
     <Compile Include="TextDocument.fs" />
     <Compile Include="Hover.fs" />
     <Compile Include="Completion.fs" />
-    <Compile Include="Survey.fs" />
     <Compile Include="Server.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
