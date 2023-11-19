@@ -72,9 +72,9 @@ The following list of features is a draft proposal of the vision at the start of
 
 ## Installation
 
-### All in one IDE Plugins
+### IDE Plugins
 
-Contextive language server does not need to be installed separately.
+For the following IDEs, Contextive can be installed via their plugin marketplaces.
 
 #### Visual Studio Code
 
@@ -85,6 +85,75 @@ Visit the [Contextive Marketplace](https://marketplace.visualstudio.com/items?it
 Check the extension [README](src/vscode/contextive/README.md) for usage instructions.
 
 ### Language Server Configurations
+
+For the following IDEs, you will need to install the Contextive Language Server and then configure the IDE to use it.
+
+#### Neovim
+
+For [Neovim](https://neovim.io/), the Contextive Language Server can be installed via [Mason](https://github.com/williamboman/mason.nvim) by executing the Mason install command in Neovim.
+
+```
+:MasonInstall contextive
+```
+
+Alternatively, install manually as described [below](#installing-contextive-language-server).
+
+The following configuration requires the `neovim/nvim-lspconfig` plugin, which can be installed and set up by following this [install guide](https://github.com/neovim/nvim-lspconfig#install).
+
+Use lspconfig to setup and initialize the Contextive Language Server configuration. The following lua snippet needs to be included in the `init.lua` file either directly or from another lua module like `lspconfigs.lua`.
+
+```lua
+local lspconfig = require("lspconfig")
+
+lspconfig.contextive.setup {}
+```
+
+To enable a custom path for contextive terms, include these settings in the language server setup configuration.
+
+```lua
+lspconfig.contextive.setup {
+  settings = {
+    contextive = {
+      path = "./path/to/definitions.yml"
+    }
+  }
+}
+```
+
+For more information on configuring Neovim with Lua modules, see: https://neovim.io/doc/user/lua-guide.html#lua-guide-config
+
+### Helix
+
+For [Helix](https://helix-editor.com/), install the Contextive Language Server manually as described [below](#installing-contextive-language-server).
+
+Then add the following configuration to `~/.config/helix/languages.toml`:
+
+```
+[language-server.contextive]
+command = "Contextive.LanguageServer"
+```
+
+To enable a custom path for contextive terms, include a config parameter in the language server setup configuration:
+
+```
+[language-server.contextive]
+# The path can be an absolute path, or a path relative to the LSP workspace root.
+# See `workspace-lsp-roots` in https://docs.helix-editor.com/master/configuration.html#editor-section for details.
+config = { contextive = { path = "/path/to/definitions.yml" } }
+command = "Contextive.LanguageServer"
+```
+
+As Helix defines language servers on a language-by-language basis, with Contextive defined as a language sever, it can be added to specific languages, e.g.:
+
+```
+[[language]]
+name = "typescript"
+language-servers = [ { name = "typescript-language-server" }, { name = "contextive" } ]
+```
+
+### Others
+
+Coming soon!
 
 #### Installing Contextive Language Server
 
@@ -112,44 +181,6 @@ command -v Contextive.LanguageServer
 ```
 
 The command should return the absolute path to the binary if it's found in the system PATH.
-
-#### Neovim
-
-How to configure Neovim with lua modules: https://neovim.io/doc/user/lua-guide.html#lua-guide-config
-
-Contextive Language Server is also provided with [Mason](https://github.com/williamboman/mason.nvim).
-
-To install Contextive with Mason, execute the Mason install command in Neovim.
-
-```
-:MasonInstall contextive
-```
-
-The following configuration requires the `neovim/nvim-lspconfig` plugin, which can be installed and set up by following this [install guide](https://github.com/neovim/nvim-lspconfig#install).
-
-Use lspconfig to setup and initialize the Contextive Language Server configuration. The following lua snippet needs to be included in the `init.lua` file either directly or from another lua module like `lspconfigs.lua`.
-
-```lua
-local lspconfig = require("lspconfig")
-
-lspconfig.contextive.setup {}
-```
-
-To enable a custom path for contextive terms, include these settings in the language server setup configuration.
-
-```lua
-lspconfig.contextive.setup {
-  settings = {
-    contextive = {
-      path = "./path/to/definitions.yml"
-    }
-  }
-}
-```
-
-### Others
-
-Coming soon!
 
 ## Contributing
 
