@@ -138,4 +138,24 @@ let tests =
               test <@ receivedDoc.External.Value = true @>
               test <@ receivedDoc.Uri.ToString().Contains("forms.gle") @>
 
-          } ]
+          }
+
+          testAsync "Server does nothing if client doesn't support showMessageRequest" {
+
+              File.Delete(latchFile)
+
+              let pathValue = Guid.NewGuid().ToString()
+
+              let config =
+                  [ Workspace.optionsBuilder ""
+                    ConfigurationSection.contextivePathBuilder pathValue ]
+
+              let expectedLogMessage = Some "Unable to send survey message"
+
+              let! (_, reply) = TestClientWithCustomInitWait(config, expectedLogMessage) |> initAndWaitForReply
+
+              test <@ not <| File.Exists(latchFile) @>
+              test <@ reply.IsSome @>
+          }
+
+          ]

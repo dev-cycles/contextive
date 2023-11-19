@@ -11,7 +11,7 @@ let setupLogging =
             .MinimumLevel.Verbose()
             .Enrich.FromLogContext()
             .WriteTo.File(
-                formatter = Formatting.Json.JsonFormatter(), // uncomment to enable detailed logging of protocol messages
+                // formatter = Formatting.Json.JsonFormatter(), // uncomment to enable detailed logging of protocol messages
                 path = "log.txt",
                 rollingInterval = RollingInterval.Day
             )

@@ -81,9 +81,6 @@ let private onStartupConfigureServer definitions =
 
             let definitionsFileLoader = pathGetter |> FileLoader.loader
 
-            Serilog.Log.Logger.Information
-                $"ShowDocumentIsSupported: {s.ClientSettings.Capabilities.Window.ShowDocument.IsSupported}"
-
             let showDocument =
                 match s.ClientSettings.Capabilities.Window.ShowDocument.IsSupported with
                 | true -> s.Window.ShowDocument

@@ -28,16 +28,25 @@ let private showSurveyPrompt (s: ILanguageServer) (cancellationToken: Cancellati
                         )
                 )
 
-            let! response = s.Window.ShowMessageRequest(surveyPrompt, cancellationToken)
+            // Switch from `try` to capability check once https://github.com/OmniSharp/csharp-language-server-protocol/issues/1117 is resolved
+            // if s.ClientSettings.Capabilities.Window.ShowMessage.IsSupported then
+            try
 
-            if response <> null then
-                File.Create(latchFile).Close()
+                let! response = s.Window.ShowMessageRequest(surveyPrompt, cancellationToken)
 
-                if response.Title = goToSurveyAction then
-                    let! res =
-                        s.Window.ShowDocument(ShowDocumentParams(Uri = surveyUri, External = true), cancellationToken)
+                if response <> null then
+                    File.Create(latchFile).Close()
 
-                    ()
+                    if response.Title = goToSurveyAction then
+                        let! res =
+                            s.Window.ShowDocument(
+                                ShowDocumentParams(Uri = surveyUri, External = true),
+                                cancellationToken
+                            )
+
+                        ()
+            with e ->
+                s.Window.Log($"Unable to send survey message: {e.ToString()}")
     }
     :> Task
 

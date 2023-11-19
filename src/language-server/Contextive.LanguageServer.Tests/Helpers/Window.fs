@@ -2,7 +2,7 @@ module Contextive.LanguageServer.Tests.Helpers.Window
 
 open System
 open OmniSharp.Extensions.LanguageServer.Client
-open OmniSharp.Extensions.JsonRpc
+open OmniSharp.Extensions.LanguageServer.Protocol.Window
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 
@@ -13,23 +13,24 @@ let handler<'TRequest, 'TResponse> awaiter (response: 'TResponse) : Handler<'TRe
         ConditionAwaiter.received awaiter msg
         Threading.Tasks.Task.FromResult(response)
 
-let handlerBuilder
-    method
-    (capability: ICapability option)
-    (handler: Handler<'TRequest, 'TResponse>)
+let showMessageRequestHandlerBuilder
+    (handler: Handler<ShowMessageRequestParams, MessageActionItem>)
     (opts: LanguageClientOptions)
-    =
-    opts.OnRequest(method, handler, JsonRpcHandlerOptions()) |> ignore
+    : LanguageClientOptions =
+    opts
+        // .WithCapability(new ShowMessageRequestClientCapabilities()) // See https://github.com/OmniSharp/csharp-language-server-protocol/issues/1117
+        .OnShowMessageRequest(handler)
+    |> ignore
 
-    match capability with
-    | None -> opts
-    | Some c -> opts.WithCapability(c)
+    opts
 
-type HandlerBuilder<'TRequest, 'TResponse> =
-    Handler<'TRequest, 'TResponse> -> LanguageClientOptions -> LanguageClientOptions
+let showDocumentRequestHandlerBuilder
+    (handler: Handler<ShowDocumentParams, ShowDocumentResult>)
+    (opts: LanguageClientOptions)
+    : LanguageClientOptions =
+    opts
+        .WithCapability(new ShowDocumentClientCapabilities())
+        .OnShowDocument(handler)
+    |> ignore
 
-let showMessageRequestHandlerBuilder: HandlerBuilder<ShowMessageRequestParams, MessageActionItem> =
-    handlerBuilder "window/showMessageRequest" None
-
-let showDocumentRequestHandlerBuilder: HandlerBuilder<ShowDocumentParams, ShowDocumentResult> =
-    handlerBuilder "window/showDocument" (Some(new ShowDocumentClientCapabilities(Support = true)))
+    opts
