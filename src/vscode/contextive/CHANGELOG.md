@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.10.5](https://github.com/dev-cycles/contextive/compare/v1.10.4...v1.10.5) (2023-11-19)
+
+
+### Bug Fixes
+
+* exception on startup [#61](https://github.com/dev-cycles/contextive/issues/61) ([2a69c0a](https://github.com/dev-cycles/contextive/commit/2a69c0a764099539e537291a85307fbfd2598dd3))
+
 ## [1.10.4](https://github.com/dev-cycles/contextive/compare/v1.10.3...v1.10.4) (2023-11-19)
 
 
