@@ -80,7 +80,6 @@ async function main() {
 			extensionTestsPath,
 			launchArgs,
 			extensionTestsEnv: {
-				CONTEXTIVE_DEBUG: true,
 				...ipcOpts,
 			}
 		});
