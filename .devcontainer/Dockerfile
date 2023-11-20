@@ -26,7 +26,12 @@ COPY setup_tools.sh /tmp/setup_tools.sh
 RUN chmod +x /tmp/setup_tools.sh && su - vscode -c "/tmp/setup_tools.sh"
 
 # This must be last in the .bashrc to ensure the paths are adjusted earlier
-RUN su - vscode -c "dotnet-suggest script bash >> ~/.bashrc"
+# the `tr -d '\015' is to workaround https://github.com/dotnet/command-line-api/pull/2186
+# it can be removed when they release a version higher than 1.1.415701
+# Temporarily removing this script, as it doesn't seem to work with any
+# of the currently used dotnet tools.  Try again when there is a version
+# higher than 1.1.415701
+# RUN su - vscode -c "dotnet-suggest script bash | tr -d '\015' >> ~/.bashrc"
 
 COPY post_start_command.sh /home/vscode/post_start_command.sh
 RUN chmod +x /home/vscode/post_start_command.sh
