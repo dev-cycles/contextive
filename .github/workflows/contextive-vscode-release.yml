@@ -3,7 +3,6 @@ on: workflow_dispatch
 
 env:
   dotnet-version: '7.0.x'
-  CONTEXTIVE_DEBUG: true
 jobs:
   build-and-test:
     name: 'Build and Test'

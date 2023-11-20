@@ -8,7 +8,11 @@ on:
       - '.github/**vscode**'
 env:
   dotnet-version: '7.0.x'
-  CONTEXTIVE_DEBUG: true
+
+  # Uncomment this to ensure the vscode extension tests run in debug mode using `dotnet run` for enhanced logging
+  # by default we test with the release mode built binary to ensure .NET trimming hasn't broken anything
+  # See https://github.com/dev-cycles/contextive/issues/61 for details
+  # CONTEXTIVE_DEBUG: true
 jobs:
   build-and-test:
     name: 'Build and Test'
@@ -64,7 +68,7 @@ jobs:
           name: Language Server Tests ${{ runner.os }}
           path: "src/**/Contextive.*.Tests/TestResults/TestResults.*-${{ env.dotnet-version }}-${{ runner.os }}.xml"
           reporter: dotnet-trx 
-      - name: Publish Language Server
+      - name: Build Release Mode/Publish Language Server
         working-directory: ./src/language-server/Contextive.LanguageServer
         run: |
           dotnet publish -c Release -r ${{ matrix.dotnet_runtime }} -o publish
@@ -85,6 +89,10 @@ jobs:
           /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           echo ">>> Started xvfb"
         if: runner.os == 'Linux'
+      - name: Copy Published Language Server to VsCode Extension
+        run: |
+          mkdir -p src/vscode/contextive/dist && cp src/language-server/Contextive.LanguageServer/publish/Contextive.LanguageServer "$_"
+        if: runner.os == 'Linux'
       - name: Build and Test VsCode Extension
         run: npm test
         working-directory: ./src/vscode/contextive
@@ -92,6 +100,7 @@ jobs:
           DISPLAY: ":99.0"
           DOTNET_VERSION: ${{ env.dotnet-version }}
         if: runner.os == 'Linux'
+        timeout-minutes: 5
       - name: Upload VsCode Extension Test Results
         uses: actions/upload-artifact@v3
         with:

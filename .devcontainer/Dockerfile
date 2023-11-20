@@ -30,3 +30,5 @@ RUN su - vscode -c "dotnet-suggest script bash >> ~/.bashrc"
 
 COPY post_start_command.sh /home/vscode/post_start_command.sh
 RUN chmod +x /home/vscode/post_start_command.sh
+
+ENV CONTEXTIVE_DEBUG=true

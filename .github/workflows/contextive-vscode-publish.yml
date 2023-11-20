@@ -5,7 +5,6 @@ on:
   
 env:
   dotnet-version: '7.0.x'
-  CONTEXTIVE_DEBUG: true
 jobs:
   publish:
     name: Publish
