@@ -14,6 +14,7 @@ let openDocument (docUri: Uri) =
     promise {
         let! doc = workspace.openTextDocument (docUri)
         do! window.showTextDocument (doc, ViewColumn.Active, false) |> Thenable.Ignore
+        do! Promise.sleep 250
         return docUri
     }
 
@@ -27,6 +28,16 @@ let closeDocument (docUri: Uri) =
             |> Thenable.Ignore
 
         return ()
+    }
+
+let getContentBuffer (content: string) =
+    System.Text.Encoding.UTF8.GetBytes(content)
+    |> Fable.Core.JS.Constructors.Uint8Array.Create
+
+let writeFile (docUri: Uri) (content: string) =
+    promise {
+        do! workspace.fs.writeFile (docUri, getContentBuffer content)
+        do! Promise.sleep 400
     }
 
 let pathInWorkspace path =
@@ -50,7 +61,7 @@ let updateConfig newPath =
     promise {
         let config = getConfig ()
         do! config.update ("path", newPath :> obj |> Some)
-        do! Promise.sleep 10
+        do! Promise.sleep 50
     }
 
 let resetConfig () =

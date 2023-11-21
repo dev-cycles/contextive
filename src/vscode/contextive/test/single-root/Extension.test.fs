@@ -22,7 +22,11 @@ let tests =
               let config = workspace.getConfiguration ("contextive")
               let path = config["path"]
               Expect.isSome path "contextive.path config is not present"
-              Expect.equal path.Value ".contextive/definitions.yml" "contextive.path config is not the default value"
+
+              Expect.equal
+                  path.Value
+                  ".contextive/definitions.yml"
+                  "contextive.path config is not the default value - it must match the default configured in the language server"
 
           testCaseAsync "Language Client becomes Ready"
           <| async { getLanguageClient () |> ignore } ]

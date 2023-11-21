@@ -60,13 +60,6 @@ let private addDisposable (context: ExtensionContext) (disposable: Disposable) =
 let private registerCommand (context: ExtensionContext) (name: string) (handler) =
     commands.registerCommand (name, handler) |> addDisposable context
 
-let private getPath () =
-    let config = workspace.getConfiguration (ExtensionId)
-
-    match config.get ("path"), workspace.workspaceFolders with
-    | Some p, Some wsf -> vscode.Uri.joinPath (wsf[0].uri, [| p |]) |> Some
-    | _, _ -> None
-
 let registerConfigChangeNotifications context (client: LanguageClient) =
     workspace.onDidChangeConfiguration.Invoke(fun e ->
         if e.affectsConfiguration (ExtensionId) then
@@ -81,7 +74,7 @@ let activate (context: ExtensionContext) =
 
         do! client.start ()
 
-        Initialize.handler getPath |> registerCommand context "contextive.initialize"
+        Initialize.handler client |> registerCommand context "contextive.initialize"
 
         registerConfigChangeNotifications context client
 
