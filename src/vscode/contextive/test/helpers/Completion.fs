@@ -21,8 +21,6 @@ let rec expectCompletion path position expectedResults (onBeforeAssert: (unit ->
     promise {
         let! docUri = getDocUri path |> openDocument
 
-        do! Promise.sleep (250)
-
         let! result = VsCodeCommands.complete docUri position
 
         do! getDocUri path |> closeDocument

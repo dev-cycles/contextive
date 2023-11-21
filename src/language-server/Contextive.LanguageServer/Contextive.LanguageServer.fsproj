@@ -23,13 +23,14 @@
     <DebuggerSupport>false</DebuggerSupport>
   </PropertyGroup>
   <ItemGroup>
-    <TrimmerRootAssembly Include="OmniSharp.Extensions.JsonRpc" />
     <TrimmerRootAssembly Include="OmniSharp.Extensions.LanguageServer" />
+    <TrimmerRootAssembly Include="OmniSharp.Extensions.JsonRpc" />
     <TrimmerRootAssembly Include="OmniSharp.Extensions.LanguageProtocol" />
     <TrimmerRootAssembly Include="OmniSharp.Extensions.LanguageServer.Shared" />
     <TrimmerRootAssembly Include="Newtonsoft.Json" />
     <TrimmerRootAssembly Include="MediatR" />
     <TrimmerRootAssembly Include="Contextive.Core" />
+    <TrimmerRootAssembly Include="FSharp.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Seq.fs" />

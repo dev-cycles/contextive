@@ -56,16 +56,13 @@ let tests =
               do! VsCodeCommands.initialize () |> Promise.Ignore
 
               let fullPath = getFullPathFromConfig ()
+
               let editor = findUriInVisibleEditors fullPath
 
               do! deleteConfiguredDefinitionsFile ()
 
               Expect.isNotNull editor "New definitions.yml isn't open"
           }
-
-          let getContent (content: string) =
-              System.Text.Encoding.UTF8.GetBytes(content)
-              |> Fable.Core.JS.Constructors.Uint8Array.Create
 
           testCaseAsync "New definitions file should show new term in completion"
           <| async {
@@ -77,14 +74,11 @@ let tests =
               let fullPath = getFullPathFromConfig ()
 
               let content =
-                  getContent
-                      """contexts:
+                  """contexts:
   - terms:
     - name: anewterm"""
 
-              do! workspace.fs.writeFile (fullPath, content)
-
-              do! Promise.sleep (500)
+              do! writeFile fullPath content
 
               let resetWorkspaceHook = Some deleteConfiguredDefinitionsFile
 
