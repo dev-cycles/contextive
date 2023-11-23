@@ -1,0 +1,8 @@
+name: Init Dotnet Workflow
+runs:
+  using: composite
+  steps:
+    - name: Setup .NET SDK ${{ env.DOTNET_VERSION }}
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
