@@ -18,11 +18,15 @@ function run() {
 
 	const opts = getMochaOpts();
 	// Create the mocha test
+
+	const resultsPath = path.resolve(testsRoot, `../TestResults/TestResults-${opts.fgrep}-${process.env.DOTNET_VERSION}-${process.env.RUNNER_OS}.xml`);
+	console.log (`Test Results Path: ${resultsPath}`);
+
 	const mocha = new Mocha(opts)
 	.reporter('mocha-multi-reporters', {
 		reporterEnabled: "list, mocha-junit-reporter",
 		mochaJunitReporterReporterOptions: {
-			mochaFile: path.resolve(testsRoot, `../TestResults/TestResults-${opts.fgrep}-${process.env.DOTNET_VERSION}-${process.env.RUNNER_OS}.xml`)
+			mochaFile: resultsPath
 		}
 	});
 

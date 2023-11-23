@@ -1,0 +1,51 @@
+name: Upload Logs & Reports
+inputs:
+  name:
+    description: 'Component Name'
+    required: true
+  reporter:
+    description: 'Reporter format, e.g. dotnet-trx or java-junit'
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: gacts/github-slug@v1
+      id: name-slug
+      with:
+        to-slug: ${{ inputs.name }}
+
+    - name: Upload ${{ inputs.name }} Logs
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: ${{ steps.name-slug.outputs.slug }}-logs-${{ env.DOTNET_VERSION }}-${{ runner.os }}
+        path: "**/log*.txt"
+        if-no-files-found: ignore
+
+    - name: Upload ${{ inputs.name }} VsCode Logs
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: ${{ steps.name-slug.outputs.slug }}-vscode-logs-${{ env.DOTNET_VERSION }}-${{ runner.os }}
+        path: "**/user-data/logs/**/output_logging*/*"
+        if-no-files-found: ignore
+
+    - name: Upload ${{ inputs.name }} Test Report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: ${{ steps.name-slug.outputs.slug }}-test-results-net${{ env.DOTNET_VERSION }}-${{ runner.os }}
+        path: "**/TestResults/TestResults*-${{ env.DOTNET_VERSION }}-${{ runner.os }}.xml"
+    
+
+    - name: Create ${{ inputs.name }}Test Report Check
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: ${{ inputs.name }} Tests (net${{ env.DOTNET_VERSION }} - ${{ runner.os }})
+        path: "**/TestResults/TestResults*-${{ env.DOTNET_VERSION }}-${{ runner.os }}.xml"
+        reporter: ${{ inputs.reporter }} 
+
+
+
+

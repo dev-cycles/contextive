@@ -1,0 +1,69 @@
+name: Contextive
+on:
+  push:
+    paths:
+      - 'src/**'
+      - '.github/**'
+env:
+  DOTNET_VERSION: '7.0.x'
+jobs:
+  language-server:
+    name: Language Server
+    strategy:
+      matrix:
+        include:
+          - dotnet_runtime: win-x64
+            os: windows-latest
+          - dotnet_runtime: linux-x64
+            os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/init-dotnet
+
+      - name: Build
+        run: dotnet fsi language-server/build.fsx -- -r ${{ matrix.dotnet_runtime }}
+        working-directory: src
+
+      - name: Language Server Artifact
+        uses: actions/upload-artifact@v3
+        if: runner.os == 'Linux'
+        with:
+          name: Contextive.LanguageServer
+          path: src/language-server/Contextive.LanguageServer/publish/*
+
+      - uses: ./.github/actions/upload-reports
+        if: always()
+        with:
+          name: 'Contextive Language Server'
+          reporter: dotnet-trx
+
+  vscode:
+    name: VsCode Extension
+    runs-on: ubuntu-latest
+    needs: language-server
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/init-dotnet
+
+      - name: Language Server Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: Contextive.LanguageServer
+          path: src/vscode/contextive/dist
+
+      - name: Build
+        run: dotnet fsi vscode/build.fsx
+        working-directory: src
+
+      - uses: ./.github/actions/upload-reports
+        if: always()
+        with:
+          name: 'Contextive VsCode Extension'
+          reporter: java-junit
