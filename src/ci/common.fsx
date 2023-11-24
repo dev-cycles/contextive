@@ -20,9 +20,19 @@ let args =
        os = EnvArg.Create("RUNNER_OS", "Operating System", isOptional = true)
        event = EnvArg.Create("GITHUB_EVENT_NAME", isOptional = true)
        ref = EnvArg.Create("GITHUB_REF", isOptional = true)
-       repo = EnvArg.Create("GITHUB_REPOSITORY", isOptional = true) |}
+       repo = EnvArg.Create("GITHUB_REPOSITORY", isOptional = true)
+       branch = EnvArg.Create("GITHUB_REF_NAME", isOptional = true)
+       headSha = EnvArg.Create("GITHUB_SHA", isOptional = true) |}
 
 type Component = { Name: string; Path: string }
+
+let bashCmd (cmd: string) =
+    $"""bash -c "{cmd.Replace("\"", "\\\"")}" """
+
+let runBash (cmd: string) (ctx: Internal.StageContext) = ctx.RunCommand(bashCmd cmd)
+
+let runBashCaptureOutput (cmd: string) (ctx: Internal.StageContext) =
+    ctx.RunCommandCaptureOutput(bashCmd cmd)
 
 let ifTopLevelStage fn (ctx: Internal.StageContext) =
     match ctx.ParentContext with
@@ -32,7 +42,9 @@ let ifTopLevelStage fn (ctx: Internal.StageContext) =
 let echoGitHubGroupStart (ctx: Internal.StageContext) = printfn "::group::%s" ctx.Name
 let echoGitHubGroupEnd (ctx: Internal.StageContext) = printfn "::endgroup::"
 
-open StageContextExtensions
+let ghError msg =
+    printfn $"::error ::{msg}"
+    Error(msg)
 
 let gitHubGroupStart = ifTopLevelStage <| echoGitHubGroupStart
 

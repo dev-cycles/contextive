@@ -1,7 +1,9 @@
 name: Contextive VSCode Publish
-on:
-  release:
-    types: [published]
+# temp to avoid accidental publishing while testing ci script refactor
+on: workflow_dispatch
+# on:
+#   release:
+#     types: [published]
   
 env:
   dotnet-version: '7.0.x'

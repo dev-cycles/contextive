@@ -16,7 +16,7 @@ pipeline "Contextive VsCode Extension" {
     logEnvironment
 
     stage "Install Tools" {
-        whenEnv { name "GITHUB_EVENT_NAME" }
+        whenEnv { name args.event.Name }
         paralle
         installTool "paket"
         installTool "fable"
