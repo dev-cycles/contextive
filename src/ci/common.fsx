@@ -10,13 +10,8 @@ let args =
             "Dotnet Runtime for Publishing, see https://learn.microsoft.com/en-us/dotnet/core/rid-catalog#known-rids",
             isOptional = true
         )
-       dotnetVersion =
-        EnvArg.Create(
-            "DOTNET_VERSION",
-            "Version of the DotNet SDK",
-            isOptional = true
-
-        )
+       release = CmdArg.Create("--release", "Release version identified, e.g. v1.10.0")
+       dotnetVersion = EnvArg.Create("DOTNET_VERSION", "Version of the DotNet SDK", isOptional = true)
        os = EnvArg.Create("RUNNER_OS", "Operating System", isOptional = true)
        event = EnvArg.Create("GITHUB_EVENT_NAME", isOptional = true)
        ref = EnvArg.Create("GITHUB_REF", isOptional = true)

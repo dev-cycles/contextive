@@ -38,18 +38,32 @@ let dotnetPublish app =
     }
 
 let appZipFileName app (ctx: Internal.StageContext) =
-    System.IO.Path.GetFullPath($"{app.Name}-{ctx.GetCmdArg(args.dotnetRuntime)}-{ctx.GetEnvVar(args.refName.Name)}.zip")
+    System.IO.Path.GetFullPath($"{app.Name}-{ctx.GetCmdArg(args.dotnetRuntime)}-{ctx.GetCmdArg(args.release)}.zip")
 
 let checkRelease app =
     stage "Check Release" {
         workingDir $"{app.Path}/publish"
 
-        whenLinux
+        whenAll {
+            platformLinux
+            envVar args.event.Name
+        }
 
         acceptExitCodes [ 124 ]
 
         run (bashCmd $"timeout -v 2 ./{app.Name}")
     }
+
+let zipCmd =
+    function
+    | "Linux"
+    | "" -> "zip"
+    | _ -> "7z a"
+
+let publishedBinaryName app =
+    function
+    | "Windows" -> $"{app.Name}.exe"
+    | _ -> app.Name
 
 let zipAndUploadAsset app =
     stage $"Zip And Upload {app.Name} Release Asset" {
@@ -58,25 +72,18 @@ let zipAndUploadAsset app =
 
             run (fun ctx ->
                 let path = appZipFileName app ctx
+                let os = ctx.GetEnvVar(args.os.Name)
+                let zip = zipCmd os
+                let binaryName = publishedBinaryName app os
 
-                let zipCmd =
-                    match ctx.GetEnvVar(args.os.Name) with
-                    | "Linux"
-                    | "" -> "zip -v"
-                    | _ -> "7z a"
-
-                $"{zipCmd} {path} * ")
+                $"{zip} {path} {binaryName}")
 
             stage "Upload" {
                 workingDir app.Path
 
-                whenAny {
-                    cmdArg args.refName.Name
-                    envVar args.refName.Name
-                }
+                whenCmdArg args.release
 
-                run (fun ctx ->
-                    bashCmd $"gh release upload {ctx.GetCmdArgOrEnvVar(args.refName.Name)} {appZipFileName app ctx}")
+                run (fun ctx -> bashCmd $"gh release upload {ctx.GetCmdArg(args.release)} {appZipFileName app ctx}")
             }
         }
     }
