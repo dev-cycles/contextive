@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.10.6](https://github.com/dev-cycles/contextive/compare/v1.10.5...v1.10.6) (2023-11-24)
+
+
+### Performance Improvements
+
+* **language-server:** reduce binary size and improve CI gate (fixes [#61](https://github.com/dev-cycles/contextive/issues/61)) ([d34d8a4](https://github.com/dev-cycles/contextive/commit/d34d8a49d17febb46346a6ae8fc2a19d2ac3a249))
+
 ## [1.10.5](https://github.com/dev-cycles/contextive/compare/v1.10.4...v1.10.5) (2023-11-19)
 
 
