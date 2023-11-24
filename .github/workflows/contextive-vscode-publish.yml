@@ -1,9 +1,10 @@
 name: Contextive Publish
 # temp to avoid accidental publishing while testing ci script refactor
-on: workflow_dispatch
-  inputs:
-    release: # use ${{ inputs.release }} - eventually replace with ${{ github.ref_name }}
-      required: true
+on:
+  workflow_dispatch:
+    inputs:
+      release: # use ${{ inputs.release }} - eventually replace with ${{ github.ref_name }}
+        required: true
 # on:
 #   release:
 #     types: [published]
