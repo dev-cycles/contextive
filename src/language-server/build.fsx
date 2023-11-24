@@ -46,7 +46,7 @@ pipeline languageServer.Name {
     logEnvironment
 
     stage "Install Tools" {
-        whenEnv { name "GITHUB_EVENT_NAME" }
+        whenEnv { name args.event.Name }
         installTool "paket"
     }
 
