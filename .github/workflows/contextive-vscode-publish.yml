@@ -1,6 +1,9 @@
 name: Contextive Publish
 # temp to avoid accidental publishing while testing ci script refactor
 on: workflow_dispatch
+  inputs:
+    release: # use ${{ inputs.release }} - eventually replace with ${{ github.ref_name }}
+      required: true
 # on:
 #   release:
 #     types: [published]
@@ -9,6 +12,7 @@ env:
   dotnet-version: '7.0.x'
 jobs:
   get-matrix:
+    name: "Load Release Matrix"
     outputs:
       matrix: ${{ steps.load-matrix.outputs.matrix }}
     runs-on: ubuntu-latest
@@ -31,32 +35,28 @@ jobs:
       matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      # - name: Check out repository code
-      #   uses: actions/checkout@v3
-      #   with:
-      #     persist-credentials: false
-      # - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      # - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      # - name: Setup .NET Core SDK ${{ env.dotnet-version }}
-      #   uses: actions/setup-dotnet@v3
-      #   with:
-      #     dotnet-version: ${{ env.dotnet-version }}
-      # - name: Display dotnet version
-      #   run: dotnet --version
-      # - name: Install Fable
-      #   run: dotnet tool install fable --global
-      # - name: Install paket
-      #   run: dotnet tool install paket --global
-      # - name: Restore paket dependencies
-      #   run: paket restore
-      #   working-directory: ./src
-      # - name: Build Language Server
-      #   run: |
-      #     dotnet publish -c Release -r ${{ matrix.dotnet_runtime }} -o publish
-      #   working-directory: ./src/language-server/Contextive.LanguageServer
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/init-dotnet
+
+      - name: Build
+        id: build
+        run: dotnet fsi language-server/build.fsx -- -r ${{ matrix.dotnet_runtime }}
+        working-directory: src
+
+      - run: echo ${{ steps.build.outputs.artifact-path }}
+
+      - name: Upload Language Server to Release
+        uses: svenstaro/upload-release-action@v2
+        if: ${{ github.event == 'release' }}
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.build.outputs.artifact-path }}
+          tag: ${{ github.ref }} 
+
+
       # - name: Copy Language Server to VsCode Extension Folder
       #   run: mkdir -p ../../vscode/contextive/dist && cp publish/* ../../vscode/contextive/dist
       #   working-directory: ./src/language-server/Contextive.LanguageServer
@@ -81,12 +81,7 @@ jobs:
       #     7z a ../Contextive.LanguageServer-${{ matrix.dotnet_runtime }}-${{ steps.get-version.outputs.VERSION}}.zip * 
       #   working-directory: ./src/language-server/Contextive.LanguageServer/publish
       #   if: ${{ ! contains(matrix.os, 'ubuntu') }}
-      # - name: Upload Language Server to release
-      #   uses: svenstaro/upload-release-action@v2
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: "src/language-server/Contextive.LanguageServer/Contextive.LanguageServer-${{ matrix.dotnet_runtime }}-${{ steps.get-version.outputs.VERSION}}.zip"
-      #     tag: ${{ github.ref }} 
+      
       # - name: Upload VsCode VSix to release
       #   uses: svenstaro/upload-release-action@v2
       #   with:

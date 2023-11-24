@@ -37,9 +37,53 @@ let dotnetPublish app =
             $"""dotnet publish -c RELEASE {runTimeFlag} -o publish""")
     }
 
+let appZipFileName app (ctx: Internal.StageContext) =
+    System.IO.Path.GetFullPath($"{app.Name}-{ctx.GetCmdArg(args.dotnetRuntime)}-{ctx.GetEnvVar(args.refName.Name)}.zip")
+
+let checkRelease app =
+    stage "Check Release" {
+        workingDir $"{app.Path}/publish"
+
+        whenLinux
+
+        acceptExitCodes [ 124 ]
+
+        run (bashCmd "timeout -v 2 ./{app.Name}")
+    }
+
+let zipAndUploadAsset app =
+    stage $"Zip And Upload {app.Name} Release Asset" {
+        stage "Zip" {
+            workingDir $"{app.Path}/publish"
+
+            run (fun ctx ->
+                let path = appZipFileName app ctx
+
+                let zipCmd =
+                    match ctx.GetEnvVar(args.os.Name) with
+                    | "Linux"
+                    | "" -> "zip -v"
+                    | _ -> "7z a"
+
+                $"{zipCmd} {path} * ")
+
+            stage "Upload" {
+                workingDir app.Path
+
+                whenAny {
+                    cmdArg args.refName.Name
+                    envVar args.refName.Name
+                }
+
+                run (fun ctx ->
+                    bashCmd $"gh release upload {ctx.GetCmdArgOrEnvVar(args.refName.Name)} {appZipFileName app ctx}")
+            }
+        }
+    }
+
 pipeline languageServer.Name {
     description "Build & Test"
-    noPrefixForStep
+    // noPrefixForStep
     runBeforeEachStage gitHubGroupStart
     runAfterEachStage gitHubGroupEnd
 
@@ -63,17 +107,9 @@ pipeline languageServer.Name {
     stage "Build Release" {
         dotnetPublish languageServer
 
-        stage "Check Release" {
-            workingDir $"{languageServer.Path}/publish"
+        checkRelease languageServer
 
-            whenEnv {
-                name args.os.Name
-                value "Linux"
-            }
-
-            acceptExitCodes [ 124 ]
-            run "bash -c \"timeout -v 2 ./Contextive.LanguageServer\""
-        }
+        zipAndUploadAsset languageServer
     }
 
 

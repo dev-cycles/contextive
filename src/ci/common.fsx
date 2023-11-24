@@ -21,8 +21,9 @@ let args =
        event = EnvArg.Create("GITHUB_EVENT_NAME", isOptional = true)
        ref = EnvArg.Create("GITHUB_REF", isOptional = true)
        repo = EnvArg.Create("GITHUB_REPOSITORY", isOptional = true)
-       branch = EnvArg.Create("GITHUB_REF_NAME", isOptional = true)
-       headSha = EnvArg.Create("GITHUB_SHA", isOptional = true) |}
+       refName = EnvArg.Create("GITHUB_REF_NAME", isOptional = true)
+       headSha = EnvArg.Create("GITHUB_SHA", isOptional = true)
+       ghOutput = EnvArg.Create("GITHUB_OUTPUT", isOptional = true) |}
 
 type Component = { Name: string; Path: string }
 
