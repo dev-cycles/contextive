@@ -48,7 +48,7 @@ let checkRelease app =
 
         acceptExitCodes [ 124 ]
 
-        run (bashCmd "timeout -v 2 ./{app.Name}")
+        run (bashCmd $"timeout -v 2 ./{app.Name}")
     }
 
 let zipAndUploadAsset app =
