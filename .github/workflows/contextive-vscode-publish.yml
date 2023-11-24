@@ -20,7 +20,7 @@ jobs:
       - id: load-matrix
         name: Load Build Matrix
         run: |
-          matrix="matrix=$(yq -P -o=json .github/config.yaml | jq -c .)"
+          matrix="matrix=$(yq -P -o=json .github/release-matrix.yml | jq -c .)"
           echo $matrix
           echo $matrix >> $GITHUB_OUTPUT
 
