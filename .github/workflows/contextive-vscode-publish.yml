@@ -46,17 +46,8 @@ jobs:
         id: build
         run: dotnet fsi language-server/build.fsx -- -r ${{ matrix.dotnet_runtime }} --release ${{ inputs.release }}
         working-directory: src
-
-      - run: echo ${{ steps.build.outputs.artifact-path }}
-
-      - name: Upload Language Server to Release
-        uses: svenstaro/upload-release-action@v2
-        if: ${{ github.event == 'release' }}
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ steps.build.outputs.artifact-path }}
-          tag: ${{ github.ref }} 
-
+        env:
+          GITHUB_TOKEN: ${{ github.GH_TOKEN }}
 
       # - name: Copy Language Server to VsCode Extension Folder
       #   run: mkdir -p ../../vscode/contextive/dist && cp publish/* ../../vscode/contextive/dist
