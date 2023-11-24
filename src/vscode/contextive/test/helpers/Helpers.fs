@@ -14,7 +14,7 @@ let openDocument (docUri: Uri) =
     promise {
         let! doc = workspace.openTextDocument (docUri)
         do! window.showTextDocument (doc, ViewColumn.Active, false) |> Thenable.Ignore
-        do! Promise.sleep 400
+        do! Promise.sleep 500
         return docUri
     }
 
