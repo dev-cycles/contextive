@@ -53,7 +53,10 @@ let checkRelease app =
         // gh runners are only x64
         // when https://github.com/actions/runner-images/issues/5631 is done (support arm64)
         // we might be able to run this on linux-arm64 and osx-arm64 as well.
-        whenEnvVar args.runnerArch.Name "x86"
+        whenCmd {
+            name args.dotnetRuntime.Name.Names.Head
+            acceptValues [ "linux-x64"; "osx-x64" ]
+        }
 
         // MacOs doesn't have the timeout command installed by default
         stage "Install Timeout on MacOs" {
@@ -96,7 +99,7 @@ let zipAndUploadAsset app =
 
                 whenCmdArg args.release
 
-                run (fun ctx -> bashCmd $"gh release upload {ctx.GetCmdArg(args.release)} {appZipFileName app ctx}")
+                run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {appZipFileName app ctx}")
             }
         }
     }
