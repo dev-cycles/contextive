@@ -33,6 +33,7 @@ jobs:
     name: Language Server
     needs: get-matrix
     strategy:
+      fail-fast: false
       matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -49,37 +50,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      # - name: Copy Language Server to VsCode Extension Folder
-      #   run: mkdir -p ../../vscode/contextive/dist && cp publish/* ../../vscode/contextive/dist
-      #   working-directory: ./src/language-server/Contextive.LanguageServer
-      # - name: Restore npm dependencies
-      #   run: npm install
-      #   working-directory: ./src/vscode/contextive
-      # - name: Package VsCode Extension
-      #   run: npx vsce package -t ${{ matrix.vsce_platform }} --githubBranch main --baseImagesUrl https://raw.githubusercontent.com/dev-cycles/contextive/${{ github.ref_name }}/src/vscode/contextive/
-      #   working-directory: ./src/vscode/contextive
-      # - name: Get Package Version
-      #   run: echo "VERSION=$(jq .version package.json -r)" >> $GITHUB_OUTPUT
-      #   id: get-version
-      #   shell: bash
-      #   working-directory: ./src/vscode/contextive
-      # - name: Zip Language Server (Ubuntu)
-      #   run: |
-      #     zip ../Contextive.LanguageServer-${{ matrix.dotnet_runtime }}-${{ steps.get-version.outputs.VERSION}}.zip * 
-      #   working-directory: ./src/language-server/Contextive.LanguageServer/publish
-      #   if: ${{ contains(matrix.os, 'ubuntu') }}
-      # - name: Zip Language Server (Others)
-      #   run: |
-      #     7z a ../Contextive.LanguageServer-${{ matrix.dotnet_runtime }}-${{ steps.get-version.outputs.VERSION}}.zip * 
-      #   working-directory: ./src/language-server/Contextive.LanguageServer/publish
-      #   if: ${{ ! contains(matrix.os, 'ubuntu') }}
-      
-      # - name: Upload VsCode VSix to release
-      #   uses: svenstaro/upload-release-action@v2
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: "src/vscode/contextive/contextive-${{ matrix.vsce_platform }}-${{ steps.get-version.outputs.VERSION}}.vsix"
-      #     tag: ${{ github.ref }}
       # - run: npx vsce publish --packagePath contextive-${{ matrix.vsce_platform }}-${{ steps.get-version.outputs.VERSION}}.vsix
       #   env:
       #     VSCE_PAT: ${{ secrets.VSCE_PAT }}
@@ -91,6 +61,7 @@ jobs:
       - get-matrix
       - language-server
     strategy:
+      fail-fast: false
       matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
     steps:

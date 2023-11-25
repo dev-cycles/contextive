@@ -62,7 +62,7 @@ let unzipCmd zipPath outputPath =
     function
     | "Linux"
     | "" -> $"unzip {zipPath} -d {outputPath}"
-    | _ -> $"7z e {zipPath} -o {outputPath}"
+    | _ -> $"7z e {zipPath} -o{outputPath}"
 
 let gitHubGroupStart = ifTopLevelStage <| echoGitHubGroupStart
 
