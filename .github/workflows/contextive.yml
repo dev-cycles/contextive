@@ -46,6 +46,8 @@ jobs:
     name: VsCode Extension
     runs-on: ubuntu-latest
     needs: language-server
+    env:
+      dotnet_runtime: linux-x64
     steps:
       - uses: actions/checkout@v3
         with:
@@ -56,11 +58,11 @@ jobs:
       - name: Language Server Artifact
         uses: actions/download-artifact@v3
         with:
-          name: Contextive.LanguageServer-linux-x64
+          name: Contextive.LanguageServer-${{ env.dotnet_runtime }}
           path: src/
 
       - name: Build
-        run: dotnet fsi vscode/build.fsx
+        run: dotnet fsi vscode/build.fsx -- -r ${{ env.dotnet_runtime }}
         working-directory: src
 
       - uses: ./.github/actions/upload-reports
