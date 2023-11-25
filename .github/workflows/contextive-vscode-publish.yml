@@ -102,7 +102,7 @@ jobs:
 
       - name: Build
         id: build
-        run: dotnet fsi vscode/build.fsx -- -r ${{ matrix.dotnet_runtime }} --release ${{ inputs.release }}
+        run: dotnet fsi vscode/build.fsx -- -r ${{ matrix.dotnet_runtime }} --release ${{ inputs.release }} --vsce-platform ${{ matrix.vsce_platform }}
         working-directory: src
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

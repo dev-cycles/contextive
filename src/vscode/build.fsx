@@ -7,6 +7,9 @@ open Common
 
 let distPath = "vscode/contextive/dist"
 
+let vsCodeAssetFileName (ctx: Internal.StageContext) =
+    $"contextive-{ctx.GetCmdArg(args.vscePlatform)}-{ctx.GetCmdArg(args.release)}.vsix"
+
 pipeline "Contextive VsCode Extension" {
     description "Build & Test"
     noPrefixForStep
@@ -41,6 +44,12 @@ pipeline "Contextive VsCode Extension" {
             run $"cp {languageServer.Path}/publish/Contextive.LanguageServer vscode/contextive/dist"
         }
 
+        stage "Download Release Asset" {
+            whenCmdArg args.release
+
+            run (fun ctx -> $"gh release download {ctx.GetCmdArg(args.release)} {appZipFileName languageServer ctx}")
+        }
+
         stage "Unzip in CI" {
             whenEnvVar args.ci.Name
 
@@ -64,6 +73,23 @@ pipeline "Contextive VsCode Extension" {
         workingDir "vscode/contextive"
         envVars [ "DISPLAY", ":99.0" ]
         run "npm test"
+    }
+
+    stage "Publish" {
+        workingDir "vscode/contextive"
+        whenCmdArg args.release
+        whenCmdArg args.vscePlatform
+
+        stage "Package" {
+            run (fun ctx ->
+                $"npx vsce package -t {ctx.GetCmdArg(args.vscePlatform)} --githubBranch main --baseImagesUrl https://raw.githubusercontent.com/dev-cycles/contextive/{ctx.GetCmdArg(args.release)}/src/vscode/contextive/")
+        }
+
+        stage "Upload Asset" {
+            run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {vsCodeAssetFileName ctx}")
+        }
+
+        stage "Publish to Marketplace" { echo "Not doing yet." }
     }
 
     runIfOnlySpecified false

@@ -10,7 +10,8 @@ let args =
             "Dotnet Runtime for Publishing, see https://learn.microsoft.com/en-us/dotnet/core/rid-catalog#known-rids",
             isOptional = true
         )
-       release = CmdArg.Create("--release", "Release version identified, e.g. v1.10.0")
+       release = CmdArg.Create("-l", "--release", "Release version identified, e.g. v1.10.0")
+       vscePlatform = CmdArg.Create("-p", "--vsce-platform", "VsCode platform Identifier, e.g. linux-x64, darwin-arm64")
        ci = EnvArg.Create("CI", "True if running in CI")
        dotnetVersion = EnvArg.Create("DOTNET_VERSION", "Version of the DotNet SDK", isOptional = true)
        os = EnvArg.Create("RUNNER_OS", "Operating System", isOptional = true)
