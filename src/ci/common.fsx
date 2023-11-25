@@ -18,7 +18,8 @@ let args =
        repo = EnvArg.Create("GITHUB_REPOSITORY", isOptional = true)
        refName = EnvArg.Create("GITHUB_REF_NAME", isOptional = true)
        headSha = EnvArg.Create("GITHUB_SHA", isOptional = true)
-       ghOutput = EnvArg.Create("GITHUB_OUTPUT", isOptional = true) |}
+       ghOutput = EnvArg.Create("GITHUB_OUTPUT", isOptional = true)
+       runnerArch = EnvArg.Create("RUNNER_ARCH", isOptional = true) |}
 
 type Component = { Name: string; Path: string }
 

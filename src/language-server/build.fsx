@@ -44,9 +44,22 @@ let checkRelease app =
     stage "Check Release" {
         workingDir $"{app.Path}/publish"
 
-        whenAll {
+        // Windows doesn't support timeout command
+        whenAny {
             platformLinux
-            envVar args.event.Name
+            platformOSX
+        }
+
+        // gh runners are only x64
+        // when https://github.com/actions/runner-images/issues/5631 is done (support arm64)
+        // we might be able to run this on linux-arm64 and osx-arm64 as well.
+        whenEnvVar args.runnerArch.Name "x86"
+
+        // MacOs doesn't have the timeout command installed by default
+        stage "Install Timeout on MacOs" {
+            whenOSX
+
+            run "brew install coreutils"
         }
 
         acceptExitCodes [ 124 ]
