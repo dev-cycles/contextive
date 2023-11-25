@@ -47,7 +47,7 @@ jobs:
         run: dotnet fsi language-server/build.fsx -- -r ${{ matrix.dotnet_runtime }} --release ${{ inputs.release }}
         working-directory: src
         env:
-          GITHUB_TOKEN: ${{ github.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       # - name: Copy Language Server to VsCode Extension Folder
       #   run: mkdir -p ../../vscode/contextive/dist && cp publish/* ../../vscode/contextive/dist
