@@ -47,7 +47,7 @@ pipeline "Contextive VsCode Extension" {
         stage "Download Release Asset" {
             whenCmdArg args.release
 
-            run (fun ctx -> $"gh release download {ctx.GetCmdArg(args.release)} {appZipFileName languageServer ctx}")
+            run (fun ctx -> $"gh release download {ctx.GetCmdArg(args.release)} -p {appZipFileName languageServer ctx}")
         }
 
         stage "Unzip in CI" {
