@@ -70,19 +70,19 @@ let zipAndUploadAsset app =
             workingDir $"{app.Path}/publish"
 
             run (fun ctx ->
-                let path = appZipFileName app ctx
+                let path = appZipPath app ctx
                 let os = ctx.GetEnvVar(args.os.Name)
                 let binaryName = publishedBinaryName app os
                 zipCmd binaryName path os)
 
-            run (fun ctx -> bashCmd $"""echo "artifact-path={appZipFileName app ctx}" >> $GITHUB_OUTPUT""")
+            run (fun ctx -> bashCmd $"""echo "artifact-path={appZipPath app ctx}" >> $GITHUB_OUTPUT""")
 
             stage "Upload" {
                 workingDir app.Path
 
                 whenCmdArg args.release
 
-                run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {appZipFileName app ctx}")
+                run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {appZipPath app ctx}")
             }
         }
     }

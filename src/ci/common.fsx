@@ -46,7 +46,10 @@ let ghError msg =
     Error(msg)
 
 let appZipFileName app (ctx: Internal.StageContext) =
-    System.IO.Path.GetFullPath($"{app.Name}-{ctx.GetCmdArg(args.dotnetRuntime)}-{ctx.GetCmdArg(args.release)}.zip")
+    $"{app.Name}-{ctx.GetCmdArg(args.dotnetRuntime)}-{ctx.GetCmdArg(args.release)}.zip"
+
+let appZipPath app (ctx: Internal.StageContext) =
+    System.IO.Path.GetFullPath(appZipFileName app ctx)
 
 let zipCmd file zipPath =
     function
