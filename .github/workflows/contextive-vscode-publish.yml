@@ -94,6 +94,15 @@ jobs:
       matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/init-dotnet
+
+      - name: Build
+        id: build
+        run: dotnet fsi vscode/build.fsx -- -r ${{ matrix.dotnet_runtime }} --release ${{ inputs.release }}
+        working-directory: src
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

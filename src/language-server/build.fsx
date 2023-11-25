@@ -5,14 +5,6 @@ open Fun.Build
 
 open Common
 
-let core =
-    { Name = "Contextive.Core"
-      Path = "core/Contextive.Core" }
-
-let languageServer =
-    { Name = "Contextive.LanguageServer"
-      Path = "language-server/Contextive.LanguageServer" }
-
 let dotnetTest app =
     stage $"Test {app.Name}" {
         workingDir $"{app.Path}.Tests"
@@ -36,9 +28,6 @@ let dotnetPublish app =
 
             $"""dotnet publish -c RELEASE {runTimeFlag} -o publish""")
     }
-
-let appZipFileName app (ctx: Internal.StageContext) =
-    System.IO.Path.GetFullPath($"{app.Name}-{ctx.GetCmdArg(args.dotnetRuntime)}-{ctx.GetCmdArg(args.release)}.zip")
 
 let checkRelease app =
     stage "Check Release" {
@@ -70,12 +59,6 @@ let checkRelease app =
         run (bashCmd $"timeout -v 2 ./{app.Name}")
     }
 
-let zipCmd =
-    function
-    | "Linux"
-    | "" -> "zip"
-    | _ -> "7z a"
-
 let publishedBinaryName app =
     function
     | "Windows" -> $"{app.Name}.exe"
@@ -89,10 +72,10 @@ let zipAndUploadAsset app =
             run (fun ctx ->
                 let path = appZipFileName app ctx
                 let os = ctx.GetEnvVar(args.os.Name)
-                let zip = zipCmd os
                 let binaryName = publishedBinaryName app os
+                zipCmd binaryName path os)
 
-                $"{zip} {path} {binaryName}")
+            run (fun ctx -> bashCmd $"""echo "artifact-path={appZipFileName app ctx}" >> $GITHUB_OUTPUT""")
 
             stage "Upload" {
                 workingDir app.Path

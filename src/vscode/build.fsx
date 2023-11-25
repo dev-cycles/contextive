@@ -16,7 +16,7 @@ pipeline "Contextive VsCode Extension" {
     logEnvironment
 
     stage "Install Tools" {
-        whenEnv { name args.event.Name }
+        whenEnv { name args.ci.Name }
         paralle
         installTool "paket"
         installTool "fable"
@@ -36,12 +36,28 @@ pipeline "Contextive VsCode Extension" {
 
     stage "Prep Language Server Artifact" {
         stage "Copy when Local" {
-            whenNot { envVar args.event.Name }
+            whenNot { envVar args.ci.Name }
 
-            run "cp language-server/Contextive.LanguageServer/publish/Contextive.LanguageServer vscode/contextive/dist"
+            run $"cp {languageServer.Path}/publish/Contextive.LanguageServer vscode/contextive/dist"
         }
 
-        run "chmod a+x vscode/contextive/dist/Contextive.LanguageServer"
+        stage "Unzip in CI" {
+            whenEnvVar args.ci.Name
+
+            run (fun ctx ->
+                ctx.GetEnvVar(args.os.Name)
+                |> unzipCmd (appZipFileName languageServer ctx) "src/vscode/contextive/dist")
+        }
+
+        stage "Make Language Server Executable" {
+            whenAny {
+                platformLinux
+                platformOSX
+            }
+
+            run "chmod a+x vscode/contextive/dist/Contextive.LanguageServer"
+        }
+
     }
 
     stage "Test" {

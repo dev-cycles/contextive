@@ -11,6 +11,7 @@ let args =
             isOptional = true
         )
        release = CmdArg.Create("--release", "Release version identified, e.g. v1.10.0")
+       ci = EnvArg.Create("CI", "True if running in CI")
        dotnetVersion = EnvArg.Create("DOTNET_VERSION", "Version of the DotNet SDK", isOptional = true)
        os = EnvArg.Create("RUNNER_OS", "Operating System", isOptional = true)
        event = EnvArg.Create("GITHUB_EVENT_NAME", isOptional = true)
@@ -43,6 +44,22 @@ let ghError msg =
     printfn $"::error ::{msg}"
     Error(msg)
 
+let appZipFileName app (ctx: Internal.StageContext) =
+    System.IO.Path.GetFullPath($"{app.Name}-{ctx.GetCmdArg(args.dotnetRuntime)}-{ctx.GetCmdArg(args.release)}.zip")
+
+let zipCmd file zipPath =
+    function
+    | "Linux"
+    | "" -> $"zip {zipPath} {file}"
+    | _ -> $"7z a {zipPath} {file}"
+
+
+let unzipCmd zipPath outputPath =
+    function
+    | "Linux"
+    | "" -> $"unzip {zipPath} -d {outputPath}"
+    | _ -> $"7z e {zipPath} -o {outputPath}"
+
 let gitHubGroupStart = ifTopLevelStage <| echoGitHubGroupStart
 
 let gitHubGroupEnd = ifTopLevelStage <| echoGitHubGroupEnd
@@ -67,3 +84,12 @@ let logEnvironment =
 🐧 This job is now running on a {env args.os} server hosted by GitHub!
 🔎 The name of your branch is {env args.ref} and your repository is {env args.repo}."""
     }
+
+
+let core =
+    { Name = "Contextive.Core"
+      Path = "core/Contextive.Core" }
+
+let languageServer =
+    { Name = "Contextive.LanguageServer"
+      Path = "language-server/Contextive.LanguageServer" }
