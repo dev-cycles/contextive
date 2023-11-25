@@ -46,7 +46,7 @@ pipeline "Contextive VsCode Extension" {
 
             run (fun ctx ->
                 ctx.GetEnvVar(args.os.Name)
-                |> unzipCmd (appZipFileName languageServer ctx) "src/vscode/contextive/dist")
+                |> unzipCmd (appZipFileName languageServer ctx) "vscode/contextive/dist")
         }
 
         stage "Make Language Server Executable" {
