@@ -56,7 +56,7 @@ jobs:
       - name: Language Server Artifact
         uses: actions/download-artifact@v3
         with:
-          name: Contextive.LanguageServer-${{ env.runner_os }}
+          name: Contextive.LanguageServer-linux-x64
           path: src/
 
       - name: Build
