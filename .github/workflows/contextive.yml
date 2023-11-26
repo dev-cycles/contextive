@@ -10,6 +10,7 @@ jobs:
   language-server:
     name: Language Server
     strategy:
+      fail-fast: false
       matrix:
         include:
           - dotnet_runtime: win-x64
@@ -25,6 +26,7 @@ jobs:
       - uses: ./.github/actions/init-dotnet
 
       - name: Build
+        id: build
         run: dotnet fsi language-server/build.fsx -- -r ${{ matrix.dotnet_runtime }}
         working-directory: src
 
@@ -32,8 +34,8 @@ jobs:
         uses: actions/upload-artifact@v3
         if: runner.os == 'Linux'
         with:
-          name: Contextive.LanguageServer
-          path: src/language-server/Contextive.LanguageServer/publish/*
+          name: Contextive.LanguageServer-${{matrix.dotnet_runtime}}
+          path: ${{ steps.build.outputs.artifact-path }}
 
       - uses: ./.github/actions/upload-reports
         if: always()
@@ -45,6 +47,8 @@ jobs:
     name: VsCode Extension
     runs-on: ubuntu-latest
     needs: language-server
+    env:
+      dotnet_runtime: linux-x64
     steps:
       - uses: actions/checkout@v3
         with:
@@ -55,11 +59,11 @@ jobs:
       - name: Language Server Artifact
         uses: actions/download-artifact@v3
         with:
-          name: Contextive.LanguageServer
-          path: src/vscode/contextive/dist
+          name: Contextive.LanguageServer-${{ env.dotnet_runtime }}
+          path: src/
 
       - name: Build
-        run: dotnet fsi vscode/build.fsx
+        run: dotnet fsi vscode/build.fsx -- -r ${{ env.dotnet_runtime }}
         working-directory: src
 
       - uses: ./.github/actions/upload-reports

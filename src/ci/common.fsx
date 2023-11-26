@@ -10,21 +10,22 @@ let args =
             "Dotnet Runtime for Publishing, see https://learn.microsoft.com/en-us/dotnet/core/rid-catalog#known-rids",
             isOptional = true
         )
-       dotnetVersion =
-        EnvArg.Create(
-            "DOTNET_VERSION",
-            "Version of the DotNet SDK",
-            isOptional = true
-
-        )
+       release = CmdArg.Create("-l", "--release", "Release version identified, e.g. v1.10.0")
+       vscePlatform = CmdArg.Create("-p", "--vsce-platform", "VsCode platform Identifier, e.g. linux-x64, darwin-arm64")
+       ci = EnvArg.Create("CI", "True if running in CI")
+       dotnetVersion = EnvArg.Create("DOTNET_VERSION", "Version of the DotNet SDK", isOptional = true)
        os = EnvArg.Create("RUNNER_OS", "Operating System", isOptional = true)
        event = EnvArg.Create("GITHUB_EVENT_NAME", isOptional = true)
        ref = EnvArg.Create("GITHUB_REF", isOptional = true)
        repo = EnvArg.Create("GITHUB_REPOSITORY", isOptional = true)
-       branch = EnvArg.Create("GITHUB_REF_NAME", isOptional = true)
-       headSha = EnvArg.Create("GITHUB_SHA", isOptional = true) |}
+       refName = EnvArg.Create("GITHUB_REF_NAME", isOptional = true)
+       headSha = EnvArg.Create("GITHUB_SHA", isOptional = true)
+       ghOutput = EnvArg.Create("GITHUB_OUTPUT", isOptional = true)
+       runnerArch = EnvArg.Create("RUNNER_ARCH", isOptional = true) |}
 
 type Component = { Name: string; Path: string }
+
+let TIMEOUT_EXIT_CODES = {| TIMED_OUT = 124; KILLED = 137 |}
 
 let bashCmd (cmd: string) =
     $"""bash -c "{cmd.Replace("\"", "\\\"")}" """
@@ -45,6 +46,25 @@ let echoGitHubGroupEnd (ctx: Internal.StageContext) = printfn "::endgroup::"
 let ghError msg =
     printfn $"::error ::{msg}"
     Error(msg)
+
+let appZipFileName app (ctx: Internal.StageContext) =
+    $"{app.Name}-{ctx.GetCmdArg(args.dotnetRuntime)}-{ctx.GetCmdArg(args.release)}.zip"
+
+let appZipPath app (ctx: Internal.StageContext) =
+    System.IO.Path.GetFullPath(appZipFileName app ctx)
+
+let zipCmd file zipPath =
+    function
+    | "Linux"
+    | "" -> $"zip {zipPath} {file}"
+    | _ -> $"7z a {zipPath} {file}"
+
+
+let unzipCmd zipPath outputPath =
+    function
+    | "Linux"
+    | "" -> $"unzip {zipPath} -d {outputPath}"
+    | _ -> $"7z e {zipPath} -o{outputPath}"
 
 let gitHubGroupStart = ifTopLevelStage <| echoGitHubGroupStart
 
@@ -70,3 +90,12 @@ let logEnvironment =
 🐧 This job is now running on a {env args.os} server hosted by GitHub!
 🔎 The name of your branch is {env args.ref} and your repository is {env args.repo}."""
     }
+
+
+let core =
+    { Name = "Contextive.Core"
+      Path = "core/Contextive.Core" }
+
+let languageServer =
+    { Name = "Contextive.LanguageServer"
+      Path = "language-server/Contextive.LanguageServer" }

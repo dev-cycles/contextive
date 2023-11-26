@@ -1,0 +1,8 @@
+name: Contextive
+on: workflow_dispatch    
+
+jobs:
+  dummy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Temporary workflow to ensure status reporting on old releases is still valid"

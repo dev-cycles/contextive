@@ -5,14 +5,6 @@ open Fun.Build
 
 open Common
 
-let core =
-    { Name = "Contextive.Core"
-      Path = "core/Contextive.Core" }
-
-let languageServer =
-    { Name = "Contextive.LanguageServer"
-      Path = "language-server/Contextive.LanguageServer" }
-
 let dotnetTest app =
     stage $"Test {app.Name}" {
         workingDir $"{app.Path}.Tests"
@@ -37,9 +29,74 @@ let dotnetPublish app =
             $"""dotnet publish -c RELEASE {runTimeFlag} -o publish""")
     }
 
+let checkRelease app =
+    stage "Check Release" {
+        workingDir $"{app.Path}/publish"
+
+        // Windows doesn't support timeout command
+        whenAny {
+            platformLinux
+            platformOSX
+        }
+
+        // gh runners are only x64
+        // when https://github.com/actions/runner-images/issues/5631 is done (support arm64)
+        // we might be able to run this on linux-arm64 and osx-arm64 as well.
+        whenCmd {
+            name args.dotnetRuntime.Name.Names.Head
+            acceptValues [ "linux-x64"; "osx-x64" ]
+        }
+
+        // MacOs doesn't have the timeout command installed by default
+        stage "Install Timeout on MacOs" {
+            whenOSX
+
+            run "brew install coreutils"
+        }
+
+        // We're trying to catch scenarios where the language server exits immediately on it's own
+        // so these scenarios where timeout terminates or kills mean the language server is
+        // running successfull.
+        // The 'KILL' is required for running locally in docker.
+        acceptExitCodes [ TIMEOUT_EXIT_CODES.TIMED_OUT; TIMEOUT_EXIT_CODES.KILLED ]
+
+        run (bashCmd $"timeout -v -k 1 2 ./{app.Name}")
+    }
+
+let publishedBinaryName app =
+    function
+    | "Windows" -> $"{app.Name}.exe"
+    | _ -> app.Name
+
+let zipAndUploadAsset app =
+    stage $"Zip And Upload {app.Name} Release Asset" {
+        stage "Zip" {
+            workingDir $"{app.Path}/publish"
+
+            run (fun ctx ->
+                let path = appZipPath app ctx
+                let os = ctx.GetEnvVar(args.os.Name)
+                let binaryName = publishedBinaryName app os
+                zipCmd binaryName path os)
+
+            stage "Set output variable" {
+                whenEnvVar args.ci.Name
+                run (fun ctx -> bashCmd $"""echo "artifact-path={appZipPath app ctx}" >> $GITHUB_OUTPUT""")
+            }
+
+            stage "Upload" {
+                workingDir app.Path
+
+                whenCmdArg args.release
+
+                run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {appZipPath app ctx}")
+            }
+        }
+    }
+
 pipeline languageServer.Name {
     description "Build & Test"
-    noPrefixForStep
+    // noPrefixForStep
     runBeforeEachStage gitHubGroupStart
     runAfterEachStage gitHubGroupEnd
 
@@ -63,17 +120,9 @@ pipeline languageServer.Name {
     stage "Build Release" {
         dotnetPublish languageServer
 
-        stage "Check Release" {
-            workingDir $"{languageServer.Path}/publish"
+        checkRelease languageServer
 
-            whenEnv {
-                name args.os.Name
-                value "Linux"
-            }
-
-            acceptExitCodes [ 124 ]
-            run "bash -c \"timeout -v 2 ./Contextive.LanguageServer\""
-        }
+        zipAndUploadAsset languageServer
     }
 
 
