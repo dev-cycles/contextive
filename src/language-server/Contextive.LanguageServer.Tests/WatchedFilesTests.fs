@@ -39,9 +39,9 @@ let tests =
                     ConfigurationSection.contextivePathBuilder $"one.yml"
                     WatchedFiles.optionsBuilder registrationAwaiter ]
 
-              let! client = TestClient(config) |> init
+              use! client = TestClient(config) |> init
 
-              let! registrationMsg = ConditionAwaiter.waitForAny registrationAwaiter 500
+              let! registrationMsg = ConditionAwaiter.waitForAny registrationAwaiter
 
               test <@ client.ClientSettings.Capabilities.Workspace.DidChangeWatchedFiles.IsSupported @>
 
@@ -65,9 +65,9 @@ let tests =
                         ConfigurationSection.contextivePathLoaderBuilder pathLoader
                         WatchedFiles.optionsBuilder registrationAwaiter ]
 
-                  let! client = TestClient(config) |> init
+                  use! client = TestClient(config) |> init
 
-                  let! initialRegistrationMsg = ConditionAwaiter.waitForAny registrationAwaiter 500
+                  let! initialRegistrationMsg = ConditionAwaiter.waitForAny registrationAwaiter
 
                   ConditionAwaiter.clear registrationAwaiter 500
 
@@ -81,7 +81,6 @@ let tests =
                               match m with
                               | Registered(_) -> true
                               | _ -> false)
-                          500
 
                   let! unregistrationMsg =
                       ConditionAwaiter.waitFor
@@ -90,7 +89,6 @@ let tests =
                               match m with
                               | Unregistered(_) -> true
                               | _ -> false)
-                          500
 
                   match secondRegistrationMsg with
                   | Some(Registered(_, opts)) -> test <@ opts.Watchers |> watcherIsForFile newDefinitionsFile @>
@@ -115,7 +113,7 @@ let tests =
                   [ Workspace.optionsBuilder relativePath
                     ConfigurationSection.contextivePathBuilder definitionsFile ]
 
-              let! client = TestClient(config) |> init
+              use! client = TestClient(config) |> init
 
               let definitionsFileUri =
                   Path.Combine(Directory.GetCurrentDirectory(), relativePath, definitionsFile)
@@ -153,7 +151,7 @@ let tests =
                   [ Workspace.optionsBuilder relativePath
                     ConfigurationSection.contextivePathBuilder definitionsFile ]
 
-              let! client = TestClient(config) |> init
+              use! client = TestClient(config) |> init
 
               let definitionsFileUri =
                   Path.Combine(Directory.GetCurrentDirectory(), relativePath, definitionsFile)

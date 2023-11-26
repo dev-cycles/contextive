@@ -17,13 +17,18 @@ type InitializationOptions =
 type private TestClient() =
     inherit LanguageServerTestBase(JsonRpcTestOptions())
 
-    override _.SetupServer() =
+    member _.AddToDisposable languageServer = base.Disposable.Add(languageServer)
+
+    override this.SetupServer() =
         let clientPipe = Pipe()
         let serverPipe = Pipe()
 
-        setupAndStartLanguageServer (serverPipe.Reader.AsStream()) (clientPipe.Writer.AsStream())
-        |> Async.Ignore
-        |> Async.Start
+        async {
+            let! server = setupAndStartLanguageServer (serverPipe.Reader.AsStream()) (clientPipe.Writer.AsStream())
+            // this.AddToDisposable server
+            ()
+        }
+        |> Async.StartImmediate
 
         (clientPipe.Reader.AsStream(), serverPipe.Writer.AsStream())
 

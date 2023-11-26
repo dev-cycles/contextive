@@ -15,7 +15,7 @@ let waitForLogMessage logAwaiter (logMessage: string) =
     async {
         let logCondition = fun (m: string) -> m.Contains(logMessage)
 
-        return! ConditionAwaiter.waitFor logAwaiter logCondition 25000
+        return! ConditionAwaiter.waitForTimeout 25000 logAwaiter logCondition
     }
 
 let optionsBuilder logAwaiter (b: LanguageClientOptions) =

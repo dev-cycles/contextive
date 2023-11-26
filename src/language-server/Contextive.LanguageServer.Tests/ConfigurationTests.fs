@@ -27,14 +27,19 @@ let tests =
 
               let pathLoader () : obj = path
 
+              let loadingAwaiter = ConditionAwaiter.create ()
+
               let config =
                   [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                    ConfigurationSection.contextivePathLoaderBuilder pathLoader ]
+                    ConfigurationSection.contextivePathLoaderBuilder pathLoader
+                    ServerLog.optionsBuilder loadingAwaiter ]
 
               use! client = TestClient(config) |> init
 
               path <- "two.yml"
               ConfigurationSection.didChangePath client path
+
+              do! ServerLog.waitForLogMessage loadingAwaiter "Loading contextive" |> Async.Ignore
 
               let! labels = Completion.getCompletionLabels client
 

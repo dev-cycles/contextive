@@ -17,6 +17,8 @@ type Message<'T> =
     | WaitFor of WaitForCondition<'T>
     | Clear
 
+[<Literal>]
+let private DEFAULT_TIMEOUT_MS = 5000
 
 let create<'T> () =
     let awaiter =
@@ -55,16 +57,29 @@ let create<'T> () =
 
 let received (awaiter: MailboxProcessor<Message<'T>>) msg = awaiter.Post(Received(msg))
 
-let waitFor (awaiter: MailboxProcessor<Message<'T>>) condition timeout =
+/// Waits for a message that passes the condition to become true up to the nominated timeout.
+let waitForTimeout timeoutMs (awaiter: MailboxProcessor<Message<'T>>) condition =
     awaiter.PostAndTryAsyncReply(
         (fun rc ->
             WaitFor(
                 { ReplyChannel = rc
                   Condition = condition }
             )),
-        timeout
+        timeoutMs
     )
 
-let waitForAny (awaiter: MailboxProcessor<Message<'T>>) timeout = waitFor awaiter (fun _ -> true) timeout
+/// Waits for a message that passes the condition to become true up to the default timeout of 5s.
+/// If you want a custom timeout, use waitForTimeout.
+let waitFor (awaiter: MailboxProcessor<Message<'T>>) =
+    waitForTimeout DEFAULT_TIMEOUT_MS awaiter
+
+/// Waits for any message up to the nominated timeout.
+let waitForAnyTimeout timeoutMs (awaiter: MailboxProcessor<Message<'T>>) =
+    waitForTimeout timeoutMs awaiter (fun _ -> true)
+
+/// Waits for any message up to the default timeout of 5s.
+/// If you want a custom timeout, use waitForAnyTimeout.
+let waitForAny awaiter =
+    waitForAnyTimeout DEFAULT_TIMEOUT_MS awaiter
 
 let clear (awaiter: MailboxProcessor<Message<'T>>) timeout = awaiter.Post(Clear)

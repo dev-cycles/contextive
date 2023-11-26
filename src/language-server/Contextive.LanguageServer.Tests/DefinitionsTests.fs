@@ -137,7 +137,7 @@ let tests =
                   let! definitions = getDefinitionsWithErrorHandler onErrorLoading configGetter workspaceFolder
                   let! termsWhenInvalid = Definitions.find definitions "" id
 
-                  let! errorMessage = ConditionAwaiter.waitForAny errorMessageAwaiter 500
+                  let! errorMessage = ConditionAwaiter.waitForAny errorMessageAwaiter
                   test <@ errorMessage.Value = expectedErrorMessage @>
                   test <@ Seq.length termsWhenInvalid = 0 @>
 

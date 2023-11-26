@@ -25,7 +25,7 @@ let tests =
                   [ Workspace.optionsBuilder ""
                     ConfigurationSection.contextivePathBuilder pathValue ]
 
-              let! (client, _) = TestClient(config) |> initAndWaitForReply
+              use! client = TestClient(config) |> init
 
               let responseRouterReturns = client.SendRequest("contextive/initialize")
 
@@ -59,7 +59,7 @@ let tests =
                     ConfigurationSection.contextivePathBuilder pathValue
                     showDocumentRequestHandlerBuilder <| handler showDocAwaiter showDocResponse ]
 
-              let! (client, _) = TestClient(config) |> initAndWaitForReply
+              use! client = TestClient(config) |> init
 
               let responseRouterReturns = client.SendRequest("contextive/initialize")
 
@@ -70,7 +70,7 @@ let tests =
 
               File.Delete(pathValue)
 
-              let! showDocMsg = ConditionAwaiter.waitForAny showDocAwaiter 5000
+              let! showDocMsg = ConditionAwaiter.waitForAny showDocAwaiter
 
               test <@ showDocMsg.Value.Uri.ToString().Contains(pathValue) @>
           }
@@ -90,7 +90,7 @@ let tests =
 
               let existingContents = File.ReadAllText(fullPath)
 
-              let! (client, _) = TestClient(config) |> initAndWaitForReply
+              use! client = TestClient(config) |> init
 
               let responseRouterReturns = client.SendRequest("contextive/initialize")
 
@@ -99,7 +99,7 @@ let tests =
                   |> Async.AwaitTask
                   |> Async.Ignore
 
-              let! showDocMsg = ConditionAwaiter.waitForAny showDocAwaiter 3000
+              let! showDocMsg = ConditionAwaiter.waitForAny showDocAwaiter
 
               let newContents = File.ReadAllText(fullPath)
 
