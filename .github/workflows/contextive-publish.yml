@@ -43,11 +43,7 @@ jobs:
         working-directory: src
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      # - run: npx vsce publish --packagePath contextive-${{ matrix.vsce_platform }}-${{ steps.get-version.outputs.VERSION}}.vsix
-      #   env:
-      #     VSCE_PAT: ${{ secrets.VSCE_PAT }}
-      #   working-directory: ./src/vscode/contextive
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
   vscode:
     name: VsCode Extension

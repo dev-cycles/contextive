@@ -102,7 +102,7 @@ pipeline "Contextive VsCode Extension" {
             run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {vsCodeAssetFileName ctx}")
         }
 
-        stage "Publish to Marketplace" { echo "Not doing yet." }
+        stage "Publish to Marketplace" { run (fun ctx -> $"npx vsce publish --packagePath {vsCodeAssetFileName ctx}") }
     }
 
     runIfOnlySpecified false
