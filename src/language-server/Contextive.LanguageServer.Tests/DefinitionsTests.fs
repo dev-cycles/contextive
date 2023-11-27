@@ -161,14 +161,14 @@ let tests =
 
                   let pathLoader () : obj = path
 
-                  let logAwaiter = ConditionAwaiter.create ()
-
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                        ConfigurationSection.contextivePathLoaderBuilder pathLoader
-                        ServerLog.optionsBuilder logAwaiter ]
+                        ConfigurationSection.contextivePathLoaderBuilder pathLoader ]
 
-                  let! (client, logAwaiter) = TestClient(config) |> initAndGetLogAwaiter
+                  let! (client, _, logAwaiter) =
+                      TestClientWithCustomInitWait(config, Some "Successfully loaded.")
+                      |> initAndWaitForReply
+
                   use client = client
 
                   let! termsWhenValidAtStart = Completion.getCompletionLabels client

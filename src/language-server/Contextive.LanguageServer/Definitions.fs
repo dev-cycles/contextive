@@ -100,7 +100,7 @@ module private Handle =
             let newState =
                 match defs with
                 | Ok defs ->
-                    state.Logger "Succesfully loaded."
+                    state.Logger "Successfully loaded."
                     { state with Definitions = defs }
                 | Error msg ->
                     let msg = $"Error loading definitions: {msg}"

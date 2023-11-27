@@ -60,20 +60,17 @@ let tests =
                   let mutable definitionsFile = "one.yml"
                   let pathLoader () : obj = definitionsFile
 
-                  let logAwaiter = ConditionAwaiter.create ()
-
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
                         ConfigurationSection.contextivePathLoaderBuilder pathLoader
-                        WatchedFiles.optionsBuilder registrationAwaiter
-                        ServerLog.optionsBuilder logAwaiter ]
+                        WatchedFiles.optionsBuilder registrationAwaiter ]
 
                   let! (client, logAwaiter) = TestClient(config) |> initAndGetLogAwaiter
                   use client = client
 
                   let! initialRegistrationMsg = ConditionAwaiter.waitForAny registrationAwaiter
 
-                  ConditionAwaiter.clear registrationAwaiter 500
+                  ConditionAwaiter.clear registrationAwaiter
 
                   definitionsFile <- newDefinitionsFile
                   do! ConfigurationSection.didChangePath client definitionsFile logAwaiter

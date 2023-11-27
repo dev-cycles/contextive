@@ -101,5 +101,5 @@ let didChangePath (client: ILanguageClient) path (logAwaiter: ConditionAwaiter.A
 
         match logAwaiter with
         | None -> ()
-        | Some la -> ConditionAwaiter.clear la 500
+        | Some la -> ConditionAwaiter.clear la
     }

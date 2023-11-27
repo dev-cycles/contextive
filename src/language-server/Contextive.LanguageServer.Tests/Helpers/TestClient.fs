@@ -60,6 +60,8 @@ let private initAndWaitForConfigLoaded testClientConfig (loadMessage: string opt
             (defaultArg loadMessage "Loading contextive")
             |> ServerLog.waitForLogMessage logAwaiter
 
+        ConditionAwaiter.clear logAwaiter
+
         return (client, reply, Some logAwaiter)
     }
 

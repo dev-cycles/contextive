@@ -84,4 +84,4 @@ let waitForAnyTimeout timeoutMs (awaiter: Awaiter<'T>) =
 let waitForAny awaiter =
     waitForAnyTimeout DEFAULT_TIMEOUT_MS awaiter
 
-let clear (awaiter: Awaiter<'T>) timeout = awaiter.Post(Clear)
+let clear (awaiter: Awaiter<'T>) = awaiter.Post(Clear)
