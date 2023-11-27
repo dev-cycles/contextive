@@ -81,9 +81,25 @@ let contextivePathBuilder path =
 ///     <para>This will only work if the TestClient was created with the <see cref="contextivePathLoaderBuilder">contextivePathLoaderBuilder</see>.</para>
 ///     <para>Ensure this method is invoked with the same path value as will be returned from the `pathLoader` registered with the TestClient.</para>
 /// </summary>
-let didChangePath (client: ILanguageClient) path =
-    let setting = jTokenFromMap <| Map[("path", path)]
-    let configSection = jTokenFromMap <| Map[("contextive", setting)]
+let didChangePath (client: ILanguageClient) path (logAwaiter: ConditionAwaiter.Awaiter<string> option) =
+    async {
+        let setting = jTokenFromMap <| Map[("path", path)]
+        let configSection = jTokenFromMap <| Map[("contextive", setting)]
 
-    let didChangeConfig = DidChangeConfigurationParams(Settings = configSection)
-    client.Workspace.DidChangeConfiguration(didChangeConfig)
+        let didChangeConfig = DidChangeConfigurationParams(Settings = configSection)
+        client.Workspace.DidChangeConfiguration(didChangeConfig)
+
+        let! reply =
+            match logAwaiter with
+            | None -> async { return None }
+            | Some la -> ServerLog.waitForLogMessage la "Loading contextive"
+
+        if Option.isNone reply then
+            failwith "Server never loaded configuration after changing the path"
+        else
+            Serilog.Log.Logger.Debug(sprintf "Server did load contextive with: %s" reply.Value)
+
+        match logAwaiter with
+        | None -> ()
+        | Some la -> ConditionAwaiter.clear la 500
+    }

@@ -14,6 +14,10 @@ dotnet tool install fable --global
 dotnet tool install femto --global
 dotnet tool install fantomas --global
 
+push src
+dotnet tool restore
+pop
+
 ## dotnet-adr
 # Currently non-functional due to https://github.com/endjin/dotnet-adr/issues/203
 

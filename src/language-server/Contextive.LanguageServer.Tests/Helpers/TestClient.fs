@@ -43,7 +43,7 @@ let private createTestClient clientOptsBuilder =
 
         let! client = testClient.Initialize(clientOptsBuilder) |> Async.AwaitTask
 
-        return client, None
+        return client, None, None
     }
 
 let private initAndWaitForConfigLoaded testClientConfig (loadMessage: string option) =
@@ -54,13 +54,13 @@ let private initAndWaitForConfigLoaded testClientConfig (loadMessage: string opt
 
         let clientOptionsBuilder = List.fold (>>) id allBuilders
 
-        let! (client, _) = Some clientOptionsBuilder |> createTestClient
+        let! (client, _, _) = Some clientOptionsBuilder |> createTestClient
 
         let! reply =
             (defaultArg loadMessage "Loading contextive")
             |> ServerLog.waitForLogMessage logAwaiter
 
-        return (client, reply)
+        return (client, reply, Some logAwaiter)
     }
 
 let initAndWaitForReply initOptions =
@@ -73,8 +73,15 @@ let initAndWaitForReply initOptions =
                 initAndWaitForConfigLoaded testClientConfig loadMessage
     }
 
+let initAndGetLogAwaiter o =
+    async {
+        let! (client, _, logAwaiter) = initAndWaitForReply o
+        return client, logAwaiter
+    }
+
+
 let init o =
     async {
-        let! result = initAndWaitForReply o
-        return fst result
+        let! (client, _) = initAndGetLogAwaiter o
+        return client
     }

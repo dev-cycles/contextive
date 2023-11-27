@@ -90,7 +90,9 @@ let private onStartupConfigureServer definitions =
 
             Definitions.init
                 definitions
-                s.Window.LogInfo
+                (fun m ->
+                    s.Window.Log(m)
+                    Serilog.Log.Logger.Information(m))
                 definitionsFileLoader
                 registerWatchedFiles
                 s.Window.ShowWarning

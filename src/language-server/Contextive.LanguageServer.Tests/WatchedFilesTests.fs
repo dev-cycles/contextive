@@ -60,35 +60,35 @@ let tests =
                   let mutable definitionsFile = "one.yml"
                   let pathLoader () : obj = definitionsFile
 
+                  let logAwaiter = ConditionAwaiter.create ()
+
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
                         ConfigurationSection.contextivePathLoaderBuilder pathLoader
-                        WatchedFiles.optionsBuilder registrationAwaiter ]
+                        WatchedFiles.optionsBuilder registrationAwaiter
+                        ServerLog.optionsBuilder logAwaiter ]
 
-                  use! client = TestClient(config) |> init
+                  let! (client, logAwaiter) = TestClient(config) |> initAndGetLogAwaiter
+                  use client = client
 
                   let! initialRegistrationMsg = ConditionAwaiter.waitForAny registrationAwaiter
 
                   ConditionAwaiter.clear registrationAwaiter 500
 
                   definitionsFile <- newDefinitionsFile
-                  ConfigurationSection.didChangePath client definitionsFile
+                  do! ConfigurationSection.didChangePath client definitionsFile logAwaiter
 
                   let! secondRegistrationMsg =
-                      ConditionAwaiter.waitFor
-                          registrationAwaiter
-                          (fun m ->
-                              match m with
-                              | Registered(_) -> true
-                              | _ -> false)
+                      ConditionAwaiter.waitFor registrationAwaiter (fun m ->
+                          match m with
+                          | Registered(_) -> true
+                          | _ -> false)
 
                   let! unregistrationMsg =
-                      ConditionAwaiter.waitFor
-                          registrationAwaiter
-                          (fun m ->
-                              match m with
-                              | Unregistered(_) -> true
-                              | _ -> false)
+                      ConditionAwaiter.waitFor registrationAwaiter (fun m ->
+                          match m with
+                          | Unregistered(_) -> true
+                          | _ -> false)
 
                   match secondRegistrationMsg with
                   | Some(Registered(_, opts)) -> test <@ opts.Watchers |> watcherIsForFile newDefinitionsFile @>

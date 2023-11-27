@@ -161,23 +161,27 @@ let tests =
 
                   let pathLoader () : obj = path
 
+                  let logAwaiter = ConditionAwaiter.create ()
+
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                        ConfigurationSection.contextivePathLoaderBuilder pathLoader ]
+                        ConfigurationSection.contextivePathLoaderBuilder pathLoader
+                        ServerLog.optionsBuilder logAwaiter ]
 
-                  use! client = TestClient(config) |> init
+                  let! (client, logAwaiter) = TestClient(config) |> initAndGetLogAwaiter
+                  use client = client
 
                   let! termsWhenValidAtStart = Completion.getCompletionLabels client
                   test <@ (termsWhenValidAtStart, Fixtures.One.expectedCompletionLabels) ||> compareList = 0 @>
 
                   path <- $"{fileName}.yml"
-                  ConfigurationSection.didChangePath client path
+                  do! ConfigurationSection.didChangePath client path logAwaiter
 
                   let! termsWhenInvalid = Completion.getCompletionLabels client
                   test <@ Seq.length termsWhenInvalid = 0 @>
 
                   path <- validPath
-                  ConfigurationSection.didChangePath client path
+                  do! ConfigurationSection.didChangePath client path logAwaiter
 
                   let! termsWhenValidAtEnd = Completion.getCompletionLabels client
                   test <@ (termsWhenValidAtEnd, Fixtures.One.expectedCompletionLabels) ||> compareList = 0 @>

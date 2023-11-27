@@ -30,7 +30,7 @@ let tests =
                   [ Workspace.optionsBuilder ""
                     ConfigurationSection.contextivePathBuilder pathValue ]
 
-              let! (client, reply) = TestClient(config) |> initAndWaitForReply
+              let! (client, reply, _) = TestClient(config) |> initAndWaitForReply
               use client = client
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
@@ -43,7 +43,7 @@ let tests =
 
               let config = [ ConfigurationSection.contextivePathBuilder $"/tmp/{pathValue}" ]
 
-              let! (client, reply) = TestClient(config) |> initAndWaitForReply
+              let! (client, reply, _) = TestClient(config) |> initAndWaitForReply
               use client = client
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
@@ -55,7 +55,7 @@ let tests =
               let pathValue = Guid.NewGuid().ToString()
               let config = [ ConfigurationSection.contextivePathBuilder pathValue ]
 
-              let! (client, reply) = TestClientWithCustomInitWait(config, Some pathValue) |> initAndWaitForReply
+              let! (client, reply, _) = TestClientWithCustomInitWait(config, Some pathValue) |> initAndWaitForReply
               use client = client
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
@@ -74,7 +74,7 @@ let tests =
 
               let defaultPath = ".contextive/definitions.yml"
 
-              let! (client, reply) = TestClient(config) |> initAndWaitForReply
+              let! (client, reply, _) = TestClient(config) |> initAndWaitForReply
               use client = client
 
               test <@ (defaultArg reply "").Contains(defaultPath) @>

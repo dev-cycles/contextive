@@ -104,7 +104,6 @@ module private Handle =
                     { state with Definitions = defs }
                 | Error msg ->
                     let msg = $"Error loading definitions: {msg}"
-                    Serilog.Log.Logger.Error msg
                     state.Logger msg
                     state.OnErrorLoading msg
 
@@ -136,9 +135,7 @@ module private Handle =
         let matchOpenFileUri = matchGlobs findMsg.OpenFileUri
 
         let foundContexts =
-            state.Definitions.Contexts
-            |> Seq.filter matchOpenFileUri
-            |> findMsg.Filter
+            state.Definitions.Contexts |> Seq.filter matchOpenFileUri |> findMsg.Filter
 
         findMsg.ReplyChannel.Reply foundContexts
         state
