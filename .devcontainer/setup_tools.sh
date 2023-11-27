@@ -29,3 +29,11 @@ pop
 # # container, because by then .config _does_ exist
 # mkdir -p $HOME/.config
 # adr templates default set madr
+
+# XDG Variables
+export XDG_RUNTIME_DIR=/run/user/$(id -u)
+echo "export XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" >> ~/.bashrc
+echo "export DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus" >> ~/.bashrc
+sudo mkdir $XDG_RUNTIME_DIR
+sudo chmod 700 $XDG_RUNTIME_DIR
+sudo chown $(id -un):$(id -gn) $XDG_RUNTIME_DIR

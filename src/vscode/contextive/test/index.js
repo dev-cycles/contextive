@@ -3,7 +3,7 @@ const Mocha = require('mocha');
 const glob = require('glob');
 
 function getMochaOpts() {
-	const defaultOpts = {timeout: 5000};
+	const defaultOpts = {timeout: 60000};
 	if (process.env.MOCHA_FGREP) {
 		return {
 			fgrep: process.env.MOCHA_FGREP,

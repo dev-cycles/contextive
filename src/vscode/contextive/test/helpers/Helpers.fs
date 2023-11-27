@@ -7,14 +7,50 @@ open Node.Api
 open Fable.Core
 open Fable.Mocha
 
+let util: obj = JsInterop.importAll "node:util"
+
+[<Emit("util.inspect($0, { showHidden: true, depth: null, getters: true })")>]
+let inspect (_: obj) = jsNative
+
+let logInspect o = JS.console.log (inspect (o))
+
+let waitForTimeout timeoutMs (condition: unit -> JS.Promise<bool>) =
+    promise {
+        let endTime = System.DateTime.Now.AddMilliseconds(timeoutMs)
+
+        let mutable conditionResult = false
+
+        while (not conditionResult && System.DateTime.Now < endTime) do
+            let! result = condition ()
+            conditionResult <- result
+            do! Promise.sleep 100
+
+        if (not conditionResult) then
+            failwith $"Condition still untrue after {timeoutMs}ms"
+    }
+
+let waitFor = waitForTimeout 30000
+
 let getDocUri relativeFile =
     vscode.Uri.file (path.resolve (__dirname, relativeFile))
+
+let findUriInVisibleEditors (docUri: Uri) =
+    window.visibleTextEditors.Find(fun te ->
+        // We compare the .toString() for platform compatibility
+        // On windows, the drive letter was captilised in the docUri, not in the textEditor
+        te.document.uri.toString () = docUri.toString ())
+
+let documentIsOpen docUri () =
+    promise {
+        let editor = findUriInVisibleEditors (docUri)
+        return editor <> null
+    }
 
 let openDocument (docUri: Uri) =
     promise {
         let! doc = workspace.openTextDocument (docUri)
         do! window.showTextDocument (doc, ViewColumn.Active, false) |> Thenable.Ignore
-        do! Promise.sleep 500
+        do! waitFor <| documentIsOpen docUri
         return docUri
     }
 
@@ -54,9 +90,6 @@ let getFullPathFromConfig () =
     let config = getConfig ()
     config["path"].Value :?> string |> pathInWorkspace
 
-let findUriInVisibleEditors (path: Uri) =
-    window.visibleTextEditors.Find(fun te -> te.document.uri.path = path.path)
-
 let updateConfig newPath =
     promise {
         let config = getConfig ()
@@ -78,14 +111,6 @@ let deleteFile fullPath =
 
 let deleteConfiguredDefinitionsFile () =
     promise { do! deleteFile <| getFullPathFromConfig () }
-
-let util: obj = JsInterop.importAll "node:util"
-
-[<Emit("util.inspect($0, { showHidden: true, depth: null, getters: true })")>]
-let inspect (_: obj) = jsNative
-
-let logInspect o = JS.console.log (inspect (o))
-
 
 [<Emit("afterEach($0, $1)")>]
 let afterEach (name: string, callback: unit -> JS.Promise<unit>) : unit = jsNative

@@ -27,6 +27,8 @@ let tests =
 
               do! VsCodeCommands.initialize () |> Promise.Ignore
 
+              do! waitFor <| documentIsOpen fullPath
+
               let editor = findUriInVisibleEditors fullPath
 
               do! closeDocument fullPath |> Promise.Ignore
@@ -39,6 +41,8 @@ let tests =
               do! VsCodeCommands.initialize () |> Promise.Ignore
 
               let fullPath = getFullPathFromConfig ()
+
+              do! waitFor <| documentIsOpen fullPath
 
               let editor = findUriInVisibleEditors fullPath
 
@@ -56,6 +60,8 @@ let tests =
               do! VsCodeCommands.initialize () |> Promise.Ignore
 
               let fullPath = getFullPathFromConfig ()
+
+              do! waitFor <| documentIsOpen fullPath
 
               let editor = findUriInVisibleEditors fullPath
 

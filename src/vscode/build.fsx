@@ -32,9 +32,29 @@ pipeline "Contextive VsCode Extension" {
         run "paket restore"
     }
 
-    stage "Start Xvbf" {
+    stage "Start Xvbf & Dbus" {
+
         run (bashCmd "/usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &")
-        echo ">>> Started xvfb"
+
+        stage "Start dbus" {
+            whenLinux
+            run (bashCmd "sudo service dbus start")
+            run (bashCmd "sudo mkdir -p $XDG_RUNTIME_DIR")
+            run (bashCmd "sudo chmod 700 $XDG_RUNTIME_DIR")
+            run (bashCmd "sudo chown $(id -un):$(id -gn) $XDG_RUNTIME_DIR")
+
+            run (
+                bashCmd "dbus-daemon --session --address=$DBUS_SESSION_BUS_ADDRESS --nofork --nopidfile --syslog-only &"
+            )
+        }
+
+        echo ">>> Started xvfb & dbus"
+    }
+
+    stage "Prep Environment" {
+        workingDir "vscode/contextive"
+
+        run "rm -fv .vscode-test/user-data/Crashpad/pending/*"
     }
 
     stage "Prep Language Server Artifact" {

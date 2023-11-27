@@ -24,18 +24,27 @@ let private getHoverText (hoverResult: Hover) =
 
 let private getHoverTextOption = Option.bind getHoverText
 
-let private getHover path position =
+let private getHover path position expectedResultCount =
     promise {
         let! docUri = getDocUri path |> openDocument
 
-        let! result = VsCodeCommands.hover docUri position
+        let getHoverResults () =
+            promise {
+                let! hoverResults = VsCodeCommands.hover docUri position
+                return hoverResults |> Seq.map getHoverTextOption
+            }
 
-        printfn "Hover result %s %A:" path position
-        logInspect result
+        do!
+            waitFor
+            <| fun () ->
+                promise {
+                    let! hoverContents = getHoverResults ()
+                    return (Seq.length hoverContents) = expectedResultCount
+                }
 
         do! getDocUri path |> closeDocument
 
-        return result |> Seq.map getHoverTextOption
+        return! getHoverResults ()
     }
 
 let expectHoverContent content substring =
@@ -53,7 +62,7 @@ let tests =
               let testDocPath = Paths.inWorkspace ".contextive/definitions.yml"
               let position = vscode.Position.Create(16, 9)
 
-              let! hoverContents = getHover testDocPath position
+              let! hoverContents = getHover testDocPath position 1
 
               let firstHoverContent = Seq.tryHead hoverContents
 
@@ -66,12 +75,10 @@ let tests =
 
               let testDocPath = Paths.inWorkspace "MarketingDemo.cs"
               let position = vscode.Position.Create(0, 15)
+              let expectedLength = 2
+              let! hoverContents = getHover testDocPath position 2
 
-              let! hoverContents = getHover testDocPath position
-
-              Expect.hasLength hoverContents 2 "Should have 2 hover results"
-
-              // printfn "hoverContents: %A" hoverContents
+              Expect.hasLength hoverContents expectedLength $"Should have {expectedLength} hover results"
 
               let firstHoverContent = Seq.tryHead hoverContents
               let secondHoverContent = hoverContents |> Seq.tail |> Seq.tryHead

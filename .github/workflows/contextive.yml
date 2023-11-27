@@ -8,16 +8,30 @@ on:
 env:
   DOTNET_VERSION: '7.0.x'
 jobs:
+
+  get-matrix:
+    name: "Load Build Matrix"
+    outputs:
+      matrix: ${{ steps.load-matrix.outputs.matrix }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - id: load-matrix
+        name: Load Build Matrix
+        run: |
+          matrix="matrix=$(yq -P -o=json .github/build-matrix.yml | jq -c .)"
+          echo $matrix
+          echo $matrix >> $GITHUB_OUTPUT
+
   language-server:
     name: Language Server
+    needs: get-matrix
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - dotnet_runtime: win-x64
-            os: windows-latest
-          - dotnet_runtime: linux-x64
-            os: ubuntu-latest
+      matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -33,7 +47,6 @@ jobs:
 
       - name: Language Server Artifact
         uses: actions/upload-artifact@v3
-        if: runner.os == 'Linux'
         with:
           name: Contextive.LanguageServer-${{matrix.dotnet_runtime}}
           path: ${{ steps.build.outputs.artifact-path }}
@@ -46,10 +59,13 @@ jobs:
 
   vscode:
     name: VsCode Extension
-    runs-on: ubuntu-latest
-    needs: language-server
-    env:
-      dotnet_runtime: linux-x64
+    needs:
+      - get-matrix
+      - language-server
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -60,11 +76,14 @@ jobs:
       - name: Language Server Artifact
         uses: actions/download-artifact@v3
         with:
-          name: Contextive.LanguageServer-${{ env.dotnet_runtime }}
+          name: Contextive.LanguageServer-${{ matrix.dotnet_runtime }}
           path: src/
 
+      - run: echo "XDG_RUNTIME_DIR=/run/user/$(id -u)" >> $GITHUB_ENV
+      - run: echo "DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus" >> $GITHUB_ENV
+
       - name: Build
-        run: dotnet fsi vscode/build.fsx -- -r ${{ env.dotnet_runtime }}
+        run: dotnet fsi vscode/build.fsx -- -r ${{ matrix.dotnet_runtime }}
         working-directory: src
 
       - uses: ./.github/actions/upload-reports

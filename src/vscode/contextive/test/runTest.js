@@ -39,6 +39,9 @@ function getLaunchArgs() {
 	const mochaFGrep = process.env['MOCHA_FGREP'] || 'Single-Root';
 	return [
 		path.resolve(__dirname, `../test/${workspacePaths[mochaFGrep]}`),
+		'--disable-gpu',
+		'--disable-extension', 'ms-dotnettools.dotnet-interactive-vscode',
+		'--disable-features=dbus'
 	];
 }
 

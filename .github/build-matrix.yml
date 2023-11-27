@@ -1,0 +1,5 @@
+include:
+  - dotnet_runtime: win-x64
+    os: windows-latest
+  - dotnet_runtime: linux-x64
+    os: ubuntu-latest
