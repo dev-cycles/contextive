@@ -1,0 +1,71 @@
+name: Contextive per Runtime Build
+on:
+  workflow_call:
+    inputs:
+      dotnet_runtime:
+        required: true
+        type: string
+      os:
+        required: true
+        type: string
+env:
+  DOTNET_VERSION: '7.0.x'
+jobs:
+
+  language-server:
+    name: Language Server
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/init-dotnet
+
+      - name: Build
+        id: build
+        run: dotnet fsi language-server/build.fsx -- -r ${{ inputs.dotnet_runtime }}
+        working-directory: src
+
+      - name: Language Server Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Contextive.LanguageServer-${{inputs.dotnet_runtime}}
+          path: ${{ steps.build.outputs.artifact-path }}
+
+      - uses: ./.github/actions/upload-reports
+        if: always()
+        with:
+          name: 'Contextive Language Server'
+          reporter: dotnet-trx
+
+  vscode:
+    name: VsCode Extension
+    needs:
+      - language-server
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/init-dotnet
+
+      - name: Language Server Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: Contextive.LanguageServer-${{ inputs.dotnet_runtime }}
+          path: src/
+
+      - run: echo "XDG_RUNTIME_DIR=/run/user/$(id -u)" >> $GITHUB_ENV
+      - run: echo "DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus" >> $GITHUB_ENV
+
+      - name: Build
+        run: dotnet fsi vscode/build.fsx -- -r ${{ inputs.dotnet_runtime }}
+        working-directory: src
+
+      - uses: ./.github/actions/upload-reports
+        if: always()
+        with:
+          name: 'Contextive VsCode Extension'
+          reporter: java-junit

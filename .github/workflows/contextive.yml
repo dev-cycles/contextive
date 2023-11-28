@@ -4,90 +4,24 @@ on:
     paths:
       - 'src/**'
       - '.github/workflows/contextive.yml'
+      - '.github/workflows/get-matrix.yml'
+      - '.github/build-matrix.yml'
       - '.github/actions/**'
 env:
   DOTNET_VERSION: '7.0.x'
+
 jobs:
-
   get-matrix:
-    name: "Load Build Matrix"
-    outputs:
-      matrix: ${{ steps.load-matrix.outputs.matrix }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-      - id: load-matrix
-        name: Load Build Matrix
-        run: |
-          matrix="matrix=$(yq -P -o=json .github/build-matrix.yml | jq -c .)"
-          echo $matrix
-          echo $matrix >> $GITHUB_OUTPUT
+    uses: ./.github/workflows/get-matrix.yml
+    with:
+      matrix-path: .github/build-matrix.yml
 
-  language-server:
-    name: Language Server
+  build-test:
     needs: get-matrix
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-
-      - uses: ./.github/actions/init-dotnet
-
-      - name: Build
-        id: build
-        run: dotnet fsi language-server/build.fsx -- -r ${{ matrix.dotnet_runtime }}
-        working-directory: src
-
-      - name: Language Server Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: Contextive.LanguageServer-${{matrix.dotnet_runtime}}
-          path: ${{ steps.build.outputs.artifact-path }}
-
-      - uses: ./.github/actions/upload-reports
-        if: always()
-        with:
-          name: 'Contextive Language Server'
-          reporter: dotnet-trx
-
-  vscode:
-    name: VsCode Extension
-    needs:
-      - get-matrix
-      - language-server
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-
-      - uses: ./.github/actions/init-dotnet
-
-      - name: Language Server Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: Contextive.LanguageServer-${{ matrix.dotnet_runtime }}
-          path: src/
-
-      - run: echo "XDG_RUNTIME_DIR=/run/user/$(id -u)" >> $GITHUB_ENV
-      - run: echo "DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus" >> $GITHUB_ENV
-
-      - name: Build
-        run: dotnet fsi vscode/build.fsx -- -r ${{ matrix.dotnet_runtime }}
-        working-directory: src
-
-      - uses: ./.github/actions/upload-reports
-        if: always()
-        with:
-          name: 'Contextive VsCode Extension'
-          reporter: java-junit
+    uses: ./.github/workflows/contextive-runtime-build.yml
+    with:
+      dotnet_runtime: ${{ matrix.dotnet_runtime }}
+      os: ${{ matrix.os }}

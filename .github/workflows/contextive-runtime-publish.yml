@@ -1,0 +1,65 @@
+name: Contextive per Runtime Publish
+on:
+  workflow_call:
+    inputs:
+      dotnet_runtime:
+        required: true
+        type: string
+      os:
+        required: true
+        type: string
+      vsce_platform:
+        required: true
+        type: string
+    secrets:
+      GH_TOKEN:
+        required: true
+      VSCE_PAT:
+        required: true
+
+  
+env:
+  dotnet-version: '7.0.x'
+  
+jobs:
+  get-matrix:
+    uses: ./.github/workflows/get-matrix.yml
+    with:
+      matrix-path: .github/release-matrix.yml
+
+  language-server:
+    name: Language Server
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/init-dotnet
+
+      - name: Build
+        id: build
+        run: dotnet fsi language-server/build.fsx -- -r ${{ input.dotnet_runtime }} --release ${{ github.ref_name }}
+        working-directory: src
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  vscode:
+    name: VsCode Extension
+    needs:
+      - language-server
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/init-dotnet
+
+      - name: Build
+        id: build
+        run: dotnet fsi vscode/build.fsx -- -r ${{ inputs.dotnet_runtime }} --release ${{ github.ref_name }} --vsce-platform ${{ inputs.vsce_platform }}
+        working-directory: src
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
