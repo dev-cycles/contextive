@@ -21,6 +21,7 @@ nuget Fable.Electron
 nuget Fable.Mocha
 nuget FSharp.Core
 nuget FSharp.Data
+nuget FSharp.DependencyManager.Paket
 nuget FsToolkit.ErrorHandling
 nuget Giraffe
 nuget Humanizer
