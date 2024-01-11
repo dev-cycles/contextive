@@ -151,6 +151,8 @@ NUGET
       FSharp.Data.Http (>= 6.3)
       FSharp.Data.Json.Core (>= 6.3)
       FSharp.Data.Runtime.Utilities (>= 6.3)
+    FSharp.DependencyManager.Paket (7.0)
+      FSharp.Core (>= 5.0)
     FsToolkit.ErrorHandling (4.14)
       FSharp.Core (>= 7.0.300)
     Giraffe (6.2)
