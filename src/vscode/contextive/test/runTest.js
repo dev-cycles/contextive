@@ -51,10 +51,15 @@ async function downloadVsCodeAndExtensions(version) {
 		version
 	});
 	console.log('cli, args', cli, args);
+
+	console.log("Installing csharp extension...");
+
 	cp.spawnSync(cli, [...args, '--install-extension', 'ms-dotnettools.csharp'], {
 		encoding: 'utf-8',
 		stdio: 'inherit',
 	});
+
+	console.log("...extensions installed.");
 }
 
 async function main() {
@@ -75,6 +80,8 @@ async function main() {
 
 		const launchArgs = getLaunchArgs();
 		const ipcOpts = getIpcEnv();
+
+		console.log("Running tests...");
 
 		// Download VS Code, unzip it and run the integration test
 		await runTests({ 
