@@ -108,5 +108,6 @@ open Fake.Core.TargetOperators
 "Cloud-Deploy-Local" ==> "Cloud-Api-Test"
 
 // *** Start Build ***
-Target.runOrDefault "Cloud-Api-Test"
+// Target.runOrDefault "Cloud-Api-Test"
+Target.runOrDefault "Cloud-Deploy"
 // Target.runOrDefault "Cdk-Bootstrap-Local"
