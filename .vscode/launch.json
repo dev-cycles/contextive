@@ -27,7 +27,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build: Language Server Tests",
-            "program": "${workspaceFolder}/${config:languageServerTestsPath}/bin/Debug/net7.0/Contextive.LanguageServer.Tests.dll",
+            "program": "${workspaceFolder}/${config:languageServerTestsPath}/bin/Debug/net6.0/Contextive.LanguageServer.Tests.dll",
             //"args": ["--filter-test-case","Can handle configuration value changing"],
             "cwd": "${workspaceFolder}/${config:languageServerTestsPath}",
             "stopAtEntry": false,
