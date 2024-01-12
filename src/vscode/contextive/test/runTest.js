@@ -84,6 +84,8 @@ async function main() {
 		const launchArgs = getLaunchArgs();
 		const ipcOpts = getIpcEnv();
 
+		console.log("Running tests...");
+
 		// Download VS Code, unzip it and run the integration test
 		await runTests({ 
 			version,
