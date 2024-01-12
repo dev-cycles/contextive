@@ -25,6 +25,7 @@ nuget FSharp.DependencyManager.Paket
 nuget FsToolkit.ErrorHandling
 nuget Giraffe
 nuget Humanizer
+nuget Microsoft.IO.RecyclableMemoryStream 2.3.2
 nuget OmniSharp.Extensions.LanguageProtocol.Testing
 nuget OmniSharp.Extensions.LanguageServer
 nuget Serilog
