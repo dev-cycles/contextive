@@ -1,5 +1,5 @@
 STORAGE: NONE
-RESTRICTION: == net7.0
+RESTRICTION: == net6.0
 NUGET
   remote: https://api.nuget.org/v3/index.json
     Amazon.CDK.Asset.AwsCliV1 (2.2.201)
@@ -330,6 +330,7 @@ NUGET
       Microsoft.Extensions.Logging.Abstractions (>= 8.0)
       Microsoft.Extensions.Logging.Configuration (>= 8.0)
       Microsoft.Extensions.Options (>= 8.0)
+      System.Runtime.CompilerServices.Unsafe (>= 6.0)
       System.Text.Json (>= 8.0)
     Microsoft.Extensions.Options (8.0)
       Microsoft.Extensions.DependencyInjection.Abstractions (>= 8.0)
@@ -341,6 +342,7 @@ NUGET
       Microsoft.Extensions.Options (>= 8.0)
       Microsoft.Extensions.Primitives (>= 8.0)
     Microsoft.Extensions.Primitives (8.0)
+      System.Runtime.CompilerServices.Unsafe (>= 6.0)
     Microsoft.IO.RecyclableMemoryStream (2.3.2)
     Microsoft.VisualStudio.Threading (17.8.14)
       Microsoft.Bcl.AsyncInterfaces (>= 7.0)
@@ -408,6 +410,7 @@ NUGET
     SimpleInfoName (2.2)
     System.CodeDom (8.0)
     System.Collections.Immutable (8.0)
+      System.Runtime.CompilerServices.Unsafe (>= 6.0)
     System.IO.Hashing (8.0)
     System.IO.Pipelines (8.0)
     System.Management (8.0)
@@ -417,7 +420,9 @@ NUGET
     System.Security.AccessControl (6.0)
     System.Security.Principal.Windows (5.0)
     System.Text.Encodings.Web (8.0)
+      System.Runtime.CompilerServices.Unsafe (>= 6.0)
     System.Text.Json (8.0)
+      System.Runtime.CompilerServices.Unsafe (>= 6.0)
       System.Text.Encodings.Web (>= 8.0)
     System.Threading.Channels (8.0)
     System.Threading.Tasks.Extensions (4.5.4)
