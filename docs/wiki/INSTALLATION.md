@@ -113,26 +113,28 @@ If you get it working, we'd love you to submit a PR to this README with instruct
 
 1. Download the appropriate zip file for your operating system and architecture:
 
-  ```shell
-  curl -L https://github.com/dev-cycles/contextive/releases/download/<version>/Contextive.LanguageServer-<os>-<arch>-<version>.zip -o Contextive.LanguageServer-<os>-<arch>-<version>.zip
-  ```
+   ```shell
+   curl -L https://github.com/dev-cycles/contextive/releases/download/<version>/Contextive.LanguageServer-<os>-<arch>-<version>.zip -o Contextive.LanguageServer-<os>-<arch>-<version>.zip
+   ```
+  
+   OR, manually download the language server asset from the [desired release](https://github.com/dev-cycles/contextive/releases)
 
 2. Unzip the Contextive.LanguageServer and copy the file into a folder that is included in your system's PATH:
 
-  Assuming the $HOME/bin directory has been created beforehand and is included in the system's PATH.
+   Assuming the $HOME/bin directory has been created beforehand and is included in the system's PATH.
 
-  ```shell
-  unzip Contextive.LanguageServer-<os>-<arch>-<version>.zip -d contextive-language-server
-  cp contextive-language-server/Contextive.LanguageServer $HOME/bin
-  ```
+   ```shell
+   unzip Contextive.LanguageServer-<os>-<arch>-<version>.zip -d contextive-language-server
+   cp contextive-language-server/Contextive.LanguageServer $HOME/bin
+   ```
 
 3. Verify that Contextive.LanguageServer is found in the PATH. A non-zero exit code indicates that the language server was not found in the PATH:
 
-  ```shell
-  command -v Contextive.LanguageServer
-  ```
+   ```shell
+   command -v Contextive.LanguageServer
+   ```
 
-  The command should return the absolute path to the binary if it's found in the system PATH.
+   The command should return the absolute path to the binary if it's found in the system PATH.
 
 4. For IDEs in the officially supported list, check the configuration guides above.  Otherwise, consult your IDE's Language Server documentation for details on how to configure a new language server and enable it for all files.
 5. Check out our [usage guide](./USAGE.md) for details on configuring and using Contextive. 
