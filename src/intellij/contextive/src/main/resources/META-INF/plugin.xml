@@ -8,23 +8,37 @@
   <name>Contextive</name>
 
   <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-  <vendor email="support@yourcompany.com" url="https://www.yourcompany.com">YourCompany</vendor>
+  <vendor email="help@contextive.tech" url="https://contextive.tech">Contextive</vendor>
 
   <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
        Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
        Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
   <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
+    <p>Contextive is an IntelliJ Platform plugin to assist developers in environments with a complex domain or project specific language, where words have a special meaning in the context of the project.</p>
+
+    <p>It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.</p>
+
+    <p>See <a href="https://github.com/dev-cycles/contextive">https://github.com/dev-cycles/contextive</a> for details.</p>
   ]]></description>
+
+  <change-notes><![CDATA[
+<h3><a href="https://github.com/dev-cycles/contextive/compare/v1.10.4...v1.10.5">1.10.5</a> (2023-11-19)</h3>
+
+<h4>Bug Fixes</h4>
+
+<ul>
+  <li>exception on startup <a href="https://github.com/dev-cycles/contextive/issues/61">#61</a> (<a href="https://github.com/dev-cycles/contextive/commit/2a69c0a764099539e537291a85307fbfd2598dd3">2a69c0a<a/>)</li>
+ </ul>
+  ]]></change-notes>
 
   <!-- Product and plugin compatibility requirements.
        Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
   <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.ultimate</depends>
 
   <!-- Extension points defined by the plugin.
        Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
   <extensions defaultExtensionNs="com.intellij">
-
+    <platform.lsp.serverSupportProvider implementation="tech.contextive.contextive.ContextiveLspServerSupportProvider"/>
   </extensions>
 </idea-plugin>
