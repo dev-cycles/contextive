@@ -4,6 +4,7 @@ on:
     paths:
       - 'src/**'
       - '.github/workflows/contextive.yml'
+      - '.github/workflows/contextive-runtime-build.yml'
       - '.github/workflows/get-matrix.yml'
       - '.github/build-matrix.yml'
       - '.github/actions/**'

@@ -1,11 +1,11 @@
 plugins {
   id("java")
-  id("org.jetbrains.kotlin.jvm") version "1.9.0"
-  id("org.jetbrains.intellij") version "1.15.0"
+  id("org.jetbrains.kotlin.jvm") version "1.9.23"
+  id("org.jetbrains.intellij") version "1.17.2"
 }
 
 group = "tech.contextive"
-version = "1.0-SNAPSHOT"
+version = "1.11.0-beta"
 
 repositories {
   mavenCentral()
@@ -14,7 +14,7 @@ repositories {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-  version.set("2022.2.5")
+  version.set("2023.3.2")
   type.set("IC") // Target IDE Platform
 
   plugins.set(listOf(/* Plugin Dependencies */))
@@ -31,8 +31,8 @@ tasks {
   }
 
   patchPluginXml {
-    sinceBuild.set("222")
-    untilBuild.set("232.*")
+    sinceBuild.set("233")
+    untilBuild.set("233.*")
   }
 
   signPlugin {
