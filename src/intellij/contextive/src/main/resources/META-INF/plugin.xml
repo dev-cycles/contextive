@@ -14,21 +14,336 @@
        Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
        Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
   <description><![CDATA[
-    <p>Contextive is an IntelliJ Platform plugin to assist developers in environments with a complex domain or project specific language, where words have a special meaning in the context of the project.</p>
-
-    <p>It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.</p>
-
-    <p>See <a href="https://github.com/dev-cycles/contextive">https://github.com/dev-cycles/contextive</a> for details.</p>
+<div class="markdown-heading"><h1 class="heading-element">Contextive README</h1><a id="user-content-contextive-readme" class="anchor" aria-label="Permalink: Contextive README" href="#contextive-readme"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Contextive is an IntelliJ Platform Plugin to assist developers in environments with a complex domain or project specific language, where words have a special meaning in the context of the project.</p>
+<p>It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://raw.githubusercontent.com/dev-cycles/contextive/main/docs/wiki/images/hover_intellij.png"><img src="https://raw.githubusercontent.com/dev-cycles/contextive/main/docs/wiki/images/hover_intellij.png" alt="Example of Contextive in action." style="max-width: 100%;"></a></p>
+<div class="markdown-heading"><h2 class="heading-element">Getting Started</h2><a id="user-content-getting-started" class="anchor" aria-label="Permalink: Getting Started" href="#getting-started"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Create a folder in your project root called <code>.contextive</code>.  Create a file in that folder called <code>definitions.yml</code>.</p>
+<p>Start defining your definitions following the schema specified in our <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md">usage guide</a>.  You might like to start by copying our <a href="https://github.com/dev-cycles/contextive/blob/main/src/language-server/Contextive.LanguageServer.Tests/DefinitionsInitializationTests.Default%20Definitions.verified.txt">default definitions</a> file that defines the terms used in the definitions file itself.</p>
+<div class="markdown-heading"><h2 class="heading-element">Supported IDEs</h2><a id="user-content-supported-ides" class="anchor" aria-label="Permalink: Supported IDEs" href="#supported-ides"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>The plugin uses the IntelliJ Language Server Protocol support, so it's only available in the IDEs where that feature is offered.  See the <a href="https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html#supported-ides" rel="nofollow">JetBrains LSP Documentation</a> for the latest list.</p>
+<p>At time of writing, it includes:</p>
+<ul>
+<li>IntelliJ IDEA Ultimate</li>
+<li>WebStorm</li>
+<li>PhpStorm</li>
+<li>PyCharm Professional</li>
+<li>DataSpell</li>
+<li>RubyMine</li>
+<li>CLion</li>
+<li>Aqua</li>
+<li>DataGrip</li>
+<li>GoLand</li>
+<li>Rider</li>
+<li>RustRover</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">Usage Guide</h2><a id="user-content-usage-guide" class="anchor" aria-label="Permalink: Usage Guide" href="#usage-guide"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>See our <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md">usage guide</a> for details on the definitions file format and available options.</p>
+<div class="markdown-heading"><h2 class="heading-element">Features</h2><a id="user-content-features" class="anchor" aria-label="Permalink: Features" href="#features"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#smart-auto-complete">Auto-complete</a> from your Contextive Definitions
+<ul>
+<li>Shows definitions in auto-complete details</li>
+</ul>
+</li>
+<li>Hover to show definitions from your Contextive Definitions
+<ul>
+<li>Hover over elements with <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#suffixes-and-prefixes">suffixes &amp; prefixes</a>
+</li>
+<li>Hover over usage of <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#combining-two-or-more-terms">multiple terms</a> combined using camelCase, PascalCase and snake_case</li>
+<li>Hover over <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#multi-word-terms">multi-word</a> terms</li>
+<li>Hover over <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#plural-words">plural</a> of defined terms</li>
+<li>Hover over <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#term-aliases">aliases</a> of defined terms</li>
+</ul>
+</li>
+<li>Supported Repository Layouts:
+<ul>
+<li>A <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#multiple-bounded-contexts-repository-per-context">repository per context</a>
+</li>
+<li>
+<a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#multiple-bounded-contexts-single-repository-single-root-monorepo">Multiple contexts in the same repository</a> (monorepo) (identified by path globs)</li>
+<li>Context distributed over <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#single-bounded-context-multiple-repositories">multiple repositories</a> (#36)</li>
+<li><a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#multiple-bounded-contexts-multi-root-shared-definitions-file">Multi-root workspaces</a></li>
+</ul>
+</li>
+<li>Works in all files</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">Coming Soon</h3><a id="user-content-coming-soon" class="anchor" aria-label="Permalink: Coming Soon" href="#coming-soon"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>IDE command to initialize the definitions file</li>
+<li>Configure different location for the definitions file</li>
+<li>UI to edit/manage Contextive Definitions</li>
+<li>Internationalization support</li>
+<li>Support for multiple contexts in separate repositories</li>
+<li>Better support for key word identification in different languages (e.g. different syntax delimiters)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">Plugin Configuration</h2><a id="user-content-plugin-configuration" class="anchor" aria-label="Permalink: Plugin Configuration" href="#plugin-configuration"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>The plugin does not currently support configuration.  The definitions file <em>must</em> be in <code>./contextive/definitions.yml</code> in your current project folder.</p>
+<p>This is pending IntelliJ support for the LSP <code>workspace/configuration</code> feature.</p>
+<div class="markdown-heading"><h2 class="heading-element">Known Issues</h2><a id="user-content-known-issues" class="anchor" aria-label="Permalink: Known Issues" href="#known-issues"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>Not configurable - see <a href="#plugin-configuration">Plugin Configuration</a>
+</li>
+</ul>
   ]]></description>
 
   <change-notes><![CDATA[
-<h3><a href="https://github.com/dev-cycles/contextive/compare/v1.10.4...v1.10.5">1.10.5</a> (2023-11-19)</h3>
-
-<h4>Bug Fixes</h4>
-
+<div class="markdown-heading"><h1 class="heading-element">Change Log</h1><a id="user-content-change-log" class="anchor" aria-label="Permalink: Change Log" href="#change-log"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.10.4...v1.10.5">1.10.5</a> (2023-11-19)</h2><a id="user-content-1105-2023-11-19" class="anchor" aria-label="Permalink: 1.10.5 (2023-11-19)" href="#1105-2023-11-19"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <ul>
-  <li>exception on startup <a href="https://github.com/dev-cycles/contextive/issues/61">#61</a> (<a href="https://github.com/dev-cycles/contextive/commit/2a69c0a764099539e537291a85307fbfd2598dd3">2a69c0a<a/>)</li>
- </ul>
+<li>exception on startup <a href="https://github.com/dev-cycles/contextive/issues/61">#61</a> (<a href="https://github.com/dev-cycles/contextive/commit/2a69c0a764099539e537291a85307fbfd2598dd3">2a69c0a</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.10.3...v1.10.4">1.10.4</a> (2023-11-19)</h2><a id="user-content-1104-2023-11-19" class="anchor" aria-label="Permalink: 1.10.4 (2023-11-19)" href="#1104-2023-11-19"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-1" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-1"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> improve resilience when client doesn't support showMessageRequest (fixes <a href="https://github.com/dev-cycles/contextive/issues/60">#60</a>) (<a href="https://github.com/dev-cycles/contextive/commit/8a1e68469173ea737f8ddf91514f92fe83851c25">8a1e684</a>)</li>
+<li>
+<strong>language-server:</strong> language server now offers a custom lsp command to initialize the default definitions file (<a href="https://github.com/dev-cycles/contextive/commit/9c7e8a59dfa179aba806fe183b161ac15df38978">9c7e8a5</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.10.2...v1.10.3">1.10.3</a> (2023-11-15)</h2><a id="user-content-1103-2023-11-15" class="anchor" aria-label="Permalink: 1.10.3 (2023-11-15)" href="#1103-2023-11-15"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-2" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-2"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> support LSP clients that only support <code>workspace/configuration</code> (<a href="https://github.com/dev-cycles/contextive/issues/58">#58</a>) (<a href="https://github.com/dev-cycles/contextive/commit/7e0639694982e2db1d51b7965429e4d05c3c69f5">7e06396</a>)</li>
+<li>
+<strong>language-server:</strong> survey prompt more resilient to accidentally missing the first prompt (<a href="https://github.com/dev-cycles/contextive/commit/7acd1401ee057071f2ca6aaa9d7dba2c73eabd32">7acd140</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.10.1...v1.10.2">1.10.2</a> (2023-10-14)</h2><a id="user-content-1102-2023-10-14" class="anchor" aria-label="Permalink: 1.10.2 (2023-10-14)" href="#1102-2023-10-14"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-3" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-3"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> fix issue with survey prompt (<a href="https://github.com/dev-cycles/contextive/commit/7196e822a73d7332024ff6fd94bf540cb503efc3">7196e82</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.10.0...v1.10.1">1.10.1</a> (2023-10-14)</h2><a id="user-content-1101-2023-10-14" class="anchor" aria-label="Permalink: 1.10.1 (2023-10-14)" href="#1101-2023-10-14"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-4" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-4"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> resolve issue with releasing v1.10.0 for macos and windows (<a href="https://github.com/dev-cycles/contextive/commit/5042b5f2598d56c6b041360909da005f8eff2b02">5042b5f</a>)</li>
+</ul>
+<div class="markdown-heading"><h1 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.9.4...v1.10.0">1.10.0</a> (2023-10-14)</h1><a id="user-content-1100-2023-10-14" class="anchor" aria-label="Permalink: 1.10.0 (2023-10-14)" href="#1100-2023-10-14"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Features</h3><a id="user-content-features" class="anchor" aria-label="Permalink: Features" href="#features"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> includes a one-time invitation for users to complete a Contextive roadmap survey (<a href="https://github.com/dev-cycles/contextive/commit/42272d0221b6a79b0d2e025976aabe4cd02ba874">42272d0</a>)</li>
+<li>
+<strong>language-server:</strong> Use the default path defined in contextive if it's not specified in the configuration. (<a href="https://github.com/dev-cycles/contextive/commit/23f9049a18c638be69a7a44d0a9cda121673703e">23f9049</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.9.3...v1.9.4">1.9.4</a> (2023-08-18)</h2><a id="user-content-194-2023-08-18" class="anchor" aria-label="Permalink: 1.9.4 (2023-08-18)" href="#194-2023-08-18"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-5" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-5"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> improve resilience when terms is an empty list in the definitions file. (fixes: <a href="https://github.com/dev-cycles/contextive/issues/48">#48</a>) (<a href="https://github.com/dev-cycles/contextive/commit/65517eff0e7f95088096d2bd914f814825504a20">65517ef</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.9.2...v1.9.3">1.9.3</a> (2023-08-08)</h2><a id="user-content-193-2023-08-08" class="anchor" aria-label="Permalink: 1.9.3 (2023-08-08)" href="#193-2023-08-08"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-6" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-6"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> ensure rendering the domain vision statement is correct even with trailing whitespace/newline. (fixes <a href="https://github.com/dev-cycles/contextive/issues/47">#47</a>) (<a href="https://github.com/dev-cycles/contextive/commit/27f86c1f7ed909c5609bf0349e641d3a57b302a0">27f86c1</a>)</li>
+<li>
+<strong>language-server:</strong> term usage examples render within double-quotes correctly even with leading and trailing whitespace/newlines. (<a href="https://github.com/dev-cycles/contextive/commit/292553fc23b85b2c69af0758f8a8f447dd08c6ad">292553f</a>)</li>
+<li>
+<strong>vscode:</strong> the default definitions file includes a definition of the 'aliases' key (<a href="https://github.com/dev-cycles/contextive/commit/a983db2ec66368073c60cce0424650714a632e2d">a983db2</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.9.1...v1.9.2">1.9.2</a> (2023-07-04)</h2><a id="user-content-192-2023-07-04" class="anchor" aria-label="Permalink: 1.9.2 (2023-07-04)" href="#192-2023-07-04"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-7" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-7"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> display aliases in the hover panel (<a href="https://github.com/dev-cycles/contextive/commit/6ba291b317fee542f4297e6f096693022ad73420">6ba291b</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.9.0...v1.9.1">1.9.1</a> (2023-07-03)</h2><a id="user-content-191-2023-07-03" class="anchor" aria-label="Permalink: 1.9.1 (2023-07-03)" href="#191-2023-07-03"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-8" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-8"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>vscode:</strong> ensure the language server process stops when vscode stops the extension. Bug in dependency <code>vscode-languageclient</code> fixed by update. (fixes <a href="https://github.com/dev-cycles/contextive/issues/44">#44</a>) (<a href="https://github.com/dev-cycles/contextive/commit/a3f7ed84f5c22d5ffa899dc033ee6076d8bc54ff">a3f7ed8</a>)</li>
+</ul>
+<div class="markdown-heading"><h1 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.8.1...v1.9.0">1.9.0</a> (2023-06-21)</h1><a id="user-content-190-2023-06-21" class="anchor" aria-label="Permalink: 1.9.0 (2023-06-21)" href="#190-2023-06-21"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Features</h3><a id="user-content-features-1" class="anchor" aria-label="Permalink: Features" href="#features-1"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> add support for term aliases and show term definition when hovering over an alias (<a href="https://github.com/dev-cycles/contextive/commit/28103deff1e491455a1660571b999bccc437378f">28103de</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.8.0...v1.8.1">1.8.1</a> (2023-06-13)</h2><a id="user-content-181-2023-06-13" class="anchor" aria-label="Permalink: 1.8.1 (2023-06-13)" href="#181-2023-06-13"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-9" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-9"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> Ensure Contextive works with both CRLF and LF files on Windows (<a href="https://github.com/dev-cycles/contextive/issues/40">#40</a>) (<a href="https://github.com/dev-cycles/contextive/commit/9a4d24839888dced52a5403123d7bf372fed7622">9a4d248</a>)</li>
+</ul>
+<div class="markdown-heading"><h1 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.7.0...v1.8.0">1.8.0</a> (2023-06-11)</h1><a id="user-content-180-2023-06-11" class="anchor" aria-label="Permalink: 1.8.0 (2023-06-11)" href="#180-2023-06-11"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-10" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-10"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> ensure hover works even if the file's path has special characters in it (<a href="https://github.com/dev-cycles/contextive/commit/076a02918815823302ba464ec565301c237f8088">076a029</a>)</li>
+<li>
+<strong>language-server:</strong> resolve error notifications when hovering over a space in column 0 (<a href="https://github.com/dev-cycles/contextive/commit/51936b8d5bc1ae769ac86aa9ab8a29630ff9256d">51936b8</a>)</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">Features</h3><a id="user-content-features-2" class="anchor" aria-label="Permalink: Features" href="#features-2"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>vscode:</strong> Add support for linux-arm64 platform (<a href="https://github.com/dev-cycles/contextive/commit/38d9afb54b637203541ae6973f6fe2f6b61e9ee5">38d9afb</a>)</li>
+</ul>
+<div class="markdown-heading"><h1 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.6.0...v1.7.0">1.7.0</a> (2023-05-28)</h1><a id="user-content-170-2023-05-28" class="anchor" aria-label="Permalink: 1.7.0 (2023-05-28)" href="#170-2023-05-28"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Features</h3><a id="user-content-features-3" class="anchor" aria-label="Permalink: Features" href="#features-3"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>vscode:</strong> add support for multi-root workspaces with a shared definitions file (<a href="https://github.com/dev-cycles/contextive/issues/38">#38</a>) (<a href="https://github.com/dev-cycles/contextive/commit/99a4257120d67fc1fb40f740a6b10310f9d5eada">99a4257</a>)</li>
+</ul>
+<div class="markdown-heading"><h1 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.5.1...v1.6.0">1.6.0</a> (2023-03-28)</h1><a id="user-content-160-2023-03-28" class="anchor" aria-label="Permalink: 1.6.0 (2023-03-28)" href="#160-2023-03-28"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Features</h3><a id="user-content-features-4" class="anchor" aria-label="Permalink: Features" href="#features-4"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> show hover panel for plural of defined terms (<a href="https://github.com/dev-cycles/contextive/commit/d45095d02fb04156eff0dfb081487cae54d2d4be">d45095d</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.5.0...v1.5.1">1.5.1</a> (2023-03-24)</h2><a id="user-content-151-2023-03-24" class="anchor" aria-label="Permalink: 1.5.1 (2023-03-24)" href="#151-2023-03-24"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-11" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-11"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>vscode:</strong> Ensure Contextive hover results appear below more relevant language feature results. (<a href="https://github.com/dev-cycles/contextive/commit/2e9e40ce77e2e7ce8fc542763712fbb94a3494db">2e9e40c</a>)</li>
+</ul>
+<div class="markdown-heading"><h1 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.4.0...v1.5.0">1.5.0</a> (2022-02-13)</h1><a id="user-content-150-2022-02-13" class="anchor" aria-label="Permalink: 1.5.0 (2022-02-13)" href="#150-2022-02-13"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Features</h3><a id="user-content-features-5" class="anchor" aria-label="Permalink: Features" href="#features-5"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> allow contextive.path to contain shell commands to enable more complex location discovery scripts <a href="https://github.com/dev-cycles/contextive/issues/36">#36</a> (<a href="https://github.com/dev-cycles/contextive/commit/dc176121a029d21ceb6ad8ee5d3bccb44772f9b2">dc17612</a>)</li>
+</ul>
+<div class="markdown-heading"><h1 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.3.1...v1.4.0">1.4.0</a> (2022-02-05)</h1><a id="user-content-140-2022-02-05" class="anchor" aria-label="Permalink: 1.4.0 (2022-02-05)" href="#140-2022-02-05"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-12" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-12"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> include more useful auto-complete suggestions for multi-word terms (<a href="https://github.com/dev-cycles/contextive/commit/7a1b4ea970bdcf3867f69e78990a3807a10a2357">7a1b4ea</a>)</li>
+<li>
+<strong>language-server:</strong> update completion item kind to be (<a href="https://github.com/dev-cycles/contextive/commit/7552c16de6f151e634e60959a60fd8971f5b47bd">7552c16</a>)</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">Features</h3><a id="user-content-features-6" class="anchor" aria-label="Permalink: Features" href="#features-6"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> show context name (if any) in auto-complete details (<a href="https://github.com/dev-cycles/contextive/commit/8c221d1a3629b7a6561a54f697c9e416bc304d14">8c221d1</a>)</li>
+<li>
+<strong>language-server:</strong> show term hover panel content in auto complete documentation window (<a href="https://github.com/dev-cycles/contextive/commit/4748c863186b57ce50eb0e5e53d4a7efae8f127e">4748c86</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.3.0...v1.3.1">1.3.1</a> (2022-02-01)</h2><a id="user-content-131-2022-02-01" class="anchor" aria-label="Permalink: 1.3.1 (2022-02-01)" href="#131-2022-02-01"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-13" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-13"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> support snake_case combined words (<a href="https://github.com/dev-cycles/contextive/issues/35">#35</a>) (<a href="https://github.com/dev-cycles/contextive/commit/abd076afc7a2d089f00be9d766be3ddf0a02d66c">abd076a</a>)</li>
+<li>
+<strong>language-server:</strong> support true multi-word terms, not just camelCase and PascalCase terms (<a href="https://github.com/dev-cycles/contextive/commit/5fc2f73230dfbe24237eee2767d9d7b001a647d8">5fc2f73</a>)</li>
+</ul>
+<div class="markdown-heading"><h1 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.2.1...v1.3.0">1.3.0</a> (2022-01-31)</h1><a id="user-content-130-2022-01-31" class="anchor" aria-label="Permalink: 1.3.0 (2022-01-31)" href="#130-2022-01-31"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-14" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-14"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> update emojis for definitions and usage examples (<a href="https://github.com/dev-cycles/contextive/commit/f08e477b1c2b7ba48bf811662a8a509a86fe7726">f08e477</a>)</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">Features</h3><a id="user-content-features-7" class="anchor" aria-label="Permalink: Features" href="#features-7"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> contexts can now be defined with a list of path globs. hover and autocomplete terms will only be shown from contexts where at least one path glob matches the currently open file (<a href="https://github.com/dev-cycles/contextive/commit/8bf13ee4f4d9d7238c9952de4e136ce185babfea">8bf13ee</a>)</li>
+<li>
+<strong>language-server:</strong> display current context name and domain vision statement in hover panel, if defined. (<a href="https://github.com/dev-cycles/contextive/commit/9658385809f9f36a21f694ad4654af5e285c5097">9658385</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.2.0...v1.2.1">1.2.1</a> (2022-01-28)</h2><a id="user-content-121-2022-01-28" class="anchor" aria-label="Permalink: 1.2.1 (2022-01-28)" href="#121-2022-01-28"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-15" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-15"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> add emojis to the hover panel to illustrate definitions and usage examples (<a href="https://github.com/dev-cycles/contextive/commit/634b1df2f994d96efb2201259c3c3296860fe757">634b1df</a>)</li>
+</ul>
+<div class="markdown-heading"><h1 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.1.3...v1.2.0">1.2.0</a> (2022-01-26)</h1><a id="user-content-120-2022-01-26" class="anchor" aria-label="Permalink: 1.2.0 (2022-01-26)" href="#120-2022-01-26"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-16" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-16"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> language server version updated on release (<a href="https://github.com/dev-cycles/contextive/issues/26">#26</a>) (<a href="https://github.com/dev-cycles/contextive/commit/2a626a7f2285cb6eb73878aa90ff8149b49d1e38">2a626a7</a>)</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">Features</h3><a id="user-content-features-8" class="anchor" aria-label="Permalink: Features" href="#features-8"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>language-server:</strong> hover now supports camelCase, PascalCase or snake_case words where defined terms are combined with other defined terms, or undefined terms (<a href="https://github.com/dev-cycles/contextive/issues/27">#27</a>) (<a href="https://github.com/dev-cycles/contextive/commit/19d9c6c69c9484140b639bf4d0a430a20cd788fc">19d9c6c</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.1.2...v1.1.3">1.1.3</a> (2022-01-24)</h2><a id="user-content-113-2022-01-24" class="anchor" aria-label="Permalink: 1.1.3 (2022-01-24)" href="#113-2022-01-24"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-17" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-17"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>vscode:</strong> ensure Language Server version is updated on release, so it is reported in vscode extension logs correctly. (<a href="https://github.com/dev-cycles/contextive/commit/4e377f52e24e159b78a686f70dfd62809fb18674">4e377f5</a>)</li>
+<li>
+<strong>vscode:</strong> resilient to more types of parsing errors (<a href="https://github.com/dev-cycles/contextive/commit/4f8dde686abac1de20949c1e4e3c03a4fd848e1f">4f8dde6</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.1.1...v1.1.2">1.1.2</a> (2022-01-23)</h2><a id="user-content-112-2022-01-23" class="anchor" aria-label="Permalink: 1.1.2 (2022-01-23)" href="#112-2022-01-23"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-18" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-18"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>vscode:</strong> add support for Apple Silicon (<a href="https://github.com/dev-cycles/contextive/commit/1e65def2c8afa94d140f62da882e52c7e74ade01">1e65def</a>)</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.1.0...v1.1.1">1.1.1</a> (2022-01-23)</h2><a id="user-content-111-2022-01-23" class="anchor" aria-label="Permalink: 1.1.1 (2022-01-23)" href="#111-2022-01-23"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-19" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-19"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>vscode:</strong> ensure Language Server version is updated on release (<a href="https://github.com/dev-cycles/contextive/commit/44e8cb3293c3c0e5666f40dcb2556fe9389f6ffe">44e8cb3</a>)</li>
+<li>
+<strong>vscode:</strong> Readme image relative link corrected to ensure readme images are displayed (<a href="https://github.com/dev-cycles/contextive/commit/b453ff6ed71bea2e87b0015432944ed0393c5242">b453ff6</a>)</li>
+</ul>
+<div class="markdown-heading"><h1 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v1.0.0...v1.1.0">1.1.0</a> (2022-01-23)</h1><a id="user-content-110-2022-01-23" class="anchor" aria-label="Permalink: 1.1.0 (2022-01-23)" href="#110-2022-01-23"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Bug Fixes</h3><a id="user-content-bug-fixes-20" class="anchor" aria-label="Permalink: Bug Fixes" href="#bug-fixes-20"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<strong>devcontainer:</strong> Resolve adr template default setting by ensuring /home/vscode/.config exists in advance, and running scripts with  to ensure profile env variables are loaded. (<a href="https://github.com/dev-cycles/contextive/issues/20">#20</a>) (<a href="https://github.com/dev-cycles/contextive/commit/9c4639e6c4ab7f3845e0c403a9c50d76ec4df9a4">9c4639e</a>)</li>
+<li>handle invalid definitions file (<a href="https://github.com/dev-cycles/contextive/issues/21">#21</a>) (<a href="https://github.com/dev-cycles/contextive/commit/caba98230ee995177bfa098b4f8604f09c640da5">caba982</a>)</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">Features</h3><a id="user-content-features-9" class="anchor" aria-label="Permalink: Features" href="#features-9"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>Add more word boundary delimiters (arrays, parentheses, parens) (<a href="https://github.com/dev-cycles/contextive/issues/18">#18</a>) (<a href="https://github.com/dev-cycles/contextive/commit/5c6d6be5b854833ac278b17804838bfd27d0cd06">5c6d6be</a>)</li>
+</ul>
+<div class="markdown-heading"><h1 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v0.0.2-beta...v1.0.0">v1.0.0</a> (2022-01-22)</h1><a id="user-content-v100-2022-01-22" class="anchor" aria-label="Permalink: v1.0.0 (2022-01-22)" href="#v100-2022-01-22"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>This is a release label attached to the existing v0.0.1-beta release, in order to serve as a baseline for starting to use <a href="https://semantic-release.gitbook.io/semantic-release/" rel="nofollow">semantic-release</a> to manage releases.</p>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v0.0.1-beta...v0.0.2-beta">v0.0.2-beta</a> (2022-01-10)</h2><a id="user-content-v002-beta-2022-01-10" class="anchor" aria-label="Permalink: v0.0.2-beta (2022-01-10)" href="#v002-beta-2022-01-10"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Features</h3><a id="user-content-features-10" class="anchor" aria-label="Permalink: Features" href="#features-10"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>Build for macOS</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">Fixed</h3><a id="user-content-fixed" class="anchor" aria-label="Permalink: Fixed" href="#fixed"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>Error logged when hovering over a term that isn't in the contextive definitions</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">
+<a href="https://github.com/dev-cycles/contextive/compare/v0.0.1-beta...v0.0.2-beta">v0.0.1-beta</a> (2022-01-09)</h2><a id="user-content-v001-beta-2022-01-09" class="anchor" aria-label="Permalink: v0.0.1-beta (2022-01-09)" href="#v001-beta-2022-01-09"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="markdown-heading"><h3 class="heading-element">Features</h3><a id="user-content-features-11" class="anchor" aria-label="Permalink: Features" href="#features-11"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>VsCode command to initialize a contextive definitions file (Default file contains instructions and examples).</li>
+<li>Hover info for terms found in the definitions file</li>
+<li>Auto-complete (with case-matching) for terms found in the definitions file</li>
+<li>Watches for updates to the definitions file</li>
+<li>Watches for updates to the <code>contextive.path</code> configuration parameter which defines which file contains the definitions</li>
+</ul>
   ]]></change-notes>
 
   <!-- Product and plugin compatibility requirements.
