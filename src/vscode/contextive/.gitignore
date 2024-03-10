@@ -8,3 +8,4 @@
 **/*.vsix
 dist
 out
+.idea

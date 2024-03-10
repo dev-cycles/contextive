@@ -5,10 +5,14 @@ plugins {
 }
 
 group = "tech.contextive"
-version = "1.11.0-beta"
+version = "1.10.5"
 
 repositories {
   mavenCentral()
+}
+
+dependencies {
+  implementation("net.lingala.zip4j:zip4j:2.11.5")
 }
 
 // Configure Gradle IntelliJ Plugin
