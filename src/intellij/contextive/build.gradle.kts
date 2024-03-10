@@ -42,10 +42,11 @@ tasks {
   signPlugin {
     certificateChain.set(
       System.getenv("CERTIFICATE_CHAIN") ?:
-      File(System.getenv("CERTIFICATE_CHAIN_PATH")).readText(Charsets.UTF_8)
+      System.getenv("CERTIFICATE_CHAIN_PATH")?.let { File(it).readText(Charsets.UTF_8) }
     )
-    privateKey.set(System.getenv("PRIVATE_KEY") ?:
-      File(System.getenv("PRIVATE_KEY_PATH")).readText(Charsets.UTF_8)
+    privateKey.set(
+      System.getenv("PRIVATE_KEY") ?:
+      System.getenv("PRIVATE_KEY_PATH")?. let { File(it ).readText(Charsets.UTF_8) }
     )
     password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
   }
