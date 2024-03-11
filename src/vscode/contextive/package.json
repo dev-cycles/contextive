@@ -10,7 +10,7 @@
 		"url": "https://github.com/dev-cycles/contextive"
 	},
 	"engines": {
-		"vscode": "^1.63.0"
+		"vscode": "^1.85.0"
 	},
 	"categories": [
 		"Programming Languages",
