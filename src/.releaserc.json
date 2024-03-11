@@ -25,7 +25,7 @@
                 "countMatches": true
             }]
         }],
-        ["@google/semantic-release-replace-plugin",{
+        ["semantic-release-replace-plugin",{
             "replacements": [{
                 "files": ["language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj"],
                 "from": "    <Version>.*</Version>",

@@ -1,4 +1,4 @@
-import { prepare as replacePrepare } from '@google/semantic-release-replace-plugin';
+import { prepare as replacePrepare } from 'semantic-release-replace-plugin';
 import markDownIt from 'markdown-it';
 import fsFull from 'fs';
 
