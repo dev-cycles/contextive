@@ -5,6 +5,10 @@ open Fun.Build
 
 open Common
 
+let languageServerLabel (ctx: Internal.StageContext) =
+    $"Contextive Language Server {ctx.GetCmdArg(args.release)} ({ctx.GetCmdArg(args.vscePlatform)})"
+
+
 let dotnetTest app =
     stage $"Test {app.Name}" {
         workingDir $"{app.Path}.Tests"
@@ -89,7 +93,8 @@ let zipAndUploadAsset app =
 
                 whenCmdArg args.release
 
-                run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {appZipPath app ctx}")
+                run (fun ctx ->
+                    $"gh release upload {ctx.GetCmdArg(args.release)} '{appZipPath app ctx}#{languageServerLabel ctx}'")
             }
         }
     }

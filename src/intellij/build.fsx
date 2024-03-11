@@ -8,7 +8,10 @@ open Common
 let distPath: string = "intellij/contextive/build/distributions"
 
 let intelliJAssetFileName (ctx: Internal.StageContext) =
-    $"contextive-{ctx.GetCmdArg(args.release)}-signed.zip"
+    $"""contextive-{ctx.GetCmdArg(args.release).Replace("v", "")}-signed.zip"""
+
+let intelliJAssetLabel (ctx: Internal.StageContext) =
+    $"""Contextive IntelliJ Plugin {ctx.GetCmdArg(args.release)}"""
 
 pipeline "Contextive IntelliJ Plugin" {
     description "Build & Test"
@@ -26,7 +29,9 @@ pipeline "Contextive IntelliJ Plugin" {
 
         stage "Upload Asset" {
             workingDir distPath
-            run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {intelliJAssetFileName ctx}")
+
+            run (fun ctx ->
+                $"gh release upload {ctx.GetCmdArg(args.release)} '{intelliJAssetFileName ctx}#{intelliJAssetLabel ctx}'")
         }
 
         stage "Publish Package" { run (bashCmd "./gradlew publishPlugin") }

@@ -10,6 +10,9 @@ let distPath = "vscode/contextive/dist"
 let vsCodeAssetFileName (ctx: Internal.StageContext) =
     $"contextive-{ctx.GetCmdArg(args.vscePlatform)}-{ctx.GetCmdArg(args.release)}.vsix"
 
+let vsCodeAssetLabel (ctx: Internal.StageContext) =
+    $"Contextive VsCode Extension {ctx.GetCmdArg(args.release)} ({ctx.GetCmdArg(args.vscePlatform)})"
+
 pipeline "Contextive VsCode Extension" {
     description "Build & Test"
     noPrefixForStep
@@ -119,7 +122,8 @@ pipeline "Contextive VsCode Extension" {
         }
 
         stage "Upload Asset" {
-            run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {vsCodeAssetFileName ctx}")
+            run (fun ctx ->
+                $"gh release upload {ctx.GetCmdArg(args.release)} '{vsCodeAssetFileName ctx}#{vsCodeAssetLabel ctx}'")
         }
 
         stage "Publish to Marketplace" { run (fun ctx -> $"npx vsce publish --packagePath {vsCodeAssetFileName ctx}") }
