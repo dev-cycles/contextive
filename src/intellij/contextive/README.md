@@ -69,5 +69,6 @@ This is pending IntelliJ support for the LSP `workspace/configuration` feature.
 ## Known Issues
 
 * Not configurable - see [Plugin Configuration](#plugin-configuration)
-* Documentation not shown on hover in some files (files treated as 'plaintext' by the specific IDE). Use F1 to show the hover documentation at the current cursor position.  This is an IntelliJ issue - see [IDEA-348497](https://youtrack.jetbrains.com/issue/IDEA-348497/Doc-popup-doesnt-appear-on-hover-in-LSP-API-based-plugins) for details.
-* Auto-completion does not work at certain positions in files.  This is under investigation with the JetBrains team.
+* Autocomplete list doesn't respect the case sensitive interpretation as described in the usage guide. IntelliJ does not yet respect the `isIncomplete' flag that forces re-computation of the list and is required to adjust the case of list items.  See [IDEA-348829](https://youtrack.jetbrains.com/issue/IDEA-348829) for details. 
+* Documentation not shown on hover in some files (files treated as 'plaintext' by the specific IDE). Use F1 to show the hover documentation at the current cursor position.  This is an IntelliJ bug, see [IDEA-348497](https://youtrack.jetbrains.com/issue/IDEA-348497/Doc-popup-doesnt-appear-on-hover-in-LSP-API-based-plugins) for details.
+* Auto-completion does not work at certain positions. See [Issue #63](https://github.com/dev-cycles/contextive/issues/63)
