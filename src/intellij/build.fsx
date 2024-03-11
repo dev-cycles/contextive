@@ -5,7 +5,7 @@ open Fun.Build
 
 open Common
 
-let distPath: string = "intellij/contextive/build/distribution"
+let distPath: string = "intellij/contextive/build/distributions"
 
 let intelliJAssetFileName (ctx: Internal.StageContext) =
     $"contextive-{ctx.GetCmdArg(args.release)}-signed.zip"
@@ -22,14 +22,14 @@ pipeline "Contextive IntelliJ Plugin" {
         workingDir "intellij/contextive"
         whenCmdArg args.release
 
-        stage "Sign Plugin" { run "./gradlew signPlugin" }
+        stage "Sign Plugin" { run (bashCmd "./gradlew signPlugin") }
 
         stage "Upload Asset" {
             workingDir distPath
             run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {intelliJAssetFileName ctx}")
         }
 
-        stage "Publish Package" { run "./gradlew publishPlugin" }
+        stage "Publish Package" { run (bashCmd "./gradlew publishPlugin") }
     }
 
     runIfOnlySpecified false

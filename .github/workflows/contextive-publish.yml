@@ -13,6 +13,7 @@ jobs:
       matrix-path: .github/release-matrix.yml
 
   publish-per-runtime:
+    needs: get-matrix
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
