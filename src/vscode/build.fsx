@@ -5,8 +5,6 @@ open Fun.Build
 
 open Common
 
-let distPath = "vscode/contextive/dist"
-
 let vsCodeAssetFileName (ctx: Internal.StageContext) =
     $"contextive-{ctx.GetCmdArg(args.vscePlatform)}-{ctx.GetCmdArg(args.release)}.vsix"
 
@@ -122,14 +120,10 @@ pipeline "Contextive VsCode Extension" {
         }
 
         stage "Upload Asset" {
-            workingDir distPath
             run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {vsCodeAssetFileName ctx}")
         }
 
-        stage "Publish to Marketplace" {
-            workingDir distPath
-            run (fun ctx -> $"npx vsce publish --packagePath {vsCodeAssetFileName ctx}")
-        }
+        stage "Publish to Marketplace" { run (fun ctx -> $"npx vsce publish --packagePath {vsCodeAssetFileName ctx}") }
     }
 
     runIfOnlySpecified false
