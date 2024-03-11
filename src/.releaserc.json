@@ -14,8 +14,19 @@
           },
           "replacements": [{
                 "files": ["intellij/contextive/src/main/resources/META-INF/plugin.xml"],
-                "from": "  <change-notes><!\\[CDATA\\[(\n|.)*\\]\\]><\\/change-notes>",
-                "to": "  <change-notes><![CDATA[${htmlFiles.changeLog}]]></change-notes>",
+                "from": "<change-notes><!\\[CDATA\\[(\n|.)*\\]\\]><\\/change-notes>",
+                "to": "<change-notes><![CDATA[${htmlFiles.changeLog}]]></change-notes>",
+                "results": [{
+                    "file": "intellij/contextive/src/main/resources/META-INF/plugin.xml",
+                    "hasChanged": true,
+                    "numMatches": 1,
+                    "numReplacements": 1
+                }],
+                "countMatches": true
+            },{
+                "files": ["intellij/contextive/src/main/resources/META-INF/plugin.xml"],
+                "from": "<description><!\\[CDATA\\[(\n|.)*\\]\\]><\\/description>",
+                "to": "<description><![CDATA[${htmlFiles.intelliJReadme}]]></description>",
                 "results": [{
                     "file": "intellij/contextive/src/main/resources/META-INF/plugin.xml",
                     "hasChanged": true,
