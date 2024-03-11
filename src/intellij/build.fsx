@@ -30,10 +30,18 @@ pipeline "Contextive IntelliJ Plugin" {
         stage "Upload Asset" {
             workingDir distPath
 
-            run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {intelliJAssetFileName ctx}")
+            echo
+                "Skipping upload, as it was uploaded on https://github.com/dev-cycles/contextive/actions/runs/8232357150"
+
+        // run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {intelliJAssetFileName ctx}")
         }
 
-        stage "Publish Package" { run (bashCmd "./gradlew publishPlugin") }
+        stage "Publish Package" {
+            echo
+                "Skipping publish, as it was published on https://github.com/dev-cycles/contextive/actions/runs/8232357150"
+
+        //run (bashCmd "./gradlew publishPlugin")
+        }
     }
 
     runIfOnlySpecified false

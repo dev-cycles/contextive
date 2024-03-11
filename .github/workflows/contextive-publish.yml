@@ -1,7 +1,15 @@
 name: Contextive Publish
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Release to publish'
+        required: true
+        type: string
+  # temporary removal to allow repair of v1.11.0 vscode extension publishing
+  # release:
+  #   types: [published]
+
   
 env:
   dotnet-version: '7.0.x'
@@ -19,6 +27,7 @@ jobs:
       matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
     uses: ./.github/workflows/contextive-runtime-publish.yml
     with:
+      release: ${{ inputs.release }} #${{ github.ref_name }} # temporary removal to allow repair of v1.11.0 vscode extension publishing
       dotnet_runtime: ${{ matrix.dotnet_runtime }}
       os: ${{ matrix.os }}
       vsce_platform: ${{ matrix.vsce_platform }}
@@ -43,7 +52,7 @@ jobs:
 
       - name: Build
         id: build
-        run: dotnet fsi intellij/build.fsx -- --release ${{ github.ref_name }}
+        run: dotnet fsi intellij/build.fsx -- --release ${{ inputs.release }} #${{ github.ref_name }} # temporary removal to allow repair of v1.11.0 vscode extension publishing
         working-directory: src
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

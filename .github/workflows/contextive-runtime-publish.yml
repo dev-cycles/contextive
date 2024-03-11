@@ -2,6 +2,9 @@ name: Contextive per Runtime Publish
 on:
   workflow_call:
     inputs:
+      release:
+        required: true
+        type: string
       dotnet_runtime:
         required: true
         type: string
@@ -39,7 +42,7 @@ jobs:
 
       - name: Build
         id: build
-        run: dotnet fsi language-server/build.fsx -- -r ${{ inputs.dotnet_runtime }} --release ${{ github.ref_name }}
+        run: dotnet fsi language-server/build.fsx -- -r ${{ inputs.dotnet_runtime }} --release ${{ inputs.release }}
         working-directory: src
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -61,7 +64,7 @@ jobs:
 
       - name: Build
         id: build
-        run: dotnet fsi vscode/build.fsx -- -r ${{ inputs.dotnet_runtime }} --release ${{ github.ref_name }} --vsce-platform ${{ inputs.vsce_platform }}
+        run: dotnet fsi vscode/build.fsx -- -r ${{ inputs.dotnet_runtime }} --release ${{ inputs.release }} --vsce-platform ${{ inputs.vsce_platform }}
         working-directory: src
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
