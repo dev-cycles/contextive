@@ -4,8 +4,6 @@ Contextive is an IntelliJ Platform Plugin to assist developers in environments w
 
 It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.
 
-![Example of Contextive in action.](https://raw.githubusercontent.com/dev-cycles/contextive/main/docs/wiki/images/hover_intellij.png)
-
 ## Getting Started
 
 Create a folder in your project root called `.contextive`.  Create a file in that folder called `definitions.yml`.
