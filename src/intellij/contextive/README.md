@@ -39,6 +39,7 @@ See our [usage guide](https://github.com/dev-cycles/contextive/blob/main/docs/wi
 
 * [Auto-complete](https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#smart-auto-complete) from your Contextive Definitions
   * Shows definitions in auto-complete details
+    * Note: Press `F1` while the auto-complete list is shown to see the definition, and choose `Show Automatically During Completion` from the documentation panel's '3-dots' menu to have it show every time.)
 * Hover to show definitions from your Contextive Definitions
   * Hover over elements with [suffixes & prefixes](https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#suffixes-and-prefixes)
   * Hover over usage of [multiple terms](https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
@@ -70,3 +71,5 @@ This is pending IntelliJ support for the LSP `workspace/configuration` feature.
 ## Known Issues
 
 * Not configurable - see [Plugin Configuration](#plugin-configuration)
+* Documentation not shown on hover in some files (files treated as 'plaintext' by the specific IDE). Use F1 to show the hover documentation at the current cursor position.  This is an IntelliJ issue - see [IDEA-348497](https://youtrack.jetbrains.com/issue/IDEA-348497/Doc-popup-doesnt-appear-on-hover-in-LSP-API-based-plugins) for details.
+* Auto-completion does not work at certain positions in files.  This is under investigation with the JetBrains team.
