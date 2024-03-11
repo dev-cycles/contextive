@@ -1,5 +1,18 @@
 # Change Log
 
+# [1.11.0](https://github.com/dev-cycles/contextive/compare/v1.10.5...v1.11.0) (2024-03-11)
+
+
+### Features
+
+* **intellij:** Add IntelliJ plugin (closes [#32](https://github.com/dev-cycles/contextive/issues/32)) ([fad50b8](https://github.com/dev-cycles/contextive/commit/fad50b835c2003c02afd023f75ccf510f892c9ff))
+* **intellij:** automatically download the language server if it's not found ([38db4b7](https://github.com/dev-cycles/contextive/commit/38db4b759a47b45d2d1b7e5a38b54c4bfdd57370))
+
+
+### Performance Improvements
+
+* **language-server:** reduce binary size (fixes [#61](https://github.com/dev-cycles/contextive/issues/61)) ([5658484](https://github.com/dev-cycles/contextive/commit/56584848fb9e4281092749212ab143690702f88c))
+
 ## [1.10.5](https://github.com/dev-cycles/contextive/compare/v1.10.4...v1.10.5) (2023-11-19)
 
 
