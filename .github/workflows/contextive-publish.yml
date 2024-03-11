@@ -12,7 +12,7 @@ jobs:
     with:
       matrix-path: .github/release-matrix.yml
 
-  build-test-publish:
+  publish-per-runtime:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
@@ -24,4 +24,31 @@ jobs:
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
       VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+  publish-intellij:
+    name: Contextive IntelliJ Publish
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/init-dotnet
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Build
+        id: build
+        run: dotnet fsi intellij/build.fsx -- --release ${{ github.ref_name }}
+        working-directory: src
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          CERTIFICATE_CHAIN: ${{ secrets.JETBRAINS_CERTIFICATE_CHAIN }}
+          PRIVATE_KEY: ${{ secrets.JETBRAINS_PRIVATE_KEY }}
+          PRIVATE_KEY_PASSWORD: ${{ secrets.JETBRAINS_PRIVATE_KEY_PASSWORD }}
+          PUBLISH_TOKEN: ${{ secrets.JETBRAINS_PUBLISH_TOKEN }}
+
 

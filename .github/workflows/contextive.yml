@@ -17,7 +17,7 @@ jobs:
     with:
       matrix-path: .github/build-matrix.yml
 
-  build-test:
+  build-test-per-runtime:
     needs: get-matrix
     strategy:
       fail-fast: false
@@ -26,3 +26,31 @@ jobs:
     with:
       dotnet_runtime: ${{ matrix.dotnet_runtime }}
       os: ${{ matrix.os }}
+
+  build-test-intellij:
+    name: IntelliJ Plugin
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      # - name: Language Server Artifact
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: Contextive.LanguageServer-${{ inputs.dotnet_runtime }}
+      #     path: src/
+
+      - name: Build
+        run: ./gradlew build
+        working-directory: src/intellij/contextive
+
+      # - uses: ./.github/actions/upload-reports
+      #   if: always()
+      #   with:
+      #     name: 'Contextive VsCode Extension'
+      #     reporter: java-junit

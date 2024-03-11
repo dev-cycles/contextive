@@ -69,33 +69,3 @@ jobs:
         with:
           name: 'Contextive VsCode Extension'
           reporter: java-junit
-
-  intellij:
-    name: IntelliJ Plugin
-    needs:
-      - language-server
-    runs-on: ${{ inputs.os }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'corretto'
-          java-version: '21'
-
-      # - name: Language Server Artifact
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: Contextive.LanguageServer-${{ inputs.dotnet_runtime }}
-      #     path: src/
-
-      - name: Build
-        run: ./gradlew build
-        working-directory: src/intellij/contextive
-
-      # - uses: ./.github/actions/upload-reports
-      #   if: always()
-      #   with:
-      #     name: 'Contextive VsCode Extension'
-      #     reporter: java-junit
