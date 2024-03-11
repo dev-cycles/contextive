@@ -53,6 +53,18 @@
         ["@semantic-release/npm",{
             "npmPublish": false,
             "pkgRoot": "vscode/contextive"
-        }]
+        }],
+        ["@semantic-release/git",{
+            "assets": [
+                "language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj",
+                "vscode/contextive/CHANGELOG.md",
+                "vscode/contextive/package.json",
+                "vscode/contextive/package-lock.json",
+                "vscode/contextive/npm-shrinkwrap.json",
+                "intellij/contextive/build.gradle.kts",
+                "intellij/contextive/src/main/resources/META-INF/plugin.xml"
+            ]
+        }],
+        "@semantic-release/github"
     ]
 }

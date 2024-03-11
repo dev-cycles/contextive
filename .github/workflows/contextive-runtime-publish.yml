@@ -31,7 +31,7 @@ jobs:
     name: Language Server
     runs-on: ${{ inputs.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
 
@@ -50,11 +50,14 @@ jobs:
       - language-server
     runs-on: ${{ inputs.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
 
       - uses: ./.github/actions/init-dotnet
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Build
         id: build

@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@google/semantic-release-replace-plugin": "^1.2.7",
-    "markdown-it": "^14.0.0"
+    "markdown-it": "^14.0.0",
+    "semantic-release-replace-plugin": "^1.2.7"
   }
 }
