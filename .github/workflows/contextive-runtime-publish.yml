@@ -39,7 +39,7 @@ jobs:
 
       - name: Build
         id: build
-        run: dotnet fsi language-server/build.fsx -- -r ${{ input.dotnet_runtime }} --release ${{ github.ref_name }}
+        run: dotnet fsi language-server/build.fsx -- -r ${{ inputs.dotnet_runtime }} --release ${{ github.ref_name }}
         working-directory: src
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
