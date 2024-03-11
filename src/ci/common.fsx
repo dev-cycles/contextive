@@ -27,6 +27,8 @@ type Component = { Name: string; Path: string }
 
 let TIMEOUT_EXIT_CODES = {| TIMED_OUT = 124; KILLED = 137 |}
 
+let versionNumber (version: string) = version.Replace("v", "")
+
 let bashCmd (cmd: string) =
     $"""bash -c "{cmd.Replace("\"", "\\\"")}" """
 

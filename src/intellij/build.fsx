@@ -8,7 +8,7 @@ open Common
 let distPath: string = "intellij/contextive/build/distributions"
 
 let intelliJAssetFileName (ctx: Internal.StageContext) =
-    $"""contextive-{ctx.GetCmdArg(args.release).Replace("v", "")}-signed.zip"""
+    $"""contextive-{versionNumber (ctx.GetCmdArg(args.release))}-signed.zip"""
 
 let intelliJAssetLabel (ctx: Internal.StageContext) =
     $"""Contextive IntelliJ Plugin {ctx.GetCmdArg(args.release)}"""

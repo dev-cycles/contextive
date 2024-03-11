@@ -6,7 +6,7 @@ open Fun.Build
 open Common
 
 let vsCodeAssetFileName (ctx: Internal.StageContext) =
-    $"contextive-{ctx.GetCmdArg(args.vscePlatform)}-{ctx.GetCmdArg(args.release)}.vsix"
+    $"""contextive-{ctx.GetCmdArg(args.vscePlatform)}-{versionNumber (ctx.GetCmdArg(args.release))}.vsix"""
 
 let vsCodeAssetLabel (ctx: Internal.StageContext) =
     $"Contextive VsCode Extension {ctx.GetCmdArg(args.release)} ({ctx.GetCmdArg(args.vscePlatform)})"
