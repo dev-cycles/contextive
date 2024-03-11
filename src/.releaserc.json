@@ -7,6 +7,24 @@
             "changelogFile": "vscode/contextive/CHANGELOG.md",
             "changelogTitle": "# Change Log"
         }],
+        ["./ci/semantic-release-markdown-to-html",{
+          "files": {
+                "changeLog": "vscode/contextive/CHANGELOG.md",
+                "intelliJReadme": "intellij/contextive/README.md"
+          },
+          "replacements": [{
+                "files": ["intellij/contextive/src/main/resources/META-INF/plugin.xml"],
+                "from": "  <change-notes><!\\[CDATA\\[(\n|.)*\\]\\]><\\/change-notes>",
+                "to": "  <change-notes><![CDATA[${htmlFiles.changeLog}]]></change-notes>",
+                "results": [{
+                    "file": "intellij/contextive/src/main/resources/META-INF/plugin.xml",
+                    "hasChanged": true,
+                    "numMatches": 1,
+                    "numReplacements": 1
+                }],
+                "countMatches": true
+            }]
+        }],
         ["@google/semantic-release-replace-plugin",{
             "replacements": [{
                 "files": ["language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj"],
@@ -19,15 +37,22 @@
                     "numReplacements": 1
                 }],
                 "countMatches": true
+            },{
+                "files": ["intellij/contextive/build.gradle.kts"],
+                "from": "version = \".*\"",
+                "to": "version = \"${nextRelease.version}\"",
+                "results": [{
+                    "file": "intellij/contextive/build.gradle.kts",
+                    "hasChanged": true,
+                    "numMatches": 1,
+                    "numReplacements": 1
+                }],
+                "countMatches": true
             }]
         }],
         ["@semantic-release/npm",{
             "npmPublish": false,
             "pkgRoot": "vscode/contextive"
-        }],
-        ["@semantic-release/git",{
-            "assets": ["language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj", "vscode/contextive/CHANGELOG.md", "vscode/contextive/package.json", "vscode/contextive/package-lock.json", "vscode/contextive/npm-shrinkwrap.json"]
-        }],
-        "@semantic-release/github"
+        }]
     ]
 }

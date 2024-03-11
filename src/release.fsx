@@ -79,6 +79,11 @@ pipeline "Contextive Release" {
         run "npm install"
     }
 
+    stage "Install CI Dependencies" {
+        workingDir "ci/semantic-release-markdown-to-html"
+        run "npm install"
+    }
+
     stage "Release" { run """npm exec --prefix "vscode/contextive" -- semantic-release""" }
 
     runIfOnlySpecified false

@@ -1,0 +1,16 @@
+{
+  "name": "semantic-release-markdown-to-html",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@google/semantic-release-replace-plugin": "^1.2.7",
+    "markdown-it": "^14.0.0"
+  }
+}
