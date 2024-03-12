@@ -113,11 +113,6 @@ pipeline "Contextive VsCode Extension" {
         workingDir "vscode/contextive"
         whenCmdArg args.release
         whenCmdArg args.vscePlatform
-        // Temporary to retry intermittent issues with github assets upload/download on https://github.com/dev-cycles/contextive/actions/runs/8240804079/job/22536988921
-        whenCmd {
-            name args.dotnetRuntime.Name.Names.Head
-            acceptValues [ "linux-x64"; "osx-arm64" ]
-        }
 
         stage "Package" {
             run (fun ctx ->
