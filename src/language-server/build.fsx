@@ -92,9 +92,7 @@ let zipAndUploadAsset app =
                 workingDir app.Path
                 whenCmdArg args.release
 
-                echo
-                    "Skipping upload, as it was uploaded on https://github.com/dev-cycles/contextive/actions/runs/8232357150"
-            //run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {appZipPath app ctx}")
+                run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {appZipPath app ctx}")
             }
         }
     }

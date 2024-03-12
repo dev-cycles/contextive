@@ -50,7 +50,7 @@ let ghError msg =
     Error(msg)
 
 let appZipFileName app (ctx: Internal.StageContext) =
-    $"{app.Name}-{ctx.GetCmdArg(args.dotnetRuntime)}-{ctx.GetCmdArg(args.release)}.zip"
+    $"{app.Name}-{ctx.GetCmdArg(args.dotnetRuntime)}-{versionNumber (ctx.GetCmdArg(args.release))}.zip"
 
 let appZipPath app (ctx: Internal.StageContext) =
     System.IO.Path.GetFullPath(appZipFileName app ctx)
