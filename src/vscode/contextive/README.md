@@ -9,6 +9,10 @@ It should help new team members get up to speed more quickly in understanding do
 
 ![Example of Contextive in action.](../../../docs/wiki/images/simple-auto-complete-demo.gif)
 
+## Installation
+
+See [VsCode Installation Instructions](../../../docs/wiki/INSTALLATION.md#visual-studio-code).
+
 ## Getting Started
 
 Use the `Contextive: Initialize Definitions` command from the command palette to create a sample definitions file. A file will be created and opened with a sample set of definitions:
