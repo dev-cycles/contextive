@@ -8,15 +8,17 @@ For the following IDEs, Contextive can be installed via their plugin/extensions 
 
 Open Visual Studio Code, launch the quick open (`Ctrl+P`) and then enter `ext install devcycles.contextive`.  OR, search `contextive` in the extensions side-bar.
 
-Visit the [Contextive Marketplace](https://marketplace.visualstudio.com/items?itemName=devcycles.contextive) page for details.
+Visit the [Contextive Extension](https://marketplace.visualstudio.com/items?itemName=devcycles.contextive) VsCode Marketplace page for details.
 
 Check the extension [README](../../src/vscode/contextive/README.md) for usage instructions.
 
 ### IntelliJ Plugin Platform
 
-Since JetBrains [announced official support](https://blog.jetbrains.com/platform/2023/07/lsp-for-plugin-developers/) for the Language Server Protocol, I've been monitoring their progress and have a local alpha version working with minimal functionality (auto-complete only). An official Contextive plugin will be launched shortly, but it will not be fully capable until [hover support](https://youtrack.jetbrains.com/issue/IDEA-334989/LSP-API-support-Quick-Documentation-hover) is released.
+Open your JetBrains product, e.g. IntelliJ IDEA, or JetBrains Rider, open the Settings dialog and choose "Plugins".  Search `contextive` in the Marketplace tab and click the `Install` button.
 
-The latest update is that it's in the 2024.1 build, but is expected to be backported to the 2023.3.1 release.
+See JetBrains documentation on [installing plugins](https://www.jetbrains.com/help/idea/managing-plugins.html), and visit the [Contextive Plugin](https://plugins.jetbrains.com/plugin/23928-contextive) JetBrains Marketplace page for details.
+
+Check the plugin [README](../../src/intellij/contextive/README.md) for usage instructions.
 
 ## Language Server Configurations
 
