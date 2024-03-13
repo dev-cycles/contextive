@@ -40,7 +40,7 @@ jobs:
           java-version: '21'
 
       # - name: Language Server Artifact
-      #   uses: actions/download-artifact@v3
+      #   uses: actions/download-artifact@v4
       #   with:
       #     name: Contextive.LanguageServer-${{ inputs.dotnet_runtime }}
       #     path: src/

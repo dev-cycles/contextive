@@ -28,7 +28,7 @@ jobs:
         working-directory: src
 
       - name: Language Server Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Contextive.LanguageServer-${{inputs.dotnet_runtime}}
           path: ${{ steps.build.outputs.artifact-path }}
@@ -55,7 +55,7 @@ jobs:
           node-version: 20
 
       - name: Language Server Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Contextive.LanguageServer-${{ inputs.dotnet_runtime }}
           path: src/
