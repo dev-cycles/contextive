@@ -14,11 +14,14 @@ Check the extension [README](../../src/vscode/contextive/README.md) for usage in
 
 ### IntelliJ Plugin Platform
 
+> [!WARNING]  
+> This plugin is considered 'beta' status, as leverages relatively new [Language Server Protocol](https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html) support from JetBrains which is still marked as unstable in the IntelliJ Platform API. Some features may not work or may not work as expected. Please [report issues](https://github.com/dev-cycles/contextive/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=) in this project and we will liaise with JetBrains to resolve.
+
 Open your JetBrains product, e.g. IntelliJ IDEA, or JetBrains Rider, open the Settings dialog and choose "Plugins".  Search `contextive` in the Marketplace tab and click the `Install` button.
 
 See JetBrains documentation on [installing plugins](https://www.jetbrains.com/help/idea/managing-plugins.html), and visit the [Contextive Plugin](https://plugins.jetbrains.com/plugin/23928-contextive) JetBrains Marketplace page for details.
 
-Check the plugin [README](../../src/intellij/contextive/README.md) for usage instructions.
+Check the plugin [README](../../src/intellij/contextive/README.md) for usage instructions, known issues and links to related JetBrains issues with the Language Server Protocol support..
 
 ## Language Server Configurations
 
