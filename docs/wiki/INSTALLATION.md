@@ -21,7 +21,7 @@ Open your JetBrains product, e.g. IntelliJ IDEA, or JetBrains Rider, open the Se
 
 See JetBrains documentation on [installing plugins](https://www.jetbrains.com/help/idea/managing-plugins.html), and visit the [Contextive Plugin](https://plugins.jetbrains.com/plugin/23928-contextive) JetBrains Marketplace page for details.
 
-Check the plugin [README](../../src/intellij/contextive/README.md) for usage instructions, known issues and links to related JetBrains issues with the Language Server Protocol support..
+Check the plugin [README](../../src/intellij/contextive/README.md) for usage instructions, known issues and links to related JetBrains issues with the Language Server Protocol support.
 
 ## Language Server Configurations
 
