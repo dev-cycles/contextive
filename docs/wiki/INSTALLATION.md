@@ -8,7 +8,7 @@ For the following IDEs, Contextive can be installed via their plugin/extensions 
 
 Open Visual Studio Code, launch the quick open (`Ctrl+P`) and then enter `ext install devcycles.contextive`.  OR, search `contextive` in the extensions side-bar.
 
-Visit the [Contextive Extension](https://marketplace.visualstudio.com/items?itemName=devcycles.contextive) VsCode Marketplace page for details.
+Visit the [Contextive Extension](https://marketplace.visualstudio.com/items?itemName=devcycles.contextive) on the [VsCode Marketplace](https://marketplace.visualstudio.com/items?itemName=devcycles.contextive) for details.
 
 Check the extension [README](../../src/vscode/contextive/README.md) for usage instructions.
 
@@ -19,7 +19,7 @@ Check the extension [README](../../src/vscode/contextive/README.md) for usage in
 
 Open your JetBrains product, e.g. IntelliJ IDEA, or JetBrains Rider, open the Settings dialog and choose "Plugins".  Search `contextive` in the Marketplace tab and click the `Install` button.
 
-See JetBrains documentation on [installing plugins](https://www.jetbrains.com/help/idea/managing-plugins.html), and visit the [Contextive Plugin](https://plugins.jetbrains.com/plugin/23928-contextive) JetBrains Marketplace page for details.
+See JetBrains documentation on [installing plugins](https://www.jetbrains.com/help/idea/managing-plugins.html), and visit the [Contextive Plugin](https://plugins.jetbrains.com/plugin/23928-contextive) on the [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/23928-contextive) for details.
 
 Check the plugin [README](../../src/intellij/contextive/README.md) for usage instructions, known issues and links to related JetBrains issues with the Language Server Protocol support.
 
