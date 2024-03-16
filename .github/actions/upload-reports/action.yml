@@ -15,7 +15,7 @@ runs:
         to-slug: ${{ inputs.name }}
 
     - name: Upload ${{ inputs.name }} Logs
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: ${{ steps.name-slug.outputs.slug }}-logs-${{ env.DOTNET_VERSION }}-${{ runner.os }}
@@ -23,7 +23,7 @@ runs:
         if-no-files-found: ignore
 
     - name: Upload ${{ inputs.name }} VsCode Logs
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: ${{ steps.name-slug.outputs.slug }}-vscode-logs-${{ env.DOTNET_VERSION }}-${{ runner.os }}
@@ -31,11 +31,11 @@ runs:
         if-no-files-found: ignore
 
     - name: Upload ${{ inputs.name }} Test Report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: ${{ steps.name-slug.outputs.slug }}-test-results-net${{ env.DOTNET_VERSION }}-${{ runner.os }}
-        path: "**/(TestResults|test-results)/*.xml"
+        path: "**/(TestResults|test-results)/**/*.xml"
     
 
     - name: Create ${{ inputs.name }}Test Report Check
@@ -43,7 +43,7 @@ runs:
       if: always()
       with:
         name: ${{ inputs.name }} Tests (net${{ env.DOTNET_VERSION }} - ${{ runner.os }})
-        path: "**/(TestResults|test-results)/*.xml"
+        path: "**/(TestResults|test-results)/**/*.xml"
         reporter: ${{ inputs.reporter }} 
 
 
