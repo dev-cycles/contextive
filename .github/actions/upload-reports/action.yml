@@ -35,7 +35,7 @@ runs:
       if: always()
       with:
         name: ${{ steps.name-slug.outputs.slug }}-test-results-net${{ env.DOTNET_VERSION }}-${{ runner.os }}
-        path: "**/TestResults/TestResults*-${{ env.DOTNET_VERSION }}-${{ runner.os }}.xml"
+        path: "**/(TestResults|test-results)/*.xml"
     
 
     - name: Create ${{ inputs.name }}Test Report Check
@@ -43,7 +43,7 @@ runs:
       if: always()
       with:
         name: ${{ inputs.name }} Tests (net${{ env.DOTNET_VERSION }} - ${{ runner.os }})
-        path: "**/TestResults/TestResults*-${{ env.DOTNET_VERSION }}-${{ runner.os }}.xml"
+        path: "**/(TestResults|test-results)/*.xml"
         reporter: ${{ inputs.reporter }} 
 
 

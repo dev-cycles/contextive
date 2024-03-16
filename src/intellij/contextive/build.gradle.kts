@@ -13,6 +13,9 @@ repositories {
 
 dependencies {
   implementation("net.lingala.zip4j:zip4j:2.11.5")
+  testImplementation(kotlin("test"))
+  testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
+  testImplementation("io.mockk:mockk:1.13.10")
 }
 
 // Configure Gradle IntelliJ Plugin
@@ -53,5 +56,12 @@ tasks {
 
   publishPlugin {
     token.set(System.getenv("PUBLISH_TOKEN"))
+  }
+
+  test {
+    useJUnitPlatform()
+    testLogging {
+      events("PASSED", "SKIPPED", "FAILED")
+    }
   }
 }

@@ -49,8 +49,8 @@ jobs:
         run: ./gradlew build
         working-directory: src/intellij/contextive
 
-      # - uses: ./.github/actions/upload-reports
-      #   if: always()
-      #   with:
-      #     name: 'Contextive VsCode Extension'
-      #     reporter: java-junit
+      - uses: ./.github/actions/upload-reports
+        if: always()
+        with:
+          name: 'Contextive IntelliJ Plugin'
+          reporter: java-junit

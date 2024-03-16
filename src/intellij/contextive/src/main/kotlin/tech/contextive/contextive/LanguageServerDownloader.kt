@@ -21,7 +21,7 @@ private const val LANGUAGE_SERVER_TEMPLATE =
     "https://github.com/dev-cycles/contextive/releases/download/v%s/Contextive.LanguageServer-%s-%s-%1\$s.zip"
 private const val CONTEXTIVE_ID = "tech.contextive.contextive"
 
-private fun getOsCode(): String = System.getProperty("os.name").lowercase().run {
+fun getOsCode(): String = System.getProperty("os.name").lowercase().run {
     when {
         "win" in this -> "win"
         "mac" in this -> "osx"
