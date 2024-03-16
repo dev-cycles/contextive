@@ -15,6 +15,7 @@ dependencies {
   implementation("net.lingala.zip4j:zip4j:2.11.5")
   testImplementation(kotlin("test"))
   testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
   testImplementation("io.mockk:mockk:1.13.10")
 }
 
