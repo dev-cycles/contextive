@@ -83,13 +83,6 @@ let tests =
               let firstHoverContent = Seq.tryHead hoverContents
               let secondHoverContent = hoverContents |> Seq.tail |> Seq.tryHead
 
-              // The commented lines are what is really expected. The uncommented lines are what is happening.
-              // See https://github.com/microsoft/vscode/issues/178184 for why
-              // Notwithstanding inability to test, this is working properly at runtime.
-              // Leaving the incorrect assertions in place so that we find out when the bug is fixed.
-
-              // expectHoverContent firstHoverContent "class Page"
-              // expectHoverContent secondHoverContent "All the content displayed in a browser when a user visits a url."
-              expectHoverContent secondHoverContent "class Page"
-              expectHoverContent firstHoverContent "All the content displayed in a browser when a user visits a url."
-          } ]
+              expectHoverContent firstHoverContent "class Page"
+              expectHoverContent secondHoverContent "All the content displayed in a browser when a user visits a url."    
+        } ]
