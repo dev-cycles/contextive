@@ -1,6 +1,7 @@
 # Start Xvgb so extension tests can run in the background from the test explorer
 rm /tmp/.X99-lock -f
 /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+export DISPLAY=:99
 sudo service dbus start
 dbus-daemon --session --address=$DBUS_SESSION_BUS_ADDRESS --nofork --nopidfile --syslog-only &
 

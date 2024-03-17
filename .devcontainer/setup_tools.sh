@@ -7,16 +7,16 @@ npm install -g yo generator-code vsce
 echo "export PATH=$PATH:~/.dotnet/tools" >> /home/vscode/.bashrc
 PATH=$PATH:~/.dotnet/tools
 echo 
-dotnet new --install Fable.Template
+dotnet new install Fable.Template
 dotnet tool install dotnet-suggest --global
 dotnet tool install paket --global
 dotnet tool install fable --global
 dotnet tool install femto --global
 dotnet tool install fantomas --global
 
-push src
+pushd src
 dotnet tool restore
-pop
+popd
 
 ## dotnet-adr
 # Currently non-functional due to https://github.com/endjin/dotnet-adr/issues/203
@@ -34,6 +34,6 @@ pop
 export XDG_RUNTIME_DIR=/run/user/$(id -u)
 echo "export XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" >> ~/.bashrc
 echo "export DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus" >> ~/.bashrc
-sudo mkdir $XDG_RUNTIME_DIR
+sudo mkdir -p $XDG_RUNTIME_DIR
 sudo chmod 700 $XDG_RUNTIME_DIR
 sudo chown $(id -un):$(id -gn) $XDG_RUNTIME_DIR
