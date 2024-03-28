@@ -11,7 +11,7 @@ It should help new team members get up to speed more quickly in understanding do
 
 ## Installation
 
-See [IntelliJ IDEs (e.g. IDEA, Rider) Installation Instructions](https://github.com/dev-cycles/contextive/blob/main/docs/wiki/INSTALLATION.md#intellij-plugin-platform).
+See [IntelliJ IDEs (e.g. IDEA) Installation Instructions](https://github.com/dev-cycles/contextive/blob/main/docs/wiki/INSTALLATION.md#intellij-plugin-platform).
 
 ## Getting Started
 

@@ -25,7 +25,7 @@ See our [Installation Guide](./docs/wiki/INSTALLATION.md) for details on how to 
 Officially supported IDEs include:
 
 #### [VsCode](./docs/wiki/INSTALLATION.md#visual-studio-code)
-#### [IntelliJ IDEs (e.g. IDEA, Rider)](./docs/wiki/INSTALLATION.md#intellij-plugin-platform)
+#### [IntelliJ IDEs (e.g. IDEA, except Rider)](./docs/wiki/INSTALLATION.md#intellij-plugin-platform)
 #### [Neovim](./docs/wiki/INSTALLATION.md#neovim)
 #### [Helix](./docs/wiki/INSTALLATION.md#helix)
 
