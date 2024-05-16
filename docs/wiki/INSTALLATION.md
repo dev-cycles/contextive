@@ -17,7 +17,7 @@ Check the extension [README](../../src/vscode/contextive/README.md) for usage in
 > [!WARNING]  
 > This plugin is considered 'beta' status, as leverages relatively new [Language Server Protocol](https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html) support from JetBrains which is still marked as unstable in the IntelliJ Platform API. Some features may not work or may not work as expected. Please [report issues](https://github.com/dev-cycles/contextive/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=) in this project and we will liaise with JetBrains to resolve.
 > 
-> For example, Rider only supports Contextive in non-C# files, see #65
+> For example, Rider doesn't support C# files when opening a solution, see [#65](https://github.com/dev-cycles/contextive/issues/65)
 
 Open your JetBrains product, e.g. IntelliJ IDEA, or JetBrains Rider, open the Settings dialog and choose "Plugins".  Search `contextive` in the Marketplace tab and click the `Install` button.
 
