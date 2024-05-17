@@ -107,8 +107,7 @@ pipeline languageServer.Name {
 
     stage "Install Tools" {
         whenEnv { name args.event.Name }
-        installTool "paket"
-        run "dotnet tool restore"
+        dotnetRestoreTools
     }
 
     stage "Install Dependencies" {

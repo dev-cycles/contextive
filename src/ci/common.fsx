@@ -72,8 +72,8 @@ let gitHubGroupStart = ifTopLevelStage <| echoGitHubGroupStart
 
 let gitHubGroupEnd = ifTopLevelStage <| echoGitHubGroupEnd
 
-let installTool tool =
-    stage $"Install {tool}" { run $"dotnet tool install {tool} --global" }
+let dotnetRestoreTools =
+    stage $"Dotnet Restore Tools" { run "dotnet tool restore" }
 
 let env (envArg: EnvArg) =
     System.Environment.GetEnvironmentVariable(envArg.Name)

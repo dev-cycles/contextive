@@ -22,8 +22,7 @@ pipeline "Contextive VsCode Extension" {
     stage "Install Tools" {
         whenEnv { name args.ci.Name }
         paralle
-        installTool "paket"
-        installTool "fable"
+        dotnetRestoreTools
     }
 
     stage "Npm Install" {
