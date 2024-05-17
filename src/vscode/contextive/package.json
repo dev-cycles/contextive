@@ -24,8 +24,7 @@
 		"Dictionary"
 	],
 	"activationEvents": [
-		"workspaceContains:**/.contextive/**",
-		"onCommand:contextive.initialize"
+		"workspaceContains:**/.contextive/**"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
