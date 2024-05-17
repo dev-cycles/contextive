@@ -56,6 +56,7 @@ async function downloadVsCodeAndExtensions(version) {
 	cp.spawnSync(cli, [...args, '--install-extension', 'ms-dotnettools.csharp'], {
 		encoding: 'utf-8',
 		stdio: 'inherit',
+		shell: true
 	});
 	console.log("Post-install extensions.")
 	console.log("-------------------");
