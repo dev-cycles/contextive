@@ -112,7 +112,7 @@ pipeline languageServer.Name {
 
     stage "Install Dependencies" {
         workingDir "language-server"
-        run "paket restore"
+        run "dotnet paket restore"
     }
 
     stage "Build & Test" {

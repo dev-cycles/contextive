@@ -29,7 +29,7 @@ pipeline "Contextive VsCode Extension" {
         workingDir "vscode/contextive"
         paralle
         run "npm install"
-        run "paket restore"
+        run "dotnet paket restore"
     }
 
     stage "Start Xvbf & Dbus" {
