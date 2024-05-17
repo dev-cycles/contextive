@@ -51,10 +51,14 @@ async function downloadVsCodeAndExtensions(version) {
 		version
 	});
 	console.log('cli, args', cli, args);
+	console.log("-------------------");
+	console.log("Pre-install extensions...")
 	cp.spawnSync(cli, [...args, '--install-extension', 'ms-dotnettools.csharp'], {
 		encoding: 'utf-8',
 		stdio: 'inherit',
 	});
+	console.log("Post-install extensions.")
+	console.log("-------------------");
 }
 
 async function main() {
