@@ -50,13 +50,16 @@ async function downloadVsCodeAndExtensions(version) {
 	const [cli, ...args] = resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath, {
 		version
 	});
-	console.log('cli, args', cli, args);
+	const cwd = path.dirname(cli);
+	const cmd = path.basename(cli);
+	console.log('cli, cmd, cwd, args', cli, cmd, cwd, args);
 	console.log("-------------------");
-	console.log("Pre-install extensions...")
-	cp.spawnSync(cli, [...args, '--install-extension', 'ms-dotnettools.csharp'], {
+	console.log("Pre-install extensions...");
+	cp.spawnSync(cmd, [...args, '--install-extension', 'ms-dotnettools.csharp'], {
 		encoding: 'utf-8',
 		stdio: 'inherit',
-		shell: true
+		shell: true,
+		cwd,
 	});
 	console.log("Post-install extensions.")
 	console.log("-------------------");
