@@ -3,3 +3,5 @@ include:
     os: windows-latest
   - dotnet_runtime: linux-x64
     os: ubuntu-latest
+  - dotnet_runtime: osx-x64
+    os: macos-latest
