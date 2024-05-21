@@ -93,12 +93,10 @@ pipeline "Contextive VsCode Extension" {
     stage "Test" {
         workingDir "vscode/contextive"
 
-        // All github runners are x64, so the arm64 runtimes don't execute on them
-        // and we can only run tests with the x64 runtime builds.
         whenAny {
             whenCmd {
                 name args.dotnetRuntime.Name.Names.Head
-                acceptValues [ "linux-x64"; "osx-x64"; "win-x64" ]
+                acceptValues [ "linux-x64"; "osx-x64"; "win-x64"; "osx-arm64" ]
             }
 
             whenNot { whenEnv { name args.ci.Name } }

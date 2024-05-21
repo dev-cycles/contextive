@@ -43,7 +43,7 @@ let ifTopLevelStage fn (ctx: Internal.StageContext) =
     | _ -> ()
 
 let echoGitHubGroupStart (ctx: Internal.StageContext) = printfn "::group::%s" ctx.Name
-let echoGitHubGroupEnd (ctx: Internal.StageContext) = printfn "::endgroup::"
+let echoGitHubGroupEnd (_: Internal.StageContext) = printfn "::endgroup::"
 
 let ghError msg =
     printfn $"::error ::{msg}"
