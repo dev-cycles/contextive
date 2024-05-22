@@ -14,23 +14,6 @@ let inspect (_: obj) = jsNative
 
 let logInspect o = JS.console.log (inspect (o))
 
-let waitForTimeout timeoutMs (condition: unit -> JS.Promise<bool>) =
-    promise {
-        let endTime = System.DateTime.Now.AddMilliseconds(timeoutMs)
-
-        let mutable conditionResult = false
-
-        while (not conditionResult && System.DateTime.Now < endTime) do
-            let! result = condition ()
-            conditionResult <- result
-            do! Promise.sleep 100
-
-        if (not conditionResult) then
-            failwith $"Condition still untrue after {timeoutMs}ms"
-    }
-
-let waitFor = waitForTimeout 30000
-
 let getDocUri relativeFile =
     vscode.Uri.file (path.resolve (__dirname, relativeFile))
 
@@ -50,7 +33,7 @@ let openDocument (docUri: Uri) =
     promise {
         let! doc = workspace.openTextDocument (docUri)
         do! window.showTextDocument (doc, ViewColumn.Active, false) |> Thenable.Ignore
-        do! waitFor <| documentIsOpen docUri
+        do! Waiter.waitFor <| documentIsOpen docUri
         return docUri
     }
 

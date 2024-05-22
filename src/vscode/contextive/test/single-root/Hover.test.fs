@@ -35,7 +35,7 @@ let private getHover path position expectedResultCount =
             }
 
         do!
-            waitFor
+            Waiter.waitFor
             <| fun () ->
                 promise {
                     let! hoverContents = getHoverResults ()

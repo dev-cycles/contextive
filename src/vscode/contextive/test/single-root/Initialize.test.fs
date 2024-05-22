@@ -3,6 +3,7 @@ module Contextive.VsCodeExtension.Tests.E2E.SingleRoot.Initialize
 open Fable.Mocha
 open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
+open Contextive.VsCodeExtension
 open Contextive.VsCodeExtension.Tests.E2E.Helpers
 open Contextive.VsCodeExtension.Tests.E2E.Helpers.Helpers
 
@@ -27,7 +28,7 @@ let tests =
 
               do! VsCodeCommands.initialize () |> Promise.Ignore
 
-              do! waitFor <| documentIsOpen fullPath
+              do! Waiter.waitFor <| documentIsOpen fullPath
 
               let editor = findUriInVisibleEditors fullPath
 
@@ -42,7 +43,7 @@ let tests =
 
               let fullPath = getFullPathFromConfig ()
 
-              do! waitFor <| documentIsOpen fullPath
+              do! Waiter.waitFor <| documentIsOpen fullPath
 
               let editor = findUriInVisibleEditors fullPath
 
@@ -61,7 +62,7 @@ let tests =
 
               let fullPath = getFullPathFromConfig ()
 
-              do! waitFor <| documentIsOpen fullPath
+              do! Waiter.waitFor <| documentIsOpen fullPath
 
               let editor = findUriInVisibleEditors fullPath
 
