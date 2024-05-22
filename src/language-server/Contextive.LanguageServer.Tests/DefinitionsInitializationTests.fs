@@ -13,6 +13,27 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 [<CLIMutable>]
 type InitResult = { Success: bool }
 
+let initializeContextive (workspaceFolderOpt:string option) (pathValue:string) (extraConfig: ClientOptionsBuilder list) = async {
+        let workspacePath = Option.defaultValue "" workspaceFolderOpt
+        let config =
+          [ Workspace.optionsBuilder <| workspacePath
+            ConfigurationSection.contextivePathBuilder pathValue ] @ extraConfig
+
+        use! client = TestClient(config) |> init
+
+        let responseRouterReturns = client.SendRequest("contextive/initialize")
+
+        let! res =
+          responseRouterReturns.Returning<InitResult>(System.Threading.CancellationToken.None)
+          |> Async.AwaitTask
+          
+        let fullPath = Path.Combine(workspacePath, pathValue)
+        let fileExists = File.Exists(fullPath)
+        let contents = File.ReadAllText(fullPath)
+        
+        return (res, fileExists, contents)
+    }
+
 [<Tests>]
 let tests =
     testSequencedGroup "Initialization Tests"
@@ -21,21 +42,7 @@ let tests =
         [ testAsync "Initialization command creates default definitions file at configured path" {
               let pathValue = Guid.NewGuid().ToString()
 
-              let config =
-                  [ Workspace.optionsBuilder ""
-                    ConfigurationSection.contextivePathBuilder pathValue ]
-
-              use! client = TestClient(config) |> init
-
-              let responseRouterReturns = client.SendRequest("contextive/initialize")
-
-              let! res =
-                  responseRouterReturns.Returning<InitResult>(System.Threading.CancellationToken.None)
-                  |> Async.AwaitTask
-
-              let fileExists = File.Exists(pathValue)
-
-              let contents = File.ReadAllText(pathValue)
+              let! res, fileExists, contents = initializeContextive None pathValue []
 
               File.Delete(pathValue)
 
@@ -47,6 +54,23 @@ let tests =
                   |> Async.AwaitTask
                   |> Async.Ignore
           }
+        
+          testAsync "Initialization command creates default definitions file at configured path when subfolder doesn't exist" {
+              let pathValue = $"{Guid.NewGuid().ToString()}/{Guid.NewGuid().ToString()}"
+
+              let! res, fileExists, contents = initializeContextive None pathValue []
+
+              File.Delete(pathValue)
+              Directory.Delete(Path.GetDirectoryName(pathValue))
+
+              test <@ res.Success @>
+              test <@ fileExists @>
+
+              do!
+                  Verifier.Verify("Default Definitions in Non-existent Path", contents)
+                  |> Async.AwaitTask
+                  |> Async.Ignore
+          }
 
           testAsync "Initialization command opens new definitions file" {
               let pathValue = Guid.NewGuid().ToString()
@@ -54,19 +78,11 @@ let tests =
               let showDocAwaiter = ConditionAwaiter.create ()
               let showDocResponse = ShowDocumentResult(Success = true)
 
-              let config =
-                  [ Workspace.optionsBuilder ""
-                    ConfigurationSection.contextivePathBuilder pathValue
-                    showDocumentRequestHandlerBuilder <| handler showDocAwaiter showDocResponse ]
-
-              use! client = TestClient(config) |> init
-
-              let responseRouterReturns = client.SendRequest("contextive/initialize")
-
-              do!
-                  responseRouterReturns.Returning<InitResult>(System.Threading.CancellationToken.None)
-                  |> Async.AwaitTask
-                  |> Async.Ignore
+              do! initializeContextive
+                    None
+                    pathValue
+                    [ showDocumentRequestHandlerBuilder <| handler showDocAwaiter showDocResponse ]
+                |> Async.Ignore
 
               File.Delete(pathValue)
 
@@ -83,25 +99,31 @@ let tests =
               let showDocAwaiter = ConditionAwaiter.create ()
               let showDocResponse = ShowDocumentResult(Success = true)
 
-              let config =
-                  [ Workspace.optionsBuilder <| workspacePath
-                    ConfigurationSection.contextivePathBuilder pathValue
-                    showDocumentRequestHandlerBuilder <| handler showDocAwaiter showDocResponse ]
+              // let config =
+              //     [ Workspace.optionsBuilder <| workspacePath
+              //       ConfigurationSection.contextivePathBuilder pathValue
+              //       showDocumentRequestHandlerBuilder <| handler showDocAwaiter showDocResponse ]
 
               let existingContents = File.ReadAllText(fullPath)
+              
+              let! _, _, newContents =
+                    initializeContextive
+                        (Some workspacePath)
+                        pathValue
+                        [ showDocumentRequestHandlerBuilder <| handler showDocAwaiter showDocResponse ]
 
-              use! client = TestClient(config) |> init
+              //use! client = TestClient(config) |> init
 
-              let responseRouterReturns = client.SendRequest("contextive/initialize")
+              //let responseRouterReturns = client.SendRequest("contextive/initialize")
 
-              do!
-                  responseRouterReturns.Returning<InitResult>(System.Threading.CancellationToken.None)
-                  |> Async.AwaitTask
-                  |> Async.Ignore
+              // do!
+              //     responseRouterReturns.Returning<InitResult>(System.Threading.CancellationToken.None)
+              //     |> Async.AwaitTask
+              //     |> Async.Ignore
 
               let! showDocMsg = ConditionAwaiter.waitForAny showDocAwaiter
 
-              let newContents = File.ReadAllText(fullPath)
+              //let newContents = File.ReadAllText(fullPath)
 
               File.WriteAllText(fullPath, existingContents)
 

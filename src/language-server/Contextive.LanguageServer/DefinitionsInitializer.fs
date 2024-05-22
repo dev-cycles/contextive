@@ -76,6 +76,12 @@ let insertComment (beforeText: string) comment (text: string) =
 
     text.Substring(0, start) + comment + text.Substring(start)
 
+let ensureDirectoryExists (p:string) =
+    p
+    |> Path.GetDirectoryName
+    |> Directory.CreateDirectory
+    |> ignore
+
 let private handler pathGetter (showDocument: ShowDocumentParams -> System.Threading.Tasks.Task<ShowDocumentResult>) =
     fun () ->
         async {
@@ -91,7 +97,7 @@ let private handler pathGetter (showDocument: ShowDocumentParams -> System.Threa
                                 Definitions.serialize defaultDefinitions
                                 |> insertComment "contexts:" introComments
                                 |> insertComment "    paths:" pathComments
-
+                            ensureDirectoryExists p
                             File.WriteAllText(p, defaultDefinitionsText)
 
                         do!
