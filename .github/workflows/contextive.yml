@@ -26,6 +26,7 @@ jobs:
     with:
       dotnet_runtime: ${{ matrix.dotnet_runtime }}
       os: ${{ matrix.os }}
+      vsce_platform: ${{matrix.vsce_platform }}
 
   build-test-intellij:
     name: IntelliJ Plugin

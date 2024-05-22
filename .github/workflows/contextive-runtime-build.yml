@@ -8,6 +8,9 @@ on:
       os:
         required: true
         type: string
+      vsce_platform:
+        required: true
+        type: string
 env:
   DOTNET_VERSION: '7.0.x'
 jobs:
@@ -64,8 +67,16 @@ jobs:
       - run: echo "DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus" >> $GITHUB_ENV
 
       - name: Build
-        run: dotnet fsi vscode/build.fsx -- -r ${{ inputs.dotnet_runtime }}
+        id: build
+        run: dotnet fsi vscode/build.fsx -- -r ${{ inputs.dotnet_runtime }} --vsce-platform ${{ inputs.vsce_platform }}
         working-directory: src
+
+      - name: VsCode Extension Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Contextive-VsCode-Extension-${{inputs.vsce_platform}}.vsix
+          path: "src/vscode/contextive/*.vsix"
+          if-no-files-found: error
 
       - uses: ./.github/actions/upload-reports
         if: always()

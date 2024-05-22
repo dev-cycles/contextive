@@ -11,6 +11,8 @@ let vsCodeAssetFileName (ctx: Internal.StageContext) =
 let vsCodeAssetLabel (ctx: Internal.StageContext) =
     $"Contextive VsCode Extension {ctx.GetCmdArg(args.release)} ({ctx.GetCmdArg(args.vscePlatform)})"
 
+let vsCodePath = "vscode/contextive"
+
 pipeline "Contextive VsCode Extension" {
     description "Build & Test"
     noPrefixForStep
@@ -26,7 +28,7 @@ pipeline "Contextive VsCode Extension" {
     }
 
     stage "Npm Install" {
-        workingDir "vscode/contextive"
+        workingDir vsCodePath
         paralle
         run "npm install"
         run "dotnet paket restore"
@@ -52,7 +54,7 @@ pipeline "Contextive VsCode Extension" {
     }
 
     stage "Prep Environment" {
-        workingDir "vscode/contextive"
+        workingDir vsCodePath
 
         run "rm -fv .vscode-test/user-data/Crashpad/pending/*"
     }
@@ -91,7 +93,7 @@ pipeline "Contextive VsCode Extension" {
     }
 
     stage "Test" {
-        workingDir "vscode/contextive"
+        workingDir vsCodePath
 
         whenAny {
             whenCmd {
@@ -106,15 +108,21 @@ pipeline "Contextive VsCode Extension" {
         run "npm test"
     }
 
-    stage "Publish" {
-        workingDir "vscode/contextive"
-        whenCmdArg args.release
+    
+    stage "Prepublish" {
+        workingDir vsCodePath
         whenCmdArg args.vscePlatform
 
         stage "Package" {
             run (fun ctx ->
-                $"npx vsce package -t {ctx.GetCmdArg(args.vscePlatform)} --githubBranch main --baseImagesUrl https://raw.githubusercontent.com/dev-cycles/contextive/{ctx.GetCmdArg(args.release)}/src/vscode/contextive/")
+                $"npx vsce package -t {ctx.GetCmdArg(args.vscePlatform)} --githubBranch main --baseImagesUrl https://raw.githubusercontent.com/dev-cycles/contextive/{ctx.GetEnvVar(args.headSha.Name)}/src/vscode/contextive/")
         }
+    }
+
+    stage "Publish" {
+        workingDir vsCodePath
+        whenCmdArg args.release
+        whenCmdArg args.vscePlatform
 
         stage "Upload Asset" {
             run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {vsCodeAssetFileName ctx}")
