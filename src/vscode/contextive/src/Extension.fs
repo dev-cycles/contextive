@@ -12,12 +12,12 @@ exception NoExtensionApi
 let private ExtensionId = "contextive"
 
 let private languageClientOptions = jsOptions<LanguageClientOptions>
-let private executable f = jsOptions<Executable> (f)
+let private executable f = jsOptions<Executable> f
 
 let private executableOptions f =
-    Some <| jsOptions<ExecutableOptions> (f)
+    Some <| jsOptions<ExecutableOptions> f
 
-let private argsArray (f: string list) = Some <| new ResizeArray<string>(f)
+let private argsArray (f: string list) = Some <| ResizeArray<string>(f)
 
 let private debugServerOptions =
     executable (fun x ->
@@ -33,7 +33,7 @@ let private debugServerOptions =
 let private runServerOptions =
     executable (fun x ->
         x.command <- "./Contextive.LanguageServer"
-        x.options <- executableOptions (fun x -> x.cwd <- Some <| path.resolve (__dirname)))
+        x.options <- executableOptions (fun x -> x.cwd <- Some <| path.resolve __dirname))
 
 let private serverOptions =
     createObj [ "run" ==> runServerOptions; "debug" ==> debugServerOptions ]
@@ -57,12 +57,12 @@ type Api = { Client: LanguageClient }
 
 let private addDisposable (context: ExtensionContext) (disposable: Disposable) = context.subscriptions.Add(!!disposable)
 
-let private registerCommand (context: ExtensionContext) (name: string) (handler) =
+let private registerCommand (context: ExtensionContext) (name: string) handler =
     commands.registerCommand (name, handler) |> addDisposable context
 
 let registerConfigChangeNotifications context (client: LanguageClient) =
     workspace.onDidChangeConfiguration.Invoke(fun e ->
-        if e.affectsConfiguration (ExtensionId) then
+        if e.affectsConfiguration ExtensionId then
             client.sendNotification ("workspace/didChangeConfiguration", Some {| settings = None |})
 
         None)
