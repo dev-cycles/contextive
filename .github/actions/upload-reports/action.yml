@@ -1,4 +1,5 @@
 name: Upload Logs & Reports
+description: Standard approach to uploading logs & test report files to job artifacts
 inputs:
   name:
     description: 'Component Name'
@@ -18,7 +19,7 @@ runs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: ${{ steps.name-slug.outputs.slug }}-logs-${{ env.DOTNET_VERSION }}-${{ runner.os }}
+        name: "${{ steps.name-slug.outputs.slug }}-logs-${{ env.DOTNET_VERSION }}-${{ runner.os }}"
         path: "**/log*.txt"
         if-no-files-found: ignore
 
@@ -26,7 +27,7 @@ runs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: ${{ steps.name-slug.outputs.slug }}-vscode-logs-${{ env.DOTNET_VERSION }}-${{ runner.os }}
+        name: "${{ steps.name-slug.outputs.slug }}-vscode-logs-${{ env.DOTNET_VERSION }}-${{ runner.os }}"
         path: "**/user-data/logs/**/output_logging*/*"
         if-no-files-found: ignore
 
@@ -34,8 +35,10 @@ runs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: ${{ steps.name-slug.outputs.slug }}-test-results-net${{ env.DOTNET_VERSION }}-${{ runner.os }}
-        path: "**/(TestResults|test-results)/**/*.xml"
+        name: "${{ steps.name-slug.outputs.slug }}-test-results-net${{ env.DOTNET_VERSION }}-${{ runner.os }}"
+        path: |
+          **/TestResults/**/*.xml
+          **/test-results/**/*.xml
     
 
     - name: Create ${{ inputs.name }}Test Report Check
