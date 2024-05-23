@@ -7,11 +7,12 @@ let private tryReadFile path =
     if File.Exists(path) then
         File.ReadAllText(path) |> Ok
     else
-        Error("Definitions file not found.")
+        //Error("Definitions file not found.")
+        Error(FileNotFound)
 
 let private loadFromPath path =
     match path with
-    | Error(e) -> Error(e)
+    | Error(e) -> Error(PathInvalid(e))
     | Ok(p) ->
         { AbsolutePath = p
           Contents = tryReadFile p }

@@ -1,5 +1,6 @@
 module Contextive.Core.Tests.DefinitionsTests
 
+open Contextive.Core.File
 open Contextive.Core.Definitions
 open Expecto
 open Swensen.Unquote
@@ -282,28 +283,26 @@ contexts:
 
                 testCase "Error when file is empty"
                 <| fun () ->
-                    let errorMessage = unwrapError <| deserialize ""
-                    test <@ errorMessage = "Definitions file is empty." @>
+                    let result = deserialize ""
+                    test <@ result = Error(ParsingError("Definitions file is empty.")) @>
 
                 testCase "Error with unexpected key"
                 <| fun () ->
-                    let errorMessage =
-                        unwrapError
-                        <| deserialize
+                    let result =
+                        deserialize
                             """
 unknown:
 """
 
                     test
                         <@
-                            errorMessage = "Error parsing definitions file:  Object starting line 2, column 1 - Property 'unknown' not found on type 'Contextive.Core.Definitions+Definitions'."
+                            result = Error(ParsingError("Object starting line 2, column 1 - Property 'unknown' not found on type 'Contextive.Core.Definitions+Definitions'."))
                         @>
 
                 testCase "Error with extra colon typo"
                 <| fun () ->
-                    let errorMessage =
-                        unwrapError
-                        <| deserialize
+                    let result =
+                        deserialize
                             """
 contexts:
   - terms:
@@ -313,5 +312,5 @@ contexts:
 
                     test
                         <@
-                            errorMessage = "Error parsing definitions file:  Object starting line 5, column 19 - Mapping values are not allowed in this context."
+                            result = Error(ParsingError("Object starting line 5, column 19 - Mapping values are not allowed in this context."))
                         @> ] ]

@@ -5,7 +5,7 @@ open DotNet.Globbing
 open Contextive.Core.File
 open Contextive.Core.Definitions
 
-type FileLoader = unit -> Async<Result<File, string>>
+type FileLoader = unit -> Async<Result<File, FileError>>
 
 type Reloader = unit -> unit
 type Unregisterer = unit -> unit
@@ -24,7 +24,7 @@ type private State =
         { WorkspaceFolder = None
           Logger = fun _ -> ()
           DefinitionsFilePath = None
-          FileLoader = fun _ -> async.Return <| Error("Path not yet defined.")
+          FileLoader = fun _ -> async.Return <| Error(NotYetLoaded)
           Definitions = Definitions.Default
           RegisterWatchedFile = None
           UnregisterLastWatchedFile = None
@@ -52,7 +52,7 @@ type Message =
     | Load
     | Find of FindPayload
 
-let private loadFile (state: State) (file: Result<File, string>) =
+let private loadFile (state: State) (file: Result<File, FileError>) =
     match file with
     | Error(e) -> Error(e)
     | Ok({ AbsolutePath = ap
@@ -71,7 +71,7 @@ module private Handle =
             OnErrorLoading = initMsg.OnErrorLoading
             FileLoader = initMsg.FileLoader }
 
-    let updateFileWatchers (state: State) (file: Result<File, string>) =
+    let updateFileWatchers (state: State) (file: Result<File, FileError>) =
         match state.DefinitionsFilePath, file with
         | Some existingPath, Ok({ AbsolutePath = newPath }) when existingPath = newPath -> state
         | _, Ok({ AbsolutePath = newPath }) ->
@@ -102,8 +102,9 @@ module private Handle =
                 | Ok defs ->
                     state.Logger "Successfully loaded."
                     { state with Definitions = defs }
-                | Error msg ->
-                    let msg = $"Error loading definitions: {msg}"
+                | Error fileError ->
+                    let errorMessage = fileErrorMessage fileError
+                    let msg = $"Error loading definitions: {errorMessage}"
                     state.Logger msg
                     state.OnErrorLoading msg
 

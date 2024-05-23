@@ -63,7 +63,7 @@ let tests =
               test
                   <@
                       reply = Some
-                          $"Error loading definitions: Unable to locate path '{pathValue}' as not in a workspace."
+                          $"Error loading definitions: Invalid Path: Unable to locate path '{pathValue}' as not in a workspace."
                   @>
           }
 

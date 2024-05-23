@@ -1,6 +1,7 @@
 module Contextive.LanguageServer.Tests.FileLoaderTests
 
 open Expecto
+open Contextive.Core.File
 open Contextive.LanguageServer
 open Swensen.Unquote
 open System.IO
@@ -14,7 +15,7 @@ let tests =
           testAsync "Path is in error state" {
               let pathGetter () = async.Return <| Error("No path")
               let! file = (FileLoader.loader pathGetter) ()
-              test <@ file = Error("No path") @>
+              test <@ file = Error(PathInvalid("No path")) @>
           }
 
           testAsync "Path Doesn't exist" {
@@ -23,10 +24,10 @@ let tests =
               let! file = (FileLoader.loader pathGetter) ()
 
               match file with
-              | Error(e) -> failtest e
+              | Error(e) -> failtest <| e.ToString()
               | Ok(f) ->
                   test <@ f.AbsolutePath = path @>
-                  test <@ f.Contents = Error("Definitions file not found.") @>
+                  test <@ f.Contents = Error(FileNotFound) @>
           }
 
           testAsync "Path exists" {
@@ -37,7 +38,7 @@ let tests =
               let! file = (FileLoader.loader pathGetter) ()
 
               match file with
-              | Error(e) -> failtest e
+              | Error(e) -> failtest <| e.ToString()
               | Ok(f) ->
                   test <@ f.AbsolutePath = path @>
 

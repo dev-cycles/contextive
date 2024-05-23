@@ -3,6 +3,7 @@ module Contextive.Core.Definitions
 open YamlDotNet.Serialization
 open YamlDotNet.Serialization.NamingConventions
 open System.Linq
+open Contextive.Core.File
 
 open Humanizer
 
@@ -89,7 +90,7 @@ let deserialize (yml: string) =
         let definitions = deserializer.Deserialize<Definitions>(yml)
 
         match definitions |> box with
-        | null -> Error "Definitions file is empty."
+        | null -> Error(ParsingError("Definitions file is empty."))
         | _ -> Ok(definitions |> replaceNullsWithEmptyLists)
     with :? YamlDotNet.Core.YamlException as e ->
         let msg =
@@ -98,7 +99,7 @@ let deserialize (yml: string) =
             else
                 e.InnerException.Message
 
-        Error $"Error parsing definitions file:  Object starting line {e.Start.Line}, column {e.Start.Column} - {msg}"
+        Error(ParsingError($"Object starting line {e.Start.Line}, column {e.Start.Column} - {msg}"))
 
 open YamlDotNet.Core
 open YamlDotNet.Core.Events
