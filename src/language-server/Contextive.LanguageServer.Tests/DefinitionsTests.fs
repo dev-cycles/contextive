@@ -6,6 +6,7 @@ open System.IO
 open Contextive.LanguageServer
 open Helpers.TestClient
 open Contextive.Core
+open Contextive.Core.File
 open Contextive.LanguageServer.Tests.Helpers
 
 [<Tests>]
@@ -40,7 +41,7 @@ let tests =
               async {
                   let definitionsPath = getFileName definitionsFileName
                   let workspaceFolder = Some ""
-                  let configGetter = (fun _ -> async.Return definitionsPath)
+                  let configGetter = (fun _ -> async.Return <| Option.map configuredPath definitionsPath)
                   let! definitions = getDefinitions configGetter workspaceFolder
                   let! contexts = Definitions.find definitions termFileUri id
                   return contexts |> Definitions.FindResult.allTerms
@@ -128,7 +129,7 @@ let tests =
                   let mutable path = getFileName fileName
 
                   let workspaceFolder = Some ""
-                  let configGetter = (fun _ -> async.Return path)
+                  let configGetter = (fun _ -> async.Return <| Option.map configuredPath path)
 
                   let errorMessageAwaiter = ConditionAwaiter.create ()
 

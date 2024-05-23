@@ -103,10 +103,14 @@ module private Handle =
                     state.Logger "Successfully loaded."
                     { state with Definitions = defs }
                 | Error fileError ->
-                    let errorMessage = fileErrorMessage fileError
-                    let msg = $"Error loading definitions: {errorMessage}"
-                    state.Logger msg
-                    state.OnErrorLoading msg
+                    match fileError with
+                    | DefaultFileNotFound ->
+                        state.Logger "No definitions file configured, and default file not found."
+                    | _ ->
+                        let errorMessage = fileErrorMessage fileError
+                        let msg = $"Error loading definitions: {errorMessage}"
+                        state.Logger msg
+                        state.OnErrorLoading msg
 
                     { state with
                         Definitions = Definitions.Default }

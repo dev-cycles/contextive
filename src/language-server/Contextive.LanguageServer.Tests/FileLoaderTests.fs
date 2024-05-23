@@ -19,20 +19,21 @@ let tests =
           }
 
           testAsync "Path Doesn't exist" {
-              let path = "/file/not/found"
+              let path = configuredPath "/file/not/found"
               let pathGetter () = async.Return <| Ok(path)
               let! file = (FileLoader.loader pathGetter) ()
 
               match file with
               | Error(e) -> failtest <| e.ToString()
               | Ok(f) ->
-                  test <@ f.AbsolutePath = path @>
+                  test <@ f.AbsolutePath = path.Path @>
                   test <@ f.Contents = Error(FileNotFound) @>
           }
 
           testAsync "Path exists" {
               let path =
                   Path.Combine(Directory.GetCurrentDirectory(), "fixtures/completion_tests/two.yml")
+                  |> configuredPath
 
               let pathGetter () = async.Return <| Ok(path)
               let! file = (FileLoader.loader pathGetter) ()
@@ -40,7 +41,7 @@ let tests =
               match file with
               | Error(e) -> failtest <| e.ToString()
               | Ok(f) ->
-                  test <@ f.AbsolutePath = path @>
+                  test <@ f.AbsolutePath = path.Path @>
 
                   test
                       <@

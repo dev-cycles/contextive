@@ -81,7 +81,7 @@ let tests =
               do! initializeContextive
                     None
                     pathValue
-                    [ showDocumentRequestHandlerBuilder <| handler showDocAwaiter showDocResponse ]
+                    [ showDocumentRequestHandlerBuilder <| requestHandler showDocAwaiter showDocResponse ]
                 |> Async.Ignore
 
               File.Delete(pathValue)
@@ -98,32 +98,16 @@ let tests =
 
               let showDocAwaiter = ConditionAwaiter.create ()
               let showDocResponse = ShowDocumentResult(Success = true)
-
-              // let config =
-              //     [ Workspace.optionsBuilder <| workspacePath
-              //       ConfigurationSection.contextivePathBuilder pathValue
-              //       showDocumentRequestHandlerBuilder <| handler showDocAwaiter showDocResponse ]
-
+              
               let existingContents = File.ReadAllText(fullPath)
               
               let! _, _, newContents =
                     initializeContextive
                         (Some workspacePath)
                         pathValue
-                        [ showDocumentRequestHandlerBuilder <| handler showDocAwaiter showDocResponse ]
-
-              //use! client = TestClient(config) |> init
-
-              //let responseRouterReturns = client.SendRequest("contextive/initialize")
-
-              // do!
-              //     responseRouterReturns.Returning<InitResult>(System.Threading.CancellationToken.None)
-              //     |> Async.AwaitTask
-              //     |> Async.Ignore
+                        [ showDocumentRequestHandlerBuilder <| requestHandler showDocAwaiter showDocResponse ]
 
               let! showDocMsg = ConditionAwaiter.waitForAny showDocAwaiter
-
-              //let newContents = File.ReadAllText(fullPath)
 
               File.WriteAllText(fullPath, existingContents)
 

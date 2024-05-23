@@ -3,6 +3,7 @@ module Contextive.LanguageServer.PathResolver
 open System
 open System.Runtime.InteropServices
 open System.IO
+open Contextive.Core.File
 
 let private getProc () =
     let proc = new Diagnostics.Process()
@@ -44,15 +45,16 @@ let private shellOutToGetPath wsf configuredPath =
         Serilog.Log.Logger.Error $"Got {e}"
         Error(e.ToString())
 
-let resolvePath workspaceFolder (path: string option) =
+let resolvePath workspaceFolder (path: PathConfiguration option) =
     match path with
     | None -> Error("No path defined - please check \"contextive.path\" setting.")
     | Some p ->
-        if Path.IsPathRooted(p) then
+        if Path.IsPathRooted(p.Path) then
             Ok(p)
-        else if p.Contains("$(") then
-            shellOutToGetPath workspaceFolder p
+        else if p.Path.Contains("$(") then
+            shellOutToGetPath workspaceFolder p.Path
+            |> Result.map (fun newPath -> { p with Path = newPath })
         else
             match workspaceFolder with
-            | Some wsf -> Path.Combine(wsf, p) |> Ok
-            | None -> Error($"Unable to locate path '{p}' as not in a workspace.")
+            | Some wsf -> Ok({ p with Path = Path.Combine(wsf, p.Path) })
+            | None -> Error($"Unable to locate path '{p.Path}' as not in a workspace.")

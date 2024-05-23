@@ -2,8 +2,11 @@ module Contextive.LanguageServer.Tests.PathResolverTests
 
 open Expecto
 open Contextive.LanguageServer
+open Contextive.Core.File
 open Swensen.Unquote
 open System.Runtime.InteropServices
+
+let pathOf p = (Result.defaultValue (configuredPath "") p).Path
 
 [<Tests>]
 let tests =
@@ -11,7 +14,7 @@ let tests =
         "LanguageServer.Path Resolver Tests"
         [ testCase "No Workspace, non-root path"
           <| fun () ->
-              let p = PathResolver.resolvePath None (Some "path/to/file")
+              let p = PathResolver.resolvePath None ("path/to/file" |> configuredPath |> Some)
               test <@ p = Error("Unable to locate path 'path/to/file' as not in a workspace.") @>
 
           testCase "No Workspace, no path"
@@ -21,32 +24,32 @@ let tests =
 
           testCase "Workspace, non-root path"
           <| fun () ->
-              let p = PathResolver.resolvePath (Some "/workspace") (Some "path")
-              test <@ p = Ok(System.IO.Path.Join("/workspace", "path")) @>
+              let p = PathResolver.resolvePath (Some "/workspace") ("path" |> configuredPath |> Some)
+              test <@ pathOf p = System.IO.Path.Join("/workspace", "path") @>
 
           testCase "No Workspace, Root path"
           <| fun () ->
-              let p = PathResolver.resolvePath None (Some "/path")
-              test <@ p = Ok("/path") @>
+              let p = PathResolver.resolvePath None ("/path" |> configuredPath |> Some)
+              test <@ pathOf p = "/path" @>
 
           testCase "Workspace, Root path"
           <| fun () ->
-              let p = PathResolver.resolvePath (Some "/workspace") (Some "/path")
-              test <@ p = Ok("/path") @>
+              let p = PathResolver.resolvePath (Some "/workspace") ("/path" |> configuredPath |> Some)
+              test <@ pathOf p = "/path" @>
 
           testCase "No Workspace, Process Shell path"
           <| fun () ->
-              let p = PathResolver.resolvePath None (Some "$(echo \"/workspace\")/path")
-              test <@ p = Ok("/workspace/path") @>
+              let p = PathResolver.resolvePath None ("$(echo \"/workspace\")/path" |> configuredPath |> Some)
+              test <@ pathOf p = "/workspace/path" @>
 
           testCase "Workspace, Process Shell path"
           <| fun () ->
-              let p = PathResolver.resolvePath None (Some "$(echo \"/workspace\")/path")
-              test <@ p = Ok("/workspace/path") @>
+              let p = PathResolver.resolvePath None ("$(echo \"/workspace\")/path" |> configuredPath |> Some)
+              test <@ pathOf p = "/workspace/path" @>
 
           testCase "Process Error"
           <| fun () ->
-              let p = PathResolver.resolvePath None (Some "$(noprogram)/path")
+              let p = PathResolver.resolvePath None ("$(noprogram)/path" |> configuredPath |> Some)
 
               test
                   <@

@@ -1,7 +1,14 @@
 module Contextive.Core.File
 
+type PathConfiguration =
+    { Path: string
+      IsDefault: bool }
+    
+let configuredPath p = { Path = p; IsDefault = false }
+
 type FileError =
     | PathInvalid of string
+    | DefaultFileNotFound
     | FileNotFound
     | NotYetLoaded
     | ParsingError of string
@@ -14,5 +21,6 @@ let fileErrorMessage =
     function
     | PathInvalid(m) -> $"Invalid Path: {m}"
     | ParsingError(m) -> $"Parsing Error: {m}"
+    | DefaultFileNotFound -> "Default definitions file not found."
     | FileNotFound -> "Definitions file not found."
     | NotYetLoaded -> "Should Not Be Reached"

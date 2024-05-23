@@ -2,6 +2,7 @@ module Contextive.LanguageServer.Tests.InitializationTests
 
 open System
 open Expecto
+open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open Swensen.Unquote
 open Contextive.LanguageServer.Tests.Helpers
 open Helpers.TestClient
@@ -78,6 +79,48 @@ let tests =
               use client = client
 
               test <@ reply = expectedResult @>
+          }
+          
+          testAsync "Server doesn't error when no configuration supplied but file doesn't exists" {
+              let showErrorAwaiter = ConditionAwaiter.create ()
+              
+              let config =
+                  [ Workspace.optionsBuilder "fixtures/non_existent_folder_tests"
+                    ConfigurationSection.configurationHandlerBuilder "dummySection" (fun () -> Map [])
+                    Window.showMessageHandlerBuilder <| Window.notificationHandler<ShowMessageParams> showErrorAwaiter
+                    ]
+
+              let expectedResult = Some "No definitions file configured, and default file not found."
+
+              let! (client, reply, _) = TestClientWithCustomInitWait(config, expectedResult) |> initAndWaitForReply
+              use client = client
+              
+              let! receivedMessage = ConditionAwaiter.waitForAnyTimeout 1 showErrorAwaiter
+
+              test <@ reply = expectedResult @>
+              test <@ receivedMessage.IsNone @>
+          }
+          
+          testAsync "Server errors when configuration supplied and file doesn't exists" {
+              let showErrorAwaiter = ConditionAwaiter.create ()
+              let pathValue = Guid.NewGuid().ToString()
+              
+              let config =
+                  [ Workspace.optionsBuilder "fixtures/non_existent_folder_tests"
+                    ConfigurationSection.contextivePathBuilder pathValue
+                    Window.showMessageHandlerBuilder <| Window.notificationHandler<ShowMessageParams> showErrorAwaiter
+                    ]
+
+              let expectedResult = Some "Error loading definitions: Definitions file not found."
+
+              let! (client, reply, _) = TestClientWithCustomInitWait(config, expectedResult) |> initAndWaitForReply
+              use client = client
+              
+              let! receivedMessage = ConditionAwaiter.waitForAny showErrorAwaiter
+
+              test <@ reply = expectedResult @>
+              test <@ receivedMessage.Value.Type = MessageType.Warning @>
+              test <@ receivedMessage.Value.Message = expectedResult.Value @>
           }
 
           ]

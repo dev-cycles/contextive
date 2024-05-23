@@ -11,6 +11,7 @@ open OmniSharp.Extensions.JsonRpc
 open Models
 open System.IO
 open Contextive.Core
+open Contextive.Core.File
 open Contextive.Core.Definitions
 
 let introComments =
@@ -90,7 +91,7 @@ let private handler pathGetter (showDocument: ShowDocumentParams -> System.Threa
             return!
                 match path with
                 | Error(e) -> async { return { Success = false } }
-                | Ok(p) ->
+                | Ok({ Path = p }) ->
                     async {
                         if not <| File.Exists(p) then
                             let defaultDefinitionsText =

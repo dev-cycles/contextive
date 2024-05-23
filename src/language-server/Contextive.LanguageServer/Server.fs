@@ -1,5 +1,6 @@
 module Contextive.LanguageServer.Server
 
+open Contextive.Core.File
 open System.Threading.Tasks
 open OmniSharp.Extensions.LanguageServer.Server
 open OmniSharp.Extensions.LanguageServer.Protocol.Server
@@ -41,10 +42,10 @@ let private getConfig (s: ILanguageServer) section key =
         let value =
             if System.String.IsNullOrEmpty configValue then
                 match key with
-                | key when key = pathKey -> Some defaultContextiveDefinitionsPath
+                | key when key = pathKey -> Some { Path = defaultContextiveDefinitionsPath; IsDefault = true }
                 | _ -> None
             else
-                Some configValue
+                Some { Path = configValue; IsDefault = false }
 
         Log.Logger.Information $"Got {key} {value}"
         return value
