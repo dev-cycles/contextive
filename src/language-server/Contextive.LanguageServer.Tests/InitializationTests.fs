@@ -67,17 +67,17 @@ let tests =
                   @>
           }
 
-          testAsync "Server loads contextive file from default location when no configuration supplied" {
+          testAsync "Server loads contextive file from default location when no configuration supplied and file exists" {
               let config =
-                  [ Workspace.optionsBuilder ""
+                  [ Workspace.optionsBuilder "fixtures/default_tests"
                     ConfigurationSection.configurationHandlerBuilder "dummySection" (fun () -> Map []) ]
 
-              let defaultPath = ".contextive/definitions.yml"
+              let expectedResult = Some "Successfully loaded."
 
-              let! (client, reply, _) = TestClient(config) |> initAndWaitForReply
+              let! (client, reply, _) = TestClientWithCustomInitWait(config, expectedResult) |> initAndWaitForReply
               use client = client
 
-              test <@ (defaultArg reply "").Contains(defaultPath) @>
+              test <@ reply = expectedResult @>
           }
 
           ]

@@ -1,0 +1,6 @@
+# This file must exist and have valid content to allow the:
+# "LanguageServer.Initialization Tests.Server loads contextive file from default location when no configuration supplied and file exists"
+# test to pass.
+contexts:
+  - terms:
+      - name: placeholder
