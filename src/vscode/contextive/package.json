@@ -40,7 +40,7 @@
 			"properties": {
 				"contextive.path": {
 					"type": "string",
-					"default": ".contextive/definitions.yml",
+					"default": null,
 					"description": "Path to the Contextive Definitions File"
 				}
 			}

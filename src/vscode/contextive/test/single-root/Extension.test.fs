@@ -17,16 +17,16 @@ let tests =
               let extension = extensions.all.Find(fun x -> x.id = "ms-dotnettools.csharp")
               Expect.equal extension.isActive true "Extension is not active"
 
-          testCase "Extension has path config"
+          testCase "Extension has no default path config"
           <| fun () ->
               let config = workspace.getConfiguration ("contextive")
               let path = config["path"]
-              Expect.isSome path "contextive.path config is not present"
+              Expect.isNone path "contextive.path config is present"
 
-              Expect.equal
-                  path.Value
-                  ".contextive/definitions.yml"
-                  "contextive.path config is not the default value - it must match the default configured in the language server"
+          //   Expect.equal
+          //       path.Value
+          //       ".contextive/definitions.yml"
+          //       "contextive.path config is not the default value - it must match the default configured in the language server"
 
           testCaseAsync "Language Client becomes Ready"
           <| async { getLanguageClient () |> ignore } ]

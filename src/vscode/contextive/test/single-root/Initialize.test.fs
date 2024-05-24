@@ -41,7 +41,7 @@ let tests =
           <| async {
               do! VsCodeCommands.initialize () |> Promise.Ignore
 
-              let fullPath = getFullPathFromConfig ()
+              let fullPath = getDefaultPath ()
 
               do! Waiter.waitFor <| documentIsOpen fullPath
 
