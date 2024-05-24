@@ -66,8 +66,10 @@ let pathInWorkspace path =
 let getConfig () =
     workspace.getConfiguration ("contextive")
 
-let getDefaultPath () =
-    pathInWorkspace ".contextive/definitions.yml"
+[<Literal>]
+let defaultRelativePath = ".contextive/definitions.yml"
+
+let getDefaultPath () = pathInWorkspace defaultRelativePath
 
 let getFullPathFromConfig () =
     let config = getConfig ()

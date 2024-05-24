@@ -228,12 +228,33 @@ When hovering over `BillingDemo/Policy.cs` we get:
 
 Some IDEs support a [multi-root workspace](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#workspace_workspaceFolders) configuration which allows separate folders to be selected as 'roots' of a workspace. 
 
-At present, Contextive only supports this for [VsCode Multi-Root](https://code.visualstudio.com/docs/editor/multi-root-workspaces) and only if the definitions/terminology for all roots are in a shared file.  (Support for separate files per root is a future enhancement.)
+So far, Contextive only supports this under ALL the following circumstances:
 
-The reason is that the Contextive definitions file is located at `.contextive/definitions.yml` by default - as this is a relative path, in a single-root configuration it is relative to the workspace root. In the multi-root configuration, it's not clear which root it's relative to.  So a custom VsCode middleware rewrites the setting to an absolute path computed relative to the folder of the `.code-workspaces` file to avoid ambiguity about which root it is relative to.
+1. You are using the VsCode IDE in a [Multi-Root](https://code.visualstudio.com/docs/editor/multi-root-workspaces) configuration AND
+2. The definitions/terminology for all roots are in a shared file (Support for separate files per root is a future enhancement) AND
+3. The value for the `contextive.path` configuration parameter is explicitly provided in the `settings` key of the `.code-workspaces` file  
+
+The reason is that the Contextive definitions file location defaults to the relative path `.contextive/definitions.yml`.  This default is defined in the language server (to ensure consistency across IDEs). In a single-root configuration it's clear what base path it is relative to, but with multi-root it's ambiguous as to which root the path is relative to.
+
+To resolve this, custom VsCode middleware rewrites the setting to an absolute path computed relative to the folder of the `.code-workspaces`, however this only works if VsCode is aware of the setting value to be re-written.
+
+> [!WARNING]  
+> In the initial support for multi-root workspaces, the default value was defined in the VsCode extension, so the path rewrite worked on this default value and an explicit setting was not required.
+> 
+> With the removal of the vscode default value, this no longer works and an explicit value is required in the `settings` key in the `.code-workspaces` file.
+>
+> If you are using the default location, please set this value to `.contextive/definitions.yml`, e.g. your `.code-workspaces` file should have:
+>
+> ```
+> {
+>    "settings": {
+>       "contextive.path": ".contextive/definitions.yml"
+>    }  
+> }
+> ```
 
 Also note that the `paths` key in the Contextive definitions file relates to the paths of the roots on disk, not to their names in the vscode multi-root configuration.
 
-If you'd like to store the definitions file in a different location, the appropriate settings location to use is the `settings` key in the `.code-workspaces` file itself, as this will apply in all roots.
+If you'd like to store the definitions file in a different location, update the setting in the `.code-workspaces` file.
 
 If you need multi-root support in another IDE, please raise a [github issue](https://github.com/dev-cycles/contextive/issues/new?assignees=&labels=&projects=&template=feature_request.md&title=)!
