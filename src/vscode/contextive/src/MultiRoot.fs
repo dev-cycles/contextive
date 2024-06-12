@@ -14,7 +14,8 @@ let getPath (result: ResizeArray<obj>) = result[0]?path
 
 let private configExists (result: ResizeArray<obj>) = result.Count > 0
 
-let private isConfiguredPathAbsolute (result: ResizeArray<obj>) = result |> getPath |> path.isAbsolute
+let private isConfiguredPathAbsolute (result: ResizeArray<obj>) =
+    result |> getPath |> (fun p -> p = null || path.isAbsolute p)
 
 let private pathNeedsRewriting (result: ResizeArray<obj>) =
     configExists result && not <| isConfiguredPathAbsolute result

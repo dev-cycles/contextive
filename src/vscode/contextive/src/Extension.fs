@@ -14,8 +14,7 @@ let private ExtensionId = "contextive"
 let private languageClientOptions = jsOptions<LanguageClientOptions>
 let private executable f = jsOptions<Executable> f
 
-let private executableOptions f =
-    Some <| jsOptions<ExecutableOptions> f
+let private executableOptions f = Some <| jsOptions<ExecutableOptions> f
 
 let private argsArray (f: string list) = Some <| ResizeArray<string>(f)
 
