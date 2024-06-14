@@ -17,6 +17,7 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
   testImplementation("io.mockk:mockk:1.13.10")
+  testImplementation("com.github.stefanbirkner:system-lambda:1.1.0")
 }
 
 // Configure Gradle IntelliJ Plugin
