@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+  implementation("net.harawata:appdirs:1.2.2")
   implementation("net.lingala.zip4j:zip4j:2.11.5")
   testImplementation(kotlin("test"))
   testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")

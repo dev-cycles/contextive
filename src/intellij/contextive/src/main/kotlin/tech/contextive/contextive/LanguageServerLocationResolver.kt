@@ -2,6 +2,7 @@ package tech.contextive.contextive
 
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
+import net.harawata.appdirs.AppDirsFactory
 import java.net.URI
 import java.nio.file.Path
 
@@ -42,7 +43,9 @@ class LanguageServerLocationResolver {
     fun path(): Path =
         PluginManagerCore
             .getPlugin(PluginId.getId(CONTEXTIVE_ID))!!.run {
-                this.pluginPath.resolve("language-server")
+                val appDirs = AppDirsFactory.getInstance()
+                Path.of(appDirs.getUserDataDir("Contextive", null, "tech.contextive"))
+                    .resolve("language-server")
                     .resolve(this.version).resolve(getLanguageServerFileName())
             }
 

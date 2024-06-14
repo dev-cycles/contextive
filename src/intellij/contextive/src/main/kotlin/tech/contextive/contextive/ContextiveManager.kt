@@ -3,6 +3,7 @@ package tech.contextive.contextive
 import com.intellij.openapi.project.BaseProjectDirectories.Companion.getBaseDirectories
 import com.intellij.openapi.project.Project
 import com.intellij.platform.lsp.api.LspServerSupportProvider
+import com.intellij.platform.lsp.api.LspServerManager
 
 class ContextiveManager(
     val lsDownloader: LanguageServerDownloadScheduler,
@@ -13,14 +14,15 @@ class ContextiveManager(
         val contextiveDefinitionsFile =
             project.getBaseDirectories().first().findFileByRelativePath(".contextive/definitions.yml");
         if (contextiveDefinitionsFile?.exists() == true) {
-            lsDownloader.scheduleDownloadIfRequired { path ->
+            lsDownloader.scheduleDownloadIfRequired({
+                LspServerManager.getInstance(project).startServersIfNeeded(ContextiveLspServerSupportProvider::class.java)
+            }, {
                 serverStarter.ensureServerStarted(
                     LspDescriptor(
-                        path,
-                        project
-                    )
+                        it,
+                        project)
                 )
-            }
+            })
 
         }
     }

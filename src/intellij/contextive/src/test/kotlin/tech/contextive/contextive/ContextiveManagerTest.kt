@@ -11,12 +11,13 @@ import java.util.*
 class ContextiveManagerTest {
 
     private fun getImmediateDownloadScheduler(expectedDownloadPath: Path) : LanguageServerDownloadScheduler {
-        val onDownloadedSlot = slot<(Path) -> Unit>()
+        val onDownloadCompleteSlot = slot<() -> Unit>()
+        val onAlreadyDownloadedSlot = slot<(Path) -> Unit>()
         return mockk<LanguageServerDownloadScheduler>(relaxed = true) {
             every {
-                scheduleDownloadIfRequired(onDownloaded = capture(onDownloadedSlot))
+                scheduleDownloadIfRequired(onDownloadComplete = capture(onDownloadCompleteSlot), onAlreadyDownloaded = capture(onAlreadyDownloadedSlot))
             } answers {
-                onDownloadedSlot.captured(expectedDownloadPath)
+                onAlreadyDownloadedSlot.captured(expectedDownloadPath)
             }
         }
     }
@@ -52,7 +53,7 @@ class ContextiveManagerTest {
         contextiveManager.startIfRequired()
 
         // Assert
-        verify(exactly = expectedServerStartInvocationCount) { contextiveLsDownloader.scheduleDownloadIfRequired(any()) }
+        verify(exactly = expectedServerStartInvocationCount) { contextiveLsDownloader.scheduleDownloadIfRequired(any(), any()) }
     }
 
     @Test
@@ -72,6 +73,6 @@ class ContextiveManagerTest {
         contextiveManager.startIfRequired()
 
         // Assert
-        verify() { serverStarter.ensureServerStarted(match<LspDescriptor> { it.languageServerPath == mockPath }) }
+        verify { serverStarter.ensureServerStarted(match<LspDescriptor> { it.languageServerPath == mockPath }) }
     }
 }

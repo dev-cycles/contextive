@@ -15,6 +15,7 @@ import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.openapi.extensions.PluginId
 import io.mockk.unmockkAll
+import net.harawata.appdirs.AppDirsFactory
 import org.junit.jupiter.api.AfterEach
 import java.net.URI
 import java.nio.file.Path
@@ -29,7 +30,6 @@ class LanguageServerLocationResolverTest {
     private fun mockPluginManager(basePath: String, version: String) {
         val plugin = mockk<IdeaPluginDescriptor> {
             every { getVersion() } answers { version }
-            every { pluginPath } answers { Path.of(basePath) }
         }
         mockkStatic(PluginManagerCore::class)
         every {
@@ -37,6 +37,14 @@ class LanguageServerLocationResolverTest {
                 match<PluginId> { it.idString == "tech.contextive.contextive" }
             )
         } answers { plugin }
+        mockkStatic(AppDirsFactory::class)
+        every {
+            AppDirsFactory.getInstance()
+        } returns mockk {
+            every {
+                getUserDataDir("Contextive", null, "tech.contextive")
+            } returns basePath
+        }
     }
 
     @ParameterizedTest
