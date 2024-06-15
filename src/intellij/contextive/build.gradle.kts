@@ -1,7 +1,7 @@
 plugins {
   id("java")
   id("org.jetbrains.kotlin.jvm") version "1.9.23"
-  id("org.jetbrains.intellij") version "1.17.2"
+  id("org.jetbrains.intellij") version "1.17.3"
 }
 
 group = "tech.contextive"
@@ -24,7 +24,7 @@ dependencies {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-  version.set("2023.3.2")
+  version.set("2024.1.1")
   type.set("IU") // Target IDE Platform
 
   plugins.set(listOf(/* Plugin Dependencies */))
@@ -41,7 +41,7 @@ tasks {
   }
 
   patchPluginXml {
-    sinceBuild.set("233")
+    sinceBuild.set("241")
     untilBuild.set("241.*")
   }
 

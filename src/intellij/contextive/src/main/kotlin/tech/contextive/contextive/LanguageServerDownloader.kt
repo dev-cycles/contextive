@@ -4,7 +4,9 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.platform.ide.progress.withBackgroundProgress
 import com.intellij.platform.util.progress.*
 import com.intellij.openapi.project.Project
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
 import net.lingala.zip4j.io.inputstream.ZipInputStream
 import net.lingala.zip4j.model.LocalFileHeader
 import java.io.File
@@ -29,28 +31,36 @@ class LanguageServerDownloader {
         val destination = path.parent
 
         LOG.info("Downloading LanguageServer from $uri")
-        var estimatedSize = 1024.0 * 1024 * 68
-        var downloaded = 0.0
-        withRawProgressReporter {
-            rawProgressReporter?.details("Downloading Contextive Language Server...")
+
+        reportSequentialProgress(1) { reporter ->
+            reporter.indeterminateStep("Checking Contextive Language Server...")
+
             val zipInputStream = ZipInputStream(uri.toURL().openStream())
             while (zipInputStream.nextEntry.also { localFileHeader = it } != null) {
                 val extractedFile = destination.resolve(localFileHeader!!.fileName).toFile()
                 val tempFile = File(extractedFile.path + ".tmp")
                 LOG.info("Extracting `${localFileHeader!!.fileName}` to `${extractedFile.path}`")
+                reporter.itemStep("Downloading ${localFileHeader!!.fileName}...") {
 
-                FileOutputStream(tempFile).use { outputStream ->
-                    while (zipInputStream.read(readBuffer).also { readLen = it } != -1) {
-                        ensureActive()
-                        downloaded += readLen
-                        outputStream.write(readBuffer, 0, readLen)
-                        rawProgressReporter?.fraction(downloaded / estimatedSize)
+                    val estimatedSize = 1024 * 1024 * 75
+                    reportSequentialProgress(estimatedSize) { innerReporter ->
+
+                        FileOutputStream(tempFile).use { outputStream ->
+                            while (zipInputStream.read(readBuffer).also { readLen = it } != -1) {
+                                ensureActive()
+                                innerReporter.sizedStep(readLen)
+                                outputStream.write(readBuffer, 0, readLen)
+                            }
+                        }
+                        Files.move(tempFile.toPath(), extractedFile.toPath())
+
                     }
-                }
 
-                Files.move(tempFile.toPath(), extractedFile.toPath())
+                }
             }
+
         }
+
         LOG.info("LanguageServer downloaded and extracted.")
     }
 }
