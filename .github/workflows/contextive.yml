@@ -47,8 +47,15 @@ jobs:
       #     path: src/
 
       - name: Build
+        id: build
         run: ./gradlew build
         working-directory: src/intellij/contextive
+
+      - name: IntelliJ Plugin Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Contextive-IntelliJ-Plugin
+          path: "src/intellij/contextive/build/distributions/contextive-*.zip"
 
       - uses: ./.github/actions/upload-reports
         if: always()
