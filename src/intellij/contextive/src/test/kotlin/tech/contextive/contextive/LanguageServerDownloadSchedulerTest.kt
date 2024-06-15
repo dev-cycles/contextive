@@ -1,13 +1,16 @@
 package tech.contextive.contextive
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import io.mockk.*
+import org.bouncycastle.util.test.SimpleTest.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.net.URI
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
+import kotlin.test.assertIs
 
 class LanguageServerDownloadSchedulerTest {
 
@@ -38,14 +41,19 @@ class LanguageServerDownloadSchedulerTest {
     }
 
     private data class Mocks(
+        // dependencies
         val resolver: LanguageServerLocationResolver,
         val downloader: LanguageServerDownloader,
         val fileSystem: FileSystem,
+        val lspManager: LspManager,
+        // objects
+        val project: Project,
         val lsPath: Path,
         val lsPathParent: Path,
         val lsUrl: URI)
 
     private fun setupMocks(languageServerExists: Boolean): Mocks {
+        val project = mockk<Project>()
         val lsPathParent = mockk<Path>()
         val lsPath = mockk<Path> {
             every { parent } returns lsPathParent
@@ -61,74 +69,79 @@ class LanguageServerDownloadSchedulerTest {
             every { url() } returns lsUrl
         }
         val downloader = mockk<LanguageServerDownloader>(relaxed = true)
-        return Mocks(resolver, downloader, fileSystem, lsPath, lsPathParent, lsUrl)
+        val lspManager = mockk<LspManager>(relaxed = true)
+        return Mocks(resolver, downloader, fileSystem, lspManager, project, lsPath, lsPathParent, lsUrl)
     }
 
     @Test
     fun givenAlreadyDownloaded_ShouldCallbackImmediately() {
         // Arrange
-        val  (resolver, downloader, fileSystem, lsPath, lsPathParent, lsUrl) = setupMocks(true)
-        var pathInCallback: Path = Path.of("")
+        val (resolver, downloader, fileSystem, lspManager, project, lsPath, lsPathParent, lsUrl) = setupMocks(true)
 
-        val scheduler = LanguageServerDownloadScheduler(resolver, downloader, fileSystem)
+        val scheduler = LanguageServerDownloadScheduler(resolver, downloader, fileSystem, lspManager)
 
         // Act
-        scheduler.scheduleDownloadIfRequired( { }, { p -> pathInCallback = p })
+        val status = scheduler.scheduleDownloadIfRequired(project)
 
         // Assert
-        assertEquals(lsPath, pathInCallback)
+        assertEquals(lsPath, (status as DownloadStatus.DOWNLOADED).path)
 
         verify(exactly = 0) {
-            downloader.download(lsUrl, lsPath)
             fileSystem.createDirectories(lsPathParent)
             fileSystem.setExecutable(lsPath)
+            lspManager.start(project, any())
+        }
+        coVerify(exactly = 0) {
+            downloader.download(project, lsUrl, lsPath)
         }
     }
 
     @Test
     fun givenNotYetDownloaded_ShouldCallbackAfterDownloading() {
         mockkImmediatePooledThread()
-        val  (resolver, downloader, fileSystem, lsPath, lsPathParent, lsUrl) = setupMocks(false)
-        var calledBack = false
+        val (resolver, downloader, fileSystem, lspManager, project, lsPath, lsPathParent, lsUrl) = setupMocks(false)
 
-        val scheduler = LanguageServerDownloadScheduler(resolver, downloader, fileSystem)
+        val scheduler = LanguageServerDownloadScheduler(resolver, downloader, fileSystem, lspManager)
 
         // Act
-        scheduler.scheduleDownloadIfRequired( { calledBack = true }, { })
+        val status = scheduler.scheduleDownloadIfRequired(project)
 
         // Assert
-        assertTrue(calledBack)
+        assertIs<DownloadStatus.SCHEDULED>(status)
         verify(exactly = 1) {
-            downloader.download(lsUrl, lsPath)
             fileSystem.createDirectories(lsPathParent)
             fileSystem.setExecutable(lsPath)
+            lspManager.start(project, any())
+        }
+        coVerify(exactly = 1) {
+            downloader.download(project, lsUrl, lsPath)
         }
     }
 
     @Test
     fun givenMidDownload_ShouldDoNothing() {
         mockkNeverExecutePooledThread()
-        val  (resolver, downloader, fileSystem, lsPath, lsPathParent, lsUrl) = setupMocks(false)
-        var calledBack = false
-        var pathInCallback: Path = Path.of("")
+        val (resolver, downloader, fileSystem, lspManager, project, lsPath, lsPathParent, lsUrl) = setupMocks(false)
 
-        val scheduler = LanguageServerDownloadScheduler(resolver, downloader, fileSystem)
+        val scheduler = LanguageServerDownloadScheduler(resolver, downloader, fileSystem, lspManager)
 
         // Act
         // Start Download (callbacks never called because of mock to pooled thread executor)
-        scheduler.scheduleDownloadIfRequired( { calledBack = true }, { p -> pathInCallback = p })
+        scheduler.scheduleDownloadIfRequired(project)
         // Change mocks to ensure callbacks would be called if download would proceed or complete
         mockkImmediatePooledThread()
-        scheduler.scheduleDownloadIfRequired( { calledBack = true }, { p -> pathInCallback = p })
+        val status = scheduler.scheduleDownloadIfRequired(project)
 
         // Assert
         // Neither callback called, nor download initiated
-        assertFalse(calledBack)
-        assertEquals(Path.of(""), pathInCallback)
+        assertIs<DownloadStatus.DOWNLOADING>(status)
         verify(exactly = 0) {
-            downloader.download(lsUrl, lsPath)
             fileSystem.createDirectories(lsPathParent)
             fileSystem.setExecutable(lsPath)
+            lspManager.start(project, any())
+        }
+        coVerify(exactly = 0) {
+            downloader.download(project, lsUrl, lsPath)
         }
     }
 

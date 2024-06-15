@@ -14,7 +14,8 @@ class ContextiveLspServerSupportProvider : LspServerSupportProvider {
             LanguageServerDownloadScheduler(
                 LanguageServerLocationResolver(),
                 LanguageServerDownloader(),
-                FileSystem()),
+                FileSystem(),
+                LspManager()),
             project,
             serverStarter
         )

@@ -294,5 +294,7 @@
        Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
   <extensions defaultExtensionNs="com.intellij">
     <platform.lsp.serverSupportProvider implementation="tech.contextive.contextive.ContextiveLspServerSupportProvider"/>
+    <notificationGroup id="Contextive"
+                       displayType="BALLOON"/>
   </extensions>
 </idea-plugin>

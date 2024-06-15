@@ -12,18 +12,19 @@ class ContextiveManager(
 ) {
     fun startIfRequired() {
         val contextiveDefinitionsFile =
-            project.getBaseDirectories().first().findFileByRelativePath(".contextive/definitions.yml");
+            project.getBaseDirectories().first().findFileByRelativePath(".contextive/definitions.yml")
+
         if (contextiveDefinitionsFile?.exists() == true) {
-            lsDownloader.scheduleDownloadIfRequired({
-                LspServerManager.getInstance(project).startServersIfNeeded(ContextiveLspServerSupportProvider::class.java)
-            }, {
+
+            val status = lsDownloader.scheduleDownloadIfRequired(project)
+
+            if (status is DownloadStatus.DOWNLOADED) {
                 serverStarter.ensureServerStarted(
                     LspDescriptor(
-                        it,
+                        status.path,
                         project)
                 )
-            })
-
+            }
         }
     }
 
