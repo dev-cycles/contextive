@@ -1,5 +1,19 @@
 # Change Log
 
+## [1.11.1](https://github.com/dev-cycles/contextive/compare/v1.11.0...v1.11.1) (2024-06-15)
+
+
+### Bug Fixes
+
+* **intellij:** improve resilience of language-server downloading ([7f9a1ce](https://github.com/dev-cycles/contextive/commit/7f9a1ceb217bad26bbb6aff1c0d9e62e600b1823))
+* **intellij:** only attempt to start the Contextive language server if a contextive definitions file is present. (fixes [#64](https://github.com/dev-cycles/contextive/issues/64)) ([0f707eb](https://github.com/dev-cycles/contextive/commit/0f707eb216cbd6b0fcd613a925259c12acec8031))
+* **intellij:** show progress indicator when downloading language server ([e2ce467](https://github.com/dev-cycles/contextive/commit/e2ce467cfa303764a44796b05737485d710cd3bb))
+* **language-server:** ensure initialization of definitions file works even when located sub-folder doesn't exist. ([e09ccaa](https://github.com/dev-cycles/contextive/commit/e09ccaa6f60f9bc19980ab340b4c095a9ca9565c))
+* **language-server:** only show errors when definitions file doesn't exist if configuration is explicitly set ([b730f83](https://github.com/dev-cycles/contextive/commit/b730f838353fc9130b805be2de9ed44c30e46931))
+* **vscode:** remove default path config from vscode extension and rely on language server default only ([8fdd26d](https://github.com/dev-cycles/contextive/commit/8fdd26d0c886b0ad9875b0fc619e726137e35a64))
+* **vscode:** resolve errors in logs since moving default contextive.path from vscode to the languageServer ([79f4854](https://github.com/dev-cycles/contextive/commit/79f485483a64972014239fffb97003ccf6a252b2))
+* **vscode:** resolve race condition when initializing contextive definitions file and activating extension at the same time ('method not found' error) ([dd9f171](https://github.com/dev-cycles/contextive/commit/dd9f171b653bbe31715a09146be037846848de85))
+
 # [1.11.0](https://github.com/dev-cycles/contextive/compare/v1.10.5...v1.11.0) (2024-03-11)
 
 

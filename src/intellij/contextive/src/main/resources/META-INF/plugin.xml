@@ -16,6 +16,13 @@
   <description><![CDATA[<h1>Contextive README</h1>
 <p>Contextive is an IntelliJ Platform Plugin to assist developers in environments with a complex domain or project specific language, where words have a special meaning in the context of the project.</p>
 <p>It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.</p>
+<blockquote>
+<p>[!WARNING]<br>
+This plugin is considered 'beta' status, as leverages relatively new <a href="https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html">Language Server Protocol</a> support from JetBrains which is still marked as unstable in the IntelliJ Platform API. Some features may not work or may not work as expected. Please <a href="https://github.com/dev-cycles/contextive/issues/new?assignees=&amp;labels=&amp;projects=&amp;template=bug_report.md&amp;title=">report issues</a> in this project and we will liaise with JetBrains to resolve.</p>
+<p>See <a href="#known-issues">known issues</a> below</p>
+</blockquote>
+<h2>Installation</h2>
+<p>See <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/INSTALLATION.md#intellij-plugin-platform">IntelliJ IDEs (e.g. IDEA) Installation Instructions</a>.</p>
 <h2>Getting Started</h2>
 <p>Create a folder in your project root called <code>.contextive</code>.  Create a file in that folder called <code>definitions.yml</code>.</p>
 <p>Start defining your definitions following the schema specified in our <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md">usage guide</a>.  You might like to start by copying our <a href="https://github.com/dev-cycles/contextive/blob/main/src/language-server/Contextive.LanguageServer.Tests/DefinitionsInitializationTests.Default%20Definitions.verified.txt">default definitions</a> file that defines the terms used in the definitions file itself.</p>
@@ -33,7 +40,7 @@
 <li>Aqua</li>
 <li>DataGrip</li>
 <li>GoLand</li>
-<li>Rider</li>
+<li>Rider - <a href="https://github.com/dev-cycles/contextive/issues/65">not working in C# files</a></li>
 <li>RustRover</li>
 </ul>
 <h2>Usage Guide</h2>
@@ -86,10 +93,23 @@
 <li>Autocomplete list doesn't respect the case sensitive interpretation as described in the usage guide. IntelliJ does not yet respect the `isIncomplete' flag that forces re-computation of the list and is required to adjust the case of list items.  See <a href="https://youtrack.jetbrains.com/issue/IDEA-348829">IDEA-348829</a> for details.</li>
 <li>Documentation not shown on hover in some files (files treated as 'plaintext' by the specific IDE). Use F1 to show the hover documentation at the current cursor position.  This is an IntelliJ bug, see <a href="https://youtrack.jetbrains.com/issue/IDEA-348497/Doc-popup-doesnt-appear-on-hover-in-LSP-API-based-plugins">IDEA-348497</a> for details.</li>
 <li>Auto-completion does not work at certain positions. See <a href="https://github.com/dev-cycles/contextive/issues/63">Issue #63</a></li>
+<li>In Rider, C# files do not show documentation on hover, or 'quick documentation shortcut', or documentation during auto-complete, when opened in Solution mode.  It does work when opening in file/folder mode. See <a href="https://github.com/dev-cycles/contextive/issues/65">Issue #65</a></li>
 </ul>
 ]]></description>
 
   <change-notes><![CDATA[<h1>Change Log</h1>
+<h2><a href="https://github.com/dev-cycles/contextive/compare/v1.11.0...v1.11.1">1.11.1</a> (2024-06-15)</h2>
+<h3>Bug Fixes</h3>
+<ul>
+<li><strong>intellij:</strong> improve resilience of language-server downloading (<a href="https://github.com/dev-cycles/contextive/commit/7f9a1ceb217bad26bbb6aff1c0d9e62e600b1823">7f9a1ce</a>)</li>
+<li><strong>intellij:</strong> only attempt to start the Contextive language server if a contextive definitions file is present. (fixes <a href="https://github.com/dev-cycles/contextive/issues/64">#64</a>) (<a href="https://github.com/dev-cycles/contextive/commit/0f707eb216cbd6b0fcd613a925259c12acec8031">0f707eb</a>)</li>
+<li><strong>intellij:</strong> show progress indicator when downloading language server (<a href="https://github.com/dev-cycles/contextive/commit/e2ce467cfa303764a44796b05737485d710cd3bb">e2ce467</a>)</li>
+<li><strong>language-server:</strong> ensure initialization of definitions file works even when located sub-folder doesn't exist. (<a href="https://github.com/dev-cycles/contextive/commit/e09ccaa6f60f9bc19980ab340b4c095a9ca9565c">e09ccaa</a>)</li>
+<li><strong>language-server:</strong> only show errors when definitions file doesn't exist if configuration is explicitly set (<a href="https://github.com/dev-cycles/contextive/commit/b730f838353fc9130b805be2de9ed44c30e46931">b730f83</a>)</li>
+<li><strong>vscode:</strong> remove default path config from vscode extension and rely on language server default only (<a href="https://github.com/dev-cycles/contextive/commit/8fdd26d0c886b0ad9875b0fc619e726137e35a64">8fdd26d</a>)</li>
+<li><strong>vscode:</strong> resolve errors in logs since moving default contextive.path from vscode to the languageServer (<a href="https://github.com/dev-cycles/contextive/commit/79f485483a64972014239fffb97003ccf6a252b2">79f4854</a>)</li>
+<li><strong>vscode:</strong> resolve race condition when initializing contextive definitions file and activating extension at the same time ('method not found' error) (<a href="https://github.com/dev-cycles/contextive/commit/dd9f171b653bbe31715a09146be037846848de85">dd9f171</a>)</li>
+</ul>
 <h1><a href="https://github.com/dev-cycles/contextive/compare/v1.10.5...v1.11.0">1.11.0</a> (2024-03-11)</h1>
 <h3>Features</h3>
 <ul>
