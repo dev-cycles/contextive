@@ -28,3 +28,5 @@ fable_modules
 .DS_Store
 # Resharper
 *.DotSettings.user
+# Visual Studio
+.vs

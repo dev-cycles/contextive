@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# VSEXTPREVIEW_LSP: Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+dotnet_diagnostic.VSEXTPREVIEW_LSP.severity = warning

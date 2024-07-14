@@ -1,50 +1,32 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{9B2F48A4-8ED8-4E23-BEBF-09D6E817887C}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.Core", "core\Contextive.Core\Contextive.Core.fsproj", "{D4E10313-76AB-4900-AF30-6FD32ADC5EB3}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Contextive.Core", "core\Contextive.Core\Contextive.Core.fsproj", "{D4E10313-76AB-4900-AF30-6FD32ADC5EB3}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.Core.Tests", "core\Contextive.Core.Tests\Contextive.Core.Tests.fsproj", "{A1268C6B-B1EA-45F6-B243-12014D304C2D}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Contextive.Core.Tests", "core\Contextive.Core.Tests\Contextive.Core.Tests.fsproj", "{A1268C6B-B1EA-45F6-B243-12014D304C2D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LanguageServer", "LanguageServer", "{747C11A9-7FA8-45D9-BC07-EDC787C7032C}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.LanguageServer", "language-server\Contextive.LanguageServer\Contextive.LanguageServer.fsproj", "{C60440CF-3096-4A1D-9DA8-B175A03F43CE}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Contextive.LanguageServer", "language-server\Contextive.LanguageServer\Contextive.LanguageServer.fsproj", "{C60440CF-3096-4A1D-9DA8-B175A03F43CE}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.LanguageServer.Tests", "language-server\Contextive.LanguageServer.Tests\Contextive.LanguageServer.Tests.fsproj", "{2892BFE0-BCB9-4030-BF6C-4CCADA301BFB}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Contextive.LanguageServer.Tests", "language-server\Contextive.LanguageServer.Tests\Contextive.LanguageServer.Tests.fsproj", "{2892BFE0-BCB9-4030-BF6C-4CCADA301BFB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VSCode", "VSCode", "{D4397B0F-EE1D-4BFD-8687-59E9F269A085}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension", "vscode\contextive\src\Contextive.VsCodeExtension.fsproj", "{7A19B8AD-9F80-42D2-8756-C561069F592B}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Contextive.VsCodeExtension", "vscode\contextive\src\Contextive.VsCodeExtension.fsproj", "{7A19B8AD-9F80-42D2-8756-C561069F592B}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Contextive.VsCodeExtension.Tests.E2e", "vscode\contextive\test\Contextive.VsCodeExtension.Tests.E2e.fsproj", "{87851465-027B-4D5E-9F48-1CBB70E31F69}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Contextive.VsCodeExtension.Tests.E2e", "vscode\contextive\test\Contextive.VsCodeExtension.Tests.E2e.fsproj", "{87851465-027B-4D5E-9F48-1CBB70E31F69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7A19B8AD-9F80-42D2-8756-C561069F592B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7A19B8AD-9F80-42D2-8756-C561069F592B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7A19B8AD-9F80-42D2-8756-C561069F592B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7A19B8AD-9F80-42D2-8756-C561069F592B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{87851465-027B-4D5E-9F48-1CBB70E31F69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{87851465-027B-4D5E-9F48-1CBB70E31F69}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{87851465-027B-4D5E-9F48-1CBB70E31F69}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{87851465-027B-4D5E-9F48-1CBB70E31F69}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C60440CF-3096-4A1D-9DA8-B175A03F43CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C60440CF-3096-4A1D-9DA8-B175A03F43CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C60440CF-3096-4A1D-9DA8-B175A03F43CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C60440CF-3096-4A1D-9DA8-B175A03F43CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2892BFE0-BCB9-4030-BF6C-4CCADA301BFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2892BFE0-BCB9-4030-BF6C-4CCADA301BFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2892BFE0-BCB9-4030-BF6C-4CCADA301BFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2892BFE0-BCB9-4030-BF6C-4CCADA301BFB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D4E10313-76AB-4900-AF30-6FD32ADC5EB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D4E10313-76AB-4900-AF30-6FD32ADC5EB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4E10313-76AB-4900-AF30-6FD32ADC5EB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -53,13 +35,35 @@ Global
 		{A1268C6B-B1EA-45F6-B243-12014D304C2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1268C6B-B1EA-45F6-B243-12014D304C2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1268C6B-B1EA-45F6-B243-12014D304C2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C60440CF-3096-4A1D-9DA8-B175A03F43CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C60440CF-3096-4A1D-9DA8-B175A03F43CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C60440CF-3096-4A1D-9DA8-B175A03F43CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C60440CF-3096-4A1D-9DA8-B175A03F43CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2892BFE0-BCB9-4030-BF6C-4CCADA301BFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2892BFE0-BCB9-4030-BF6C-4CCADA301BFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2892BFE0-BCB9-4030-BF6C-4CCADA301BFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2892BFE0-BCB9-4030-BF6C-4CCADA301BFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A19B8AD-9F80-42D2-8756-C561069F592B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A19B8AD-9F80-42D2-8756-C561069F592B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A19B8AD-9F80-42D2-8756-C561069F592B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A19B8AD-9F80-42D2-8756-C561069F592B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87851465-027B-4D5E-9F48-1CBB70E31F69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87851465-027B-4D5E-9F48-1CBB70E31F69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87851465-027B-4D5E-9F48-1CBB70E31F69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87851465-027B-4D5E-9F48-1CBB70E31F69}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{7A19B8AD-9F80-42D2-8756-C561069F592B} = {D4397B0F-EE1D-4BFD-8687-59E9F269A085}
-		{87851465-027B-4D5E-9F48-1CBB70E31F69} = {D4397B0F-EE1D-4BFD-8687-59E9F269A085}
-		{C60440CF-3096-4A1D-9DA8-B175A03F43CE} = {747C11A9-7FA8-45D9-BC07-EDC787C7032C}
-		{2892BFE0-BCB9-4030-BF6C-4CCADA301BFB} = {747C11A9-7FA8-45D9-BC07-EDC787C7032C}
 		{D4E10313-76AB-4900-AF30-6FD32ADC5EB3} = {9B2F48A4-8ED8-4E23-BEBF-09D6E817887C}
 		{A1268C6B-B1EA-45F6-B243-12014D304C2D} = {9B2F48A4-8ED8-4E23-BEBF-09D6E817887C}
+		{C60440CF-3096-4A1D-9DA8-B175A03F43CE} = {747C11A9-7FA8-45D9-BC07-EDC787C7032C}
+		{2892BFE0-BCB9-4030-BF6C-4CCADA301BFB} = {747C11A9-7FA8-45D9-BC07-EDC787C7032C}
+		{7A19B8AD-9F80-42D2-8756-C561069F592B} = {D4397B0F-EE1D-4BFD-8687-59E9F269A085}
+		{87851465-027B-4D5E-9F48-1CBB70E31F69} = {D4397B0F-EE1D-4BFD-8687-59E9F269A085}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2D6D446E-1A80-427C-9F41-0353B1700ED1}
 	EndGlobalSection
 EndGlobal
