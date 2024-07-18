@@ -17,6 +17,11 @@ By defining terms in a central definitions file, Contextive can surface definiti
 
 ![Example of Contextive in action.](docs/wiki/images/simple-auto-complete-demo.gif)
 
+Interview introducing Contextive at NDC Sydney 2024:
+
+[![Video Introduction to Contextive](https://img.youtube.com/vi/Y_HzdX7nHo0/0.jpg)](https://www.youtube.com/watch?v=Y_HzdX7nHo0)
+
+[Other Videos referencing Contextive](./docs/wiki/VIDEOS.md)
 
 ## Installation
 
