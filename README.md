@@ -45,7 +45,7 @@ The following list is a rough and evolving backlog/roadmap.  Checked items are c
   * [x] Store Ubiquitous Language term definitions in a file in the repository (e.g. yml format)
   * [x] Repository Layouts:
     * [x] Support a monorepo with multiple Bounded Contexts in one repo - identify which paths relate to each Bounded Context
-    * [x] Support a Bounded Context distributed across multiple repos (#36)
+    * [x] Support a Bounded Context distributed across multiple repos ([#36](https://github.com/dev-cycles/contextive/issues/36))
   * [x] Support aliases of terms, hovering over the alias shows the term definition
   * [x] Add details of the alias in the hover
   * [ ] Add ability to define an alias as deprecated and warn as such
@@ -57,7 +57,7 @@ The following list is a rough and evolving backlog/roadmap.  Checked items are c
     * [ ] Support multi-root workspaces with a definitions file per root
   * [x] [IntelliJ IDEs](#intellij-ides)
     * [x] [Most IntelliJ Platform IDEs](https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html#supported-ides)
-    * [ ] Rider - limited support, see #65
+    * [ ] Rider - limited support, see [#65](https://github.com/dev-cycles/contextive/issues/65)
   * [ ] Visual Studio (2019/2022)
   * [ ] Eclipse
   * [ ] NetBeans
