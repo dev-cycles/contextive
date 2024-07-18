@@ -25,7 +25,7 @@ See our [Installation Guide](./docs/wiki/INSTALLATION.md) for details on how to 
 Officially supported IDEs include:
 
 #### [VsCode](./docs/wiki/INSTALLATION.md#visual-studio-code)
-#### [IntelliJ IDEs (e.g. IDEA, except Rider)](./docs/wiki/INSTALLATION.md#intellij-plugin-platform)
+#### [IntelliJ IDEs](./docs/wiki/INSTALLATION.md#intellij-plugin-platform)
 #### [Neovim](./docs/wiki/INSTALLATION.md#neovim)
 #### [Helix](./docs/wiki/INSTALLATION.md#helix)
 
@@ -55,6 +55,9 @@ The following list is a rough and evolving backlog/roadmap.  Checked items are c
     * [x] Support single-root workspaces
     * [x] Support multi-root workspaces with a shared definitions file
     * [ ] Support multi-root workspaces with a definitions file per root
+  * [x] [IntelliJ IDEs](#intellij-ides)
+    * [x] [Most IntelliJ Platform IDEs](https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html#supported-ides)
+    * [ ] Rider - limited support, see #65
   * [ ] Visual Studio (2019/2022)
   * [ ] Eclipse
   * [ ] NetBeans
