@@ -80,7 +80,7 @@ let private replaceNullsWithEmptyLists (definitions: Definitions) =
     { definitions with
         Contexts = ResizeArray(Seq.map Context.withDefaultTermsIfNull definitions.Contexts) }
 
-let deserialize (yml: string) : Result<Definitions, string> =
+let deserialize (yml: string) : Result<Definitions, FileError> =
     try
         let deserializer =
             (new DeserializerBuilder())

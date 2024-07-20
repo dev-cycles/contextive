@@ -25,7 +25,7 @@ let put (slug: string) =
                             | Ok(s) -> text s next ctx
                             | Error(msg) -> (setStatusCode 500 >=> setBodyFromString msg) next ctx
                     }
-                | Error(message) -> (clientError message) next ctx
+                | Error(message) -> (clientError (message.ToString())) next ctx
         }
 
 let get (slug: string) =

@@ -5,6 +5,7 @@ open Amazon.Lambda.Serialization.SystemTextJson
 open Contextive.Cloud.Api.SlackModels
 open Contextive.Cloud.Api.DefinitionsRepository
 open Contextive.Core.Definitions
+open Contextive.Core.File
 
 [<assembly: LambdaSerializer(typeof<DefaultLambdaJsonSerializer>)>]
 do ()
@@ -136,7 +137,7 @@ let lookForMatchingTerms (msg: string) (definitions: Definitions) =
     let contexts = Seq.map (filterContext tokens) definitions.Contexts
 
     if (Seq.head contexts).Terms.Count = 0 then
-        Error("No terms found.")
+        Error(ParsingError("No terms found."))
     else
         Ok
             { definitions with
@@ -161,5 +162,5 @@ let FunctionHandlerAsync (evt: CloudWatchEvent<Receiving.SlackMessage>, context:
         do!
             match msg with
             | Ok(m) -> sendMessageToChannel logger m
-            | Error(e) -> task { logger.LogError(e) }
+            | Error(e) -> task { logger.LogError((e.ToString())) }
     }
