@@ -1,75 +1,75 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-    <GenerateProgramFile>false</GenerateProgramFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Helpers/Fixtures.fs" />
-    <Compile Include="Helpers/Definitions.fs" />
-    <Compile Include="Helpers/Completion.fs" />
-    <Compile Include="Helpers/ConditionAwaiter.fs" />
-    <Compile Include="Helpers/WatchedFiles.fs" />
-    <Compile Include="Helpers/ServerLog.fs" />
-    <Compile Include="Helpers/Window.fs" />
-    <Compile Include="Helpers/Workspace.fs" />
-    <Compile Include="Helpers/TestClient.fs" />
-    <Compile Include="Helpers/ConfigurationSection.fs" />
-    <Compile Include="DefinitionsInitializationTests.fs" />
-    <Compile Include="RenderingTests.fs" />
-    <Compile Include="FileLoaderTests.fs" />
-    <Compile Include="PathResolverTests.fs" />
-    <Compile Include="ConfigurationTests.fs" />
-    <Compile Include="DefinitionsTests.fs" />
-    <Compile Include="WatchedFilesTests.fs" />
-    <Compile Include="TextDocumentTests.fs" />
-    <Compile Include="CompletionTests.fs" />
-    <Compile Include="HoverTests.fs" />
-    <Compile Include="InitializationTests.fs" />
-    <Compile Include="Program.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fixtures/completion_tests/empty_terms_list.yml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="fixtures/completion_tests/one.yml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="fixtures/completion_tests/two.yml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="fixtures/completion_tests/three.yml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="fixtures/completion_tests/invalid_schema.yml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="fixtures/completion_tests/invalid_schema2.yml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="fixtures/completion_tests/invalid_empty.yml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="fixtures/completion_tests/multi.yml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="fixtures/initialization_tests/existing.yml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="fixtures/default_tests/.contextive/definitions.yml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="coverlet.collector" Version="6.0.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Contextive.LanguageServer\Contextive.LanguageServer.fsproj" />
-  </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <IsPackable>false</IsPackable>
+        <GenerateProgramFile>false</GenerateProgramFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="Helpers/Fixtures.fs"/>
+        <Compile Include="Helpers/Definitions.fs"/>
+        <Compile Include="Helpers/Completion.fs"/>
+        <Compile Include="Helpers/ConditionAwaiter.fs"/>
+        <Compile Include="Helpers/WatchedFiles.fs"/>
+        <Compile Include="Helpers/ServerLog.fs"/>
+        <Compile Include="Helpers/Window.fs"/>
+        <Compile Include="Helpers/Workspace.fs"/>
+        <Compile Include="Helpers/TestClient.fs"/>
+        <Compile Include="Helpers/ConfigurationSection.fs"/>
+        <Compile Include="DefinitionsInitializationTests.fs"/>
+        <Compile Include="RenderingTests.fs"/>
+        <Compile Include="FileLoaderTests.fs"/>
+        <Compile Include="PathResolverTests.fs"/>
+        <Compile Include="ConfigurationTests.fs"/>
+        <Compile Include="DefinitionsTests.fs"/>
+        <Compile Include="WatchedFilesTests.fs"/>
+        <Compile Include="TextDocumentTests.fs"/>
+        <Compile Include="CompletionTests.fs"/>
+        <Compile Include="HoverTests.fs"/>
+        <Compile Include="InitializationTests.fs"/>
+        <Compile Include="Program.fs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="fixtures/completion_tests/empty_terms_list.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="fixtures/completion_tests/one.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="fixtures/completion_tests/two.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="fixtures/completion_tests/three.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="fixtures/completion_tests/invalid_schema.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="fixtures/completion_tests/invalid_schema2.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="fixtures/completion_tests/invalid_empty.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="fixtures/completion_tests/multi.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="fixtures/initialization_tests/existing.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="fixtures/default_tests/.contextive/definitions.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
+        <PackageReference Include="coverlet.collector" Version="6.0.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Contextive.LanguageServer\Contextive.LanguageServer.fsproj"/>
+    </ItemGroup>
+    <Import Project="..\..\.paket\Paket.Restore.targets"/>
 </Project>

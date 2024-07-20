@@ -1,6 +1,6 @@
 # For details on usage and latest versions, see:
 # https://mcr.microsoft.com/en-us/product/devcontainers/dotnet/about
-FROM mcr.microsoft.com/vscode/devcontainers/dotnet:7.0-bookworm
+FROM mcr.microsoft.com/vscode/devcontainers/dotnet:8.0-bookworm
 
 # For dotnet-adr - currently non-functional due to https://github.com/endjin/dotnet-adr/issues/203
 # # Install other dotnet versions (required for adr tool and dotnet suggest)

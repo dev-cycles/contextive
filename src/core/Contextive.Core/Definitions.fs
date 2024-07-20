@@ -109,11 +109,13 @@ type OptionStringTypeConverter() =
         member this.Accepts(``type``: System.Type) : bool =
             ``type``.FullName = (typeof<option<string>>).FullName
 
-        member this.ReadYaml(parser: YamlDotNet.Core.IParser, ``type``: System.Type) : obj =
+        member this.ReadYaml(parser: YamlDotNet.Core.IParser, ``type``: System.Type, _: ObjectDeserializer) : obj =
             let value = parser.Consume<Scalar>().Value
             if value = null then None else Some value
 
-        member this.WriteYaml(emitter: YamlDotNet.Core.IEmitter, value: obj, ``type``: System.Type) : unit =
+        member this.WriteYaml
+            (emitter: YamlDotNet.Core.IEmitter, value: obj, ``type``: System.Type, _: ObjectSerializer)
+            : unit =
             match (value :?> option<string>) with
             | None -> emitter.Emit(new Scalar(""))
             | Some v -> emitter.Emit(new Scalar(v))
