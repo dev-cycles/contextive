@@ -9,14 +9,7 @@ PATH=$PATH:~/.dotnet/tools
 echo 
 dotnet new install Fable.Template
 dotnet tool install dotnet-suggest --global
-dotnet tool install paket --global
-dotnet tool install fable --global
-dotnet tool install femto --global
 dotnet tool install fantomas --global
-
-pushd src
-dotnet tool restore
-popd
 
 ## dotnet-adr
 # Currently non-functional due to https://github.com/endjin/dotnet-adr/issues/203
