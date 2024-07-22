@@ -57,6 +57,8 @@ let private getWorkspaceFolder (s: ILanguageServer) =
     if not (Seq.isEmpty workspaceFolders) then
         let workspaceRoot = workspaceFolders |> Seq.head
         Some <| workspaceRoot.Uri.ToUri().LocalPath
+    else if s.Client.ClientSettings.RootUri <> null then
+        Some <| s.Client.ClientSettings.RootUri.ToUri().LocalPath
     else
         None
 

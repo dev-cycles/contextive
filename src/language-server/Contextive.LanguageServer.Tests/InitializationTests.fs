@@ -39,6 +39,21 @@ let tests =
               test <@ (defaultArg reply "").Contains(pathValue) @>
           }
 
+          testAsync "Server loads contextive file from relative location with rootUi and no workspace" {
+              let pathValue = Guid.NewGuid().ToString()
+
+              let config =
+                  [ Workspace.rootOptionsBuilder ""
+                    ConfigurationSection.contextivePathBuilder pathValue ]
+
+              let! (client, reply, _) = TestClient(config) |> initAndWaitForReply
+              use client = client
+
+              test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
+
+              test <@ (defaultArg reply "").Contains(pathValue) @>
+          }
+
           testAsync "Server loads contextive file from absolute location without workspace" {
               let pathValue = Guid.NewGuid().ToString()
 

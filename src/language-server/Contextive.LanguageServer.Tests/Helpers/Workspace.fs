@@ -10,3 +10,7 @@ let workspaceFolderPath relativePath =
 let optionsBuilder path (b: LanguageClientOptions) =
     let wsPath = workspaceFolderPath path
     b.WithWorkspaceFolder(wsPath, "Default")
+
+let rootOptionsBuilder path (b: LanguageClientOptions) =
+    let wsPath = workspaceFolderPath path
+    b.WithRootUri(wsPath)
