@@ -1,115 +1,96 @@
-#r "paket:
-nuget FSharp.Core 7
-nuget FSharp.Data
-nuget Fake.DotNet.Cli
-nuget Fake.Core.Target //"
+#r "nuget: Fun.Build, 1.0.5"
+#r "nuget: FSharp.Data"
+#r "nuget: FsToolkit.ErrorHandling"
+#load "ci/common.fsx"
 
-//#load ".fake/build.fsx/intellisense.fsx"
-// include Fake modules, see Fake modules section
-
-open Fake.Core
-open Fake.DotNet
+open Fun.Build
 open FSharp.Data
-
-
-#if !FAKE
-let execContext = Fake.Core.Context.FakeExecutionContext.Create false "build.fsx" []
-Fake.Core.Context.setExecutionContext (Fake.Core.Context.RuntimeContext.Fake execContext)
-#endif
-
-//Context.setExecutionContext (Context.Fake(FakeExecutionContext.Create true "" [||]))
-
-let inline withWorkDir wd = DotNet.Options.withWorkingDirectory wd
-
-let ensureSuccess (p: ProcessResult) =
-    match p with
-    | p when p.ExitCode = 0 -> ()
-    | p -> failwith (String.concat (System.Environment.NewLine) p.Errors)
+open FsToolkit.ErrorHandling
+open FsToolkit.ErrorHandling.Operator.AsyncResult
+open Common
 
 type BucketResponse = JsonProvider<""" { "Buckets": [{"Name": "SampleName"}] } """>
 type EventBusResponse = JsonProvider<""" { "EventBuses": [{"Name": "SampleName"}] } """>
 
-let setLocal = Environment.setEnvironVar "AWS_PROFILE" "local"
+let awsLocal cmd ctx =
+    $"awslocal {cmd}" |> runBashCaptureOutput <| ctx
 
-let cdk' cdkType cmd args =
-    let argString = Option.defaultValue "" args
-
-    CreateProcess.fromRawCommandLine cdkType $"{cmd} {argString}"
-    |> CreateProcess.withWorkingDirectory "cloud"
-    |> CreateProcess.ensureExitCode
-    |> Proc.run
-    |> ignore
-
-let cdkLocal cmd =
-    setLocal
-    cdk' "cdklocal" cmd <| Some "--context local= --require-approval never"
-
-let cdk cmd =
-    Environment.setEnvironVar "AWS_PROFILE" "dev-cycles-sandbox-chris"
-    cdk' "cdk" cmd None
-
-let awsLocal cmd filter =
-    CreateProcess.fromRawCommandLine "awslocal" cmd
-    |> CreateProcess.redirectOutput
-    |> CreateProcess.ensureExitCode
-    |> Proc.run
-    |> fun a -> a.Result.Output
-    |> filter
-
-let getDefinitionsBucketName () =
-    awsLocal "s3api list-buckets" (fun output ->
+let getDefinitionsBucketName (ctx) =
+    awsLocal "s3api list-buckets" ctx
+    >>= (fun output ->
         BucketResponse.Parse output
         |> fun b -> b.Buckets
         |> Array.find (fun b -> b.Name.Contains("definitions"))
-        |> fun b -> b.Name)
+        |> fun b -> b.Name
+        |> Ok
+        |> AsyncResult.ofResult)
 
-let getEventBusName () =
-    awsLocal "events list-event-buses" (fun output ->
+let getEventBusName (ctx) =
+    awsLocal "events list-event-buses" ctx
+    >>= (fun output ->
         EventBusResponse.Parse output
         |> fun b -> b.EventBuses
         |> Array.find (fun b -> b.Name.Contains("Slack"))
-        |> fun b -> b.Name)
+        |> fun b -> b.Name
+        |> Ok
+        |> AsyncResult.ofResult)
 
-// *** Define Targets ***
-Target.create "Cloud-Api-Test" (fun _ ->
-    setLocal
 
-    Environment.setEnvironVar "DEFINITIONS_BUCKET_NAME"
-    <| getDefinitionsBucketName ()
 
-    Environment.setEnvironVar "EVENT_BUS_NAME" <| getEventBusName ()
-    Environment.setEnvironVar "IS_LOCAL" "True"
+let cloudApiTest =
+    stage "Cloud Api Test" {
+        envVars [ "AWS_PROFILE", "local"; "IS_LOCAL", "True" ]
 
-    DotNet.exec (withWorkDir "cloud/src/Contextive.Cloud.Api.Tests") "run" ""
-    |> ensureSuccess)
+        workingDir "cloud/src/Contextive.Cloud.Api.Tests"
 
-Target.create "Cloud-Api-Publish" (fun _ ->
-    setLocal
+        run (fun ctx ->
+            asyncResult {
+                let! ebn = getEventBusName ctx
+                let! dbn = getDefinitionsBucketName ctx
+                return! runBash $"DEFINITIONS_BUCKET_NAME={dbn} EVENT_BUS_NAME={ebn} dotnet run" ctx
+            })
+    }
 
-    DotNet.exec (withWorkDir "cloud/src/Contextive.Cloud.Api") "publish" "--runtime linux-x64 --no-self-contained"
-    |> ensureSuccess)
+let cdkLocalCmd cmd =
+    $"cdklocal {cmd} --context local= --require-approval never"
 
-Target.create "Cdk-Bootstrap-Local" (fun _ -> cdkLocal "bootstrap")
+let cdkDeployLocal =
+    stage "CDK Deploy Local" {
+        envVars [ "AWS_PROFILE", "local"; "IS_LOCAL", "True" ]
+        run (cdkLocalCmd "deploy")
+    }
 
-Target.create "Cloud-Deploy-Local" (fun _ -> cdkLocal "deploy")
+let cdkBootStrapLocal =
+    stage "CDK BootStrap Local" {
+        envVars [ "AWS_PROFILE", "local"; "IS_LOCAL", "True" ]
 
-Target.create "Cloud-Deploy" (fun _ -> cdk "deploy")
+        run (cdkLocalCmd "bootstrap")
+    }
 
-Target.create "Cloud-Synth" (fun _ -> cdk "synth")
+let cloudApiPublish =
+    stage "Cloud Api Publish" {
+        envVars [ "AWS_PROFILE", "local"; "IS_LOCAL", "True" ]
+        workingDir "cloud/src/Contextive.Cloud.Api"
+        run "dotnet publish --runtime linux-arm64 --no-self-contained"
+    }
 
-open Fake.Core.TargetOperators
+pipeline "Contextive Cloud" {
+    noPrefixForStep
+    runBeforeEachStage gitHubGroupStart
+    runAfterEachStage gitHubGroupEnd
 
-"Cloud-Api-Publish" ==> "Cloud-Deploy"
+    stage "Prep" {
+        paralle
+        cloudApiPublish
 
-"Cloud-Api-Publish" ==> "Cdk-Bootstrap-Local"
+        cdkBootStrapLocal
+    }
 
-"Cloud-Api-Publish" ==> "Cloud-Deploy-Local"
+    cdkDeployLocal
 
-"Cdk-Bootstrap-Local" ==> "Cloud-Deploy-Local"
+    cloudApiTest
 
-"Cloud-Deploy-Local" ==> "Cloud-Api-Test"
+    runIfOnlySpecified false
+}
 
-// *** Start Build ***
-Target.runOrDefault "Cloud-Api-Test"
-// Target.runOrDefault "Cloud-Deploy"
-// Target.runOrDefault "Cdk-Bootstrap-Local"
+tryPrintPipelineCommandHelp ()
