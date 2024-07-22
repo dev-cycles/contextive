@@ -42,10 +42,15 @@ let private getConfig (s: ILanguageServer) section key =
         let value =
             if System.String.IsNullOrEmpty configValue then
                 match key with
-                | key when key = pathKey -> Some { Path = defaultContextiveDefinitionsPath; IsDefault = true }
+                | key when key = pathKey ->
+                    Some
+                        { Path = defaultContextiveDefinitionsPath
+                          IsDefault = true }
                 | _ -> None
             else
-                Some { Path = configValue; IsDefault = false }
+                Some
+                    { Path = configValue
+                      IsDefault = false }
 
         Log.Logger.Information $"Got {key} {value}"
         return value
@@ -91,6 +96,12 @@ let private onStartupConfigureServer definitions =
 
             DefinitionsInitializer.registerHandler s pathGetter showDocument
 
+            let showWarning =
+                if s.Window.ClientSettings.Capabilities.Window.ShowMessage.IsSupported then
+                    s.Window.ShowWarning
+                else
+                    fun _ -> ()
+
             Definitions.init
                 definitions
                 (fun m ->
@@ -98,7 +109,7 @@ let private onStartupConfigureServer definitions =
                     Serilog.Log.Logger.Information(m))
                 definitionsFileLoader
                 registerWatchedFiles
-                s.Window.ShowWarning
+                showWarning
 
             definitionsLoader ()
 
