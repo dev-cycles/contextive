@@ -57,12 +57,15 @@ let cdkLocalCmd cmd =
 let cdkDeployLocal =
     stage "CDK Deploy Local" {
         envVars [ "AWS_PROFILE", "local"; "IS_LOCAL", "True" ]
+        workingDir "cloud"
+
         run (cdkLocalCmd "deploy")
     }
 
 let cdkBootStrapLocal =
     stage "CDK BootStrap Local" {
         envVars [ "AWS_PROFILE", "local"; "IS_LOCAL", "True" ]
+        workingDir "cloud"
 
         run (cdkLocalCmd "bootstrap")
     }
@@ -71,7 +74,7 @@ let cloudApiPublish =
     stage "Cloud Api Publish" {
         envVars [ "AWS_PROFILE", "local"; "IS_LOCAL", "True" ]
         workingDir "cloud/src/Contextive.Cloud.Api"
-        run "dotnet publish --runtime linux-arm64 --no-self-contained"
+        run "dotnet publish --runtime linux-x64 --no-self-contained"
     }
 
 pipeline "Contextive Cloud" {
@@ -79,12 +82,9 @@ pipeline "Contextive Cloud" {
     runBeforeEachStage gitHubGroupStart
     runAfterEachStage gitHubGroupEnd
 
-    stage "Prep" {
-        paralle
-        cloudApiPublish
+    cloudApiPublish
 
-        cdkBootStrapLocal
-    }
+    cdkBootStrapLocal
 
     cdkDeployLocal
 

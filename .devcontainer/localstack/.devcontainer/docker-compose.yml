@@ -20,7 +20,7 @@ services:
       - DYNAMODB_SHARE_DB=1 # to allow use of nosql workbench
       - LAMBDA_EXECUTOR=docker-reuse
     volumes:
-      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
+      - './localstack:/var/lib/localstack'
       - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
       - contextive

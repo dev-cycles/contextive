@@ -15,8 +15,8 @@ let props construct name entryPointModule (definitions: IBucket) (eventBus: IEve
         System.IO.Path.Combine(basePath, relativePath)
 
     FunctionProps(
-        Runtime = Runtime.DOTNET_6,
-        Code = Code.FromAsset(assemblyPath "../../../../Contextive.Cloud.Api/bin/Debug/net6.0/linux-x64/publish"),
+        Runtime = Runtime.DOTNET_8,
+        Code = Code.FromAsset(assemblyPath "../../../../Contextive.Cloud.Api/bin/Release/net8.0/linux-x64/publish"),
         Handler = $"Contextive.Cloud.Api::{entryPointModule}::FunctionHandlerAsync",
         Description = $"Contextive {name}",
         MemorySize = Nullable<float>(256.0),
