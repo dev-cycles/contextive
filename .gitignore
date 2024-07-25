@@ -30,3 +30,5 @@ fable_modules
 *.DotSettings.user
 # Visual Studio
 .vs
+# Environment configuration
+.env
