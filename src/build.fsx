@@ -51,8 +51,14 @@ let cloudApiTest =
             })
     }
 
+let cdkCmd' cdkType cmd = 
+    $"{cdkType} {cmd} --context local= --require-approval never"
+
 let cdkLocalCmd cmd =
-    $"cdklocal {cmd} --context local= --require-approval never"
+    cdkCmd' "cdklocal" cmd
+
+let cdkCmd cmd = 
+    cdkCmd' "cdk" cmd
 
 let cdkDeployLocal =
     stage "CDK Deploy Local" {
@@ -77,7 +83,13 @@ let cloudApiPublish =
         run "dotnet publish --runtime linux-x64 --no-self-contained"
     }
 
-pipeline "Contextive Cloud" {
+let cloudDeploy : 
+    stage "Cloud Deploy" {
+        workingDir "cloud"
+        run (cdkCmd "deploy")
+    }
+
+pipeline "Contextive Cloud Local Test" {
     noPrefixForStep
     runBeforeEachStage gitHubGroupStart
     runAfterEachStage gitHubGroupEnd
@@ -91,6 +103,18 @@ pipeline "Contextive Cloud" {
     cloudApiTest
 
     runIfOnlySpecified false
+}
+
+pipeline "Contextive Cloud Local Test" {
+    noPrefixForStep
+    runBeforeEachStage gitHubGroupStart
+    runAfterEachStage gitHubGroupEnd
+
+    cloudApiPublish
+
+    cloudDeploy
+
+    runIfOnlySpecified true
 }
 
 tryPrintPipelineCommandHelp ()
