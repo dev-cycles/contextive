@@ -23,6 +23,8 @@ jobs:
         with:
           persist-credentials: false
 
+      - run: echo $GITHUB_JOB
+
       - uses: ./.github/actions/init-dotnet
 
       - name: Build
