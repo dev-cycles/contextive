@@ -2,7 +2,7 @@ name: Contextive Release
 on: workflow_dispatch    
 
 env:
-  dotnet-version: '7.0.x'
+  dotnet-version: '8.0.x'
 jobs:
   build-and-test:
     name: 'Release'

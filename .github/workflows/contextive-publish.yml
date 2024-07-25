@@ -12,7 +12,7 @@ on:
 
   
 env:
-  dotnet-version: '7.0.x'
+  dotnet-version: '8.0.x'
   
 jobs:
   get-matrix:
