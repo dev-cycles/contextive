@@ -3,6 +3,24 @@ module Contextive.VsCodeExtension.Tests.E2E.SingleRoot.Extension
 open Fable.Mocha
 open Fable.Import.VSCode.Vscode
 open Contextive.VsCodeExtension.Extension
+open Contextive.VsCodeExtension.Waiter
+open Contextive.VsCodeExtension.Tests.E2E.Helpers
+open Contextive.VsCodeExtension.Tests.E2E.Helpers.Helpers
+
+let waitForExtensionIsActive extensionId =
+    promise {
+        let getExtension () =
+            extensions.all.Find(fun x -> x.id = extensionId)
+
+        do!
+            waitFor (fun () ->
+                promise {
+                    let extension = getExtension ()
+                    return extension.isActive
+                })
+
+        return getExtension ()
+    }
 
 let tests =
     testList
@@ -12,10 +30,13 @@ let tests =
               let extension = extensions.all.Find(fun x -> x.id = "devcycles.contextive")
               Expect.equal extension.isActive true "Extension is not active"
 
-          testCase "CSharp Extension is Active"
-          <| fun () ->
-              let extension = extensions.all.Find(fun x -> x.id = "ms-dotnettools.csharp")
+          testCaseAsync "CSharp Extension is Active"
+          <| async {
+              let! cSharpDocUri = Paths.inWorkspace "MarketingDemo.cs" |> getDocUri |> openDocument
+              let! extension = waitForExtensionIsActive "ms-dotnettools.csharp"
+              do! closeDocument cSharpDocUri
               Expect.equal extension.isActive true "Extension is not active"
+          }
 
           testCase "Extension has no default path config"
           <| fun () ->
