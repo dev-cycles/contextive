@@ -105,7 +105,7 @@ jobs:
 
       - name: Build
         id: build
-        run: dotnet fsi visualstudio/build.fsx
+        run: dotnet fsi visualstudio/build.fsx -- -r ${{ inputs.dotnet_runtime }}
         working-directory: src
       
       - name: Visual Studio Extension Artifact
