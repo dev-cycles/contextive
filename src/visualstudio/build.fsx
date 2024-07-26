@@ -5,9 +5,10 @@ open Fun.Build
 
 open Common
 
-let visualStudioPath = "visualstudio/contextive/contextive'"
+let visualStudioProjectPath = "visualstudio/contextive/contextive"
 
-let visualStudioAssetPath = $"{visualStudioPath}/bin/Release/net8.0-windows7.0"
+let visualStudioAssetPath =
+    $"{visualStudioProjectPath}/bin/Release/net8.0-windows7.0"
 
 let visualStudioAssetFileName = "contextive.vsix"
 
@@ -23,7 +24,7 @@ pipeline "Contextive Visual Studio Extension" {
         stage "Copy when Local" {
             whenNot { envVar args.ci.Name }
 
-            run $"cp {languageServer.Path}/publish/Contextive.LanguageServer ${visualStudioPath}"
+            run $"cp {languageServer.Path}/publish/Contextive.LanguageServer ${visualStudioProjectPath}"
         }
 
         stage "Download Release Asset" {
@@ -38,13 +39,13 @@ pipeline "Contextive Visual Studio Extension" {
 
             run (fun ctx ->
                 ctx.GetEnvVar(args.os.Name)
-                |> unzipCmd (appZipFileName languageServer ctx) visualStudioPath)
+                |> unzipCmd (appZipFileName languageServer ctx) visualStudioProjectPath)
         }
 
     }
 
     stage "Package" {
-        workingDir visualStudioPath
+        workingDir visualStudioProjectPath
 
         run "dotnet publish"
     }
