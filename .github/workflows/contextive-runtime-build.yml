@@ -101,22 +101,19 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: Contextive.LanguageServer-${{ inputs.dotnet_runtime }}
-          path: src/visualstudio/contextive/contextive
+          path: src
 
       - name: Build
         id: build
-        run: dotnet publish
-        working-directory: src/visualstudio/contextive/contextive
+        run: dotnet fsi visualstudio/build.fsx
+        working-directory: src
       
-      - run: Get-ChildItem -Recurse
-        working-directory: src/visualstudio/contextive/contextive
-
-      # - name: Visual Studio Extension Artifact
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: Contextive-VisualStudio-Extension.vsix
-      #     path: "src/visualstudio/**/*.vsix" # TODO: Confirm Path
-      #     if-no-files-found: error
+      - name: Visual Studio Extension Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Contextive-VisualStudio-Extension.vsix
+          path: "src/visualstudio/contextive/contextive/bin/Release/net8.0-windows7.0/contextive.vsix"
+          if-no-files-found: error
 
       # TODO: Uncomment once we have tests
       # - uses: ./.github/actions/upload-reports
