@@ -5,7 +5,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Contextive.LanguageServer.exe" />
     <None Remove="contextive.pkgdef" />
   </ItemGroup>
 
