@@ -2,10 +2,7 @@ source https://api.nuget.org/v3/index.json
 
 storage: none
 framework: net8.0
-nuget Amazon.CDK.AWS.Apigatewayv2.Alpha
-nuget Amazon.CDK.AWS.Apigatewayv2.Integrations.Alpha
 nuget Amazon.CDK.Lib
-nuget Amazon.Jsii.Analyzers
 nuget Amazon.Lambda.CloudWatchEvents
 nuget Amazon.Lambda.Core
 nuget Amazon.Lambda.TestUtilities

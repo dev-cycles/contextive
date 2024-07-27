@@ -2,8 +2,7 @@ module Contextive.Cloud.HttpApi
 
 open Amazon.CDK
 open Amazon.CDK.AWS.Apigatewayv2
-open Amazon.CDK.AWS.Apigatewayv2.Alpha
-open Amazon.CDK.AWS.Apigatewayv2.Integrations.Alpha
+open Amazon.CDK.AwsApigatewayv2Integrations
 
 let setup construct apiFunction =
     let apiIntegration = HttpLambdaIntegration("ApiIntegration", apiFunction)
