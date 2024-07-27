@@ -1,7 +1,7 @@
 #r "nuget: Fun.Build, 1.0.5"
 #r "nuget: FSharp.Data"
 #r "nuget: FsToolkit.ErrorHandling"
-#load "ci/common.fsx"
+#load "../ci/common.fsx"
 
 open Fun.Build
 open FSharp.Data
@@ -47,18 +47,16 @@ let cloudApiTest =
             asyncResult {
                 let! ebn = getEventBusName ctx
                 let! dbn = getDefinitionsBucketName ctx
-                return! runBash $"DEFINITIONS_BUCKET_NAME={dbn} EVENT_BUS_NAME={ebn} dotnet run" ctx
+                return! runBash $"DEFINITIONS_BUCKET_NAME={dbn} EVENT_BUS_NAME={ebn} dotnet run --no-spinner" ctx
             })
     }
 
-let cdkCmd' cdkType cmd = 
-    $"{cdkType} {cmd} --context local= --require-approval never"
+let cdkCmd' cdkType cmd = $"{cdkType} {cmd}"
 
 let cdkLocalCmd cmd =
-    cdkCmd' "cdklocal" cmd
+    cdkCmd' "cdklocal" $"{cmd} --context local= --require-approval never"
 
-let cdkCmd cmd = 
-    cdkCmd' "cdk" cmd
+let cdkCmd cmd = cdkCmd' "cdk" cmd
 
 let cdkDeployLocal =
     stage "CDK Deploy Local" {
@@ -83,9 +81,10 @@ let cloudApiPublish =
         run "dotnet publish --runtime linux-x64 --no-self-contained"
     }
 
-let cloudDeploy : 
+let cloudDeploy =
     stage "Cloud Deploy" {
         workingDir "cloud"
+        envVars [ "AWS_REGION", "eu-west-3" ]
         run (cdkCmd "deploy")
     }
 
@@ -105,7 +104,7 @@ pipeline "Contextive Cloud Local Test" {
     runIfOnlySpecified false
 }
 
-pipeline "Contextive Cloud Local Test" {
+pipeline "Contextive Cloud Deploy" {
     noPrefixForStep
     runBeforeEachStage gitHubGroupStart
     runAfterEachStage gitHubGroupEnd

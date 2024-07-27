@@ -24,7 +24,7 @@ let post: HttpHandler =
                     use eventBridgeClient =
                         new AmazonEventBridgeClient(AmazonEventBridgeConfig() |> forEnvironment)
 
-                    logger.LogInformation($"Sending event, text is '{event.Event.Text}'")
+                    logger.LogInformation($"Sending event, event was '{JsonSerializer.Serialize(event)}")
 
                     try
                         let! res =
