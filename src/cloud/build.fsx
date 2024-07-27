@@ -11,9 +11,14 @@ open Common
 
 type BucketResponse = JsonProvider<""" { "Buckets": [{"Name": "SampleName"}] } """>
 type EventBusResponse = JsonProvider<""" { "EventBuses": [{"Name": "SampleName"}] } """>
+type ApiGatewayResponse = JsonProvider<"""{ "Items": [{ "ApiEndpoint": "https://host.name" }] }""">
+
 
 let awsLocal cmd ctx =
     $"awslocal {cmd}" |> runBashCaptureOutput <| ctx
+
+let aws cmd ctx =
+    $"aws {cmd}" |> runBashCaptureOutput <| ctx
 
 let getDefinitionsBucketName (ctx) =
     awsLocal "s3api list-buckets" ctx
@@ -35,7 +40,14 @@ let getEventBusName (ctx) =
         |> Ok
         |> AsyncResult.ofResult)
 
-
+let getEndpoint (ctx) =
+    aws "apigatewayv2 get-apis" ctx
+    >>= (fun output ->
+        ApiGatewayResponse.Parse output
+        |> fun i -> i.Items |> Seq.head
+        |> fun a -> a.ApiEndpoint
+        |> Ok
+        |> AsyncResult.ofResult)
 
 let cloudApiTest =
     stage "Cloud Api Test" {
@@ -81,11 +93,25 @@ let cloudApiPublish =
         run "dotnet publish --runtime linux-x64 --no-self-contained"
     }
 
+let prodRegion = [ "AWS_REGION", "eu-west-3" ]
+
 let cloudDeploy =
     stage "Cloud Deploy" {
         workingDir "cloud"
-        envVars [ "AWS_REGION", "eu-west-3" ]
+        envVars prodRegion
         run (cdkCmd "deploy")
+    }
+
+let cloudE2eTest =
+    stage "Cloud E2E Test" {
+        workingDir "cloud/src/Contextive.Cloud.Tests.E2e"
+        envVars prodRegion
+
+        run (fun ctx ->
+            asyncResult {
+                let! definitionsUrl = getEndpoint ctx
+                return! runBash $"CONTEXTIVE_ENDPOINT_URL={definitionsUrl} dotnet run --no-spinner" ctx
+            })
     }
 
 pipeline "Contextive Cloud Local Test" {
@@ -112,6 +138,8 @@ pipeline "Contextive Cloud Deploy" {
     cloudApiPublish
 
     cloudDeploy
+
+    cloudE2eTest
 
     runIfOnlySpecified true
 }
