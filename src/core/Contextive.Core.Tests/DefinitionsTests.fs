@@ -296,7 +296,11 @@ unknown:
 
                     test
                         <@
-                            result = Error(ParsingError("Object starting line 2, column 1 - Property 'unknown' not found on type 'Contextive.Core.Definitions+Definitions'."))
+                            result = Error(
+                                ParsingError(
+                                    "Object starting line 2, column 1 - Property 'unknown' not found on type 'Contextive.Core.Definitions+Definitions'."
+                                )
+                            )
                         @>
 
                 testCase "Error with extra colon typo"
@@ -312,5 +316,22 @@ contexts:
 
                     test
                         <@
-                            result = Error(ParsingError("Object starting line 5, column 19 - Mapping values are not allowed in this context."))
-                        @> ] ]
+                            result = Error(
+                                ParsingError(
+                                    "Object starting line 5, column 19 - Mapping values are not allowed in this context."
+                                )
+                            )
+                        @> ]
+          testList
+              "ValidationErrors"
+              [ testCase "Term name is required"
+                <| fun () ->
+                    let result =
+                        deserialize
+                            """
+contexts:
+  - terms:
+    - name:
+"""
+
+                    test <@ result = Error(ValidationError("The Name field is required. See line 4, column 7.")) @> ] ]

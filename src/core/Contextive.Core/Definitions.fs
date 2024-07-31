@@ -4,12 +4,14 @@ open YamlDotNet.Serialization
 open YamlDotNet.Serialization.NamingConventions
 open System.Linq
 open Contextive.Core.File
+open System.ComponentModel.DataAnnotations
 
 open Humanizer
 
 [<CLIMutable>]
 type Term =
-    { Name: string
+    { [<Required>]
+      Name: string
       Definition: string option
       Examples: ResizeArray<string>
       Aliases: ResizeArray<string> }
@@ -84,6 +86,7 @@ let deserialize (yml: string) =
     try
         let deserializer =
             (new DeserializerBuilder())
+                .WithNodeDeserializer(ValidatingDeserializer.factory, ValidatingDeserializer.where)
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build()
 
@@ -93,13 +96,17 @@ let deserialize (yml: string) =
         | null -> Error(ParsingError("Definitions file is empty."))
         | _ -> Ok(definitions |> replaceNullsWithEmptyLists)
     with :? YamlDotNet.Core.YamlException as e ->
-        let msg =
-            if e.InnerException = null then
-                e.Message
-            else
-                e.InnerException.Message
+        match e.InnerException with
+        | :? ValidationException as ve ->
+            Error(ValidationError($"{ve.Message} See line {e.Start.Line}, column {e.Start.Column}."))
+        | _ ->
+            let msg =
+                if e.InnerException = null then
+                    e.Message
+                else
+                    e.InnerException.Message
 
-        Error(ParsingError($"Object starting line {e.Start.Line}, column {e.Start.Column} - {msg}"))
+            Error(ParsingError($"Object starting line {e.Start.Line}, column {e.Start.Column} - {msg}"))
 
 open YamlDotNet.Core
 open YamlDotNet.Core.Events

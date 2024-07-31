@@ -9,6 +9,7 @@
     <DebuggerSupport>false</DebuggerSupport>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ValidatingDeserializer.fs" />
     <Compile Include="File.fs" />
     <Compile Include="DefinitionsSchema.fs" />
     <Compile Include="Definitions.fs" />

@@ -1,9 +1,7 @@
 module Contextive.Core.File
 
-type PathConfiguration =
-    { Path: string
-      IsDefault: bool }
-    
+type PathConfiguration = { Path: string; IsDefault: bool }
+
 let configuredPath p = { Path = p; IsDefault = false }
 
 type FileError =
@@ -12,15 +10,17 @@ type FileError =
     | FileNotFound
     | NotYetLoaded
     | ParsingError of string
+    | ValidationError of string
 
 type File =
     { AbsolutePath: string
       Contents: Result<string, FileError> }
-    
+
 let fileErrorMessage =
     function
     | PathInvalid(m) -> $"Invalid Path: {m}"
     | ParsingError(m) -> $"Parsing Error: {m}"
+    | ValidationError(m) -> $"Validation Error: {m}"
     | DefaultFileNotFound -> "Default definitions file not found."
     | FileNotFound -> "Definitions file not found."
     | NotYetLoaded -> "Should Not Be Reached"
