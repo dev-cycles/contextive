@@ -14,8 +14,9 @@ open Contextive.Core
 open Contextive.Core.File
 open Contextive.Core.Definitions
 
-let introComments =
-    """# Welcome to Contextive!
+let private introComments =
+    """# yaml-language-server: $schema=contextive-schema.json
+# Welcome to Contextive!
 #
 # This initial definitions file illustrates the syntax of the file by providing definitions and examples of the terms
 # used in schema of the definitions file.
@@ -25,11 +26,11 @@ let introComments =
 # Update the yaml below to define your specific contexts and definitions, and feel free to use markdown in definitions and examples.
 """
 
-let pathComments =
+let private pathComments =
     """    # Globs are supported. Multiple paths may be included. If any match the currently open file, the context will be used.
 """
 
-let defaultDefinitions =
+let private defaultDefinitions =
     { Contexts =
         [| { Name = "Demo"
              DomainVisionStatement = "To illustrate the usage of the contextive definitions file."
@@ -72,16 +73,15 @@ It might be a legacy term, or an alternative term that is in common use while th
                |> ResizeArray } |]
         |> ResizeArray }
 
-let insertComment (beforeText: string) comment (text: string) =
+let private insertComment (beforeText: string) comment (text: string) =
     let start = text.IndexOf(beforeText)
 
     text.Substring(0, start) + comment + text.Substring(start)
 
-let ensureDirectoryExists (p:string) =
-    p
-    |> Path.GetDirectoryName
-    |> Directory.CreateDirectory
-    |> ignore
+let private ensureDirectoryExists (p: string) =
+    p |> Path.GetDirectoryName |> Directory.CreateDirectory |> ignore
+
+let private schemaFileName = "contextive-schema.json"
 
 let private handler pathGetter (showDocument: ShowDocumentParams -> System.Threading.Tasks.Task<ShowDocumentResult>) =
     fun () ->
@@ -98,8 +98,13 @@ let private handler pathGetter (showDocument: ShowDocumentParams -> System.Threa
                                 Definitions.serialize defaultDefinitions
                                 |> insertComment "contexts:" introComments
                                 |> insertComment "    paths:" pathComments
+
                             ensureDirectoryExists p
                             File.WriteAllText(p, defaultDefinitionsText)
+
+                        let folder = Path.GetDirectoryName(p)
+                        let schemaPath = Path.Combine(folder, schemaFileName)
+                        File.WriteAllText(schemaPath, DefinitionsSchema.schema)
 
                         do!
                             showDocument (ShowDocumentParams(Uri = p, External = false))
@@ -110,7 +115,6 @@ let private handler pathGetter (showDocument: ShowDocumentParams -> System.Threa
                     }
         }
         |> Async.StartAsTask
-
 
 let private method = "contextive/initialize"
 
