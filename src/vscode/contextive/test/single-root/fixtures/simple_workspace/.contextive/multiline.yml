@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=contextive-schema.json
 contexts:
   - name: Demo Multiline Options
     terms:

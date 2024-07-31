@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=contextive-schema.json
 # Invalid definitions.  `example` is an unknown key - it should be `examples`
 contexts:
   - terms:

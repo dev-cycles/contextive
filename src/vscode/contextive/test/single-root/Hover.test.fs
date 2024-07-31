@@ -60,7 +60,7 @@ let tests =
           testCaseAsync "Hover returns expected content"
           <| async {
               let testDocPath = Paths.inWorkspace ".contextive/definitions.yml"
-              let position = vscode.Position.Create(16, 9)
+              let position = vscode.Position.Create(17, 9)
 
               let! hoverContents = getHover testDocPath position 1
 
@@ -88,11 +88,14 @@ let tests =
               // Notwithstanding inability to test, this is working properly at runtime.
               // Leaving the incorrect assertions in place so that we find out when the bug is fixed.
               try
-                // expectHoverContent firstHoverContent "class Page"
-                // expectHoverContent secondHoverContent "All the content displayed in a browser when a user visits a url."
-                expectHoverContent secondHoverContent "class Page"
-                expectHoverContent firstHoverContent "All the content displayed in a browser when a user visits a url."
-              with
-              | e -> logInspect e
+                  // expectHoverContent firstHoverContent "class Page"
+                  // expectHoverContent secondHoverContent "All the content displayed in a browser when a user visits a url."
+                  expectHoverContent secondHoverContent "class Page"
+
+                  expectHoverContent
+                      firstHoverContent
+                      "All the content displayed in a browser when a user visits a url."
+              with e ->
+                  logInspect e
 
           } ]

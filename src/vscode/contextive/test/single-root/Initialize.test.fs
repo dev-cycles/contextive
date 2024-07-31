@@ -55,7 +55,7 @@ let tests =
           testCaseAsync
               "When config is defined, and definitions file doesn't exist, Initialize Command should create and open in configured location"
           <| async {
-              let newPath = $"{System.Guid.NewGuid().ToString()}.yml"
+              let newPath = $".contextive/{System.Guid.NewGuid().ToString()}.yml"
               do! updateConfig newPath
 
               do! VsCodeCommands.initialize () |> Promise.Ignore
@@ -73,7 +73,7 @@ let tests =
 
           testCaseAsync "New definitions file should show new term in completion"
           <| async {
-              let newPath = $"{System.Guid.NewGuid().ToString()}.yml"
+              let newPath = $".contextive/{System.Guid.NewGuid().ToString()}.yml"
               do! updateConfig newPath
 
               do! VsCodeCommands.initialize () |> Promise.Ignore
