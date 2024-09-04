@@ -3,10 +3,27 @@
     <TargetFramework>net8.0-windows7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	  <Version>1.11.1</Version>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Contextive.LanguageServer.exe" />
+    <Compile Remove="ContextiveLanguageServerProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="contextive.pkgdef" />
+    <None Remove="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\..\vscode\contextive\images\contextive.png" Link="contextive.png" />
+    <Content Include="Contextive.LanguageServer.exe">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\..\..\LICENSE" Link="LICENSE" />
+    <Content Include="ContextiveLanguageServerProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="README.md" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json.schemastore.org/vsix-publish",
+    "categories": [ "documentation" ],
+    "identity": {
+        "internalName": "Contextive.VisualStudio"
+    },
+    "overview": "README.md",
+    "priceCategory": "free",
+    "publisher": "devcycles",
+    "private": false,
+    "qna": true,
+    "repo": "https://github.com/dev-cycles/contextive"
+}

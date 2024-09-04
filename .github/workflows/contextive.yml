@@ -28,43 +28,6 @@ jobs:
       os: ${{ matrix.os }}
       vsce_platform: ${{matrix.vsce_platform }}
 
-  # build-test-visualstudio:
-  #   name: Visual Studio Extension
-  #   needs:
-  #     - language-server # TODO Confirm ID
-  #   runs-on: windows-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         persist-credentials: false
-
-  #     - uses: ./.github/actions/init-dotnet
-
-  #     - name: Language Server Artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: Contextive.LanguageServer-${{ inputs.dotnet_runtime }}
-  #         path: src/
-
-  #     - name: Build
-  #       id: build
-  #       run: dotnet fsi vscode/build.fsx -- -r ${{ inputs.dotnet_runtime }} --vsce-platform ${{ inputs.vsce_platform }}
-  #       working-directory: src
-
-  #     - name: Visual Studio Extension Artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: Contextive-VisualStudio-Extension.vsix
-  #         path: "src/visualstudio/**/*.vsix" # TODO: Confirm Path
-  #         if-no-files-found: error
-
-  #     # TODO: Uncomment once we have tests
-  #     # - uses: ./.github/actions/upload-reports
-  #     #   if: always()
-  #     #   with:
-  #     #     name: 'Contextive Visual Studio Extension'
-  #     #     reporter: java-junit
-
   build-test-intellij:
     name: IntelliJ Plugin
     runs-on: 'ubuntu-latest'

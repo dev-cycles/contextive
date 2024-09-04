@@ -10,11 +10,20 @@ namespace contextive
         public override ExtensionConfiguration ExtensionConfiguration => new()
         {
             Metadata = new(
-                    id: "contextive.f050f6e5-c51b-4c33-9a59-ba9945a00259",
+                    id: "Contextive.f050f6e5-c51b-4c33-9a59-ba9945a00259",
                     version: this.ExtensionAssemblyVersion,
-                    publisherName: "Dev Cycles",
+                    publisherName: "Chris Simon",
                     displayName: "Contextive",
-                    description: "Supports developers where a complex domain or project specific language is in use by surfacing definitions everywhere specific words are used - code, comments, config or documentation."),
+                    description: "Supports developers where a complex domain or project specific language is in use by surfacing definitions everywhere specific words are used - code, comments, config or documentation.")
+            {
+                // See https://learn.microsoft.com/en-us/dotnet/api/microsoft.visualstudio.extensibility.extensionmetadata?view=vs-extensibility#properties
+                MoreInfo = "https://contextive.tech",
+                InstallationTargetArchitecture = VisualStudioArchitecture.Amd64,
+                Icon = "contextive.png",
+                License = "LICENSE",
+                ReleaseNotes = "https://github.com/dev-cycles/contextive/releases/tag/v1.11.1",
+                Tags = ["DDD", "Dictionary", "Domain-Driven Design", "Domain Modelling", "Knowledge Management"]
+            }
         };
 
         /// <inheritdoc />
