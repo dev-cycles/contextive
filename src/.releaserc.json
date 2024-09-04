@@ -49,11 +49,19 @@
         }],
         ["semantic-release-replace-plugin",{
             "replacements": [{
-                "files": ["language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj"],
+                "files": [
+                    "language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj",
+                    "visualstudio/contextive/contextive/contextive.csproj"
+                ],
                 "from": "<Version>.*</Version>",
                 "to": "<Version>${nextRelease.version}</Version>",
                 "results": [{
                     "file": "language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj",
+                    "hasChanged": true,
+                    "numMatches": 1,
+                    "numReplacements": 1
+                },{
+                    "file": "visualstudio/contextive/contextive/contextive.csproj",
                     "hasChanged": true,
                     "numMatches": 1,
                     "numReplacements": 1
@@ -65,17 +73,6 @@
                 "to": "version = \"${nextRelease.version}\"",
                 "results": [{
                     "file": "intellij/contextive/build.gradle.kts",
-                    "hasChanged": true,
-                    "numMatches": 1,
-                    "numReplacements": 1
-                }],
-                "countMatches": true
-            },{
-                "files": ["visualstudio/contextive/contextive/contextive.csproj"],
-                "from": "<Version>.*</Version>",
-                "to": "<Version>${nextRelease.version}</Version>",
-                "results": [{
-                    "file": "visualstudio/contextive/contextive/contextive.csproj",
                     "hasChanged": true,
                     "numMatches": 1,
                     "numReplacements": 1
@@ -105,8 +102,8 @@
                 "countMatches": true
             },{
                 "files": ["visualstudio/contextive/contextive/ContextiveExtension.cs"],
-                "from": "releases/tag/v.*\"",
-                "to": "releases/tag/v${nextRelease.version}\"",
+                "from": "releases/tag/v.*?\",",
+                "to": "releases/tag/v${nextRelease.version}\",",
                 "results": [{
                     "file": "visualstudio/contextive/contextive/ContextiveExtension.cs",
                     "hasChanged": true,
