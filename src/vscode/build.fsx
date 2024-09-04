@@ -129,11 +129,13 @@ pipeline "Contextive VsCode Extension" {
         whenCmdArg args.release
         whenCmdArg args.vscePlatform
 
-        stage "Upload Asset" {
-            run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {vsCodeAssetFileName ctx}")
-        }
+        // Temporary Manually skipped as was already uploaded on first run: https://github.com/dev-cycles/contextive/actions/runs/10701042363/job/29666246138
+        // stage "Upload Asset" {
+        //     run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {vsCodeAssetFileName ctx}")
+        // }
 
-        stage "Publish to Microsoft VS Marketplace" { run (fun ctx -> $"npx vsce publish --packagePath {vsCodeAssetFileName ctx}") }
+        // Temporary Manually skipped as was already published on first run: https://github.com/dev-cycles/contextive/actions/runs/10701042363/job/29666246138
+        // stage "Publish to Microsoft VS Marketplace" { run (fun ctx -> $"npx vsce publish --packagePath {vsCodeAssetFileName ctx}") }
         stage "Publish to Open-Vsx Marketplace" { run (fun ctx -> $"npx ovsx publish {vsCodeAssetFileName ctx} -p \"{ctx.GetEnvVar(args.ovsxPat.Name)}\"") }
     }
 

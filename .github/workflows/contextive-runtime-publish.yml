@@ -19,6 +19,8 @@ on:
         required: true
       VSCE_PAT:
         required: true
+      OVSX_PAT:
+        required: true
 
   
 env:
@@ -83,12 +85,6 @@ jobs:
           persist-credentials: false
 
       - uses: ./.github/actions/init-dotnet
-
-      - name: Language Server Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: Contextive.LanguageServer-${{ inputs.dotnet_runtime }}
-          path: src
 
       - name: Build
         id: build
