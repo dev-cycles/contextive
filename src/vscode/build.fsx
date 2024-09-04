@@ -13,6 +13,11 @@ let vsCodeAssetLabel (ctx: Internal.StageContext) =
 
 let vsCodePath = "vscode/contextive"
 
+let publishTag (ctx: Internal.StageContext) = 
+    match ctx.GetCmdArg(args.release) with
+    | "" -> ctx.GetEnvVar(args.headSha.Name)
+    | r -> r
+
 pipeline "Contextive VsCode Extension" {
     description "Build & Test"
     noPrefixForStep
@@ -115,7 +120,7 @@ pipeline "Contextive VsCode Extension" {
 
         stage "Package" {
             run (fun ctx ->
-                $"npx vsce package -t {ctx.GetCmdArg(args.vscePlatform)} --githubBranch {ctx.GetCmdArg(args.release)} --baseContentUrl https://github.com/dev-cycles/contextive/blob/{ctx.GetCmdArg(args.release)}/src/vscode/contextive/ --baseImagesUrl https://raw.githubusercontent.com/dev-cycles/contextive/{ctx.GetCmdArg(args.release)}/src/vscode/contextive/")
+                $"npx vsce package -t {ctx.GetCmdArg(args.vscePlatform)} --githubBranch {publishTag ctx} --baseContentUrl https://github.com/dev-cycles/contextive/blob/{publishTag ctx}/src/vscode/contextive/ --baseImagesUrl https://raw.githubusercontent.com/dev-cycles/contextive/{publishTag ctx}/src/vscode/contextive/")
         }
     }
 
