@@ -2,7 +2,7 @@
     "$schema": "http://json.schemastore.org/vsix-publish",
     "categories": [ "documentation" ],
     "identity": {
-        "internalName": "Contextive.VisualStudio"
+        "internalName": "ContextiveVisualStudio"
     },
     "overview": "README.md",
     "priceCategory": "free",
