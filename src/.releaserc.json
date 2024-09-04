@@ -86,7 +86,7 @@
                 "from": "dev-cycles/contextive/v.*?/",
                 "to": "dev-cycles/contextive/v${nextRelease.version}/",
                 "results": [{
-                    "file": "vvisualstudio/contextive/contextive/README.md",
+                    "file": "visualstudio/contextive/contextive/README.md",
                     "hasChanged": true,
                     "numMatches": 2,
                     "numReplacements": 2
