@@ -133,7 +133,8 @@ pipeline "Contextive VsCode Extension" {
             run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {vsCodeAssetFileName ctx}")
         }
 
-        stage "Publish to Marketplace" { run (fun ctx -> $"npx vsce publish --packagePath {vsCodeAssetFileName ctx}") }
+        stage "Publish to Microsoft VS Marketplace" { run (fun ctx -> $"npx vsce publish --packagePath {vsCodeAssetFileName ctx}") }
+        stage "Publish to Open-Vsx Marketplace" { run (fun ctx -> $"npx ovsx publish {vsCodeAssetFileName ctx} -p \"{ctx.GetEnvVar(args.ovsxPat.Name)}\"") }
     }
 
     runIfOnlySpecified false
