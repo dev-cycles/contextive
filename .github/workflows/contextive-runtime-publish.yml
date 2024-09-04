@@ -32,57 +32,52 @@ jobs:
     with:
       matrix-path: .github/release-matrix.yml
 
-# Temporary Manually skipped as was already published on 
-# first run: https://github.com/dev-cycles/contextive/actions/runs/10701042363
-  # language-server:
-  #   name: Language Server
-  #   runs-on: ${{ inputs.os }}
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         persist-credentials: false
+  language-server:
+    name: Language Server
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-  #     - uses: ./.github/actions/init-dotnet
+      - uses: ./.github/actions/init-dotnet
 
-  #     - name: Build
-  #       id: build
-  #       run: dotnet fsi language-server/build.fsx -- -r ${{ inputs.dotnet_runtime }} --release ${{ inputs.release }}
-  #       working-directory: src
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Build
+        id: build
+        run: dotnet fsi language-server/build.fsx -- -r ${{ inputs.dotnet_runtime }} --release ${{ inputs.release }}
+        working-directory: src
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-# Temporary Manually skipped as was already published on 
-# MS VS Marketplace first run: https://github.com/dev-cycles/contextive/actions/runs/10701042363
-# OSVX Marketplace second run: https://github.com/dev-cycles/contextive/actions/runs/10701382779
-  # vscode:
-  #   name: VsCode Extension
-  #   needs:
-  #     - language-server
-  #   runs-on: ${{ inputs.os }}
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         persist-credentials: false
+  vscode:
+    name: VsCode Extension
+    needs:
+      - language-server
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-  #     - uses: ./.github/actions/init-dotnet
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
+      - uses: ./.github/actions/init-dotnet
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-  #     - name: Build
-  #       id: build
-  #       run: dotnet fsi vscode/build.fsx -- -r ${{ inputs.dotnet_runtime }} --release ${{ inputs.release }} --vsce-platform ${{ inputs.vsce_platform }}
-  #       working-directory: src
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-  #         VSCE_PAT: ${{ secrets.VSCE_PAT }}
-  #         OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      - name: Build
+        id: build
+        run: dotnet fsi vscode/build.fsx -- -r ${{ inputs.dotnet_runtime }} --release ${{ inputs.release }} --vsce-platform ${{ inputs.vsce_platform }}
+        working-directory: src
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
 
   publish-visualstudio:
     name: Visual Studio Extension
     if: ${{ inputs.os == 'windows-latest' }}
-    # needs:
-    #   - language-server
+    needs:
+      - language-server
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v4

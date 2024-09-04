@@ -3,12 +3,12 @@ on:
   release:
     types: [published]
   ## Keeping in Comments as may be helpful for future publish-rescue requirements
-  workflow_dispatch:
-    inputs:
-      release:
-        description: 'Release to publish'
-        required: true
-        type: string
+  # workflow_dispatch:
+  #   inputs:
+  #     release:
+  #       description: 'Release to publish'
+  #       required: true
+  #       type: string
 
   
 env:
@@ -27,8 +27,8 @@ jobs:
       matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
     uses: ./.github/workflows/contextive-runtime-publish.yml
     with:
-      # release: ${{ github.ref_name }} 
-      release: ${{ inputs.release }} # Use this if switching to manual publish
+      release: ${{ github.ref_name }} 
+      # release: ${{ inputs.release }} # Use this if switching to manual publish
       dotnet_runtime: ${{ matrix.dotnet_runtime }}
       os: ${{ matrix.os }}
       vsce_platform: ${{ matrix.vsce_platform }}
@@ -37,32 +37,29 @@ jobs:
       VSCE_PAT: ${{ secrets.VSCE_PAT }}
       OVSX_PAT: ${{ secrets.OVSX_PAT }}
 
-# Temporary Manually skipped as was already published on first run: https://github.com/dev-cycles/contextive/actions/runs/10701042363/job/29666246138
-  # publish-intellij:
-  #   name: Contextive IntelliJ Publish
-  #   runs-on: 'ubuntu-latest'
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         persist-credentials: false
+  publish-intellij:
+    name: Contextive IntelliJ Publish
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-  #     - uses: ./.github/actions/init-dotnet
+      - uses: ./.github/actions/init-dotnet
 
-  #     - uses: actions/setup-java@v4
-  #       with:
-  #         distribution: 'corretto'
-  #         java-version: '21'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
 
-  #     - name: Build
-  #       id: build
-  #       run: dotnet fsi intellij/build.fsx -- --release ${{ github.ref_name }}
-  #       # run: dotnet fsi intellij/build.fsx -- --release ${{ inputs.release }} # Use this if switching to manual publishg
-  #       working-directory: src
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-  #         CERTIFICATE_CHAIN: ${{ secrets.JETBRAINS_CERTIFICATE_CHAIN }}
-  #         PRIVATE_KEY: ${{ secrets.JETBRAINS_PRIVATE_KEY }}
-  #         PRIVATE_KEY_PASSWORD: ${{ secrets.JETBRAINS_PRIVATE_KEY_PASSWORD }}
-  #         PUBLISH_TOKEN: ${{ secrets.JETBRAINS_PUBLISH_TOKEN }}
-
-
+      - name: Build
+        id: build
+        run: dotnet fsi intellij/build.fsx -- --release ${{ github.ref_name }}
+        # run: dotnet fsi intellij/build.fsx -- --release ${{ inputs.release }} # Use this if switching to manual publishg
+        working-directory: src
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          CERTIFICATE_CHAIN: ${{ secrets.JETBRAINS_CERTIFICATE_CHAIN }}
+          PRIVATE_KEY: ${{ secrets.JETBRAINS_PRIVATE_KEY }}
+          PRIVATE_KEY_PASSWORD: ${{ secrets.JETBRAINS_PRIVATE_KEY_PASSWORD }}
+          PUBLISH_TOKEN: ${{ secrets.JETBRAINS_PUBLISH_TOKEN }}

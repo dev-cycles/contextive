@@ -88,13 +88,12 @@ let zipAndUploadAsset app =
                 run (fun ctx -> bashCmd $"""echo "artifact-path={appZipPath app ctx}" >> $GITHUB_OUTPUT""")
             }
 
-            // Temporary Manually skipped as was already uploaded on first run: https://github.com/dev-cycles/contextive/actions/runs/10701042363/job/29666246138
-            // stage "Upload" {
-            //     workingDir app.Path
-            //     whenCmdArg args.release
+            stage "Upload" {
+                workingDir app.Path
+                whenCmdArg args.release
 
-            //     run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {appZipPath app ctx}")
-            // }
+                run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {appZipPath app ctx}")
+            }
         }
     }
 
