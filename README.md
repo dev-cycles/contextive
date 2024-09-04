@@ -31,6 +31,7 @@ Officially supported IDEs include:
 
 #### [VsCode](./docs/wiki/INSTALLATION.md#visual-studio-code)
 #### [IntelliJ IDEs](./docs/wiki/INSTALLATION.md#intellij-plugin-platform)
+#### [Visual Studio](./docs/wiki/INSTALLATION.md#visual-studio-2022)
 #### [Neovim](./docs/wiki/INSTALLATION.md#neovim)
 #### [Helix](./docs/wiki/INSTALLATION.md#helix)
 

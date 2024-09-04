@@ -25,6 +25,17 @@ See JetBrains documentation on [installing plugins](https://www.jetbrains.com/he
 
 Check the plugin [README](../../src/intellij/contextive/README.md) for usage instructions, known issues and links to related JetBrains issues with the Language Server Protocol support.
 
+## Visual Studio 2022
+
+Open Visual Studio 2022. Use the `Extensions` -> `Manage Extensions...` menu option. Search for `Contextive` and click `Install`.
+
+> [!WARNING]  
+> This plugin is considered 'beta' status, as leverages relatively new [Language Server Protocol](https://learn.microsoft.com/en-us/visualstudio/extensibility/visualstudio.extensibility/language-server-provider/language-server-provider?view=vs-2022) support in the [Preview Extensibility Model](https://learn.microsoft.com/en-us/visualstudio/extensibility/visualstudio.extensibility/?view=vs-2022). Some features may not work or may not work as expected. Please [report issues](https://github.com/dev-cycles/contextive/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=) in this project and we will liaise with Microsoft & the Visual Studio team to resolve.
+> 
+> The main issue for most use cases is that the extension doesn't work when opening a solution file, only when opening a folder.  See [Issue #75](https://github.com/dev-cycles/contextive/issues/75) for details.
+>
+> See [known issues](../../src/visualstudio/contextive/contextive/README.md#known-issues) for others.
+
 ## Language Server Configurations
 
 For the following IDEs, you will need to install the Contextive Language Server and then configure the IDE to use it.

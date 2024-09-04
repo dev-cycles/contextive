@@ -7,8 +7,6 @@ Contextive is a Visual Studio Code extension to assist developers in environment
 
 It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.
 
-![Example of Contextive in action.](https://raw.githubusercontent.com/dev-cycles/contextive/v1.12.0/docs/wiki/images/simple-auto-complete-demo.gif)
-
 > [!WARNING]  
 > This plugin is considered 'beta' status, as leverages relatively new [Language Server Protocol](https://learn.microsoft.com/en-us/visualstudio/extensibility/visualstudio.extensibility/language-server-provider/language-server-provider?view=vs-2022) support in the [Preview Extensibility Model](https://learn.microsoft.com/en-us/visualstudio/extensibility/visualstudio.extensibility/?view=vs-2022). Some features may not work or may not work as expected. Please [report issues](https://github.com/dev-cycles/contextive/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=) in this project and we will liaise with Microsoft & the Visual Studio team to resolve.
 > 
@@ -18,7 +16,7 @@ It should help new team members get up to speed more quickly in understanding do
 
 ## Installation
 
-See [VsCode Installation Instructions](https://raw.githubusercontent.com/dev-cycles/contextive/v1.12.0/docs/wiki/INSTALLATION.md#visual-studio-code).
+See [Visual Studio Instructions](https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/INSTALLATION.md#visual-studio-2022).
 
 ## Getting Started
 
