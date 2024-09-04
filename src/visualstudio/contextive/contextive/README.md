@@ -7,7 +7,7 @@ Contextive is a Visual Studio Code extension to assist developers in environment
 
 It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.
 
-![Example of Contextive in action.](https://raw.githubusercontent.com/dev-cycles/contextive/v1.11.1/docs/wiki/images/simple-auto-complete-demo.gif)
+![Example of Contextive in action.](https://raw.githubusercontent.com/dev-cycles/contextive/v1.12.0/docs/wiki/images/simple-auto-complete-demo.gif)
 
 > [!WARNING]  
 > This plugin is considered 'beta' status, as leverages relatively new [Language Server Protocol](https://learn.microsoft.com/en-us/visualstudio/extensibility/visualstudio.extensibility/language-server-provider/language-server-provider?view=vs-2022) support in the [Preview Extensibility Model](https://learn.microsoft.com/en-us/visualstudio/extensibility/visualstudio.extensibility/?view=vs-2022). Some features may not work or may not work as expected. Please [report issues](https://github.com/dev-cycles/contextive/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=) in this project and we will liaise with Microsoft & the Visual Studio team to resolve.
@@ -18,33 +18,33 @@ It should help new team members get up to speed more quickly in understanding do
 
 ## Installation
 
-See [VsCode Installation Instructions](https://raw.githubusercontent.com/dev-cycles/contextive/v1.11.1/docs/wiki/INSTALLATION.md#visual-studio-code).
+See [VsCode Installation Instructions](https://raw.githubusercontent.com/dev-cycles/contextive/v1.12.0/docs/wiki/INSTALLATION.md#visual-studio-code).
 
 ## Getting Started
 
 Create a folder in your project root called `.contextive`.  Create a file in that folder called `definitions.yml`.
 
-Start defining your definitions following the schema specified in our [usage guide](https://github.com/dev-cycles/contextive/blob/v1.11.1/docs/wiki/USAGE.md). You might like to start by copying our [default definitions](https://github.com/dev-cycles/contextive/blob/v1.11.1/src/language-server/Contextive.LanguageServer.Tests/DefinitionsInitializationTests.Default%20Definitions.verified.txt) file that defines the terms used in the definitions file itself.
+Start defining your definitions following the schema specified in our [usage guide](https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md). You might like to start by copying our [default definitions](https://github.com/dev-cycles/contextive/blob/v1.12.0/src/language-server/Contextive.LanguageServer.Tests/DefinitionsInitializationTests.Default%20Definitions.verified.txt) file that defines the terms used in the definitions file itself.
 
 ## Usage Guide
 
-See our [usage guide](https://github.com/dev-cycles/contextive/blob/v1.11.1/docs/wiki/USAGE.md) for details on the definitions file format and available options. 
+See our [usage guide](https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md) for details on the definitions file format and available options. 
 
 ## Features
 
 * Initialize your Contextive Definitions
-* [Auto-complete](https://github.com/dev-cycles/contextive/blob/v1.11.1/docs/wiki/USAGE.md#smart-auto-complete) from your Contextive Definitions
+* [Auto-complete](https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#smart-auto-complete) from your Contextive Definitions
   * Shows definitions in auto-complete details
 * Hover to show definitions from your Contextive Definitions
-  * Hover over elements with [suffixes & prefixes](https://github.com/dev-cycles/contextive/blob/v1.11.1/docs/wiki/USAGE.md#suffixes-and-prefixes)
-  * Hover over usage of [multiple terms](https://github.com/dev-cycles/contextive/blob/v1.11.1/docs/wiki/USAGE.md#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
-  * Hover over [multi-word](https://github.com/dev-cycles/contextive/blob/v1.11.1/docs/wiki/USAGE.md#multi-word-terms) terms
-  * Hover over [plural](https://github.com/dev-cycles/contextive/blob/v1.11.1/docs/wiki/USAGE.md#plural-words) of defined terms
-  * Hover over [aliases](https://github.com/dev-cycles/contextive/blob/v1.11.1/docs/wiki/USAGE.md#term-aliases) of defined terms
+  * Hover over elements with [suffixes & prefixes](https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#suffixes-and-prefixes)
+  * Hover over usage of [multiple terms](https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
+  * Hover over [multi-word](https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#multi-word-terms) terms
+  * Hover over [plural](https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#plural-words) of defined terms
+  * Hover over [aliases](https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#term-aliases) of defined terms
 * Supported Repository Layouts:
-  * A [repository per context](https://github.com/dev-cycles/contextive/blob/v1.11.1/docs/wiki/USAGE.md#multiple-bounded-contexts-repository-per-context)
-  * [Multiple contexts in the same repository](https://github.com/dev-cycles/contextive/blob/v1.11.1/docs/wiki/USAGE.md#multiple-bounded-contexts-single-repository-single-root-monorepo) (monorepo) (identified by path globs)
-  * Context distributed over [multiple repositories](https://github.com/dev-cycles/contextive/blob/v1.11.1/docs/wiki/USAGE.md#single-bounded-context-multiple-repositories) ([#36](https://github.com/dev-cycles/contextive/issues/36))
+  * A [repository per context](https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#multiple-bounded-contexts-repository-per-context)
+  * [Multiple contexts in the same repository](https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#multiple-bounded-contexts-single-repository-single-root-monorepo) (monorepo) (identified by path globs)
+  * Context distributed over [multiple repositories](https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#single-bounded-context-multiple-repositories) ([#36](https://github.com/dev-cycles/contextive/issues/36))
 
 ### Coming Soon
 

@@ -22,10 +22,10 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 <p>See <a href="#known-issues">known issues</a> below</p>
 </blockquote>
 <h2>Installation</h2>
-<p>See <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/INSTALLATION.md#intellij-plugin-platform">IntelliJ IDEs (e.g. IDEA) Installation Instructions</a>.</p>
+<p>See <a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/INSTALLATION.md#intellij-plugin-platform">IntelliJ IDEs (e.g. IDEA) Installation Instructions</a>.</p>
 <h2>Getting Started</h2>
 <p>Create a folder in your project root called <code>.contextive</code>.  Create a file in that folder called <code>definitions.yml</code>.</p>
-<p>Start defining your definitions following the schema specified in our <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md">usage guide</a>.  You might like to start by copying our <a href="https://github.com/dev-cycles/contextive/blob/main/src/language-server/Contextive.LanguageServer.Tests/DefinitionsInitializationTests.Default%20Definitions.verified.txt">default definitions</a> file that defines the terms used in the definitions file itself.</p>
+<p>Start defining your definitions following the schema specified in our <a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md">usage guide</a>.  You might like to start by copying our <a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/src/language-server/Contextive.LanguageServer.Tests/DefinitionsInitializationTests.Default%20Definitions.verified.txt">default definitions</a> file that defines the terms used in the definitions file itself.</p>
 <h2>Supported IDEs</h2>
 <p>The plugin uses the IntelliJ Language Server Protocol support, so it's only available in the IDEs where that feature is offered.  See the <a href="https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html#supported-ides">JetBrains LSP Documentation</a> for the latest list.</p>
 <p>At time of writing, it includes:</p>
@@ -44,10 +44,10 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 <li>RustRover</li>
 </ul>
 <h2>Usage Guide</h2>
-<p>See our <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md">usage guide</a> for details on the definitions file format and available options.</p>
+<p>See our <a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md">usage guide</a> for details on the definitions file format and available options.</p>
 <h2>Features</h2>
 <ul>
-<li><a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#smart-auto-complete">Auto-complete</a> from your Contextive Definitions
+<li><a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#smart-auto-complete">Auto-complete</a> from your Contextive Definitions
 <ul>
 <li>Shows definitions in auto-complete details
 <ul>
@@ -58,19 +58,19 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 </li>
 <li>Hover to show definitions from your Contextive Definitions
 <ul>
-<li>Hover over elements with <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#suffixes-and-prefixes">suffixes &amp; prefixes</a></li>
-<li>Hover over usage of <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#combining-two-or-more-terms">multiple terms</a> combined using camelCase, PascalCase and snake_case</li>
-<li>Hover over <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#multi-word-terms">multi-word</a> terms</li>
-<li>Hover over <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#plural-words">plural</a> of defined terms</li>
-<li>Hover over <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#term-aliases">aliases</a> of defined terms</li>
+<li>Hover over elements with <a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#suffixes-and-prefixes">suffixes &amp; prefixes</a></li>
+<li>Hover over usage of <a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#combining-two-or-more-terms">multiple terms</a> combined using camelCase, PascalCase and snake_case</li>
+<li>Hover over <a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#multi-word-terms">multi-word</a> terms</li>
+<li>Hover over <a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#plural-words">plural</a> of defined terms</li>
+<li>Hover over <a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#term-aliases">aliases</a> of defined terms</li>
 </ul>
 </li>
 <li>Supported Repository Layouts:
 <ul>
-<li>A <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#multiple-bounded-contexts-repository-per-context">repository per context</a></li>
-<li><a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#multiple-bounded-contexts-single-repository-single-root-monorepo">Multiple contexts in the same repository</a> (monorepo) (identified by path globs)</li>
-<li>Context distributed over <a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#single-bounded-context-multiple-repositories">multiple repositories</a> (#36)</li>
-<li><a href="https://github.com/dev-cycles/contextive/blob/main/docs/wiki/USAGE.md#multiple-bounded-contexts-multi-root-shared-definitions-file">Multi-root workspaces</a></li>
+<li>A <a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#multiple-bounded-contexts-repository-per-context">repository per context</a></li>
+<li><a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#multiple-bounded-contexts-single-repository-single-root-monorepo">Multiple contexts in the same repository</a> (monorepo) (identified by path globs)</li>
+<li>Context distributed over <a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#single-bounded-context-multiple-repositories">multiple repositories</a> (<a href="https://github.com/dev-cycles/contextive/issues/36">#36</a>)</li>
+<li><a href="https://github.com/dev-cycles/contextive/blob/v1.12.0/docs/wiki/USAGE.md#multiple-bounded-contexts-multi-root-shared-definitions-file">Multi-root workspaces</a></li>
 </ul>
 </li>
 <li>Works in all files</li>
@@ -98,6 +98,20 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 ]]></description>
 
   <change-notes><![CDATA[<h1>Change Log</h1>
+<h1><a href="https://github.com/dev-cycles/contextive/compare/v1.11.1...v1.12.0">1.12.0</a> (2024-09-04)</h1>
+<h3>Bug Fixes</h3>
+<ul>
+<li><strong>intellij:</strong> Add support for 2042.2 series of intellij platform (<a href="https://github.com/dev-cycles/contextive/commit/08308bff2056fd1af764d88649de7fe90b8516b1">08308bf</a>)</li>
+</ul>
+<h3>Features</h3>
+<ul>
+<li><strong>language-server:</strong> Add support for LSP Clients that only support rootUri and not workspaces (e.g. Visual Studio) (<a href="https://github.com/dev-cycles/contextive/commit/7fe11b3831d6f8b8f86d1d10817c7ba50a0163c0">7fe11b3</a>)</li>
+<li><strong>language-server:</strong> Add yaml schema for definitions file (<a href="https://github.com/dev-cycles/contextive/issues/74">#74</a>) (<a href="https://github.com/dev-cycles/contextive/commit/65ec44a16de20357b69d1662cfc70521298287da">65ec44a</a>)</li>
+<li><strong>language-server:</strong> Only use 'window/showMessage' if it is supported by the LanguageClient (e.g. Visual Studio does not support it) (<a href="https://github.com/dev-cycles/contextive/commit/965cb30539ea05357dfd6cdf4e2bb44406d8a16c">965cb30</a>)</li>
+<li><strong>language-server:</strong> validate definitions file for missing term names (<a href="https://github.com/dev-cycles/contextive/commit/0fb0978640f594843d1f8ff25959ea3d0bf729ae">0fb0978</a>)</li>
+<li><strong>visual-studio:</strong> Add Visual Studio integration (<a href="https://github.com/dev-cycles/contextive/commit/b052a82df7df39d518760f8dfcae84771505262f">b052a82</a>), closes <a href="https://github.com/dev-cycles/contextive/issues/28">#28</a></li>
+<li><strong>vscode:</strong> Publish to Open-Vsx Marketplace (closes <a href="https://github.com/dev-cycles/contextive/issues/80">#80</a>) (<a href="https://github.com/dev-cycles/contextive/commit/2d23775c6c99468319fdf68d7bad2b1997fad883">2d23775</a>)</li>
+</ul>
 <h2><a href="https://github.com/dev-cycles/contextive/compare/v1.11.0...v1.11.1">1.11.1</a> (2024-06-15)</h2>
 <h3>Bug Fixes</h3>
 <ul>
