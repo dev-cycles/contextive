@@ -34,6 +34,17 @@
                     "numReplacements": 1
                 }],
                 "countMatches": true
+            },{
+                "files": ["intellij/contextive/src/main/resources/META-INF/plugin.xml"],
+                "from": "/blob/v.*/",
+                "to": "/blob/v${nextRelease.version}/",
+                "results": [{
+                    "file": "intellij/contextive/src/main/resources/META-INF/plugin.xml",
+                    "hasChanged": true,
+                    "numMatches": 14,
+                    "numReplacements": 14
+                }],
+                "countMatches": true
             }]
         }],
         ["semantic-release-replace-plugin",{
