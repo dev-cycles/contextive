@@ -127,7 +127,8 @@
                 "intellij/contextive/build.gradle.kts",
                 "intellij/contextive/src/main/resources/META-INF/plugin.xml",
                 "visualstudio/contextive/contextive/contextive.csproj",
-                "visualstudio/contextive/contextive/README.md"
+                "visualstudio/contextive/contextive/README.md",
+                "visualstudio/contextive/contextive/ContextiveExtension.cs"
             ]
         }],
         "@semantic-release/github"
