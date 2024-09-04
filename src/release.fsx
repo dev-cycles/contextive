@@ -9,7 +9,6 @@ open FsToolkit.ErrorHandling
 open FsToolkit.ErrorHandling.Operator.AsyncResult
 open Common
 
-let hash = "8de71776e6e52a083e81be053c88eaf3aca82b87" // fail
 let branch = ""
 
 type GitHubRun =
@@ -25,8 +24,11 @@ type GitHubRun =
 type Fs<'a> = Printf.StringFormat<'a>
 
 let ErrorMessages =
-    {| NoRunFound =
-        (Fs) "No run for hash '{%s}'. Ensure the commit is fully tested in a workflow run before attempting to release."
+    {| 
+       NoRunFound = 
+        (Fs) "No run found for hash '%s'. Please ensure a workflow has run before releasing."
+       ParsingError =
+        (Fs) "Unable to parse workflow run details for hash '%s'. Error message: %A."
        FailedRun =
         (Fs)
             "Workflow run for hash '%s' concluded with '%s'. Only try and release commits with a passing workflow run. See %s for details."
@@ -36,33 +38,37 @@ let ErrorMessages =
 
 let ghRunListCmd hash =
     sprintf
-        """gh run list -w Contextive --json databaseId,conclusion,displayTitle,status,headSha,url -q 'map(select(.["headSha"] == "%s"))[]'"""
+        """gh run list -w Contextive --json databaseId,conclusion,displayTitle,status,headSha,url -q '[.[]|select(.headSha=="%s")][0]'"""
         hash
 
-let tryParseGitHubRun json =
+let tryParseGitHubRun hash (json: string) =    
     try
-        Ok(GitHubRun.Parse(json))
-    with _ ->
-        Error(sprintf ErrorMessages.NoRunFound hash)
+        if json.Trim() = "" then
+            Error(sprintf ErrorMessages.NoRunFound hash)
+        else
+            Ok(GitHubRun.Parse(json))
+    with e ->
+        Error(sprintf ErrorMessages.ParsingError hash (e))
     |> AsyncResult.ofResult
 
-let checkConclusion: GitHubRun.Root -> _ =
+let checkConclusion hash =
     function
-    | ghRun when ghRun.Status <> "completed" ->
+    | (ghRun: GitHubRun.Root) when ghRun.Status <> "completed" ->
         sprintf ErrorMessages.InProgressRun hash ghRun.Status ghRun.Url |> ghError
     | ghRun when ghRun.Conclusion = "success" -> Ok(ghRun)
     | ghRun -> sprintf ErrorMessages.FailedRun hash ghRun.Conclusion ghRun.Url |> ghError
     >> AsyncResult.ofResult
 
-let getRunForHash (ctx: Internal.StageContext) =
-    ctx.GetEnvVar(args.headSha.Name) |> ghRunListCmd |> runBashCaptureOutput <| ctx
+let getRunForHash hash ctx =
+    hash |> ghRunListCmd |> runBashCaptureOutput <| ctx
 
 let logSuccess (ghRun: GitHubRun.Root) =
     printfn "::notice ::See %s for the Workflow Run used to validate this release." ghRun.Url
     Ok() |> AsyncResult.ofResult
 
 let checkReleaseStatus (ctx: Internal.StageContext) =
-    getRunForHash ctx >>= tryParseGitHubRun >>= checkConclusion >>= logSuccess
+    let hash = ctx.GetEnvVar(args.headSha.Name)
+    getRunForHash hash ctx >>= (tryParseGitHubRun hash) >>= (checkConclusion hash) >>= logSuccess
 
 pipeline "Contextive Release" {
     noPrefixForStep
