@@ -82,25 +82,25 @@
                 }],
                 "countMatches": true
             },{
-                "files": ["visualstudio/contextive/contextive/contextive.csproj"],
-                "from": "    <Version>.*</Version>",
-                "to": "    <Version>${nextRelease.version}</Version>",
-                "results": [{
-                    "file": "visualstudio/contextive/contextive/contextive.csproj",
-                    "hasChanged": true,
-                    "numMatches": 1,
-                    "numReplacements": 1
-                }],
-                "countMatches": true
-            },{
                 "files": ["visualstudio/contextive/contextive/README.md"],
                 "from": "dev-cycles/contextive/v[0-9\\.]+/",
                 "to": "dev-cycles/contextive/v${nextRelease.version}/",
                 "results": [{
-                    "file": "visualstudio/contextive/contextive/README.md",
+                    "file": "vvisualstudio/contextive/contextive/README.md",
                     "hasChanged": true,
                     "numMatches": 2,
                     "numReplacements": 2
+                }],
+                "countMatches": true
+            },{
+                "files": ["visualstudio/contextive/contextive/README.md"],
+                "from": "dev-cycles/contextive/blob/v[0-9\\.]+/",
+                "to": "dev-cycles/contextive/blob/v${nextRelease.version}/",
+                "results": [{
+                    "file": "visualstudio/contextive/contextive/README.md",
+                    "hasChanged": true,
+                    "numMatches": 12,
+                    "numReplacements": 12
                 }],
                 "countMatches": true
             },{
