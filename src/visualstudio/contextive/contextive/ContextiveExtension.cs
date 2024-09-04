@@ -10,7 +10,7 @@ namespace contextive
         public override ExtensionConfiguration ExtensionConfiguration => new()
         {
             Metadata = new(
-                    id: "Contextive.f050f6e5-c51b-4c33-9a59-ba9945a00259",
+                    id: "Contextive.3b084294-49d4-487f-93f6-cadc0e419ac3",
                     version: this.ExtensionAssemblyVersion,
                     publisherName: "Chris Simon",
                     displayName: "Contextive",
