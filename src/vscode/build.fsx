@@ -115,7 +115,7 @@ pipeline "Contextive VsCode Extension" {
 
         stage "Package" {
             run (fun ctx ->
-                $"npx vsce package -t {ctx.GetCmdArg(args.vscePlatform)} --githubBranch main --baseImagesUrl https://raw.githubusercontent.com/dev-cycles/contextive/{ctx.GetEnvVar(args.headSha.Name)}/src/vscode/contextive/")
+                $"npx vsce package -t {ctx.GetCmdArg(args.vscePlatform)} --githubBranch {ctx.GetCmdArg(args.release)} --baseContentUrl https://github.com/dev-cycles/contextive/blob/{ctx.GetCmdArg(args.release)}/src/vscode/contextive/ --baseImagesUrl https://raw.githubusercontent.com/dev-cycles/contextive/{ctx.GetCmdArg(args.release)}/src/vscode/contextive/")
         }
     }
 
