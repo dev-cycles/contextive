@@ -12,7 +12,7 @@ It should help new team members get up to speed more quickly in understanding do
 > 
 > The main issue for most use cases is that the extension doesn't work when opening a solution file, only when opening a folder.  See [Issue #75](https://github.com/dev-cycles/contextive/issues/75) for details.
 >
-> See [known issues](#known-issues) below for others.
+> See [known issues](https://github.com/dev-cycles/contextive/blob/v1.12.0/src/visualstudio/contextive/contextive/README.md#known-issues) for others.
 
 ## Installation
 
