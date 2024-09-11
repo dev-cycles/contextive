@@ -1,4 +1,3 @@
-#r "nuget: Fun.Build, 1.0.5"
 #r "nuget: FSharp.Data"
 #r "nuget: FsToolkit.ErrorHandling"
 #load "ci/common.fsx"

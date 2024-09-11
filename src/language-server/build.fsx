@@ -1,4 +1,3 @@
-#r "nuget: Fun.Build, 1.0.5"
 #load "../ci/common.fsx"
 
 open Fun.Build
