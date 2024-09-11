@@ -2,7 +2,7 @@
 #load "../ci/common.fsx"
 
 open Fun.Build
-
+open Fun.Build.Github
 open Common
 
 let languageServerLabel (ctx: Internal.StageContext) =
@@ -100,8 +100,7 @@ let zipAndUploadAsset app =
 pipeline languageServer.Name {
     description "Build & Test"
     // noPrefixForStep
-    runBeforeEachStage gitHubGroupStart
-    runAfterEachStage gitHubGroupEnd
+    collapseGithubActionLogs
 
     logEnvironment
 

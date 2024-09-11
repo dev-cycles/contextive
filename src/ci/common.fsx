@@ -1,4 +1,4 @@
-#r "nuget: Fun.Build, 1.0.5"
+#r "nuget: Fun.Build, 1.1.7"
 
 open Fun.Build
 
@@ -44,9 +44,6 @@ let ifTopLevelStage fn (ctx: Internal.StageContext) =
     | ValueSome(Internal.StageParent.Pipeline _) -> fn ctx
     | _ -> ()
 
-let echoGitHubGroupStart (ctx: Internal.StageContext) = printfn "::group::%s" ctx.Name
-let echoGitHubGroupEnd (_: Internal.StageContext) = printfn "::endgroup::"
-
 let ghError msg =
     printfn $"::error ::{msg}"
     Error(msg)
@@ -69,10 +66,6 @@ let unzipCmd zipPath outputPath =
     | "Linux"
     | "" -> $"unzip {zipPath} -d {outputPath}"
     | _ -> $"7z e {zipPath} -o{outputPath}"
-
-let gitHubGroupStart = ifTopLevelStage <| echoGitHubGroupStart
-
-let gitHubGroupEnd = ifTopLevelStage <| echoGitHubGroupEnd
 
 let dotnetRestoreTools =
     stage $"Dotnet Restore Tools" { run "dotnet tool restore" }
@@ -103,3 +96,12 @@ let core =
 let languageServer =
     { Name = "Contextive.LanguageServer"
       Path = "language-server/Contextive.LanguageServer" }
+
+let whenComponentInRelease (component': string) = whenStage $"Check for component {component'} in LAST_CHANGE.md" {    
+    run (fun ctx -> 
+        seq { component'; "language-server" }
+            |> String.concat "|"
+            |> sprintf "grep -E (%s) LAST_RELEASE_NOTES.md"
+            |> ctx.RunCommand
+    )
+}

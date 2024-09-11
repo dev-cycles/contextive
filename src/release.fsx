@@ -4,6 +4,7 @@
 #load "ci/common.fsx"
 
 open Fun.Build
+open Fun.Build.Github
 open FSharp.Data
 open FsToolkit.ErrorHandling
 open FsToolkit.ErrorHandling.Operator.AsyncResult
@@ -72,8 +73,7 @@ let checkReleaseStatus (ctx: Internal.StageContext) =
 
 pipeline "Contextive Release" {
     noPrefixForStep
-    runBeforeEachStage gitHubGroupStart
-    runAfterEachStage gitHubGroupEnd
+    collapseGithubActionLogs
 
     stage "Check Build Status" {
         whenEnv { name args.headSha.Name }

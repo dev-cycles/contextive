@@ -1,8 +1,7 @@
-#r "nuget: Fun.Build, 1.0.5"
 #load "../ci/common.fsx"
 
 open Fun.Build
-
+open Fun.Build.Github
 open Common
 
 let vsCodeAssetFileName (ctx: Internal.StageContext) =
@@ -21,9 +20,8 @@ let publishTag (ctx: Internal.StageContext) =
 pipeline "Contextive VsCode Extension" {
     description "Build & Test"
     noPrefixForStep
-    runBeforeEachStage gitHubGroupStart
-    runAfterEachStage gitHubGroupEnd
-
+    collapseGithubActionLogs
+    
     logEnvironment
 
     stage "Install Tools" {
@@ -133,8 +131,12 @@ pipeline "Contextive VsCode Extension" {
             run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {vsCodeAssetFileName ctx}")
         }
 
-        stage "Publish to Microsoft VS Marketplace" { run (fun ctx -> $"npx vsce publish --packagePath {vsCodeAssetFileName ctx}") }
-        stage "Publish to Open-Vsx Marketplace" { run (fun ctx -> $"npx ovsx publish {vsCodeAssetFileName ctx} -p \"{ctx.GetEnvVar(args.ovsxPat.Name)}\"") }
+        stage "Publish to Marketplaces" {
+            whenComponentInRelease "vscode"
+            
+            stage "To Microsoft VS Marketplace" { run (fun ctx -> $"npx vsce publish --packagePath {vsCodeAssetFileName ctx}") }
+            stage "To Open-Vsx Marketplace" { run (fun ctx -> $"npx ovsx publish {vsCodeAssetFileName ctx} -p \"{ctx.GetEnvVar(args.ovsxPat.Name)}\"") }            
+        }
     }
 
     runIfOnlySpecified false

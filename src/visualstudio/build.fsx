@@ -2,7 +2,7 @@
 #load "../ci/common.fsx"
 
 open Fun.Build
-
+open Fun.Build.Github
 open Common
 
 let visualStudioProjectPath = "visualstudio/contextive/contextive"
@@ -19,8 +19,7 @@ let vsixPublisherExe = """C:\Program Files\Microsoft Visual Studio\2022\Enterpri
 pipeline "Contextive Visual Studio Extension" {
     description "Build & Test"
     noPrefixForStep
-    runBeforeEachStage gitHubGroupStart
-    runAfterEachStage gitHubGroupEnd
+    collapseGithubActionLogs
 
     logEnvironment
 
@@ -64,8 +63,10 @@ pipeline "Contextive Visual Studio Extension" {
         }
 
         // See https://learn.microsoft.com/en-us/visualstudio/extensibility/walkthrough-publishing-a-visual-studio-extension-via-command-line?view=vs-2022
-        stage "Publish to Marketplace" { run (fun ctx ->
-            $"\"{vsixPublisherExe}\" publish -payload \"{visualStudioAssetRelativePath}/{visualStudioAssetFileName}\"  -publishManifest \"publishmanifest.json\" -personalAccessToken \"{ctx.GetEnvVar(args.vscePat.Name)}\""
+        stage "Publish to Marketplace" {
+            whenComponentInRelease "visual-studio"
+            run (fun ctx ->
+                $"\"{vsixPublisherExe}\" publish -payload \"{visualStudioAssetRelativePath}/{visualStudioAssetFileName}\"  -publishManifest \"publishmanifest.json\" -personalAccessToken \"{ctx.GetEnvVar(args.vscePat.Name)}\""
         ) }
     }
 

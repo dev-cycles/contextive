@@ -2,7 +2,7 @@
 #load "../ci/common.fsx"
 
 open Fun.Build
-
+open Fun.Build.Github
 open Common
 
 let distPath: string = "intellij/contextive/build/distributions"
@@ -16,8 +16,7 @@ let intelliJAssetLabel (ctx: Internal.StageContext) =
 pipeline "Contextive IntelliJ Plugin" {
     description "Build & Test"
     noPrefixForStep
-    runBeforeEachStage gitHubGroupStart
-    runAfterEachStage gitHubGroupEnd
+    collapseGithubActionLogs
 
     logEnvironment
 
@@ -33,7 +32,10 @@ pipeline "Contextive IntelliJ Plugin" {
             run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {intelliJAssetFileName ctx}")
         }
 
-        stage "Publish Package" { run (bashCmd "./gradlew publishPlugin") }
+        stage "Publish Package" {
+            whenComponentInRelease "intellij"
+            run (bashCmd "./gradlew publishPlugin")
+        }
     }
 
     runIfOnlySpecified false

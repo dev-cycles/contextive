@@ -111,6 +111,17 @@
                     "numReplacements": 1
                 }],
                 "countMatches": true
+            },{
+                "files": ["LAST_RELEASE_NOTES.md"],
+                "from": ".*",
+                "to": "${nextRelease.notes}",
+                "results": [{
+                    "file": "LAST_RELEASE_NOTES.md",
+                    "hasChanged": true,
+                    "numMatches": 1,
+                    "numReplacements": 1
+                }],
+                "countMatches": true
             }]
         }],
         ["@semantic-release/npm",{
@@ -128,7 +139,8 @@
                 "intellij/contextive/src/main/resources/META-INF/plugin.xml",
                 "visualstudio/contextive/contextive/contextive.csproj",
                 "visualstudio/contextive/contextive/README.md",
-                "visualstudio/contextive/contextive/ContextiveExtension.cs"
+                "visualstudio/contextive/contextive/ContextiveExtension.cs",
+                "LAST_RELEASE_NOTES.md"
             ]
         }],
         "@semantic-release/github"
