@@ -80,24 +80,13 @@
                 "countMatches": true
             },{
                 "files": ["visualstudio/contextive/contextive/README.md"],
-                "from": "dev-cycles/contextive/v.*?/",
-                "to": "dev-cycles/contextive/v${nextRelease.version}/",
-                "results": [{
-                    "file": "visualstudio/contextive/contextive/README.md",
-                    "hasChanged": true,
-                    "numMatches": 2,
-                    "numReplacements": 2
-                }],
-                "countMatches": true
-            },{
-                "files": ["visualstudio/contextive/contextive/README.md"],
                 "from": "dev-cycles/contextive/blob/v.*?/",
                 "to": "dev-cycles/contextive/blob/v${nextRelease.version}/",
                 "results": [{
                     "file": "visualstudio/contextive/contextive/README.md",
                     "hasChanged": true,
-                    "numMatches": 12,
-                    "numReplacements": 12
+                    "numMatches": 14,
+                    "numReplacements": 14
                 }],
                 "countMatches": true
             },{
