@@ -102,7 +102,7 @@
                 "countMatches": true
             },{
                 "files": ["LAST_RELEASE_NOTES.md"],
-                "from": ".*",
+                "from": "[\\S\\s]+",
                 "to": "${nextRelease.notes}",
                 "results": [{
                     "file": "LAST_RELEASE_NOTES.md",
