@@ -97,7 +97,8 @@ let languageServer =
     { Name = "Contextive.LanguageServer"
       Path = "language-server/Contextive.LanguageServer" }
 
-let whenComponentInRelease (component': string) = whenStage $"Check for component {component'} in LAST_CHANGE.md" {    
+let whenComponentInRelease (component': string) (folder: string) = whenStage $"Check for component {component'} in LAST_RELEASE_NOTES.md" {
+    workingDir folder
     run (fun ctx -> 
         seq { component'; "language-server" }
             |> String.concat "|"

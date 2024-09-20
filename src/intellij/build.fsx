@@ -31,8 +31,8 @@ pipeline "Contextive IntelliJ Plugin" {
             run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {intelliJAssetFileName ctx}")
         }
 
-        stage "Publish Package" {
-            whenComponentInRelease "intellij"
+        stage "Publish Package" {           
+            whenComponentInRelease "intellij" "../.."
             run (bashCmd "./gradlew publishPlugin")
         }
     }
