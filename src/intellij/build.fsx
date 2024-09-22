@@ -32,7 +32,7 @@ pipeline "Contextive IntelliJ Plugin" {
         }
 
         stage "Publish Package" {           
-            whenComponentInRelease "intellij" "../.."
+            whenComponentInRelease "intellij"
             run (bashCmd "./gradlew publishPlugin")
         }
     }

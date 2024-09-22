@@ -63,7 +63,7 @@ pipeline "Contextive Visual Studio Extension" {
 
         // See https://learn.microsoft.com/en-us/visualstudio/extensibility/walkthrough-publishing-a-visual-studio-extension-via-command-line?view=vs-2022
         stage "Publish to Marketplace" {
-            whenComponentInRelease "visual-studio" "../../.."
+            whenComponentInRelease "visual-studio"
             run (fun ctx ->
                 $"\"{vsixPublisherExe}\" publish -payload \"{visualStudioAssetRelativePath}/{visualStudioAssetFileName}\"  -publishManifest \"publishmanifest.json\" -personalAccessToken \"{ctx.GetEnvVar(args.vscePat.Name)}\""
         ) }
