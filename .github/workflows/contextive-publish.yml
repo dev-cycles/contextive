@@ -2,13 +2,13 @@ name: Contextive Publish
 on:
   release:
     types: [published]
-  ## Keeping in Comments as may be helpful for future publish-rescue requirements
-  workflow_dispatch:
-    inputs:
-      release:
-        description: 'Release to publish'
-        required: true
-        type: string
+  ## Keeping in Comments as may be helpful for future publish rescue requirements (search PUBLISH_RESCUE for other locations)
+  # workflow_dispatch:
+  #   inputs:
+  #     release:
+  #       description: 'Release to publish'
+  #       required: true
+  #       type: string
 
   
 env:
@@ -27,8 +27,8 @@ jobs:
       matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
     uses: ./.github/workflows/contextive-runtime-publish.yml
     with:
-      # release: ${{ github.ref_name }} 
-      release: ${{ inputs.release }} # Use this if switching to manual publish
+      release: ${{ github.ref_name }} 
+      # release: ${{ inputs.release }} # swap with above for PUBLISH_RESCUE
       dotnet_runtime: ${{ matrix.dotnet_runtime }}
       os: ${{ matrix.os }}
       vsce_platform: ${{ matrix.vsce_platform }}
@@ -54,8 +54,8 @@ jobs:
 
       - name: Build
         id: build
-        # run: dotnet fsi intellij/build.fsx -- --release ${{ github.ref_name }}
-        run: dotnet fsi intellij/build.fsx -- --release ${{ inputs.release }} # Use this if switching to manual publishg
+        run: dotnet fsi intellij/build.fsx -- --release ${{ github.ref_name }}
+        # run: dotnet fsi intellij/build.fsx -- --release ${{ inputs.release }} # swap with above for PUBLISH_RESCUE
         working-directory: src
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
