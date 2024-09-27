@@ -12,6 +12,10 @@ Longer (1hr, 32min) demonstration including a philosophical introduction to know
 
 [![Managing Domain Knowledge](https://img.youtube.com/vi/uk7hCIRJmW4/0.jpg)](https://www.youtube.com/watch?v=uk7hCIRJmW4)
 
+Shorter (1hr, 05min) version of the above talk:
+
+[![Managing Domain Knowldge](https://img.youtube.com/vi/03giAunlhZ4/0.jpg)](https://www.youtube.com/watch?v=03giAunlhZ4)
+
 ## Ubiquitous F# in Contextive, the Ubiquitous Language Tool | FSharpConf 2023
 
 Overview of using Contextive as well as a demo of how it is designed and built and some speculation about future plans.
