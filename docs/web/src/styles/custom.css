@@ -1,0 +1,18 @@
+:root,
+::backdrop {
+    --sl-nav-height: 6rem;
+    --sl-font: 'Atkinson Hyperlegible';
+}
+
+:root[data-theme='light'],
+[data-theme='light'] ::backdrop {
+    --sl-color-bg-nav: #f7f5ef;
+    
+    --sl-color-accent-low: #0f0f23;
+	--sl-color-accent: #090c7a;
+	--sl-color-accent-high: #0063cc;
+}
+
+h1 {
+    font-family: 'Forrest'
+}
