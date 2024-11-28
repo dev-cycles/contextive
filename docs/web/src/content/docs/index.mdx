@@ -1,0 +1,30 @@
+---
+title: Get on the same page
+description: Get on the same page.
+template: splash
+hero:
+  tagline: A suite of tools to help immerse teams in the language of their domains.
+  image:
+    file: ../../assets/images/hover_intellij.png
+  actions:
+    - text: Get Started
+      link: /guides/installation/
+      icon: right-arrow
+    - text: Usage Guide
+      link: /guides/usage/
+      icon: document
+      variant: secondary
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Next steps
+
+<CardGrid stagger>
+	<Card title="Install" icon="down-caret">
+		Check out our [installation guide](./guides/installation) to find guidance on getting Contextive into your IDE.
+	</Card>
+	<Card title="Define" icon="pencil">
+		Define your domain language.  Our [usage guide](./guides/usage) will help!
+	</Card>
+</CardGrid>

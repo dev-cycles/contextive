@@ -1,0 +1,39 @@
+:root,
+::backdrop {
+    --sl-nav-height: 6rem;
+    --sl-font: 'Atkinson Hyperlegible';
+}
+h1 {
+    font-family: 'Forrest'
+}
+
+/* See  https://starlight.astro.build/guides/css-and-tailwind/#color-theme-editor */
+/* Dark mode colors. */
+:root {
+	--sl-color-accent-low: #0f2440;
+	--sl-color-accent: #0466ce;
+	--sl-color-accent-high: #b0cbf0;
+	--sl-color-white: #ffffff;
+	--sl-color-gray-1: #ecedf8;
+	--sl-color-gray-2: #c0c1ce;
+	--sl-color-gray-3: #8789a3;
+	--sl-color-gray-4: #54566d;
+	--sl-color-gray-5: #35364c;
+	--sl-color-gray-6: #242439;
+	--sl-color-black: #171721;
+}
+/* Light mode colors. */
+:root[data-theme='light'] {
+	--sl-color-accent-low: #c4d9f5;
+	--sl-color-accent: #0968d0;
+	--sl-color-accent-high: #0f325f;
+	--sl-color-white: #171721;
+	--sl-color-gray-1: #242439;
+	--sl-color-gray-2: #35364c;
+	--sl-color-gray-3: #54566d;
+	--sl-color-gray-4: #8789a3;
+	--sl-color-gray-5: #c0c1ce;
+	--sl-color-gray-6: #ecedf8;
+	--sl-color-gray-7: #f5f6fb;
+	--sl-color-black: #ffffff;
+}

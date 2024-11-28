@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'Forrest';
+    /* Use a relative path to the local font file in `url()`. */
+    src: url('./Web Fonts/forrest-regular-webfont.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }

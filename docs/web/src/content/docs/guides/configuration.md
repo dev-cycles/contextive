@@ -1,0 +1,12 @@
+---
+title: Configuration
+description: How to configure Contextive
+sidebar:
+  order: 1
+---
+
+Contextive has a single LSP setting: `contextive.path` which defines the location of the `definitions.yml` file.  The default value is `.contextive/definitions.yml`, a relative path to the workspace root.
+
+If you'd like to store the definitions file in a different location, use your IDE's settings/configuration feature to modify the `contextive.path` setting.  Consult your IDE for details on how to change plugin/extension/language server configuration.  If your IDE is referenced in our [Installation Guide](../installation) it should include an example.
+
+Another IDE-specific mechanism is the way the workspace root is identified.  Some IDEs use the folder you opened them in, some support multi-root configurations via special files, and others have searching techniques for finding the root, such as travelling up the folder hierarchy looking for a `.git` folder.  Consult your IDE documentation for details.

@@ -32,3 +32,5 @@ fable_modules
 .vs
 # Environment configuration
 .env
+# Local Netlify folder
+.netlify
