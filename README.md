@@ -61,17 +61,16 @@ The following list is a rough and evolving backlog/roadmap.  Checked items are c
   * [ ] Add ability to define an alias as deprecated and warn as such
   * [x] Support multiline domain vision statements, definitions and usage examples
 * [ ] IDE Support
-  * [x] [Visual Studio Code](#visual-studio-code)
+  * [x] [Visual Studio Code](#vscode)
     * [x] Support single-root workspaces
     * [x] Support multi-root workspaces with a shared definitions file
     * [ ] Support multi-root workspaces with a definitions file per root
   * [x] [IntelliJ IDEs](#intellij-ides)
     * [x] [Most IntelliJ Platform IDEs](https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html#supported-ides)
     * [ ] Rider - limited support, see [#65](https://github.com/dev-cycles/contextive/issues/65)
-  * [ ] Visual Studio (2019/2022)
+  * [x] [Visual Studio (2019/2022)](#visual-studio)
   * [ ] Eclipse
   * [ ] NetBeans
-  * [ ] JetBrains
   * [x] [neovim](#neovim)
   * [x] [helix](#helix)
   * [ ] emacs
