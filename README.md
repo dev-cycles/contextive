@@ -6,8 +6,8 @@
   <img alt="Contextive: Get on the same page." src="images/logo-tagline.png">
 </picture>
 
-[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Mastodon](https://img.shields.io/mastodon/follow/111227986489537355?domain=https%3A%2F%2Ftechhub.social%2F
-)](https://techhub.social/@contextive) [![Twitter](https://img.shields.io/twitter/follow/contextive_tech?label=Follow%20Contextive)](https://twitter.com/intent/follow?screen_name=contextive_tech) 
+[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Bluesky](https://img.shields.io/badge/Bluesky-0285FF?logo=bluesky&logoColor=fff)](https://bsky.app/profile/contextive.tech) [![Mastodon](https://img.shields.io/mastodon/follow/111227986489537355?domain=https%3A%2F%2Ftechhub.social%2F
+)](https://techhub.social/@contextive)
 
 Contextive is a suite of tools to immerse developers in the language of their users' domains.
 
@@ -19,29 +19,29 @@ Even if you're not using Domain Driven Design, Contextive should still be very h
 
 By defining terms in a central definitions file, Contextive can surface definitions and usage examples in auto-complete suggestions & hover panels wherever the terms are used - in code (of any language across the stack), comments, config, and documentation (e.g. markdown).
 
-![Example of Contextive in action.](docs/wiki/images/simple-auto-complete-demo.gif)
+![Example of Contextive in action.](docs/web/src/assets/images/simple-auto-complete-demo.gif)
 
 Interview introducing Contextive at NDC Sydney 2024:
 
 [![Video Introduction to Contextive](https://img.youtube.com/vi/Y_HzdX7nHo0/0.jpg)](https://www.youtube.com/watch?v=Y_HzdX7nHo0)
 
-[Other Videos referencing Contextive](./docs/wiki/VIDEOS.md)
+[Other Videos referencing Contextive](https://docs.contextive.tech/background/videos/)
 
 ## Installation
 
-See our [Installation Guide](./docs/wiki/INSTALLATION.md) for details on how to install in a few different IDEs, or any IDE that supports the Language Server Protocol.
+See our [Installation Guide](https://docs.contextive.tech/guides/installation/) for details on how to install in a few different IDEs, or any IDE that supports the Language Server Protocol.
 
 Officially supported IDEs include:
 
-#### [VsCode](./docs/wiki/INSTALLATION.md#visual-studio-code)
-#### [IntelliJ IDEs](./docs/wiki/INSTALLATION.md#intellij-plugin-platform)
-#### [Visual Studio](./docs/wiki/INSTALLATION.md#visual-studio-2022)
-#### [Neovim](./docs/wiki/INSTALLATION.md#neovim)
-#### [Helix](./docs/wiki/INSTALLATION.md#helix)
+#### [VsCode](https://docs.contextive.tech/guides/installation/#visual-studio-code)
+#### [IntelliJ IDEs](https://docs.contextive.tech/guides/installation/#intellij-plugin-platform)
+#### [Visual Studio](https://docs.contextive.tech/guides/installation/#visual-studio-2022)
+#### [Neovim](https://docs.contextive.tech/guides/installation/#neovim)
+#### [Helix](https://docs.contextive.tech/guides/installation/#helix)
 
 ## Configuration & Usage
 
-See our [Usage Guide](./docs/wiki/USAGE.md) for details on configuring Contextive, setting up your definitions file, and the various features and options available to you in defining your domain-specific terminology.
+See our [Usage Guide](https://docs.contextive.tech/guides/usage/) for details on configuring Contextive, setting up your definitions file, and the various features and options available to you in defining your domain-specific terminology.
 
 ## Features
 
@@ -96,10 +96,6 @@ The following list is a rough and evolving backlog/roadmap.  Checked items are c
 ## Contributing
 
 See [CONTRIBUTING](./CONTRIBUTING.md) for details.
-
-## Logo
-
-The Contextive logo is based (with extreme gratitude!) on the `Bibliophile` image from https://undraw.co - an amazing resource of free images and illustrations.
 
 ## License
 

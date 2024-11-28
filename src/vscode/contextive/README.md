@@ -7,11 +7,11 @@ Contextive is a Visual Studio Code extension to assist developers in environment
 
 It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.
 
-![Example of Contextive in action.](../../../docs/wiki/images/simple-auto-complete-demo.gif)
+![Example of Contextive in action.](../../../docs/web/src/assets/images/simple-auto-complete-demo.gif)
 
 ## Installation
 
-See [VsCode Installation Instructions](../../../docs/wiki/INSTALLATION.md#visual-studio-code).
+See [VsCode Installation Instructions](https://docs.contextive.tech/guides/installation/#visual-studio-code).
 
 ## Getting Started
 
@@ -25,24 +25,24 @@ You should delete the sample definitions and replace them with your own.
 
 ## Usage Guide
 
-See our [usage guide](../../../docs/wiki/USAGE.md) for details on the definitions file format and available options. 
+See our [usage guide](https://docs.contextive.tech/guides/usage/) for details on the definitions file format and available options. 
 
 ## Features
 
 * Initialize your Contextive Definitions
-* [Auto-complete](../../../docs/wiki/USAGE.md#smart-auto-complete) from your Contextive Definitions
+* [Auto-complete](https://docs.contextive.tech/guides/usage/#smart-auto-complete) from your Contextive Definitions
   * Shows definitions in auto-complete details
 * Hover to show definitions from your Contextive Definitions
-  * Hover over elements with [suffixes & prefixes](../../../docs/wiki/USAGE.md#suffixes-and-prefixes)
-  * Hover over usage of [multiple terms](../../../docs/wiki/USAGE.md#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
-  * Hover over [multi-word](../../../docs/wiki/USAGE.md#multi-word-terms) terms
-  * Hover over [plural](../../../docs/wiki/USAGE.md#plural-words) of defined terms
-  * Hover over [aliases](../../../docs/wiki/USAGE.md#term-aliases) of defined terms
+  * Hover over elements with [suffixes & prefixes](https://docs.contextive.tech/guides/usage/#suffixes-and-prefixes)
+  * Hover over usage of [multiple terms](https://docs.contextive.tech/guides/usage/#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
+  * Hover over [multi-word](https://docs.contextive.tech/guides/usage/#multi-word-terms) terms
+  * Hover over [plural](https://docs.contextive.tech/guides/usage/#plural-words) of defined terms
+  * Hover over [aliases](https://docs.contextive.tech/guides/usage/#term-aliases) of defined terms
 * Supported Repository Layouts:
-  * A [repository per context](../../../docs/wiki/USAGE.md#multiple-bounded-contexts-repository-per-context)
-  * [Multiple contexts in the same repository](../../../docs/wiki/USAGE.md#multiple-bounded-contexts-single-repository-single-root-monorepo) (monorepo) (identified by path globs)
-  * Context distributed over [multiple repositories](../../../docs/wiki/USAGE.md#single-bounded-context-multiple-repositories) (#36)
-  * [Multi-root workspaces](../../../docs/wiki/USAGE.md#multiple-bounded-contexts-multi-root-shared-definitions-file)
+  * A [repository per context](https://docs.contextive.tech/guides/usage/#multiple-bounded-contexts-repository-per-context)
+  * [Multiple contexts in the same repository](https://docs.contextive.tech/guides/usage/#multiple-bounded-contexts-single-repository-single-root-monorepo) (monorepo) (identified by path globs)
+  * Context distributed over [multiple repositories](https://docs.contextive.tech/guides/usage/#single-bounded-context-multiple-repositories) (#36)
+  * [Multi-root workspaces](https://docs.contextive.tech/guides/usage/#multiple-bounded-contexts-multi-root-shared-definitions-file)
 * Works in all files (uses the `*` document selector)
 
 ### Coming Soon
