@@ -3,10 +3,17 @@
 * Status: accepted
 * Deciders: Chris Simon
 * Date: 2022-01-05
+* History:
+  * Updated: 2024-11-29
+    * Added definition of support for IDEs (such as IntelliJ) that do not support multi-platform extension distribution
 
 ## Decision Summary
 
-Build using .NET single-file and self-contained option with separate builds per target platform. Leverage multi-platform VSCode builds to provide an extension per platform.
+Build using .NET single-file and self-contained option with separate builds per target platform.
+
+For IDEs (such as VsCode) that support multi-platform extension distribution, use per-platform builds to provide an extension per platform with the language server bundled.
+
+For IDEs (such as IntelliJ) that do not support multi-platform extension distribution, download the language server on install.
 
 ## Context and Problem Statement
 
@@ -35,11 +42,17 @@ There are other publishing and deployment options:
 
 This ADR is to explore the trade-offs in the options above and determine a build, publishing and distribution strategy for the .NET executable that is the Contextive Language Server.
 
-### VS Code Extension Publishing Options
+### Extension Publishing Options
+
+#### Vs Code 
 
 By default, VS Code Extensions are not platform specific.  As they generally run in a Node.js environment provided by VS Code there is no need for platform-specific considerations.  However, the VS Code [publishing model](https://code.visualstudio.com/api/working-with-extensions/publishing-extension) does support [platform-specific extensions](https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions) often used for the use case of native node modules.
 
 In our case, as the extension needs to include or obtain the language server, if the included language server is platform-specific then the extension itself must be platform-specific.
+
+#### IntelliJ
+
+IntelliJ plugins are not platform specific and currently cannot be made platform specific. See [JetBrains YouTrack: Add support for OS-specific plugins](https://youtrack.jetbrains.com/issue/MP-1896/Add-support-for-OS-specific-plugins).
 
 ## Decision Drivers
 
@@ -50,7 +63,7 @@ In our case, as the extension needs to include or obtain the language server, if
 
 The two main options for Language Server distribution are:
 
-1. Embed the language server inside the VS Code extension package
+1. Embed the language server inside the plugin/extension package
 2. Download the language server on extension startup (This is the approach taken by the [Omnisharp package](https://github.com/OmniSharp/omnisharp-vscode))
 
 Either way, the Language Server can be published for distribution using either of the following styles, as discussed in the Context section above:
@@ -67,15 +80,26 @@ Combining both options, the following table outlines the 4 options:
 
 ## Decision Outcome
 
-Chosen option: Option 1.b - the VS Code Extension includes the language server, and the language server is compiled as a self-contained artifact.
+Chosen option:
 
-This was selected to provide the best user experience in terms of startup time and simplicity of installation/setup.
+* For VSCode and other IDEs that support multi-platform distribution:
+  * Option 1.b - the Extension includes the language server, and the language server is compiled as a self-contained artifact.
+* For IntelliJ and other IDES that do NOT support multi-platform distribut:
+  * Option 2.b - the Plugin does NOT include the language server - the correct self-contained artifact is downloaded on first startup
+
+These options were selected to provide the best user experience in terms of startup time and simplicity of installation/setup where available, with a fallback to a less optimal user experience where required.
 
 ### Positive Consequences
+
+For bundled distribution:
 
 * Simpler implementation - no need to host/download/install the language server on startup
 * Faster startup time - no delay from the download/install
 * Less risk of version incompatibilities between extension and language server
+
+For download-on-startup distribution:
+
+* No need to have complexity of multiple per-OS plugins in the plugin store
 
 ### Negative Consequences
 
