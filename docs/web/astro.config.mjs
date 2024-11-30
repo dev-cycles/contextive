@@ -7,6 +7,11 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'Contextive',
+			description: 'A suite of tools for immersing developers in the language of your domains.',
+			editLink: {
+				baseUrl: 'https://github.com/dev-cycles/contextive/edit/main/docs/web/',
+			},
+			tagline: 'Get on the same page.',
 			logo: {
 				alt: 'Contextive',
 				replacesTitle: true,
@@ -15,6 +20,8 @@ export default defineConfig({
 			},
 			social: {
 				github: 'https://github.com/dev-cycles/contextive',
+				blueSky: 'https://bsky.app/profile/contextive.tech',
+				linkedin: 'https://www.linkedin.com/company/contextive-tech',
 			},
 			customCss: [
 				'./src/assets/fonts/Forrest/font-face.css',
