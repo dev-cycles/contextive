@@ -2,8 +2,8 @@ name: Contextive Docs
 on:
   push:
     paths:
-      - 'docs/web/**'
-      - '.github/workflows/contextive-docs.yml'
+      - "docs/web/**"
+      - ".github/workflows/contextive-docs.yml"
 
 env:
   BRANCH_NAME: ${{ github.ref_name }}
@@ -11,10 +11,10 @@ env:
 jobs:
   docs:
     name: Docs
-    runs-on: 'ubuntu-latest'
+    runs-on: "ubuntu-latest"
     defaults:
       run:
-        working-directory: 'docs/web/'
+        working-directory: "docs/web/"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,15 +26,14 @@ jobs:
           cache: "npm"
           cache-dependency-path: docs/web/package-lock.json
 
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-southeast-2
+          role-to-assume: ${{ secrets.AWS_ROLE_TEST }}
+
       - run: npm ci
 
       - run: npm run build
 
       - name: Deploy
-        run: |
-          prod_flag=""
-          if [ "$BRANCH_NAME" = "main" ]; then prod_flag="--prod"; fi
-          npm run deploy -- $prod_flag
-        env:
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_AUTH: ${{ secrets.NETLIFY_AUTH }} 
+        run: deploy-ci.sh
