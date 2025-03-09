@@ -41,5 +41,4 @@ jobs:
 
       - run: npm run build
 
-      - name: Deploy
-        run: deploy-ci.sh
+      - run: ./deploy-ci.sh
