@@ -19,13 +19,11 @@ echo Deploying to $S3_URL
 aws s3 sync dist $S3_URL
 
 # Invalidate Cache
-if [[ -z "$CI" ]]; then
-    GITHUB_JOB=`date +%s`
-fi
+CALLER_REF=`date +%s`
 DISTRIBUTION_ID=$(aws ssm get-parameter --name "/$CONTEXTIVE_STAGE/docs/distributionId" --query Parameter.Value --output text)
 aws cloudfront create-invalidation \
     --distribution-id $DISTRIBUTION_ID \
-    --invalidation-batch "Paths={Quantity=1,Items=[$BASE_URL/*]},CallerReference=$GITHUB_JOB"
+    --invalidation-batch "Paths={Quantity=1,Items=[$BASE_URL/*]},CallerReference=$CALLER_REF"
 
 # Output outcome
 if [[ "$CONTEXTIVE_STAGE" = "prod" ]]; then
