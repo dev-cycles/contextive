@@ -58,22 +58,6 @@
                             }
                         ],
                         "countMatches": true
-                    },
-                    {
-                        "files": [
-                            "intellij/contextive/src/main/resources/META-INF/plugin.xml"
-                        ],
-                        "from": "/blob/v.*?/",
-                        "to": "/blob/v${nextRelease.version}/",
-                        "results": [
-                            {
-                                "file": "intellij/contextive/src/main/resources/META-INF/plugin.xml",
-                                "hasChanged": true,
-                                "numMatches": 14,
-                                "numReplacements": 14
-                            }
-                        ],
-                        "countMatches": true
                     }
                 ]
             }
@@ -123,22 +107,6 @@
                     },
                     {
                         "files": [
-                            "visualstudio/contextive/contextive/README.md"
-                        ],
-                        "from": "dev-cycles/contextive/blob/v.*?/",
-                        "to": "dev-cycles/contextive/blob/v${nextRelease.version}/",
-                        "results": [
-                            {
-                                "file": "visualstudio/contextive/contextive/README.md",
-                                "hasChanged": true,
-                                "numMatches": 14,
-                                "numReplacements": 14
-                            }
-                        ],
-                        "countMatches": true
-                    },
-                    {
-                        "files": [
                             "visualstudio/contextive/contextive/ContextiveExtension.cs"
                         ],
                         "from": "releases/tag/v.*?\",",
@@ -155,18 +123,30 @@
                     },
                     {
                         "files": [
+                            "visualstudio/contextive/contextive/README.md",
+                            "intellij/contextive/src/main/resources/META-INF/plugin.xml",
+                            "vscode/contextive/README.md"
+                        ],
+                        "from": "dev-cycles/contextive/blob/v.*?/",
+                        "to": "dev-cycles/contextive/blob/v${nextRelease.version}/",
+                        "countMatches": true
+                    },
+                    {
+                        "files": [
+                            "visualstudio/contextive/contextive/README.md",
+                            "intellij/contextive/src/main/resources/META-INF/plugin.xml",
+                            "vscode/contextive/README.md"
+                        ],
+                        "from": "/ide/v/.*?/",
+                        "to": "/ide/v/${nextRelease.version}/",
+                        "countMatches": true
+                    },
+                    {
+                        "files": [
                             "LAST_RELEASE_NOTES.md"
                         ],
                         "from": "[\\S\\s]+",
                         "to": "${nextRelease.notes}",
-                        "results": [
-                            {
-                                "file": "LAST_RELEASE_NOTES.md",
-                                "hasChanged": true,
-                                "numMatches": 1,
-                                "numReplacements": 1
-                            }
-                        ],
                         "countMatches": true
                     }
                 ]
