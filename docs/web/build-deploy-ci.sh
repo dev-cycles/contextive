@@ -1,8 +1,12 @@
 BUCKET_NAME=($(aws ssm get-parameter --name "/$CONTEXTIVE_STAGE/docs/bucketName" --query Parameter.Value --output text))
 SHA=($(git rev-parse --short HEAD))
 VERSION=($(jq .version package.json -r))
-PATH=$VERSION
+DOCS_PATH=$VERSION
 if [[ "$CONTEXTIVE_STAGE" = "test" ]]; then
-    PATH=$VERSION+$SHA
+    DOCS_PATH=$VERSION+$SHA
 fi
-aws s3 sync dist s3://$BUCKET_NAME/ide/$PATH
+export BASE_URL=/ide/$DOCS_PATH
+npm run build
+S3_URL=s3://$BUCKET_NAME$BASE_URL
+echo Deploying to $S3_URL
+aws s3 sync dist $S3_URL
