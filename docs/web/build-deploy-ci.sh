@@ -22,7 +22,7 @@ aws cloudfront create-invalidation \
 
 # Output outcome
 if [[ "$CONTEXTIVE_STAGE" = "prod" ]]; then
-    echo Site live at https://docs.contextive.tech$BASE_URL
+    echo ::notice ::Site live at https://docs.contextive.tech$BASE_URL
 else
-    echo Site live for preview at https://docs.test.contextive.tech$BASE_URL
+    echo ::notice ::Site live for preview at https://docs.test.contextive.tech$BASE_URL
 fi
