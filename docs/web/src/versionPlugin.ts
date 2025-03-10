@@ -25,9 +25,6 @@ const versionBannerMiddleware = defineRouteMiddleware(context => {
         entry.data.banner = { content: `<p>You are reading the documentation for version <span class="version">${version}</span>.</p><p><a href="${ROUTE_TO_CURRENT_VERSION}">Documentation for the latest version</a>.</p>` }
     }
     if (entry.filePath === 'src/content/docs/index.mdx') {
-        const link = sha !== '' ?
-            `https://github.com/dev-cycles/contextive/commit/${sha}`
-            : `https://github.com/dev-cycles/contextive/releases/tag/v${version}`
         entry.data.hero?.actions.push({
             text: release_label,
             ...release_link,
