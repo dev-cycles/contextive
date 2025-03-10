@@ -175,8 +175,15 @@ To ensure it's useful in a variety of scenarios, it includes a number of options
 * PascalCase
 * snake_case
 * UPPER_CASE
+* kebab-case
 
-The auto-complete options will adjust as you type - e.g. after typing a single lower-case letter, only `camelCase` and `snake_case` will be included.  After typing a single upper case letter, `PascalCase` and `UPPER_CASE` will be included.  After typing two upper case letters, single word, snake_case and combined words will all be in `UPPERCASE`.
+The auto-complete options will adjust as you type:
+
+* After typing a single lower-case letter, only `camelCase`, `snake_case` & `kebab-case` will be included.
+* After typing a single upper case letter, `PascalCase` and `UPPER_CASE` will be included.
+* After typing two upper case letters, single word, snake_case and combined words will all be in `UPPERCASE`.
+* After typing any case letters and an underscore, only `snake_case` will be included.
+* After typing only lower case letters and a `-`, only `kebab-case` will be included.
 
 ![Example of smart auto-complete.](../../../assets/images/markdown-demo.gif)
 
