@@ -1,0 +1,9 @@
+---
+const { href } = Astro.props;
+const renderedHref = href.replace(
+    "{frontmatter.contextive_version}",
+    Astro.locals.starlightRoute.entry.data.contextive_version,
+);
+---
+
+<a href={renderedHref}><slot /></a>

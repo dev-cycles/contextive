@@ -46,7 +46,7 @@ export default defineConfig({
 				'changelog',
 			],
 			plugins: [
-				versionPlugin(),
+				versionPlugin,
 			],
 		}),
 	],

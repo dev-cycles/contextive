@@ -105,7 +105,9 @@ When hovering over the word `unit`, the definition of `cargo` will be displayed:
 
 As some of the fields in the definitions file could have long text, it may be helpful to use multi-line yaml. Because the fields are interpreted as markdown, there are some special considerations to be aware of.  The site https://yaml-multiline.info/ is a great resource for multi-line yaml fields.
 
-The following common scenarios are more fully explored in the [multiline sample file](https://github.com/dev-cycles/contextive/blob/main/src/vscode/contextive/test/single-root/fixtures/simple_workspace/.contextive/multiline.yml) and apply to all fields, but are most likely useful for the `domainVisionStatement`, `terms.definition` and `terms.examples` fields.
+import Link from '../../../components/VersionedLink.astro';
+
+The following common scenarios are more fully explored in the <Link href="https://github.com/dev-cycles/contextive/blob/v{frontmatter.contextive_version}/src/vscode/contextive/test/single-root/fixtures/simple_workspace/.contextive/multiline.yml">multiline sample file</Link> and apply to all fields, but are most likely useful for the `domainVisionStatement`, `terms.definition` and `terms.examples` fields.
 
 ### Multiline with Line Break
 
