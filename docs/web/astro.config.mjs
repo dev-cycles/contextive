@@ -1,20 +1,24 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import packageInfo from './package.json';
+import versionBannerPlugin from './src/versionBannerPlugin.ts';
+
+const version = process.env.VERSION || packageInfo.version;
 
 // https://astro.build/config
 export default defineConfig({
 	base: process.env.BASE_URL,
 	integrations: [
 		starlight({
-			title: 'Contextive',
-			description: 'A suite of tools for immersing developers in the language of your domains.',
+			title: 'Contextive - IDE Extensions - ' + version,
+			description: 'IDE Extensions to help immerse developers in the language of their domains.',
 			editLink: {
 				baseUrl: 'https://github.com/dev-cycles/contextive/edit/main/docs/web/',
 			},
 			tagline: 'Get on the same page.',
 			logo: {
-				alt: 'Contextive',
+				alt: 'Contextive - ' + version,
 				replacesTitle: true,
 				light: './src/assets/logos/logo-primary.png',
 				dark: './src/assets/logos/logo-inverted.png'
@@ -31,6 +35,10 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
+					label: 'Version: ' + version,
+					link: "/"
+				},
+				{
 					label: 'Guides',
 					autogenerate: { directory: 'guides' },
 				},
@@ -43,6 +51,9 @@ export default defineConfig({
 				// 	autogenerate: { directory: 'reference' },
 				// },
 			],
+			plugins: [
+				versionBannerPlugin(version)
+			]
 		}),
 	],
 });
