@@ -37,7 +37,7 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ap-southeast-2
-          role-to-assume: $AWS_ROLE
+          role-to-assume: ${{ env.AWS_ROLE }}
 
       - run: npm ci
 
