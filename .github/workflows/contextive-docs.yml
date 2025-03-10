@@ -13,6 +13,8 @@ permissions:
 
 env:
   BRANCH_NAME: ${{ github.ref_name }}
+  CONTEXTIVE_STAGE: test
+  AWS_ROLE: ${{ secrets.AWS_ROLE_TEST }}
 
 jobs:
   docs:
@@ -35,7 +37,7 @@ jobs:
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ap-southeast-2
-          role-to-assume: ${{ secrets.AWS_ROLE_TEST }}
+          role-to-assume: $AWS_ROLE
 
       - run: npm ci
 
