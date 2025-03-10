@@ -30,7 +30,6 @@
         "xvfb",
         "yzhang"
     ],
-    "FSharp.dotnetRoot": "/usr/share/dotnet",
     "FSharp.workspacePath": "./src/Contextive.sln",
     "vsCodeExtensionPath": "./src/vscode/contextive",
     "languageServerPath": "./src/language-server/Contextive.LanguageServer",
@@ -56,7 +55,7 @@
     "mochaExplorer.env": {
         "ELECTRON_RUN_AS_NODE": null,
         "DISPLAY": ":99.0",
-        "XDG_RUNTIME_DIR":"/tmp",
+        "XDG_RUNTIME_DIR": "/tmp",
         //"MOCHA_FGREP": "Multi-Root" // Will default to single-root.  Uncomment when testing multi-root from the test explorer.
     },
     "mochaExplorer.exit": true,
@@ -65,5 +64,6 @@
     "[fsharp]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "Ionide.Ionide-fsharp"
-    }
+    },
+    "testing.automaticallyOpenTestResults": "neverOpen"
 }

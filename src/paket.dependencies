@@ -8,6 +8,7 @@ nuget Fable.Electron
 nuget Fable.Mocha
 nuget FSharp.Core
 nuget Humanizer
+nuget Microsoft.NET.Test.Sdk
 nuget OmniSharp.Extensions.LanguageProtocol.Testing
 nuget OmniSharp.Extensions.LanguageServer
 nuget Serilog

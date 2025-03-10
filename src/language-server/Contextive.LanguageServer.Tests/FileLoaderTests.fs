@@ -48,9 +48,10 @@ let tests =
                           f.Contents = Ok(
                               "contexts:
   - terms:
-    - name: word1
-    - name: word2
-    - name: word3"
+      - name: word1
+      - name: word2
+      - name: word3
+"
                           )
                       @>
           } ]

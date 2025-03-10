@@ -2,7 +2,6 @@ module Contextive.LanguageServer.Tests.HoverTests
 
 open Expecto
 open Swensen.Unquote
-open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open System.IO
@@ -11,7 +10,7 @@ open Contextive.Core.Definitions
 open Helpers.TestClient
 open Contextive.LanguageServer.Tests.Helpers
 
-module DH = Helpers.Definitions
+module DH = Definitions
 
 [<Tests>]
 let tests =
@@ -168,8 +167,8 @@ let tests =
               let hoverHandler =
                   Hover.handler
                       (DH.mockTermNamesFinder
-                          ({ Context.Default with
-                              Name = "TestContext" })
+                          { Context.Default with
+                              Name = "TestContext" }
                           terms)
                       (fun _ _ -> foundToken)
 

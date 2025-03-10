@@ -115,7 +115,7 @@ let tests =
               let definitionsFileUri =
                   Path.Combine(Directory.GetCurrentDirectory(), relativePath, definitionsFile)
 
-              if (File.Exists(definitionsFileUri)) then
+              if File.Exists(definitionsFileUri) then
                   File.Delete(definitionsFileUri)
 
               didChangeWatchedFiles client definitionsFileUri
@@ -155,7 +155,7 @@ let tests =
 
               let existingContents = File.ReadAllText(definitionsFileUri)
 
-              let newDefinition = $"{Environment.NewLine}    - name: {newTerm}"
+              let newDefinition = $"{Environment.NewLine}      - name: {newTerm}"
 
               File.AppendAllText(definitionsFileUri, newDefinition)
 
