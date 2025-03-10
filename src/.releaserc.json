@@ -1,137 +1,213 @@
 {
-    "branches": ["main"],
+    "branches": [
+        "main"
+    ],
     "plugins": [
         "@semantic-release/commit-analyzer",
         "@semantic-release/release-notes-generator",
-        ["@semantic-release/changelog",{
-            "changelogFile": "vscode/contextive/CHANGELOG.md",
-            "changelogTitle": "# Change Log"
-        }],
-        ["./ci/semantic-release-markdown-to-html",{
-          "files": {
-                "changeLog": "vscode/contextive/CHANGELOG.md",
-                "intelliJReadme": "intellij/contextive/README.md"
-          },
-          "replacements": [{
-                "files": ["intellij/contextive/src/main/resources/META-INF/plugin.xml"],
-                "from": "<change-notes><!\\[CDATA\\[(\n|.)*\\]\\]><\\/change-notes>",
-                "to": "<change-notes><![CDATA[${htmlFiles.changeLog}]]></change-notes>",
-                "results": [{
-                    "file": "intellij/contextive/src/main/resources/META-INF/plugin.xml",
-                    "hasChanged": true,
-                    "numMatches": 1,
-                    "numReplacements": 1
-                }],
-                "countMatches": true
-            },{
-                "files": ["intellij/contextive/src/main/resources/META-INF/plugin.xml"],
-                "from": "<description><!\\[CDATA\\[(\n|.)*\\]\\]><\\/description>",
-                "to": "<description><![CDATA[${htmlFiles.intelliJReadme}]]></description>",
-                "results": [{
-                    "file": "intellij/contextive/src/main/resources/META-INF/plugin.xml",
-                    "hasChanged": true,
-                    "numMatches": 1,
-                    "numReplacements": 1
-                }],
-                "countMatches": true
-            },{
-                "files": ["intellij/contextive/src/main/resources/META-INF/plugin.xml"],
-                "from": "/blob/v.*?/",
-                "to": "/blob/v${nextRelease.version}/",
-                "results": [{
-                    "file": "intellij/contextive/src/main/resources/META-INF/plugin.xml",
-                    "hasChanged": true,
-                    "numMatches": 14,
-                    "numReplacements": 14
-                }],
-                "countMatches": true
-            }]
-        }],
-        ["semantic-release-replace-plugin",{
-            "replacements": [{
-                "files": [
+        [
+            "@semantic-release/changelog",
+            {
+                "changelogFile": "vscode/contextive/CHANGELOG.md",
+                "changelogTitle": "# Change Log"
+            }
+        ],
+        [
+            "@semantic-release/changelog",
+            {
+                "changelogFile": "../docs/web/src/content/docs/changelog.md",
+                "changelogTitle": "---\ntitle: Change Log\ntableOfContents:\n  minHeadingLevel: 1\n  maxHeadingLevel: 2\n---"
+            }
+        ],
+        [
+            "./ci/semantic-release-markdown-to-html",
+            {
+                "files": {
+                    "changeLog": "vscode/contextive/CHANGELOG.md",
+                    "intelliJReadme": "intellij/contextive/README.md"
+                },
+                "replacements": [
+                    {
+                        "files": [
+                            "intellij/contextive/src/main/resources/META-INF/plugin.xml"
+                        ],
+                        "from": "<change-notes><!\\[CDATA\\[(\n|.)*\\]\\]><\\/change-notes>",
+                        "to": "<change-notes><![CDATA[${htmlFiles.changeLog}]]></change-notes>",
+                        "results": [
+                            {
+                                "file": "intellij/contextive/src/main/resources/META-INF/plugin.xml",
+                                "hasChanged": true,
+                                "numMatches": 1,
+                                "numReplacements": 1
+                            }
+                        ],
+                        "countMatches": true
+                    },
+                    {
+                        "files": [
+                            "intellij/contextive/src/main/resources/META-INF/plugin.xml"
+                        ],
+                        "from": "<description><!\\[CDATA\\[(\n|.)*\\]\\]><\\/description>",
+                        "to": "<description><![CDATA[${htmlFiles.intelliJReadme}]]></description>",
+                        "results": [
+                            {
+                                "file": "intellij/contextive/src/main/resources/META-INF/plugin.xml",
+                                "hasChanged": true,
+                                "numMatches": 1,
+                                "numReplacements": 1
+                            }
+                        ],
+                        "countMatches": true
+                    },
+                    {
+                        "files": [
+                            "intellij/contextive/src/main/resources/META-INF/plugin.xml"
+                        ],
+                        "from": "/blob/v.*?/",
+                        "to": "/blob/v${nextRelease.version}/",
+                        "results": [
+                            {
+                                "file": "intellij/contextive/src/main/resources/META-INF/plugin.xml",
+                                "hasChanged": true,
+                                "numMatches": 14,
+                                "numReplacements": 14
+                            }
+                        ],
+                        "countMatches": true
+                    }
+                ]
+            }
+        ],
+        [
+            "semantic-release-replace-plugin",
+            {
+                "replacements": [
+                    {
+                        "files": [
+                            "language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj",
+                            "visualstudio/contextive/contextive/contextive.csproj"
+                        ],
+                        "from": "<Version>.*</Version>",
+                        "to": "<Version>${nextRelease.version}</Version>",
+                        "results": [
+                            {
+                                "file": "language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj",
+                                "hasChanged": true,
+                                "numMatches": 1,
+                                "numReplacements": 1
+                            },
+                            {
+                                "file": "visualstudio/contextive/contextive/contextive.csproj",
+                                "hasChanged": true,
+                                "numMatches": 1,
+                                "numReplacements": 1
+                            }
+                        ],
+                        "countMatches": true
+                    },
+                    {
+                        "files": [
+                            "intellij/contextive/build.gradle.kts"
+                        ],
+                        "from": "version = \".*\"",
+                        "to": "version = \"${nextRelease.version}\"",
+                        "results": [
+                            {
+                                "file": "intellij/contextive/build.gradle.kts",
+                                "hasChanged": true,
+                                "numMatches": 1,
+                                "numReplacements": 1
+                            }
+                        ],
+                        "countMatches": true
+                    },
+                    {
+                        "files": [
+                            "visualstudio/contextive/contextive/README.md"
+                        ],
+                        "from": "dev-cycles/contextive/blob/v.*?/",
+                        "to": "dev-cycles/contextive/blob/v${nextRelease.version}/",
+                        "results": [
+                            {
+                                "file": "visualstudio/contextive/contextive/README.md",
+                                "hasChanged": true,
+                                "numMatches": 14,
+                                "numReplacements": 14
+                            }
+                        ],
+                        "countMatches": true
+                    },
+                    {
+                        "files": [
+                            "visualstudio/contextive/contextive/ContextiveExtension.cs"
+                        ],
+                        "from": "releases/tag/v.*?\",",
+                        "to": "releases/tag/v${nextRelease.version}\",",
+                        "results": [
+                            {
+                                "file": "visualstudio/contextive/contextive/ContextiveExtension.cs",
+                                "hasChanged": true,
+                                "numMatches": 1,
+                                "numReplacements": 1
+                            }
+                        ],
+                        "countMatches": true
+                    },
+                    {
+                        "files": [
+                            "LAST_RELEASE_NOTES.md"
+                        ],
+                        "from": "[\\S\\s]+",
+                        "to": "${nextRelease.notes}",
+                        "results": [
+                            {
+                                "file": "LAST_RELEASE_NOTES.md",
+                                "hasChanged": true,
+                                "numMatches": 1,
+                                "numReplacements": 1
+                            }
+                        ],
+                        "countMatches": true
+                    }
+                ]
+            }
+        ],
+        [
+            "@semantic-release/npm",
+            {
+                "npmPublish": false,
+                "pkgRoot": "vscode/contextive"
+            }
+        ],
+        [
+            "@semantic-release/npm",
+            {
+                "npmPublish": false,
+                "pkgRoot": "../docs/web"
+            }
+        ],
+        [
+            "@semantic-release/git",
+            {
+                "assets": [
                     "language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj",
-                    "visualstudio/contextive/contextive/contextive.csproj"
-                ],
-                "from": "<Version>.*</Version>",
-                "to": "<Version>${nextRelease.version}</Version>",
-                "results": [{
-                    "file": "language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj",
-                    "hasChanged": true,
-                    "numMatches": 1,
-                    "numReplacements": 1
-                },{
-                    "file": "visualstudio/contextive/contextive/contextive.csproj",
-                    "hasChanged": true,
-                    "numMatches": 1,
-                    "numReplacements": 1
-                }],
-                "countMatches": true
-            },{
-                "files": ["intellij/contextive/build.gradle.kts"],
-                "from": "version = \".*\"",
-                "to": "version = \"${nextRelease.version}\"",
-                "results": [{
-                    "file": "intellij/contextive/build.gradle.kts",
-                    "hasChanged": true,
-                    "numMatches": 1,
-                    "numReplacements": 1
-                }],
-                "countMatches": true
-            },{
-                "files": ["visualstudio/contextive/contextive/README.md"],
-                "from": "dev-cycles/contextive/blob/v.*?/",
-                "to": "dev-cycles/contextive/blob/v${nextRelease.version}/",
-                "results": [{
-                    "file": "visualstudio/contextive/contextive/README.md",
-                    "hasChanged": true,
-                    "numMatches": 14,
-                    "numReplacements": 14
-                }],
-                "countMatches": true
-            },{
-                "files": ["visualstudio/contextive/contextive/ContextiveExtension.cs"],
-                "from": "releases/tag/v.*?\",",
-                "to": "releases/tag/v${nextRelease.version}\",",
-                "results": [{
-                    "file": "visualstudio/contextive/contextive/ContextiveExtension.cs",
-                    "hasChanged": true,
-                    "numMatches": 1,
-                    "numReplacements": 1
-                }],
-                "countMatches": true
-            },{
-                "files": ["LAST_RELEASE_NOTES.md"],
-                "from": "[\\S\\s]+",
-                "to": "${nextRelease.notes}",
-                "results": [{
-                    "file": "LAST_RELEASE_NOTES.md",
-                    "hasChanged": true,
-                    "numMatches": 1,
-                    "numReplacements": 1
-                }],
-                "countMatches": true
-            }]
-        }],
-        ["@semantic-release/npm",{
-            "npmPublish": false,
-            "pkgRoot": "vscode/contextive"
-        }],
-        ["@semantic-release/git",{
-            "assets": [
-                "language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj",
-                "vscode/contextive/CHANGELOG.md",
-                "vscode/contextive/package.json",
-                "vscode/contextive/package-lock.json",
-                "vscode/contextive/npm-shrinkwrap.json",
-                "intellij/contextive/build.gradle.kts",
-                "intellij/contextive/src/main/resources/META-INF/plugin.xml",
-                "visualstudio/contextive/contextive/contextive.csproj",
-                "visualstudio/contextive/contextive/README.md",
-                "visualstudio/contextive/contextive/ContextiveExtension.cs",
-                "LAST_RELEASE_NOTES.md"
-            ]
-        }],
+                    "vscode/contextive/CHANGELOG.md",
+                    "vscode/contextive/package.json",
+                    "vscode/contextive/package-lock.json",
+                    "vscode/contextive/npm-shrinkwrap.json",
+                    "intellij/contextive/build.gradle.kts",
+                    "intellij/contextive/src/main/resources/META-INF/plugin.xml",
+                    "visualstudio/contextive/contextive/contextive.csproj",
+                    "visualstudio/contextive/contextive/README.md",
+                    "visualstudio/contextive/contextive/ContextiveExtension.cs",
+                    "LAST_RELEASE_NOTES.md",
+                    "../docs/web/package.json",
+                    "../docs/web/package-lock.json",
+                    "../docs/web/npm-shrinkwrap.json",
+                    "../docs/web/src/content/docs/changelog.md"
+                ]
+            }
+        ],
         "@semantic-release/github"
     ]
 }

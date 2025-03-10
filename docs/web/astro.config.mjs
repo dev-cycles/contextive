@@ -38,11 +38,12 @@ export default defineConfig({
 				{
 					label: 'Background',
 					autogenerate: { directory: 'background' }
-				}
+				},
 				// {
 				// 	label: 'Reference',
 				// 	autogenerate: { directory: 'reference' },
 				// },
+				'changelog',
 			],
 			plugins: [
 				versionPlugin(),
