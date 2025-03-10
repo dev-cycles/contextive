@@ -4,6 +4,8 @@ on:
     paths:
       - "docs/web/**"
       - ".github/workflows/contextive-docs.yml"
+  release:
+    types: [published]
 
 # See https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services#adding-permissions-settings
 # And https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#permissions
@@ -13,8 +15,8 @@ permissions:
 
 env:
   BRANCH_NAME: ${{ github.ref_name }}
-  CONTEXTIVE_STAGE: test
-  AWS_ROLE: ${{ secrets.AWS_ROLE_TEST }}
+  CONTEXTIVE_STAGE: ${{ github.event_name == 'release' && 'prod' || 'test' }}
+  AWS_ROLE: ${{ github.event_name == 'release' && secrets.AWS_ROLE_PROD || secrets.AWS_ROLE_TEST }}
 
 jobs:
   docs:
