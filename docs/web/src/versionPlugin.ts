@@ -1,7 +1,9 @@
 import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
 import { type StarlightPlugin } from "@astrojs/starlight/types";
 
-const version = process.env.VERSION;
+const version = process.env.CONTEXTIVE_VERSION;
+const archive = !!process.env.CONTEXTIVE_ARCHIVE;
+const sha = process.env.CONTEXTIVE_SHA;
 
 const ROUTE_TO_CURRENT_VERSION = "/ide";
 
@@ -9,7 +11,22 @@ const versionBannerMiddleware = defineRouteMiddleware(context => {
     // Get the content collection entry for this page.
     const { entry } = context.locals.starlightRoute;
     // Update the title to add an exclamation mark.
-    entry.data.banner = { content: `<p>You are reading the documentation for version <span class="version">${version}</span>.</p><p><a href="${ROUTE_TO_CURRENT_VERSION}">Documentation for the latest version</a>.</p>` }
+    entry.data.contextive_version = version;
+    if (archive) {
+        entry.data.banner = { content: `<p>You are reading the documentation for version <span class="version">${version}</span>.</p><p><a href="${ROUTE_TO_CURRENT_VERSION}">Documentation for the latest version</a>.</p>` }
+    }
+    if (entry.filePath === 'src/content/docs/index.mdx') {
+        const link = sha !== '' ?
+            `https://github.com/dev-cycles/contextive/commit/${sha}`
+            : `https://github.com/dev-cycles/contextive/releases/tag/v${version}`
+        entry.data.hero?.actions.push({
+            text: `Release: v${version}`,
+            link,
+            variant: 'secondary',
+            attrs: { target: '_blank' },
+            icon: { type: 'icon', name: 'github' }
+        })
+    }
 });
 
 export default function () {

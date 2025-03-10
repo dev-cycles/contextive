@@ -42,3 +42,6 @@ jobs:
       - run: npm ci
 
       - run: ./build-deploy-ci.sh
+      - run: ./build-deploy-ci.sh
+        env:
+          CONTEXTIVE_ARCHIVE: 1

@@ -1,8 +1,15 @@
 # Build site with correct base URL and version
-SHA=($(git rev-parse --short HEAD))
-export VERSION=$(jq .version package.json -r)
-VERSION=$VERSION+$SHA
-export BASE_URL=/ide/v/$VERSION
+export CONTEXTIVE_VERSION=$(jq .version package.json -r)
+if [[ "$CONTEXTIVE_STAGE" != "prod" ]]; then
+    export CONTEXTIVE_SHA=$(git rev-parse --short HEAD)
+    CONTEXTIVE_VERSION=$CONTEXTIVE_VERSION-$CONTEXTIVE_SHA
+fi
+export BASE_URL=/ide
+
+if [[ "$CONTEXTIVE_ARCHIVE" ]]; then
+    BASE_URL=$BASE_URL/v/$CONTEXTIVE_VERSION
+fi
+rm -rf dist
 npm run build
 
 # Deploy to S3

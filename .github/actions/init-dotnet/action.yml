@@ -1,4 +1,5 @@
 name: Init Dotnet Workflow
+description: Initialize dotnet to version set in env variable
 runs:
   using: composite
   steps:
