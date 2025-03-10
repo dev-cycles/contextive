@@ -4,6 +4,15 @@ import { type StarlightPlugin } from "@astrojs/starlight/types";
 const version = process.env.CONTEXTIVE_VERSION;
 const archive = !!process.env.CONTEXTIVE_ARCHIVE;
 const sha = process.env.CONTEXTIVE_SHA;
+const release_label = `Release: v${version}`;
+const release_url = sha !== '' ?
+    `https://github.com/dev-cycles/contextive/commit/${sha}`
+    : `https://github.com/dev-cycles/contextive/releases/tag/v${version}`;
+const release_link =
+{
+    link: release_url,
+    attrs: { target: '_blank' },
+}
 
 const ROUTE_TO_CURRENT_VERSION = "/ide";
 
@@ -20,10 +29,9 @@ const versionBannerMiddleware = defineRouteMiddleware(context => {
             `https://github.com/dev-cycles/contextive/commit/${sha}`
             : `https://github.com/dev-cycles/contextive/releases/tag/v${version}`
         entry.data.hero?.actions.push({
-            text: `Release: v${version}`,
-            link,
+            text: release_label,
+            ...release_link,
             variant: 'secondary',
-            attrs: { target: '_blank' },
             icon: { type: 'icon', name: 'github' }
         })
     }
@@ -35,13 +43,19 @@ export default function () {
         hooks: {
             'config:setup': ({ config, updateConfig, addRouteMiddleware }) => {
                 if (version) {
-                    const { title, logo } = config;
+                    const { title, logo, sidebar } = config;
+                    sidebar?.unshift({
+                        label: release_label,
+                        ...release_link,
+                        attrs: { target: '_blank' },
+                    })
                     updateConfig({
                         title: title + ' - ' + version,
                         logo: {
                             ...logo,
                             alt: logo?.alt + ' - ' + version
-                        } as typeof logo
+                        } as typeof logo,
+                        sidebar,
                     });
                     addRouteMiddleware({ entrypoint: import.meta.filename, order: 'pre' })
                 }
