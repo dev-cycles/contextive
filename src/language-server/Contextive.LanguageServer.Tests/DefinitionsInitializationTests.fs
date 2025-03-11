@@ -8,6 +8,7 @@ open Contextive.LanguageServer.Tests.Helpers.Window
 open Helpers.TestClient
 open System.IO
 open VerifyExpecto
+open VerifyTests
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 
 [<CLIMutable>]
@@ -51,7 +52,7 @@ let tests =
     testSequencedGroup "Initialization Tests"
     <| testList
         "LanguageServer.Definitions Initialization Tests"
-        [ testAsync "Initialization command creates default definitions file at configured path" {
+        [ testTask "Initialization command creates default definitions file at configured path" {
               let pathValue = Guid.NewGuid().ToString()
 
               let! res, fileExists, contents, schemaContents = initializeContextive None pathValue []
@@ -61,18 +62,12 @@ let tests =
               test <@ res.Success @>
               test <@ fileExists @>
 
-              do!
-                  Verifier.Verify("Default Definitions", contents)
-                  |> Async.AwaitTask
-                  |> Async.Ignore
+              do! Verifier.Verify("Default Definitions", contents).ToTask()
 
-              do!
-                  Verifier.Verify("Default Definitions Schema", schemaContents)
-                  |> Async.AwaitTask
-                  |> Async.Ignore
+              do! Verifier.Verify("Default Definitions Schema", schemaContents).ToTask()
           }
 
-          testAsync
+          testTask
               "Initialization command creates default definitions file at configured path when subfolder doesn't exist" {
               let pathValue = $"{Guid.NewGuid().ToString()}/{Guid.NewGuid().ToString()}"
 
@@ -85,15 +80,9 @@ let tests =
               test <@ res.Success @>
               test <@ fileExists @>
 
-              do!
-                  Verifier.Verify("Default Definitions in Non-existent Path", contents)
-                  |> Async.AwaitTask
-                  |> Async.Ignore
+              do! Verifier.Verify("Default Definitions in Non-existent Path", contents).ToTask()
 
-              do!
-                  Verifier.Verify("Default Definitions Schema in Non-existent Path", schemaContents)
-                  |> Async.AwaitTask
-                  |> Async.Ignore
+              do! Verifier.Verify("Default Definitions Schema in Non-existent Path", schemaContents).ToTask()
           }
 
           testAsync "Initialization command opens new definitions file" {
