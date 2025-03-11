@@ -5,6 +5,7 @@ plugins {
   id("java")
   id("org.jetbrains.kotlin.jvm") version "2.1.10"
   id("org.jetbrains.intellij.platform") version "2.3.0"
+  id("com.github.ben-manes.versions") version "0.52.0"
 }
 
 group = "tech.contextive"
@@ -18,13 +19,13 @@ repositories {
 }
 
 dependencies {
-  implementation("net.harawata:appdirs:1.2.2")
+  implementation("net.harawata:appdirs:1.4.0")
   implementation("net.lingala.zip4j:zip4j:2.11.5")
   testImplementation(kotlin("test"))
-  testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
+  testImplementation("org.junit.jupiter:junit-jupiter-params:5.12.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-  testImplementation("io.mockk:mockk:1.13.10")
-  testImplementation("com.github.stefanbirkner:system-lambda:1.1.0")
+  testImplementation("io.mockk:mockk:1.13.17")
+  testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
   intellijPlatform {
     //intellijIdeaUltimate("251-EAP-SNAPSHOT", useInstaller = false)
     intellijIdeaUltimate("2024.3.4.1")
