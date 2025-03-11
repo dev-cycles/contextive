@@ -1,14 +1,14 @@
 name: Contextive Publish
 on:
-  # release:
-  #   types: [published] # temporary while debugging semantic release
+  release:
+    types: [published]
   ## Keeping in Comments as may be helpful for future publish rescue requirements (search PUBLISH_RESCUE for other locations)
-  workflow_dispatch:
-    inputs:
-      release:
-        description: "Release to publish"
-        required: true
-        type: string
+  # workflow_dispatch:
+  #   inputs:
+  #     release:
+  #       description: "Release to publish"
+  #       required: true
+  #       type: string
 
 env:
   dotnet-version: "8.0.x"
