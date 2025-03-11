@@ -22,10 +22,10 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 <p>See <a href="#known-issues">known issues</a> below</p>
 </blockquote>
 <h2>Installation</h2>
-<p>See <a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/INSTALLATION.md#intellij-plugin-platform">IntelliJ IDEs (e.g. IDEA) Installation Instructions</a>.</p>
+<p>See <a href="https://docs.contextive.tech/ide/v/1.14.0/guides/installation/#intellij-plugin-platform">IntelliJ IDEs (e.g. IDEA) Installation Instructions</a>.</p>
 <h2>Getting Started</h2>
 <p>Create a folder in your project root called <code>.contextive</code>.  Create a file in that folder called <code>definitions.yml</code>.</p>
-<p>Start defining your definitions following the schema specified in our <a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/USAGE.md">usage guide</a>.  You might like to start by copying our <a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/src/language-server/Contextive.LanguageServer.Tests/DefinitionsInitializationTests.Default%20Definitions.verified.txt">default definitions</a> file that defines the terms used in the definitions file itself.</p>
+<p>Start defining your definitions following the schema specified in our <a href="https://docs.contextive.tech/ide/v/1.14.0/guides/usage/">usage guide</a>.  You might like to start by copying our <a href="https://github.com/dev-cycles/contextive/blob/v1.14.0/src/language-server/Contextive.LanguageServer.Tests/DefinitionsInitializationTests.Default%20Definitions.verified.txt">default definitions</a> file that defines the terms used in the definitions file itself.</p>
 <h2>Supported IDEs</h2>
 <p>The plugin uses the IntelliJ Language Server Protocol support, so it's only available in the IDEs where that feature is offered.  See the <a href="https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html#supported-ides">JetBrains LSP Documentation</a> for the latest list.</p>
 <p>At time of writing, it includes:</p>
@@ -44,10 +44,10 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 <li>RustRover</li>
 </ul>
 <h2>Usage Guide</h2>
-<p>See our <a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/USAGE.md">usage guide</a> for details on the definitions file format and available options.</p>
+<p>See our <a href="https://docs.contextive.tech/ide/v/1.14.0/guides/usage/">usage guide</a> for details on the definitions file format and available options.</p>
 <h2>Features</h2>
 <ul>
-<li><a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/USAGE.md#smart-auto-complete">Auto-complete</a> from your Contextive Definitions
+<li><a href="https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#smart-auto-complete">Auto-complete</a> from your Contextive Definitions
 <ul>
 <li>Shows definitions in auto-complete details
 <ul>
@@ -58,19 +58,19 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 </li>
 <li>Hover to show definitions from your Contextive Definitions
 <ul>
-<li>Hover over elements with <a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/USAGE.md#suffixes-and-prefixes">suffixes &amp; prefixes</a></li>
-<li>Hover over usage of <a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/USAGE.md#combining-two-or-more-terms">multiple terms</a> combined using camelCase, PascalCase and snake_case</li>
-<li>Hover over <a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/USAGE.md#multi-word-terms">multi-word</a> terms</li>
-<li>Hover over <a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/USAGE.md#plural-words">plural</a> of defined terms</li>
-<li>Hover over <a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/USAGE.md#term-aliases">aliases</a> of defined terms</li>
+<li>Hover over elements with <a href="https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#suffixes-and-prefixes">suffixes &amp; prefixes</a></li>
+<li>Hover over usage of <a href="https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#combining-two-or-more-terms">multiple terms</a> combined using camelCase, PascalCase and snake_case</li>
+<li>Hover over <a href="https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#multi-word-terms">multi-word</a> terms</li>
+<li>Hover over <a href="https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#plural-words">plural</a> of defined terms</li>
+<li>Hover over <a href="https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#term-aliases">aliases</a> of defined terms</li>
 </ul>
 </li>
 <li>Supported Repository Layouts:
 <ul>
-<li>A <a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/USAGE.md#multiple-bounded-contexts-repository-per-context">repository per context</a></li>
-<li><a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/USAGE.md#multiple-bounded-contexts-single-repository-single-root-monorepo">Multiple contexts in the same repository</a> (monorepo) (identified by path globs)</li>
-<li>Context distributed over <a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/USAGE.md#single-bounded-context-multiple-repositories">multiple repositories</a> (<a href="https://github.com/dev-cycles/contextive/issues/36">#36</a>)</li>
-<li><a href="https://github.com/dev-cycles/contextive/blob/v1.12.1/docs/wiki/USAGE.md#multiple-bounded-contexts-multi-root-shared-definitions-file">Multi-root workspaces</a></li>
+<li>A <a href="https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#multiple-bounded-contexts-repository-per-context">repository per context</a></li>
+<li><a href="https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#multiple-bounded-contexts-single-repository-single-root-monorepo">Multiple contexts in the same repository</a> (monorepo) (identified by path globs)</li>
+<li>Context distributed over <a href="https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#single-bounded-context-multiple-repositories">multiple repositories</a> (<a href="https://github.com/dev-cycles/contextive/issues/36">#36</a>)</li>
+<li><a href="https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#multiple-bounded-contexts-multi-root-shared-definitions-file">Multi-root workspaces</a></li>
 </ul>
 </li>
 <li>Works in all files</li>
@@ -98,6 +98,16 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 ]]></description>
 
   <change-notes><![CDATA[<h1>Change Log</h1>
+<h1><a href="https://github.com/dev-cycles/contextive/compare/v1.13.0...v1.14.0">1.14.0</a> (2025-03-11)</h1>
+<h3>Bug Fixes</h3>
+<ul>
+<li><strong>intellij:</strong> Support forthcoming IntelliJ Platform 2025 editions (<a href="https://github.com/dev-cycles/contextive/commit/69e3113a23eeb9130e116df7a2095b136611121a">69e3113</a>)</li>
+</ul>
+<h3>Features</h3>
+<ul>
+<li><strong>language-server:</strong> add support for hovering over kebab-case terms (<a href="https://github.com/dev-cycles/contextive/commit/3c02938b3a0ec4296c0f1afdbc80d36cb1991a06">3c02938</a>)</li>
+<li><strong>language-server:</strong> multi-word terms can be defined in the definitions file in snake_case or kebab_case (<a href="https://github.com/dev-cycles/contextive/commit/4aeffd8c89cebb03a51120ca6c10fa94e1821da1">4aeffd8</a>)</li>
+</ul>
 <h2><a href="https://github.com/dev-cycles/contextive/compare/v1.12.0...v1.12.1">1.12.1</a> (2024-09-20)</h2>
 <h3>Bug Fixes</h3>
 <ul>
