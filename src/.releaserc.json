@@ -167,24 +167,16 @@
             }
         ],
         [
+            "@semantic-release/exec",
+            {
+                "prepareCmd": "git add .."
+            }
+        ],
+        [
             "@semantic-release/git",
             {
                 "assets": [
-                    "language-server/Contextive.LanguageServer/Contextive.LanguageServer.fsproj",
-                    "vscode/contextive/CHANGELOG.md",
-                    "vscode/contextive/package.json",
-                    "vscode/contextive/package-lock.json",
-                    "vscode/contextive/npm-shrinkwrap.json",
-                    "intellij/contextive/build.gradle.kts",
-                    "intellij/contextive/src/main/resources/META-INF/plugin.xml",
-                    "visualstudio/contextive/contextive/contextive.csproj",
-                    "visualstudio/contextive/contextive/README.md",
-                    "visualstudio/contextive/contextive/ContextiveExtension.cs",
-                    "LAST_RELEASE_NOTES.md",
-                    "../docs/web/package.json",
-                    "../docs/web/package-lock.json",
-                    "../docs/web/npm-shrinkwrap.json",
-                    "../docs/web/src/content/docs/changelog.md"
+                    "vscode/contextive/package.json"
                 ]
             }
         ],
