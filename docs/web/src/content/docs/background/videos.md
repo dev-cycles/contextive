@@ -24,6 +24,12 @@ Overview of using Contextive as well as a demo of how it is designed and built a
 
 [![Ubiquitous F# in Contextive, the Ubiquitous Language Tool](https://img.youtube.com/vi/bf1as7nTFEY/0.jpg)](https://www.youtube.com/watch?v=bf1as7nTFEY)
 
+## Experiences Building a Language Server Protocol | Jetbrains Plugin Developers Conference, Nov 2024
+
+Introduction to Contextive in the context of how it was added to the IntelliJ platform:
+
+[![Contextive in the IntelliJ Platform](https://img.youtube.com/vi/N4bkzOqxI4E/0.jpg)](https://www.youtube.com/watch?v=N4bkzOqxI4E)
+
 ## Ubiquitous Language, Simplified
 
 A video by [Bran van der Meer](https://bran.name/) all about the Ubiquitous Language which references Contextive.
