@@ -6,6 +6,10 @@
 	"publisher": "devcycles",
 	"license": "SEE LICENSE IN LICENSE",
 	"icon": "images/contextive.png",
+	"galleryBanner": {
+		"color": "#f7f4f0",
+		"theme": "light"
+	},
 	"repository": {
 		"url": "https://github.com/dev-cycles/contextive"
 	},
