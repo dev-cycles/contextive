@@ -6,8 +6,9 @@
   <img alt="Contextive: Get on the same page." src="images/logo-tagline.png">
 </picture>
 
-[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Bluesky](https://img.shields.io/badge/Bluesky-0285FF?logo=bluesky&logoColor=fff)](https://bsky.app/profile/contextive.tech) [![Mastodon](https://img.shields.io/mastodon/follow/111227986489537355?domain=https%3A%2F%2Ftechhub.social%2F
-)](https://techhub.social/@contextive)
+[![Contextive](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml/badge.svg)](https://github.com/dev-cycles/contextive/actions/workflows/contextive.yml) [![Github](https://img.shields.io/github/stars/dev-cycles/contextive
+)](https://github.com/dev-cycles/contextive) [![Bluesky](https://img.shields.io/badge/Bluesky-0285FF?logo=bluesky&logoColor=fff)](https://bsky.app/profile/contextive.tech) [![Mastodon](https://img.shields.io/mastodon/follow/111227986489537355?domain=https%3A%2F%2Ftechhub.social%2F
+)](https://techhub.social/@contextive) [![LinkedIn](https://custom-icon-badges.demolab.com/badge/LinkedIn-0A66C2?logo=linkedin-white&logoColor=fff)](https://www.linkedin.com/company/contextive-tech)
 
 Contextive is a suite of tools to immerse developers in the language of their users' domains.
 
@@ -25,23 +26,23 @@ Interview introducing Contextive at NDC Sydney 2024:
 
 [![Video Introduction to Contextive](https://img.youtube.com/vi/Y_HzdX7nHo0/0.jpg)](https://www.youtube.com/watch?v=Y_HzdX7nHo0)
 
-[Other Videos referencing Contextive](https://docs.contextive.tech/background/videos/)
+[Other Videos referencing Contextive](https://docs.contextive.tech/ide/background/videos/)
 
 ## Installation
 
-See our [Installation Guide](https://docs.contextive.tech/guides/installation/) for details on how to install in a few different IDEs, or any IDE that supports the Language Server Protocol.
+See our [Installation Guide](https://docs.contextive.tech/ide/guides/installation/) for details on how to install in a few different IDEs, or any IDE that supports the Language Server Protocol.
 
 Officially supported IDEs include:
 
-#### [VsCode](https://docs.contextive.tech/guides/installation/#visual-studio-code)
-#### [IntelliJ IDEs](https://docs.contextive.tech/guides/installation/#intellij-plugin-platform)
-#### [Visual Studio](https://docs.contextive.tech/guides/installation/#visual-studio-2022)
-#### [Neovim](https://docs.contextive.tech/guides/installation/#neovim)
-#### [Helix](https://docs.contextive.tech/guides/installation/#helix)
+#### [VsCode](https://docs.contextive.tech/ide/guides/installation/#visual-studio-code)
+#### [IntelliJ IDEs](https://docs.contextive.tech/ide/guides/installation/#intellij-plugin-platform)
+#### [Visual Studio](https://docs.contextive.tech/ide/guides/installation/#visual-studio-2022)
+#### [Neovim](https://docs.contextive.tech/ide/guides/installation/#neovim)
+#### [Helix](https://docs.contextive.tech/ide/guides/installation/#helix)
 
 ## Configuration & Usage
 
-See our [Usage Guide](https://docs.contextive.tech/guides/usage/) for details on configuring Contextive, setting up your definitions file, and the various features and options available to you in defining your domain-specific terminology.
+See our [Usage Guide](https://docs.contextive.tech/ide/guides/usage/) for details on configuring Contextive, setting up your definitions file, and the various features and options available to you in defining your domain-specific terminology.
 
 ## Features
 
