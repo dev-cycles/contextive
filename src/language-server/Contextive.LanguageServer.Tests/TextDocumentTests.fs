@@ -45,7 +45,9 @@ let tests =
             ("position at end", [ "firstWord secondWord" ], Position(0, 21), None)
             ("position on space", [ "firstword secondWord" ], Position(0, 9), Some "firstword")
             ("out of range line", [ "firstWord secondWord" ], Position(1, 0), None)
-            ("out of range char", [ "firstWord" ], Position(0, 50), None) ]
+            ("out of range char", [ "firstWord" ], Position(0, 50), None)
+            ("snake_case", [ "snake_case()" ], Position(0, 1), Some "snake_case")
+            ("kebab-case", [ "kebab-case:" ], Position(0, 1), Some "kebab-case") ]
           |> List.map testTokenFinding
           |> testList "Wordfinding Tests"
 

@@ -17,6 +17,12 @@ let private (|Regex|_|) pattern input =
 
 let private adjustCharacterForTrailingSpace character = System.Math.Max(0, character - 1)
 
+/// Chars that shouldn't be delimiters (as they might be in the middle of a token), but should be trimmed if at start or end of a token
+let private trimChars = [| ' '; '-' |]
+
+let private trim (token:string) : string = 
+    token.Trim(trimChars)
+
 type Lexer =
     | Line of line: string
     | Start of line: string * start: int
@@ -34,7 +40,7 @@ type Lexer =
         | _ -> false
 
     static member private delimiters =
-        [| ' '; '('; '.'; '-'; '>'; ':'; ','; ')'; '{'; '}'; '['; ']' |]
+        [| ' '; '('; '.'; '>'; ':'; ','; ')'; '{'; '}'; '['; ']' |]
 
     static member private startOfToken line position =
         Start(line, line.LastIndexOfAny(Lexer.delimiters, position) + 1)
@@ -64,5 +70,5 @@ type Lexer =
 
     static member get =
         function
-        | Token(line, start, _) as t when t.HasLength -> line.Substring(start, t.Length.Value) |> Some
+        | Token(line, start, _) as t when t.HasLength -> line.Substring(start, t.Length.Value) |> trim |> Some
         | _ -> None

@@ -74,6 +74,7 @@ let tests =
             ("anotherWord", Position(0, 1), "another", "three")
             ("combined_word", Position(0, 1), "CombinedWord", "three")
             ("CombinedWordId", Position(0, 1), "CombinedWord", "three")
+            ("combined-word", Position(0, 1), "CombinedWord", "three")
             ("AnotherCombinedWord", Position(0, 1), "another", "three")
             ("AnotherCombinedWord", Position(0, 1), "CombinedWord", "three")
             ("originals", Position(0, 0), "original", "three")

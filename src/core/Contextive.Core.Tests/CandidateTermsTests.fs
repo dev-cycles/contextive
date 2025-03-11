@@ -61,6 +61,17 @@ let tokenAndPartsTests =
                       "case"
                   })
              })
+            ("kebab-case",
+             seq {
+                 ("kebab", seq { "kebab" })
+                 ("case", seq { "case" })
+
+                 ("kebabcase",
+                  seq {
+                      "kebab"
+                      "case"
+                  })
+             })
             ("PascalCaseId",
              seq {
                  ("Pascal", seq { "Pascal" })
