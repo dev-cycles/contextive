@@ -65,6 +65,7 @@
 	},
 	"devDependencies": {
 		"@semantic-release/changelog": "^6.0.3",
+		"@semantic-release/exec": "^7.0.3",
 		"@semantic-release/git": "^10.0.1",
 		"@sinonjs/fake-timers": "^14.0.0",
 		"@types/vscode": "^1.85.0",
