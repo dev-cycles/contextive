@@ -169,7 +169,7 @@
         [
             "@semantic-release/exec",
             {
-                "prepareCmd": "git add .."
+                "prepareCmd": "git add --all -- ':!vscode/contextive/package.json'"
             }
         ],
         [

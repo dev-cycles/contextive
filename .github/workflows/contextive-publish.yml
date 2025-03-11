@@ -1,19 +1,18 @@
 name: Contextive Publish
 on:
-  release:
-    types: [published]
+  # release:
+  #   types: [published] # temporary while debugging semantic release
   ## Keeping in Comments as may be helpful for future publish rescue requirements (search PUBLISH_RESCUE for other locations)
-  # workflow_dispatch:
-  #   inputs:
-  #     release:
-  #       description: 'Release to publish'
-  #       required: true
-  #       type: string
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "Release to publish"
+        required: true
+        type: string
 
-  
 env:
-  dotnet-version: '8.0.x'
-  
+  dotnet-version: "8.0.x"
+
 jobs:
   get-matrix:
     uses: ./.github/workflows/get-matrix.yml
@@ -27,7 +26,7 @@ jobs:
       matrix: ${{ fromJSON(needs.get-matrix.outputs.matrix) }}
     uses: ./.github/workflows/contextive-runtime-publish.yml
     with:
-      release: ${{ github.ref_name }} 
+      release: ${{ github.ref_name }}
       # release: ${{ inputs.release }} # swap with above for PUBLISH_RESCUE
       dotnet_runtime: ${{ matrix.dotnet_runtime }}
       os: ${{ matrix.os }}
@@ -39,7 +38,7 @@ jobs:
 
   publish-intellij:
     name: Contextive IntelliJ Publish
-    runs-on: 'ubuntu-latest'
+    runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -49,8 +48,8 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
-          distribution: 'corretto'
-          java-version: '21'
+          distribution: "corretto"
+          java-version: "21"
 
       - name: Build
         id: build
