@@ -6,3 +6,5 @@ contexts:
       - name: octopus
       - name: combined
       - name: word
+      - name: snake_word
+      - name: kebab-word

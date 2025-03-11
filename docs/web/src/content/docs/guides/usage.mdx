@@ -61,7 +61,7 @@ The screenshots are from VsCode, but it should look similar in any IDE.
 
 ## Combined Words
 
-For the hover display, Contextive is able to identify the use of defined terms in combined words - where terms are combined using `camelCase`, `PascalCase` or `snake_case`, or defined terms that _are_ combined words.
+When working out what to show you in a hover panel, Contextive is able to identify the use of multiple defined terms in combined words when terms are combined using `camelCase`, `PascalCase`, `snake_case` or `kebab-case`.
 
 ### Suffixes and Prefixes
 
@@ -79,13 +79,29 @@ It's also common to end up with code elements (classes, variables or methods) th
 
 Sometimes, the combined term needs its own unique definition - just add it to your definitions file, and Contextive will work out that the more precise match is the one you want, decluttering your hover panel.  
 
-It can be added to your definitions file as either separate words (e.g. `Leg Magnitude Policy`) or as `PascalCase` or `camelCase` (e.g. `LegMagnitudePolicy`).  Either way, once it's defined, the definitions of `Leg` and `Policy` will no longer be shown:
+It can be added to your definitions file in a few different ways.  Consider a case where we alread have definitions for `Leg` and `Policy` but we want a special definition for `Leg Magnitude Policy`.  You can specify it in your definitions file in a number of ways:
 
-![Example of hovering over an exactly matching combined word.](../../../assets/images/leg_magnitude_policy_example.png)
+* `Leg Magnitude Policy` (Recommended - natural language)
+* `LegMagnitudePolicy` (PascalCase)
+* `legMagnitudePolicy` (camelCase)
+* `leg_magnitude_policy` (snake_case)
+* `leg-magnitude-policy` (kebab-case)
 
-This also now works for `snake_case` code:
+:::tip[Recommendation]
+We recommend defining multi-word terms in your definitions file in natural language:
 
-![Example of snake_case working in auto-complete and hover.](../../../assets/images/snake-case-auto-complete-demo.gif)
+`Leg Magnitude Policy`
+
+The other options are supported as many folk are migrating from documentation systems where the definitions had to match the exact usage of the terms in code.
+:::
+
+However it's it's defined, the definitions of `Leg` and `Policy` will not be shown and only the 'multi-word' term will be shown.
+
+As with all combined words, it will be shown when hovering over text that matches any of the supported word combination techniques: `camelCase`, `PascalCase`, `snake_case` or `kebab-case`.
+
+![Example of hovering over a combined word in PascalCase.](../../../assets/images/leg_magnitude_policy_example.png)
+
+![Example of hovering over a combined word in snake_case.](../../../assets/images/snake-case-auto-complete-demo.gif)
 
 ## Plural Words
 

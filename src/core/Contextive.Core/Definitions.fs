@@ -24,7 +24,11 @@ module Term =
           Aliases = null }
 
     let private nameEquals (candidateTerm: string) (termName: string) =
-        let normalisedTerm = termName.Replace(" ", "")
+        let normalisedTerm =
+            termName
+                .Replace(" ", "")
+                .Replace("_", "")
+                .Replace("-", "")
 
         let singularEquals =
             normalisedTerm.Equals(candidateTerm, System.StringComparison.InvariantCultureIgnoreCase)

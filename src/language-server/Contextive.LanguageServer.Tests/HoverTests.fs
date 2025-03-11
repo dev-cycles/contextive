@@ -79,6 +79,8 @@ let tests =
             ("AnotherCombinedWord", Position(0, 1), "CombinedWord", "three")
             ("originals", Position(0, 0), "original", "three")
             ("octopi", Position(0, 0), "octopus", "three")
+            ("snake_word", Position(0, 0), "snake_word", "three")
+            ("kebab-word", Position(0, 0), "kebab-word", "three")
             ("single", Position(0, 0), "single", "empty_terms_list") ]
           |> List.map testHoverTermFound
           |> testList "Term found when hovering in opened docs at Positions"
