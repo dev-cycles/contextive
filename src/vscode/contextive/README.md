@@ -18,7 +18,7 @@ See [VsCode Installation Instructions](https://docs.contextive.tech/ide/v/1.14.1
 
 Use the `Contextive: Initialize Glossary File` command from the command palette to create a sample glossary file. A file will be created and opened with a sample set of definitions:
 
-![Example of a Contextive definition hover over the word "context" in a yml file.](../../../docs/wiki/images/example_hover.png)
+![Example of a Contextive definition hover over the word "context" in a yml file.](../../../docs/web/src/assets/images/example_hover.png)
 
 This sample file illustrates the use of Contextive by defining the terms used in the glossary file yml structure itself.  You can hover over the name of the terms in the file to see Contextive in action (see the sample image above).
 
