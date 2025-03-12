@@ -14,7 +14,7 @@ In the following sections, examples are drawn from the Cargo domain, as explored
 
 The usage examples are quoted or inspired by sample conversations in the book - ideally, your usage examples should be exact sentences as said by your domain experts.
 
-The following Contextive definitions file was used to generate all screenshots/scenarios below:
+The following Contextive Glossary file was used to generate all screenshots/scenarios below:
 
 ```
 contexts:
@@ -77,9 +77,9 @@ It's also common to end up with code elements (classes, variables or methods) th
 
 ### Multi-word terms
 
-Sometimes, the combined term needs its own unique definition - just add it to your definitions file, and Contextive will work out that the more precise match is the one you want, decluttering your hover panel.  
+Sometimes, the combined term needs its own unique definition - just add it to your glossary file, and Contextive will work out that the more precise match is the one you want, decluttering your hover panel.  
 
-It can be added to your definitions file in a few different ways.  Consider a case where we alread have definitions for `Leg` and `Policy` but we want a special definition for `Leg Magnitude Policy`.  You can specify it in your definitions file in a number of ways:
+It can be added to your glossary file in a few different ways.  Consider a case where we alread have definitions for `Leg` and `Policy` but we want a special definition for `Leg Magnitude Policy`.  You can specify it in your glossary file in a number of ways:
 
 * `Leg Magnitude Policy` (Recommended - natural language)
 * `LegMagnitudePolicy` (PascalCase)
@@ -88,11 +88,11 @@ It can be added to your definitions file in a few different ways.  Consider a ca
 * `leg-magnitude-policy` (kebab-case)
 
 :::tip[Recommendation]
-We recommend defining multi-word terms in your definitions file in natural language:
+We recommend defining multi-word terms in your glossary file in natural language:
 
 `Leg Magnitude Policy`
 
-The other options are supported as many folk are migrating from documentation systems where the definitions had to match the exact usage of the terms in code.
+The other options are supported as many folk are migrating from documentation systems which must match the exact usage of the terms in code.
 :::
 
 However it's it's defined, the definitions of `Leg` and `Policy` will not be shown and only the 'multi-word' term will be shown.
@@ -119,7 +119,7 @@ When hovering over the word `unit`, the definition of `cargo` will be displayed:
 
 ## Multiline YAML
 
-As some of the fields in the definitions file could have long text, it may be helpful to use multi-line yaml. Because the fields are interpreted as markdown, there are some special considerations to be aware of.  The site https://yaml-multiline.info/ is a great resource for multi-line yaml fields.
+As some of the fields in the glossary file could have long text, it may be helpful to use multi-line yaml. Because the fields are interpreted as markdown, there are some special considerations to be aware of.  The site https://yaml-multiline.info/ is a great resource for multi-line yaml fields.
 
 import Link from '../../../components/VersionedLink.astro';
 
@@ -183,7 +183,7 @@ The line will still wrap according to the width of the hover panel.
 
 ## Smart Auto-Complete
 
-As the terms added to the auto-complete are from a definitions file, not from your code symbols, the auto-complete will work in any file of any language - including documentation, such as markdown.
+As the terms added to the auto-complete are from a glossary file, not from your code symbols, the auto-complete will work in any file of any language - including documentation, such as markdown.
 
 To ensure it's useful in a variety of scenarios, it includes a number of options to fit your required format:
 
@@ -209,11 +209,11 @@ Contextive is designed to work with a variety of repository organisation schemes
 
 ### Single Bounded Context, Multiple Repositories
 
-When a single context is comprised of services, each with their own repository, it's not ideal to have to maintain a copy of the context's language definitions in each repository.
+When a single context is comprised of services, each with their own repository, it's not ideal to have to maintain a copy of the context's glossary in each repository.
 
-To facilitate this pattern, Contextive recommends storing the terms only once, in a central/common repository, and using native package management facilities to distribute the definitions file as part of any common code packages.
+To facilitate this pattern, Contextive recommends storing the terms only once, in a central/common repository, and using native package management facilities to distribute the glossary file as part of any common code packages.
 
-For package managers that store the packages within the workspace, simply set `contextive.path` to the relative path of the downloaded package.  For package managers that store the packages in a global cache, Contextive allows the `contextive.path` setting to contain a shell escape code - `$(cmd)`. When `$(` is detected in the path setting, Contextive will execute `echo "%contextive.path%"` and use the result to `stdout` as the location of the definitions file.
+For package managers that store the packages within the workspace, simply set `contextive.path` to the relative path of the downloaded package.  For package managers that store the packages in a global cache, Contextive allows the `contextive.path` setting to contain a shell escape code - `$(cmd)`. When `$(` is detected in the path setting, Contextive will execute `echo "%contextive.path%"` and use the result to `stdout` as the location of the glossary file.
 
 See https://github.com/dev-cycles/contextive-demo-go-service for an example of this in action using `golang` packages.
 
@@ -230,7 +230,7 @@ This is particularly helpful if the same term (e.g. a common term, like `client`
 
 Each context has optional properties `name` and `domainVisionStatement`.  When set, these names and vision statements will be included in the hover panel.
 
-Given the definitions file above, and a folder structure like so:
+Given the glossary file above, and a folder structure like so:
 
 ```
 /CargoDemo
@@ -249,7 +249,7 @@ When hovering over `BillingDemo/Policy.cs` we get:
 
 ![Example of hovering over policy in the Billing context.](../../../assets/images/billing_policy_example.png)
 
-### Multiple Bounded Contexts, Multi-Root, Shared Definitions File
+### Multiple Bounded Contexts, Multi-Root, Shared glossary file
 
 Some IDEs support a [multi-root workspace](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#workspace_workspaceFolders) configuration which allows separate folders to be selected as 'roots' of a workspace. 
 
@@ -259,7 +259,7 @@ So far, Contextive only supports this under ALL the following circumstances:
 2. The definitions/terminology for all roots are in a shared file (Support for separate files per root is a future enhancement) AND
 3. The value for the `contextive.path` configuration parameter is explicitly provided in the `settings` key of the `.code-workspaces` file  
 
-The reason is that the Contextive definitions file location defaults to the relative path `.contextive/definitions.yml`.  This default is defined in the language server (to ensure consistency across IDEs). In a single-root configuration it's clear what base path it is relative to, but with multi-root it's ambiguous as to which root the path is relative to.
+The reason is that the Contextive glossary file location defaults to the relative path `.contextive/definitions.yml`.  This default is defined in the language server (to ensure consistency across IDEs). In a single-root configuration it's clear what base path it is relative to, but with multi-root it's ambiguous as to which root the path is relative to.
 
 To resolve this, custom VsCode middleware rewrites the setting to an absolute path computed relative to the folder of the `.code-workspaces`, however this only works if VsCode is aware of the setting value to be re-written.
 
@@ -279,8 +279,8 @@ If you are using the default location, please set this value to `.contextive/def
 ```
 :::
 
-Also note that the `paths` key in the Contextive definitions file relates to the paths of the roots on disk, not to their names in the vscode multi-root configuration.
+Also note that the `paths` key in the Contextive glossary file relates to the paths of the roots on disk, not to their names in the vscode multi-root configuration.
 
-If you'd like to store the definitions file in a different location, update the setting in the `.code-workspaces` file.
+If you'd like to store the glossary file in a different location, update the setting in the `.code-workspaces` file.
 
 If you need multi-root support in another IDE, please raise a [github issue](https://github.com/dev-cycles/contextive/issues/new?assignees=&labels=&projects=&template=feature_request.md&title=)!

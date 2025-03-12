@@ -6,7 +6,7 @@
 
 Contextive is a Visual Studio Code extension to assist developers in environments with a complex domain or project specific language, where words have a special meaning in the context of the project.
 
-It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.
+It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the glossary in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.
 
 > [!WARNING]  
 > This plugin is considered 'beta' status, as leverages relatively new [Language Server Protocol](https://learn.microsoft.com/en-us/visualstudio/extensibility/visualstudio.extensibility/language-server-provider/language-server-provider?view=vs-2022) support in the [Preview Extensibility Model](https://learn.microsoft.com/en-us/visualstudio/extensibility/visualstudio.extensibility/?view=vs-2022). Some features may not work or may not work as expected. Please [report issues](https://github.com/dev-cycles/contextive/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=) in this project and we will liaise with Microsoft & the Visual Studio team to resolve.
@@ -23,18 +23,18 @@ See [Visual Studio Instructions](https://docs.contextive.tech/ide/v/1.14.1/guide
 
 Create a folder in your project root called `.contextive`.  Create a file in that folder called `definitions.yml`.
 
-Start defining your definitions following the schema specified in our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/). You might like to start by copying our [default definitions](https://github.com/dev-cycles/contextive/blob/v1.14.1/src/language-server/Contextive.LanguageServer.Tests/DefinitionsInitializationTests.Default%20Definitions.verified.txt) file that defines the terms used in the definitions file itself.
+Start defining your terms following the schema specified in our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/). You might like to start by copying our [default glossary](https://github.com/dev-cycles/contextive/blob/v1.14.1/src/language-server/Contextive.LanguageServer.Tests/GlossaryFileInitializationTests.Default%20Glossary%20File.verified.txt) file that defines the terms used in the glossary file itself.
 
 ## Usage Guide
 
-See our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/) for details on the definitions file format and available options. 
+See our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/) for details on the glossary file format and available options. 
 
 ## Features
 
-* Initialize your Contextive Definitions
-* [Auto-complete](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#smart-auto-complete) from your Contextive Definitions
+* Initialize your Contextive Glossary File
+* [Auto-complete](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#smart-auto-complete) from your Contextive Glossary
   * Shows definitions in auto-complete details
-* Hover to show definitions from your Contextive Definitions
+* Hover to show definitions from your Contextive Glossary
   * Hover over elements with [suffixes & prefixes](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#suffixes-and-prefixes)
   * Hover over usage of [multiple terms](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
   * Hover over [multi-word](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multi-word-terms) terms
@@ -47,19 +47,19 @@ See our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/) f
 
 ### Coming Soon
 
-* UI to edit/manage Contextive Definitions
+* UI to edit/manage Contextive Glossary
 * Internationalization support
 * Support for multiple contexts in separate repositories
 * Better support for key word identification in different languages (e.g. different syntax delimiters)
 
 ## Extension Settings
 
-The extension does not currently support configuration.  The definitions file _must_ be in `./contextive/definitions.yml` in your open folder.
+The extension does not currently support configuration.  The glossary file _must_ be in `./contextive/definitions.yml` in your open folder.
 
 ## Known Issues
 
 * [Doesn't work when opening a Solution, only when opening a folder](https://github.com/dev-cycles/contextive/issues/75)
-* [Definitions don't update in hover panels when the definitions file is updated](https://github.com/dev-cycles/contextive/issues/79)
+* [Definitions don't update in hover panels when the glossary file is updated](https://github.com/dev-cycles/contextive/issues/79)
 * [Doesn't work in all file types](https://github.com/dev-cycles/contextive/issues/78)
 * [Markdown not supported in hover panel](https://github.com/dev-cycles/contextive/issues/76)
 

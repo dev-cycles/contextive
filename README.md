@@ -18,7 +18,7 @@ Contextive is inspired by the concept of the [Ubiquitous Language](https://marti
 
 Even if you're not using Domain Driven Design, Contextive should still be very helpful in any software project where it's important that developers are aligned on the meaning of terms.
 
-By defining terms in a central definitions file, Contextive can surface definitions and usage examples in auto-complete suggestions & hover panels wherever the terms are used - in code (of any language across the stack), comments, config, and documentation (e.g. markdown).
+By defining terms in a central glossary file, Contextive can surface definitions and usage examples in auto-complete suggestions & hover panels wherever the terms are used - in code (of any language across the stack), comments, config, and documentation (e.g. markdown).
 
 ![Example of Contextive in action.](docs/web/src/assets/images/simple-auto-complete-demo.gif)
 
@@ -42,7 +42,7 @@ Officially supported IDEs include:
 
 ## Configuration & Usage
 
-See our [Usage Guide](https://docs.contextive.tech/ide/guides/usage/) for details on configuring Contextive, setting up your definitions file, and the various features and options available to you in defining your domain-specific terminology.
+See our [Usage Guide](https://docs.contextive.tech/ide/guides/usage/) for details on configuring Contextive, setting up your glossary file, and the various features and options available to you in defining your domain-specific terminology.
 
 ## Features
 
@@ -53,7 +53,7 @@ The following list is a rough and evolving backlog/roadmap.  Checked items are c
   * [x] For each term, include a definition, and examples of usage in normal sentences
   * [ ] Link terms to each other (e.g. commands to the aggregates/entities they apply to; events to the aggregates/entities that publish them)
   * [ ] Define relationships between contexts (e.g. a Context Map definition)
-  * [x] Store Ubiquitous Language term definitions in a file in the repository (e.g. yml format)
+  * [x] Store Ubiquitous Language glossary in a file in the repository (e.g. yml format)
   * [x] Repository Layouts:
     * [x] Support a monorepo with multiple Bounded Contexts in one repo - identify which paths relate to each Bounded Context
     * [x] Support a Bounded Context distributed across multiple repos ([#36](https://github.com/dev-cycles/contextive/issues/36))
@@ -64,8 +64,8 @@ The following list is a rough and evolving backlog/roadmap.  Checked items are c
 * [ ] IDE Support
   * [x] [Visual Studio Code](#vscode)
     * [x] Support single-root workspaces
-    * [x] Support multi-root workspaces with a shared definitions file
-    * [ ] Support multi-root workspaces with a definitions file per root
+    * [x] Support multi-root workspaces with a shared glossary file
+    * [ ] Support multi-root workspaces with a glossary file per root
   * [x] [IntelliJ IDEs](#intellij-ides)
     * [x] [Most IntelliJ Platform IDEs](https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html#supported-ides)
     * [ ] Rider - limited support, see [#65](https://github.com/dev-cycles/contextive/issues/65)

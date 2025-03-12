@@ -6,7 +6,7 @@
 
 Contextive is a Visual Studio Code extension to assist developers in environments with a complex domain or project specific language, where words have a special meaning in the context of the project.
 
-It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.
+It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the glossary in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.
 
 ![Example of Contextive in action.](../../../docs/web/src/assets/images/simple-auto-complete-demo.gif)
 
@@ -16,24 +16,24 @@ See [VsCode Installation Instructions](https://docs.contextive.tech/ide/v/1.14.1
 
 ## Getting Started
 
-Use the `Contextive: Initialize Definitions` command from the command palette to create a sample definitions file. A file will be created and opened with a sample set of definitions:
+Use the `Contextive: Initialize Glossary File` command from the command palette to create a sample glossary file. A file will be created and opened with a sample set of definitions:
 
 ![Example of a Contextive definition hover over the word "context" in a yml file.](../../../docs/wiki/images/example_hover.png)
 
-This sample file illustrates the use of Contextive by defining the terms used in the definitions file yml structure itself.  You can hover over the name of the terms in the file to see Contextive in action (see the sample image above).
+This sample file illustrates the use of Contextive by defining the terms used in the glossary file yml structure itself.  You can hover over the name of the terms in the file to see Contextive in action (see the sample image above).
 
 You should delete the sample definitions and replace them with your own.
 
 ## Usage Guide
 
-See our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/) for details on the definitions file format and available options. 
+See our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/) for details on the glossary file format and available options. 
 
 ## Features
 
-* Initialize your Contextive Definitions
-* [Auto-complete](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#smart-auto-complete) from your Contextive Definitions
+* Initialize your Contextive Glossary
+* [Auto-complete](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#smart-auto-complete) from your Contextive Glossary
   * Shows definitions in auto-complete details
-* Hover to show definitions from your Contextive Definitions
+* Hover to show definitions from your Contextive Glossary
   * Hover over elements with [suffixes & prefixes](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#suffixes-and-prefixes)
   * Hover over usage of [multiple terms](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
   * Hover over [multi-word](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multi-word-terms) terms
@@ -48,7 +48,7 @@ See our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/) f
 
 ### Coming Soon
 
-* UI to edit/manage Contextive Definitions
+* UI to edit/manage Contextive Glossary
 * Internationalization support
 * Support for multiple contexts in separate repositories
 * Better support for key word identification in different languages (e.g. different syntax delimiters)
@@ -57,8 +57,8 @@ See our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/) f
 
 This extension contributes the following settings:
 
-* `contextive.path`: The path of the file that stores the Contextive definitions.  Default: `.contextive/definitions.yml`
+* `contextive.path`: The path of the file that stores the Contextive glossary.  Default: `.contextive/definitions.yml`
 
 ## Known Issues
 
-* The extension only activates on the presence of the `.contextive` folder in the workspace.  If the `contextive.path` setting has been updated, the `.contextive` folder may not exist.  (The extension will also activate on use of the `Contextive: Initialize Definitions` command.)
+* The extension only activates on the presence of the `.contextive` folder in the workspace.  If the `contextive.path` setting has been updated, the `.contextive` folder may not exist.  (The extension will also activate on use of the `Contextive: Initialize Glossary File` command.)

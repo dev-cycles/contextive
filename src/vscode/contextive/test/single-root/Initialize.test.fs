@@ -17,7 +17,7 @@ let tests =
           }
 
           testCaseAsync
-              "When config is undefined, and default definitions file doesn't exist, initialize Command should create and open in default location"
+              "When config is undefined, and default glossary file doesn't exist, initialize Command should create and open in default location"
           <| async {
 
               do! resetConfig ()
@@ -37,7 +37,7 @@ let tests =
               Expect.isNotNull editor "Existing definitions.yml isn't open"
           }
 
-          testCaseAsync "When definitions file exists, Initialize Command should open existing file"
+          testCaseAsync "When glossary file exists, Initialize Command should open existing file"
           <| async {
               do! VsCodeCommands.initialize () |> Promise.Ignore
 
@@ -53,7 +53,7 @@ let tests =
           }
 
           testCaseAsync
-              "When config is defined, and definitions file doesn't exist, Initialize Command should create and open in configured location"
+              "When config is defined, and glossary file doesn't exist, Initialize Command should create and open in configured location"
           <| async {
               let newPath = $".contextive/{System.Guid.NewGuid().ToString()}.yml"
               do! updateConfig newPath
@@ -66,12 +66,12 @@ let tests =
 
               let editor = findUriInVisibleEditors fullPath
 
-              do! deleteConfiguredDefinitionsFile ()
+              do! deleteConfiguredGlossaryFile ()
 
               Expect.isNotNull editor "New definitions.yml isn't open"
           }
 
-          testCaseAsync "New definitions file should show new term in completion"
+          testCaseAsync "New glossary file should show new term in completion"
           <| async {
               let newPath = $".contextive/{System.Guid.NewGuid().ToString()}.yml"
               do! updateConfig newPath
@@ -87,7 +87,7 @@ let tests =
 
               do! writeFile fullPath content
 
-              let resetWorkspaceHook = Some deleteConfiguredDefinitionsFile
+              let resetWorkspaceHook = Some deleteConfiguredGlossaryFile
 
               let testDocPath = Paths.inWorkspace "test.txt"
               let position = vscode.Position.Create(0, 10)

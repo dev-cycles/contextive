@@ -94,7 +94,7 @@ let deleteFile fullPath =
         do! workspace.fs.delete fullPath
     }
 
-let deleteConfiguredDefinitionsFile () =
+let deleteConfiguredGlossaryFile () =
     promise { do! deleteFile <| getFullPathFromConfig () }
 
 [<Emit("afterEach($0, $1)")>]

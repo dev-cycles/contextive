@@ -35,7 +35,7 @@
 		"commands": [
 			{
 				"command": "contextive.initialize",
-				"title": "Contextive: Initialize Definitions",
+				"title": "Contextive: Initialize Glossary File",
 				"shortTitle": "Initialize Contextive"
 			}
 		],
@@ -45,7 +45,7 @@
 				"contextive.path": {
 					"type": "string",
 					"default": null,
-					"description": "Path to the Contextive Definitions File"
+					"description": "Path to the Contextive Glossary File"
 				}
 			}
 		}
