@@ -8,6 +8,6 @@ let resolvedPathGetter configGetter pathResolver () =
         return pathResolver path
     }
 
-let handler (glossaryFileReloader: SubGlossary.Reloader) _ =
-    glossaryFileReloader ()
+let handler (subGlossaryReloader: SubGlossary.Reloader) _ =
+    subGlossaryReloader ()
     Task.CompletedTask

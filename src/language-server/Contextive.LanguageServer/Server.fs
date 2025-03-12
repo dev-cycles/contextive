@@ -22,14 +22,14 @@ let version =
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
         .InformationalVersion
 
-let private onStartupConfigureServer (glossaryFile : SubGlossary.T) =
+let private onStartupConfigureServer (subGlossary : SubGlossary.T) =
     OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
         async {
             s.Window.LogInfo $"Starting {name} v{version}..."
 
-            let glossaryFileLoader = SubGlossary.loader glossaryFile
+            let subGlossaryLoader = SubGlossary.loader subGlossary
 
-            let registerWatchedFiles = Some <| WatchedFiles.register s glossaryFileLoader
+            let registerWatchedFiles = Some <| WatchedFiles.register s subGlossaryLoader
 
             let showWarning =
                 if s.Window.ClientSettings.Capabilities.Window.ShowMessage.IsSupported then
@@ -40,7 +40,7 @@ let private onStartupConfigureServer (glossaryFile : SubGlossary.T) =
             let! glossaryFileReader = DefaultGlossaryFileProvider.getDefaultGlossaryFileReader s
 
             SubGlossary.init
-                glossaryFile
+                subGlossary
                 (fun m ->
                     s.Window.Log(m)
                     Serilog.Log.Logger.Information(m))
@@ -48,7 +48,7 @@ let private onStartupConfigureServer (glossaryFile : SubGlossary.T) =
                 registerWatchedFiles
                 showWarning
 
-            glossaryFileLoader ()
+            subGlossaryLoader ()
 
         }
         |> Async.StartAsTask
@@ -56,13 +56,13 @@ let private onStartupConfigureServer (glossaryFile : SubGlossary.T) =
 
 
 let private configureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
-    let definitions = SubGlossary.create ()
+    let sbbGlossary = SubGlossary.create ()
 
     opts
         .WithInput(input)
         .WithOutput(output)
 
-        .OnStarted(onStartupConfigureServer definitions)
+        .OnStarted(onStartupConfigureServer sbbGlossary)
         .WithConfigurationSection(DefaultGlossaryFileProvider.ConfigSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z ->
             z
@@ -72,12 +72,12 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
             |> ignore)
         .WithServerInfo(ServerInfo(Name = name, Version = version))
 
-        .OnDidChangeConfiguration(Configuration.handler <| SubGlossary.loader definitions)
+        .OnDidChangeConfiguration(Configuration.handler <| SubGlossary.loader sbbGlossary)
         .OnCompletion(
-            Completion.handler <| SubGlossary.find definitions <| TextDocument.findToken,
+            Completion.handler <| SubGlossary.find sbbGlossary <| TextDocument.findToken,
             Completion.registrationOptions
         )
-        .OnHover(Hover.handler <| SubGlossary.find definitions <| TextDocument.findToken, Hover.registrationOptions)
+        .OnHover(Hover.handler <| SubGlossary.find sbbGlossary <| TextDocument.findToken, Hover.registrationOptions)
 
     |> TextDocument.onSync
 

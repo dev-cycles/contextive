@@ -176,19 +176,19 @@ let create () =
 
         loop <| State.Initial())
 
-let init (subGlossaryManager: MailboxProcessor<Message>) logger fileReader registerWatchedFile onErrorLoading =
+let init (subGlossary: MailboxProcessor<Message>) logger fileReader registerWatchedFile onErrorLoading =
     Init(
         { Logger = logger
           FileReader = fileReader
           RegisterWatchedFile = registerWatchedFile
           OnErrorLoading = onErrorLoading }
     )
-    |> subGlossaryManager.Post
+    |> subGlossary.Post
 
-let loader (subGlossaryManager: MailboxProcessor<Message>) =
-    fun () -> Load |> subGlossaryManager.Post
+let loader (subGlossary: MailboxProcessor<Message>) =
+    fun () -> Load |> subGlossary.Post
 
-let find (subGlossaryManager: MailboxProcessor<Message>) (openFileUri: string) (filter: Filter) =
+let find (subGlossary: MailboxProcessor<Message>) (openFileUri: string) (filter: Filter) =
     let msgBuilder =
         fun rc ->
             Find(
@@ -197,4 +197,4 @@ let find (subGlossaryManager: MailboxProcessor<Message>) (openFileUri: string) (
                   ReplyChannel = rc }
             )
 
-    subGlossaryManager.PostAndAsyncReply(msgBuilder, 1000)
+    subGlossary.PostAndAsyncReply(msgBuilder, 1000)
