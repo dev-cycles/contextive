@@ -21,6 +21,6 @@ let fileErrorMessage =
     | PathInvalid(m) -> $"Invalid Path: {m}"
     | ParsingError(m) -> $"Parsing Error: {m}"
     | ValidationError(m) -> $"Validation Error: {m}"
-    | DefaultFileNotFound -> "Default definitions file not found."
-    | FileNotFound -> "Definitions file not found."
+    | DefaultFileNotFound -> "Default glossary file not found."
+    | FileNotFound -> "Glossary file not found."
     | NotYetLoaded -> "Should Not Be Reached"

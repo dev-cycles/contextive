@@ -1,6 +1,6 @@
-module Contextive.LanguageServer.Tests.Helpers.Definitions
+module Contextive.LanguageServer.Tests.Helpers.GlossaryFile
 
-open Contextive.Core.Definitions
+open Contextive.Core.GlossaryFile
 
 let termNamesToTerms (terms: string list) =
     terms |> Seq.map (fun t -> { Term.Default with Name = t })

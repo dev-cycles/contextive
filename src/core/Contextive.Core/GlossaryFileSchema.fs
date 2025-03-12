@@ -1,11 +1,11 @@
-module Contextive.Core.DefinitionsSchema
+module Contextive.Core.GlossaryFileSchema
 
 let schema =
     """{
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://contextive.tech/",
-  "title": "Contextive Definitions Schema",
-  "description": "Schema for defining an ubiquitous language.",
+  "title": "Contextive Glossary Schema",
+  "description": "Schema for defining a ubiquitous language glossary.",
   "type": "object",
   "properties": {
     "contexts": {

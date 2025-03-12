@@ -1,4 +1,4 @@
-module Contextive.Core.Definitions
+module Contextive.Core.GlossaryFile
 
 open YamlDotNet.Serialization
 open YamlDotNet.Serialization.NamingConventions
@@ -73,18 +73,18 @@ module Context =
             withTerms (ResizeArray<Term>()) context
 
 [<CLIMutable>]
-type Definitions = { Contexts: ResizeArray<Context> }
+type GlossaryFile = { Contexts: ResizeArray<Context> }
 
-module Definitions =
+module GlossaryFile =
     let Default = { Contexts = new ResizeArray<Context>() }
 
 type FindResult = Context seq
 type Filter = FindResult -> FindResult
 type Finder = string -> Filter -> Async<FindResult>
 
-let private replaceNullsWithEmptyLists (definitions: Definitions) =
-    { definitions with
-        Contexts = ResizeArray(Seq.map Context.withDefaultTermsIfNull definitions.Contexts) }
+let private replaceNullsWithEmptyLists (glossaryFile: GlossaryFile) =
+    { glossaryFile with
+        Contexts = ResizeArray(Seq.map Context.withDefaultTermsIfNull glossaryFile.Contexts) }
 
 let deserialize (yml: string) =
     try
@@ -94,11 +94,11 @@ let deserialize (yml: string) =
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build()
 
-        let definitions = deserializer.Deserialize<Definitions>(yml)
+        let glossary = deserializer.Deserialize<GlossaryFile>(yml)
 
-        match definitions |> box with
-        | null -> Error(ParsingError("Definitions file is empty."))
-        | _ -> Ok(definitions |> replaceNullsWithEmptyLists)
+        match glossary |> box with
+        | null -> Error(ParsingError("Glossary file is empty."))
+        | _ -> Ok(glossary |> replaceNullsWithEmptyLists)
     with :? YamlDotNet.Core.YamlException as e ->
         match e.InnerException with
         | :? ValidationException as ve ->
@@ -120,19 +120,19 @@ type OptionStringTypeConverter() =
         member this.Accepts(``type``: System.Type) : bool =
             ``type``.FullName = (typeof<option<string>>).FullName
 
-        member this.ReadYaml(parser: YamlDotNet.Core.IParser, ``type``: System.Type, _: ObjectDeserializer) : obj =
+        member this.ReadYaml(parser: IParser, ``type``: System.Type, _: ObjectDeserializer) : obj =
             let value = parser.Consume<Scalar>().Value
             if value = null then None else Some value
 
         member this.WriteYaml
-            (emitter: YamlDotNet.Core.IEmitter, value: obj, ``type``: System.Type, _: ObjectSerializer)
+            (emitter: IEmitter, value: obj, ``type``: System.Type, _: ObjectSerializer)
             : unit =
             match (value :?> option<string>) with
             | None -> emitter.Emit(new Scalar(""))
             | Some v -> emitter.Emit(new Scalar(v))
 
 
-let serialize (definitions: Definitions) =
+let serialize (glossaryFile: GlossaryFile) =
     let serializer =
         (new SerializerBuilder())
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
@@ -141,4 +141,4 @@ let serialize (definitions: Definitions) =
             .WithIndentedSequences()
             .Build()
 
-    serializer.Serialize definitions
+    serializer.Serialize glossaryFile

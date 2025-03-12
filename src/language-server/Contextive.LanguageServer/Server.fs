@@ -22,14 +22,14 @@ let version =
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
         .InformationalVersion
 
-let private onStartupConfigureServer (definitions : Definitions.T) =
+let private onStartupConfigureServer (glossaryFile : GlossaryFile.T) =
     OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
         async {
             s.Window.LogInfo $"Starting {name} v{version}..."
 
-            let definitionsLoader = Definitions.loader definitions
+            let glossaryFileLoader = GlossaryFile.loader glossaryFile
 
-            let registerWatchedFiles = Some <| WatchedFiles.register s definitionsLoader
+            let registerWatchedFiles = Some <| WatchedFiles.register s glossaryFileLoader
 
             let showWarning =
                 if s.Window.ClientSettings.Capabilities.Window.ShowMessage.IsSupported then
@@ -37,18 +37,18 @@ let private onStartupConfigureServer (definitions : Definitions.T) =
                 else
                     fun _ -> ()
 
-            let! definitionsFileLoader = DefaultDefinitionsProvider.getDefaultDefinitionsFileLoader s
+            let! glossaryFileReader = DefaultGlossaryFileProvider.getDefaultGlossaryFileReader s
 
-            Definitions.init
-                definitions
+            GlossaryFile.init
+                glossaryFile
                 (fun m ->
                     s.Window.Log(m)
                     Serilog.Log.Logger.Information(m))
-                definitionsFileLoader
+                glossaryFileReader
                 registerWatchedFiles
                 showWarning
 
-            definitionsLoader ()
+            glossaryFileLoader ()
 
         }
         |> Async.StartAsTask
@@ -56,14 +56,14 @@ let private onStartupConfigureServer (definitions : Definitions.T) =
 
 
 let private configureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
-    let definitions = Definitions.create ()
+    let definitions = GlossaryFile.create ()
 
     opts
         .WithInput(input)
         .WithOutput(output)
 
         .OnStarted(onStartupConfigureServer definitions)
-        .WithConfigurationSection(DefaultDefinitionsProvider.ConfigSection) // Add back in when implementing didConfigurationChanged handling
+        .WithConfigurationSection(DefaultGlossaryFileProvider.ConfigSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z ->
             z
                 .AddLanguageProtocolLogging()
@@ -72,12 +72,12 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
             |> ignore)
         .WithServerInfo(ServerInfo(Name = name, Version = version))
 
-        .OnDidChangeConfiguration(Configuration.handler <| Definitions.loader definitions)
+        .OnDidChangeConfiguration(Configuration.handler <| GlossaryFile.loader definitions)
         .OnCompletion(
-            Completion.handler <| Definitions.find definitions <| TextDocument.findToken,
+            Completion.handler <| GlossaryFile.find definitions <| TextDocument.findToken,
             Completion.registrationOptions
         )
-        .OnHover(Hover.handler <| Definitions.find definitions <| TextDocument.findToken, Hover.registrationOptions)
+        .OnHover(Hover.handler <| GlossaryFile.find definitions <| TextDocument.findToken, Hover.registrationOptions)
 
     |> TextDocument.onSync
 

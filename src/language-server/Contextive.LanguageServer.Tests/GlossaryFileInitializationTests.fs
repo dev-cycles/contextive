@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.DefinitionsInitializationTests
+module Contextive.LanguageServer.Tests.GlossaryFileInitializationTests
 
 open System
 open Expecto
@@ -51,8 +51,8 @@ let initializeContextive
 let tests =
     testSequencedGroup "Initialization Tests"
     <| testList
-        "LanguageServer.Definitions Initialization Tests"
-        [ testTask "Initialization command creates default definitions file at configured path" {
+        "LanguageServer.GlossaryFile Initialization Tests"
+        [ testTask "Initialization command creates default glossary file at configured path" {
               let pathValue = Guid.NewGuid().ToString()
 
               let! res, fileExists, contents, schemaContents = initializeContextive None pathValue []
@@ -62,13 +62,13 @@ let tests =
               test <@ res.Success @>
               test <@ fileExists @>
 
-              do! Verifier.Verify("Default Definitions", contents).ToTask()
+              do! Verifier.Verify("Default Glossary File", contents).ToTask()
 
-              do! Verifier.Verify("Default Definitions Schema", schemaContents).ToTask()
+              do! Verifier.Verify("Default Glossary File Schema", schemaContents).ToTask()
           }
 
           testTask
-              "Initialization command creates default definitions file at configured path when subfolder doesn't exist" {
+              "Initialization command creates default glossary file at configured path when subfolder doesn't exist" {
               let pathValue = $"{Guid.NewGuid().ToString()}/{Guid.NewGuid().ToString()}"
 
               let! res, fileExists, contents, schemaContents = initializeContextive None pathValue []
@@ -80,12 +80,12 @@ let tests =
               test <@ res.Success @>
               test <@ fileExists @>
 
-              do! Verifier.Verify("Default Definitions in Non-existent Path", contents).ToTask()
+              do! Verifier.Verify("Default Glossary File in Non-existent Path", contents).ToTask()
 
-              do! Verifier.Verify("Default Definitions Schema in Non-existent Path", schemaContents).ToTask()
+              do! Verifier.Verify("Default Glossary File Schema in Non-existent Path", schemaContents).ToTask()
           }
 
-          testAsync "Initialization command opens new definitions file" {
+          testAsync "Initialization command opens new glossary file" {
               let pathValue = Guid.NewGuid().ToString()
 
               let showDocAwaiter = ConditionAwaiter.create ()
@@ -107,7 +107,7 @@ let tests =
               test <@ showDocMsg.Value.Uri.ToString().Contains(pathValue) @>
           }
 
-          testAsync "Initialization command opens existing definitions file without changing it" {
+          testAsync "Initialization command opens existing glossary file without changing it" {
               let pathValue = "existing.yml"
               let workspacePath = Path.Combine("fixtures", "initialization_tests")
               let fullPath = Path.Combine(workspacePath, pathValue)

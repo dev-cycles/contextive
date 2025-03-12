@@ -8,6 +8,6 @@ let resolvedPathGetter configGetter pathResolver () =
         return pathResolver path
     }
 
-let handler (definitionsLoader: Definitions.Reloader) _ =
-    definitionsLoader ()
+let handler (glossaryFileReloader: GlossaryFile.Reloader) _ =
+    glossaryFileReloader ()
     Task.CompletedTask

@@ -7,7 +7,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 open System.Threading.Tasks
 
-let handler (reloader: Definitions.Reloader) (p: DidChangeWatchedFilesParams) _ _ =
+let handler (reloader: GlossaryFile.Reloader) (p: DidChangeWatchedFilesParams) _ _ =
     reloader ()
     Task.CompletedTask
 

@@ -1,9 +1,9 @@
-module Contextive.LanguageServer.Definitions
+module Contextive.LanguageServer.GlossaryFile
 
 open DotNet.Globbing
 
 open Contextive.Core.File
-open Contextive.Core.Definitions
+open Contextive.Core.GlossaryFile
 
 type FileLoader = unit -> Async<Result<File, FileError>>
 
@@ -13,8 +13,8 @@ type Unregisterer = unit -> unit
 type private State =
     { WorkspaceFolder: string option
       Logger: (string -> unit)
-      DefinitionsFilePath: string option
-      Definitions: Definitions
+      GlossaryFilePath: string option
+      Glossary: GlossaryFile
       FileLoader: FileLoader
       RegisterWatchedFile: (string option -> Unregisterer) option
       UnregisterLastWatchedFile: Unregisterer option
@@ -23,9 +23,9 @@ type private State =
     static member Initial() =
         { WorkspaceFolder = None
           Logger = fun _ -> ()
-          DefinitionsFilePath = None
+          GlossaryFilePath = None
           FileLoader = fun _ -> async.Return <| Error(NotYetLoaded)
-          Definitions = Definitions.Default
+          Glossary = GlossaryFile.Default
           RegisterWatchedFile = None
           UnregisterLastWatchedFile = None
           OnErrorLoading = fun _ -> () }
@@ -34,7 +34,7 @@ type LoadReply = string option
 
 type InitPayload =
     { Logger: (string -> unit)
-      FileLoader: FileLoader
+      FileReader: FileLoader
       RegisterWatchedFile: (string option -> Unregisterer) option
       OnErrorLoading: (string -> unit) }
 
@@ -71,10 +71,10 @@ module private Handle =
             Logger = initMsg.Logger
             RegisterWatchedFile = initMsg.RegisterWatchedFile
             OnErrorLoading = initMsg.OnErrorLoading
-            FileLoader = initMsg.FileLoader }
+            FileLoader = initMsg.FileReader }
 
     let updateFileWatchers (state: State) (file: Result<File, FileError>) =
-        match state.DefinitionsFilePath, file with
+        match state.GlossaryFilePath, file with
         | Some existingPath, Ok({ AbsolutePath = newPath }) when existingPath = newPath -> state
         | _, Ok({ AbsolutePath = newPath }) ->
             match state.UnregisterLastWatchedFile with
@@ -90,7 +90,7 @@ module private Handle =
 
             { state with
                 UnregisterLastWatchedFile = unregisterer
-                DefinitionsFilePath = path }
+                GlossaryFilePath = path }
         | _, _ -> state
 
     let load (state: State) : Async<State> =
@@ -103,19 +103,19 @@ module private Handle =
                 match defs with
                 | Ok defs ->
                     state.Logger "Successfully loaded."
-                    { state with Definitions = defs }
+                    { state with Glossary = defs }
                 | Error fileError ->
                     match fileError with
                     | DefaultFileNotFound ->
-                        state.Logger "No definitions file configured, and default file not found."
+                        state.Logger "No glossary file configured, and default file not found."
                     | _ ->
                         let errorMessage = fileErrorMessage fileError
-                        let msg = $"Error loading definitions: {errorMessage}"
+                        let msg = $"Error loading glossary: {errorMessage}"
                         state.Logger msg
                         state.OnErrorLoading msg
 
                     { state with
-                        Definitions = Definitions.Default }
+                        Glossary = GlossaryFile.Default }
 
             return updateFileWatchers newState file
         }
@@ -142,7 +142,7 @@ module private Handle =
         let matchOpenFileUri = matchGlobs findMsg.OpenFileUri
 
         let foundContexts =
-            state.Definitions.Contexts |> Seq.filter matchOpenFileUri |> findMsg.Filter
+            state.Glossary.Contexts |> Seq.filter matchOpenFileUri |> findMsg.Filter
 
         findMsg.ReplyChannel.Reply foundContexts
         state
@@ -176,19 +176,19 @@ let create () =
 
         loop <| State.Initial())
 
-let init (definitionsManager: MailboxProcessor<Message>) logger fileLoader registerWatchedFile onErrorLoading =
+let init (glossaryFileManager: MailboxProcessor<Message>) logger fileReader registerWatchedFile onErrorLoading =
     Init(
         { Logger = logger
-          FileLoader = fileLoader
+          FileReader = fileReader
           RegisterWatchedFile = registerWatchedFile
           OnErrorLoading = onErrorLoading }
     )
-    |> definitionsManager.Post
+    |> glossaryFileManager.Post
 
-let loader (definitionsManager: MailboxProcessor<Message>) =
-    fun () -> Load |> definitionsManager.Post
+let loader (glossaryFileManager: MailboxProcessor<Message>) =
+    fun () -> Load |> glossaryFileManager.Post
 
-let find (definitionsManager: MailboxProcessor<Message>) (openFileUri: string) (filter: Filter) =
+let find (glossaryFileManager: MailboxProcessor<Message>) (openFileUri: string) (filter: Filter) =
     let msgBuilder =
         fun rc ->
             Find(
@@ -197,4 +197,4 @@ let find (definitionsManager: MailboxProcessor<Message>) (openFileUri: string) (
                   ReplyChannel = rc }
             )
 
-    definitionsManager.PostAndAsyncReply(msgBuilder, 1000)
+    glossaryFileManager.PostAndAsyncReply(msgBuilder, 1000)

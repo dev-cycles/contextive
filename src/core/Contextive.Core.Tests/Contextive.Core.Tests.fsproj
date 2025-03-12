@@ -6,9 +6,9 @@
         <GenerateProgramFile>false</GenerateProgramFile>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="DefinitionsTests.fs"/>
-        <Compile Include="CandidateTermsTests.fs"/>
-        <Compile Include="Program.fs"/>
+        <Compile Include="GlossaryFileTests.fs" />
+        <Compile Include="CandidateTermsTests.fs" />
+        <Compile Include="Program.fs" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.0">
@@ -17,7 +17,7 @@
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Contextive.Core\Contextive.Core.fsproj"/>
+        <ProjectReference Include="..\Contextive.Core\Contextive.Core.fsproj" />
     </ItemGroup>
-    <Import Project="..\..\.paket\Paket.Restore.targets"/>
+    <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

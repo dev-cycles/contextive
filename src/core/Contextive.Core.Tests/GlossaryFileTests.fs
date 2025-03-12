@@ -1,7 +1,7 @@
-module Contextive.Core.Tests.DefinitionsTests
+module Contextive.Core.Tests.GlossaryFileTests
 
 open Contextive.Core.File
-open Contextive.Core.Definitions
+open Contextive.Core.GlossaryFile
 open Expecto
 open Swensen.Unquote
 
@@ -13,9 +13,9 @@ let unwrapError =
     | Error(msg) -> msg
 
 [<Tests>]
-let definitionsTests =
+let glossaryFileTests =
     testList
-        "Core.Definitions Tests"
+        "Core.GlossaryFile Tests"
         [
 
           testCase "Term has default"
@@ -33,10 +33,10 @@ let definitionsTests =
               test <@ context.Paths.Count = 0 @>
               test <@ context.Terms.Count = 0 @>
 
-          testCase "Definitions has default"
+          testCase "GlossaryFile has default"
           <| fun () ->
-              let definitions = Definitions.Default
-              test <@ definitions.Contexts.Count = 0 @>
+              let glossaryFile = GlossaryFile.Default
+              test <@ glossaryFile.Contexts.Count = 0 @>
 
           testCase "Context with new terms has new terms"
           <| fun () ->
@@ -50,7 +50,7 @@ let definitionsTests =
 
                 testCase "Minimal parse has parse defaults"
                 <| fun () ->
-                    let definitions =
+                    let glossaryFile =
                         unwrap
                         <| deserialize
                             """
@@ -59,8 +59,8 @@ contexts:
     - name: firstTerm
 """
 
-                    test <@ definitions.Contexts.Count = 1 @>
-                    let context = Seq.head definitions.Contexts
+                    test <@ glossaryFile.Contexts.Count = 1 @>
+                    let context = Seq.head glossaryFile.Contexts
                     test <@ context.Name = null @>
                     test <@ context.DomainVisionStatement = null @>
                     test <@ context.Paths = null @>
@@ -71,7 +71,7 @@ contexts:
 
                 testCase "Can Parse Term Name"
                 <| fun () ->
-                    let definitions =
+                    let glossaryFile =
                         unwrap
                         <| deserialize
                             """
@@ -80,11 +80,11 @@ contexts:
     - name: firstTerm
 """
 
-                    test <@ definitions.Contexts[0].Terms[0].Name = "firstTerm" @>
+                    test <@ glossaryFile.Contexts[0].Terms[0].Name = "firstTerm" @>
 
                 testCase "Can Parse Term Aliases"
                 <| fun () ->
-                    let definitions =
+                    let glossaryFile =
                         unwrap
                         <| deserialize
                             """
@@ -96,14 +96,14 @@ contexts:
       - "secondAlias"
 """
 
-                    let aliases = definitions.Contexts[0].Terms[0].Aliases
+                    let aliases = glossaryFile.Contexts[0].Terms[0].Aliases
                     test <@ aliases.Count = 2 @>
                     test <@ List.ofSeq <| aliases = [ "aliasOfFirstTerm"; "secondAlias" ] @>
 
 
                 testCase "Can Parse Term Definition"
                 <| fun () ->
-                    let definitions =
+                    let glossaryFile =
                         unwrap
                         <| deserialize
                             """
@@ -113,11 +113,11 @@ contexts:
       definition: Some definition
 """
 
-                    test <@ definitions.Contexts[0].Terms[0].Definition = Some "Some definition" @>
+                    test <@ glossaryFile.Contexts[0].Terms[0].Definition = Some "Some definition" @>
 
                 testCase "Can Parse Term Examples"
                 <| fun () ->
-                    let definitions =
+                    let glossaryFile =
                         unwrap
                         <| deserialize
                             """
@@ -129,13 +129,13 @@ contexts:
         - "Example 2"
 """
 
-                    let examples = definitions.Contexts[0].Terms[0].Examples
+                    let examples = glossaryFile.Contexts[0].Terms[0].Examples
                     test <@ examples.Count = 2 @>
                     test <@ List.ofSeq <| examples = [ "Example 1"; "Example 2" ] @>
 
                 testCase "Can Parse Context Name"
                 <| fun () ->
-                    let definitions =
+                    let glossaryFile =
                         unwrap
                         <| deserialize
                             """
@@ -143,12 +143,12 @@ contexts:
   - name: The Context
 """
 
-                    let context = definitions.Contexts[0]
+                    let context = glossaryFile.Contexts[0]
                     test <@ context.Name = "The Context" @>
 
                 testCase "Can Parse Context Domain Vision Statement"
                 <| fun () ->
-                    let definitions =
+                    let glossaryFile =
                         unwrap
                         <| deserialize
                             """
@@ -156,12 +156,12 @@ contexts:
   - domainVisionStatement: The Domain Vision Statement
 """
 
-                    let context = definitions.Contexts[0]
+                    let context = glossaryFile.Contexts[0]
                     test <@ context.DomainVisionStatement = "The Domain Vision Statement" @>
 
                 testCase "Empty List parses as empty list instead of null"
                 <| fun () ->
-                    let definitions =
+                    let glossaryFile =
                         unwrap
                         <| deserialize
                             """
@@ -169,13 +169,13 @@ contexts:
   - terms:
 """
 
-                    let context = definitions.Contexts[0]
+                    let context = glossaryFile.Contexts[0]
                     test <@ context.Terms.Count = 0 @>
 
 
                 testCase "Can Parse Context Paths"
                 <| fun () ->
-                    let definitions =
+                    let glossaryFile =
                         unwrap
                         <| deserialize
                             """
@@ -185,7 +185,7 @@ contexts:
     - "path2"
 """
 
-                    let context = definitions.Contexts[0]
+                    let context = glossaryFile.Contexts[0]
                     test <@ List.ofSeq <| context.Paths = [ "path1"; "path2" ] @>
 
                 testList
@@ -195,9 +195,9 @@ contexts:
                       let testContextName name yml expectedName =
                           testCase name
                           <| fun () ->
-                              let definitions = unwrap <| deserialize yml
+                              let glossaryFile = unwrap <| deserialize yml
 
-                              let context = definitions.Contexts[0]
+                              let context = glossaryFile.Contexts[0]
                               test <@ context.Name.ReplaceLineEndings() = expectedName @>
 
                       testContextName
@@ -284,7 +284,7 @@ contexts:
                 testCase "Error when file is empty"
                 <| fun () ->
                     let result = deserialize ""
-                    test <@ result = Error(ParsingError("Definitions file is empty.")) @>
+                    test <@ result = Error(ParsingError("Glossary file is empty.")) @>
 
                 testCase "Error with unexpected key"
                 <| fun () ->
@@ -298,7 +298,7 @@ unknown:
                         <@
                             result = Error(
                                 ParsingError(
-                                    "Object starting line 2, column 1 - Property 'unknown' not found on type 'Contextive.Core.Definitions+Definitions'."
+                                    "Object starting line 2, column 1 - Property 'unknown' not found on type 'Contextive.Core.GlossaryFile+GlossaryFile'."
                                 )
                             )
                         @>

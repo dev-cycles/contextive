@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.FileLoader
+module Contextive.LanguageServer.FileReader
 
 open System.IO
 open Contextive.Core.File
@@ -13,7 +13,7 @@ let private tryReadFile (pathConfig: PathConfiguration) =
             | { IsDefault = false } -> FileNotFound
         Error(fileError)
 
-let private loadFromPath path =
+let private readFromPath path =
     match path with
     | Error(e) -> Error(PathInvalid(e))
     | Ok(p) ->
@@ -21,9 +21,9 @@ let private loadFromPath path =
           Contents = tryReadFile p }
         |> Ok
 
-let loader pathGetter =
+let reader pathGetter =
     fun () ->
         async {
             let! absolutePath = pathGetter ()
-            return loadFromPath absolutePath
+            return readFromPath absolutePath
         }

@@ -81,14 +81,14 @@ let private lower (s: string) = s.ToLower()
 let private title (s: string) =
     s.Substring(0, 1).ToUpper() + s.Substring(1)
 
-let createCompletionItemData (term: Definitions.Term) label =
+let createCompletionItemData (term: GlossaryFile.Term) label =
     { Label = label
       Documentation = Rendering.renderTerm [ term ] }
 
 let private termToCaseMatchedCompletionData
     (caseTemplate: string option)
     (token: CandidateTerms.Token)
-    (term: Definitions.Term)
+    (term: GlossaryFile.Term)
     =
     match caseTemplate with
     | None -> token
@@ -108,7 +108,7 @@ let private transform
 let private tokenCombinations
     (transformers: (string * (string -> string) * (string -> string)) seq)
     (candidateTerms: CandidateTerms.CandidateTerms)
-    (term: Definitions.Term)
+    (term: GlossaryFile.Term)
     =
     transformers
     |> Seq.map (fun transformer -> transform transformer candidateTerms |> createCompletionItemData term)
@@ -116,7 +116,7 @@ let private tokenCombinations
 let private candidateTermsToCaseMatchedCompletionData
     (caseTemplate: string option)
     (candidateTerms: CandidateTerms.CandidateTerms)
-    (term: Definitions.Term)
+    (term: GlossaryFile.Term)
     =
     let snakeCase = ("_", lower, lower)
     let upperSnakeCase = ("_", upper, upper)
@@ -135,7 +135,7 @@ let private candidateTermsToCaseMatchedCompletionData
 
     tokenCombinationGenerator term
 
-let private termToListOptions (caseTemplate: string option) (term: Definitions.Term) : CompletionItemData seq =
+let private termToListOptions (caseTemplate: string option) (term: GlossaryFile.Term) : CompletionItemData seq =
     let token = term.Name
     let candidateTerms = CandidateTerms.candidateTermsFromToken <| Some token
 
@@ -144,7 +144,7 @@ let private termToListOptions (caseTemplate: string option) (term: Definitions.T
     else
         seq { termToCaseMatchedCompletionData caseTemplate token term }
 
-let private getContextCompletionLabelData (termToListOptionsWithCase) (context: Definitions.Context) =
+let private getContextCompletionLabelData (termToListOptionsWithCase) (context: GlossaryFile.Context) =
     { ContextName = context.Name
       CompletionItems = (context.Terms |> Seq.collect termToListOptionsWithCase) }
 
@@ -154,7 +154,7 @@ let private getCaseTemplate (tokenFinder: TextDocument.TokenFinder) (textDocumen
     | _ -> tokenFinder (textDocument.Uri) position
 
 let handler
-    (termFinder: Definitions.Finder)
+    (termFinder: GlossaryFile.Finder)
     (tokenFinder: TextDocument.TokenFinder)
     (p: CompletionParams)
     (hc: CompletionCapability)

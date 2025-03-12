@@ -14,12 +14,12 @@ let private renderDefinition d =
 
 let private renderName name = name |> emphasise |> emojifyTerm
 
-let private renderAliases (t: Definitions.Term) =
+let private renderAliases (t: GlossaryFile.Term) =
     match t.Aliases with
     | null -> None
     | aliases -> aliases |> Seq.map (fun alias -> $"_{alias}_") |> String.concat ", " |> Some
 
-let private renderAliasLine (t: Definitions.Term) =
+let private renderAliasLine (t: GlossaryFile.Term) =
     match renderAliases t with
     | None -> None
     | Some aliases -> Some $"_Aliases_: {aliases}"
@@ -31,7 +31,7 @@ let private concatIfExists (separator: string) (lines: string option seq) =
 
 let private concatWithNewLinesIfExists = concatIfExists doubleBlankLine
 
-let private renderTermDefinition (term: Definitions.Term) =
+let private renderTermDefinition (term: GlossaryFile.Term) =
     seq {
         Some $"{renderName term.Name}: {renderDefinition term.Definition}"
         renderAliasLine term
@@ -41,7 +41,7 @@ let private renderTermDefinition (term: Definitions.Term) =
 
 let private speechify (usageExample: string) = $"💬 \"{usageExample.Trim()}\""
 
-let private renderTermUsageExamples (t: Definitions.Term) =
+let private renderTermUsageExamples (t: GlossaryFile.Term) =
     t.Examples
     |> Seq.map speechify
     |> Seq.append (Seq.singleton $"#### {emphasise t.Name} Usage Examples:")
@@ -49,27 +49,27 @@ let private renderTermUsageExamples (t: Definitions.Term) =
 
 let private renderUsageExamples =
     function
-    | { Definitions.Term.Examples = null } -> Seq.empty
+    | { GlossaryFile.Term.Examples = null } -> Seq.empty
     | t -> renderTermUsageExamples t
 
-let renderTerm (terms: Definitions.Term seq) =
+let renderTerm (terms: GlossaryFile.Term seq) =
     [ renderTermDefinition; renderUsageExamples ]
     |> Seq.collect (fun p -> terms |> Seq.collect p)
     |> concatWithNewLinesIfExists
 
-let private renderContextHeading (context: Definitions.Context) =
+let private renderContextHeading (context: GlossaryFile.Context) =
     match context.Name with
     | null
     | "" -> None
     | _ -> Some $"### 💠 {context.Name} Context"
 
-let private renderContextDomainVisionStatement (context: Definitions.Context) =
+let private renderContextDomainVisionStatement (context: GlossaryFile.Context) =
     match context.DomainVisionStatement with
     | null
     | "" -> None
     | _ -> Some $"_Vision: {context.DomainVisionStatement.TrimEnd()}_"
 
-let private renderContext (context: Definitions.Context) =
+let private renderContext (context: GlossaryFile.Context) =
     let terms = context.Terms
 
     if Seq.length terms = 0 then
@@ -84,5 +84,5 @@ let private renderContext (context: Definitions.Context) =
 
 let private ContextSeparator = $"{doubleBlankLine}***{doubleBlankLine}"
 
-let renderContexts (contexts: Definitions.FindResult) =
+let renderContexts (contexts: GlossaryFile.FindResult) =
     contexts |> Seq.map renderContext |> concatIfExists ContextSeparator

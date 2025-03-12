@@ -3,10 +3,10 @@ module Contextive.LanguageServer.Tests.RenderingTests
 open Expecto
 open Swensen.Unquote
 open Contextive.LanguageServer
-open Contextive.Core.Definitions
+open Contextive.Core.GlossaryFile
 open Contextive.LanguageServer.Tests.Helpers
 
-module DH = Helpers.Definitions
+module GlossaryFile = Helpers.GlossaryFile
 
 [<Tests>]
 let tests =
@@ -136,7 +136,7 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_""")
                           Name = "TestContext"
                           DomainVisionStatement = "supporting the test" }
                   }
-                  |> DH.allContextsWithTermNames [ "term" ]
+                  |> GlossaryFile.allContextsWithTermNames [ "term" ]
 
               let rendering = Rendering.renderContexts contexts
 
@@ -157,7 +157,7 @@ _Vision: supporting the test_
                       { Context.Default with Name = "Test" }
                       { Context.Default with Name = "Other" }
                   }
-                  |> DH.allContextsWithTermNames [ "term" ]
+                  |> GlossaryFile.allContextsWithTermNames [ "term" ]
 
               let rendering = Rendering.renderContexts contexts
 
@@ -183,7 +183,7 @@ _Vision: supporting the test_
                           Name = "Test"
                           DomainVisionStatement = "vision statement should still be italic" + System.Environment.NewLine }
                   }
-                  |> DH.allContextsWithTermNames [ "term" ]
+                  |> GlossaryFile.allContextsWithTermNames [ "term" ]
 
               let rendering = Rendering.renderContexts contexts
 
@@ -205,7 +205,7 @@ _Vision: vision statement should still be italic_
                           Name = "Test"
                           DomainVisionStatement = "vision statement should still be italic " }
                   }
-                  |> DH.allContextsWithTermNames [ "term" ]
+                  |> GlossaryFile.allContextsWithTermNames [ "term" ]
 
               let rendering = Rendering.renderContexts contexts
 

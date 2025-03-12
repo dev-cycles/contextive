@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.DefinitionsTests
+module Contextive.LanguageServer.Tests.GlossaryFileTests
 
 open Expecto
 open Swensen.Unquote
@@ -12,39 +12,39 @@ open Contextive.LanguageServer.Tests.Helpers
 [<Tests>]
 let tests =
     testList
-        "LanguageServer.Definitions File Tests"
+        "LanguageServer.GlossaryFile Tests"
         [
 
-          let getName (t: Definitions.Term) = t.Name
+          let getName (t: GlossaryFile.Term) = t.Name
 
-          let getDefinitionsWithErrorHandler onErrorAction configGetter workspaceFolder =
+          let getGlossaryFileWithErrorHandler onErrorAction configGetter workspaceFolder =
               async {
-                  let definitions = Definitions.create ()
+                  let glossaryFile = GlossaryFile.create ()
 
-                  let definitionsFileLoader =
+                  let glossaryFileReader =
                       PathResolver.resolvePath workspaceFolder
                       |> Configuration.resolvedPathGetter configGetter
-                      |> FileLoader.loader
+                      |> FileReader.reader
 
-                  Definitions.init definitions (fun _ -> ()) definitionsFileLoader None onErrorAction
-                  (Definitions.loader definitions) ()
-                  return definitions
+                  GlossaryFile.init glossaryFile (fun _ -> ()) glossaryFileReader None onErrorAction
+                  (GlossaryFile.loader glossaryFile) ()
+                  return glossaryFile
               }
 
-          let getDefinitions = getDefinitionsWithErrorHandler (fun _ -> ())
+          let getGlossaryFile = getGlossaryFileWithErrorHandler (fun _ -> ())
 
-          let getFileName definitionsFileName =
-              Path.Combine("fixtures", "completion_tests", $"{definitionsFileName}.yml")
+          let getFileName glossaryFileName =
+              Path.Combine("fixtures", "completion_tests", $"{glossaryFileName}.yml")
               |> Some
 
-          let getTermsFromFileInContext termFileUri definitionsFileName =
+          let getTermsFromFileInContext termFileUri glossaryFileName =
               async {
-                  let definitionsPath = getFileName definitionsFileName
+                  let glossaryFilePath = getFileName glossaryFileName
                   let workspaceFolder = Some ""
-                  let configGetter = (fun _ -> async.Return <| Option.map configuredPath definitionsPath)
-                  let! definitions = getDefinitions configGetter workspaceFolder
-                  let! contexts = Definitions.find definitions termFileUri id
-                  return contexts |> Definitions.FindResult.allTerms
+                  let configGetter = (fun _ -> async.Return <| Option.map configuredPath glossaryFilePath)
+                  let! glossaryFile = getGlossaryFile configGetter workspaceFolder
+                  let! contexts = GlossaryFile.find glossaryFile termFileUri id
+                  return contexts |> GlossaryFile.FindResult.allTerms
               }
 
           let getTermsFromFile = getTermsFromFileInContext ""
@@ -117,14 +117,14 @@ let tests =
           |> testList "Can load definition from correct context"
 
           let invalidScenarios =
-              [ ("invalid_empty", "Error loading definitions: Parsing Error: Definitions file is empty.")
+              [ ("invalid_empty", "Error loading glossary: Parsing Error: Glossary file is empty.")
                 ("invalid_schema",
-                 "Error loading definitions: Parsing Error: Object starting line 6, column 9 - Property 'example' not found on type 'Contextive.Core.Definitions+Term'.")
+                 "Error loading glossary: Parsing Error: Object starting line 6, column 9 - Property 'example' not found on type 'Contextive.Core.GlossaryFile+Term'.")
                 ("invalid_schema2",
-                 "Error loading definitions: Parsing Error: Object starting line 5, column 19 - Mapping values are not allowed in this context.")
-                ("no_file", "Error loading definitions: Definitions file not found.") ]
+                 "Error loading glossary: Parsing Error: Object starting line 5, column 19 - Mapping values are not allowed in this context.")
+                ("no_file", "Error loading glossary: Glossary file not found.") ]
 
-          let canRecoverFromInvalidDefinitions (fileName, expectedErrorMessage) =
+          let canRecoverFromInvalidGlossaryFile (fileName, expectedErrorMessage) =
               testAsync fileName {
                   let mutable path = getFileName fileName
 
@@ -135,27 +135,27 @@ let tests =
 
                   let onErrorLoading = fun msg -> ConditionAwaiter.received errorMessageAwaiter msg
 
-                  let! definitions = getDefinitionsWithErrorHandler onErrorLoading configGetter workspaceFolder
-                  let! termsWhenInvalid = Definitions.find definitions "" id
+                  let! glossaryFile = getGlossaryFileWithErrorHandler onErrorLoading configGetter workspaceFolder
+                  let! termsWhenInvalid = GlossaryFile.find glossaryFile "" id
 
                   let! errorMessage = ConditionAwaiter.waitForAny errorMessageAwaiter
                   test <@ errorMessage.Value = expectedErrorMessage @>
                   test <@ Seq.length termsWhenInvalid = 0 @>
 
                   path <- getFileName "one"
-                  (Definitions.loader definitions) ()
+                  (GlossaryFile.loader glossaryFile) ()
 
-                  let! contexts = Definitions.find definitions "" id
-                  let foundNames = contexts |> Definitions.FindResult.allTerms |> Seq.map getName
+                  let! contexts = GlossaryFile.find glossaryFile "" id
+                  let foundNames = contexts |> GlossaryFile.FindResult.allTerms |> Seq.map getName
 
                   test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>
               }
 
           invalidScenarios
-          |> List.map canRecoverFromInvalidDefinitions
-          |> testList "Can recover from invalid definitions"
+          |> List.map canRecoverFromInvalidGlossaryFile
+          |> testList "Can recover from invalid glossary file"
 
-          let canRecoverFromInvalidDefinitionsWhenConfigChanges (fileName, _) =
+          let canRecoverFromInvalidGlossaryFileWhenConfigChanges (fileName, _) =
               testAsync fileName {
                   let validPath = "one.yml"
                   let mutable path = validPath
@@ -189,5 +189,5 @@ let tests =
               }
 
           invalidScenarios
-          |> List.map canRecoverFromInvalidDefinitionsWhenConfigChanges
-          |> testList "Can recover from invalid definitions when config changes" ]
+          |> List.map canRecoverFromInvalidGlossaryFileWhenConfigChanges
+          |> testList "Can recover from invalid glossary file when config changes" ]

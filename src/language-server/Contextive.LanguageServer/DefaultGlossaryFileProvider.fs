@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.DefaultDefinitionsProvider
+module Contextive.LanguageServer.DefaultGlossaryFileProvider
 
 open Contextive.Core.File
 open System.Threading.Tasks
@@ -11,7 +11,7 @@ let ConfigSection = "contextive"
 let private pathKey = "path"
 
 [<Literal>]
-let private defaultContextiveDefinitionsPath = ".contextive/definitions.yml"
+let private defaultContextiveGlossaryFilePath = ".contextive/definitions.yml"
 
 let private getConfig (s: ILanguageServer) section key =
     async {
@@ -31,7 +31,7 @@ let private getConfig (s: ILanguageServer) section key =
                 match key with
                 | key when key = pathKey ->
                     Some
-                        { Path = defaultContextiveDefinitionsPath
+                        { Path = defaultContextiveGlossaryFilePath
                           IsDefault = true }
                 | _ -> None
             else
@@ -55,15 +55,15 @@ let private getWorkspaceFolder (s: ILanguageServer) =
         None
 
 
-let initDefinitionsInitializer (s: ILanguageServer) pathGetter = 
+let initGlossaryFileInitializer (s: ILanguageServer) pathGetter = 
     let showDocument =
         match s.ClientSettings.Capabilities.Window.ShowDocument.IsSupported with
         | true -> s.Window.ShowDocument
         | false -> fun _ -> Task.FromResult(ShowDocumentResult())
 
-    DefinitionsInitializer.registerHandler s pathGetter showDocument
+    GlossaryFileInitializer.registerHandler s pathGetter showDocument
 
-let getDefaultDefinitionsFileLoader (s: ILanguageServer) = async {
+let getDefaultGlossaryFileReader (s: ILanguageServer) = async {
     let configGetter () = getConfig s ConfigSection pathKey
     // Not sure if this is needed to ensure configuration is loaded, or allow a task/context switch
     // Either way, if it's not here, then getWorkspaceFolder returns null
@@ -75,7 +75,7 @@ let getDefaultDefinitionsFileLoader (s: ILanguageServer) = async {
         PathResolver.resolvePath workspaceFolder
         |> Configuration.resolvedPathGetter configGetter
 
-    initDefinitionsInitializer s pathGetter
+    initGlossaryFileInitializer s pathGetter
 
-    return pathGetter |> FileLoader.loader
+    return pathGetter |> FileReader.reader
 }

@@ -35,14 +35,14 @@
     <ItemGroup>
         <Compile Include="Seq.fs" />        
         <Compile Include="Rendering.fs" />
-        <Compile Include="FileLoader.fs" />
+        <Compile Include="FileReader.fs" />
         <Compile Include="PathResolver.fs" />
         <Compile Include="Tokeniser.fs" />
-        <Compile Include="Definitions.fs" />
+        <Compile Include="GlossaryFile.fs" />
         <Compile Include="DefinitionsSet.fs" />
-        <Compile Include="DefinitionsInitializer.fs" />
+        <Compile Include="GlossaryFileInitializer.fs" />
         <Compile Include="Configuration.fs" />
-        <Compile Include="DefaultDefinitionsProvider.fs" />
+        <Compile Include="DefaultGlossaryFileProvider.fs" />
         <Compile Include="WatchedFiles.fs" />        
         <Compile Include="TextDocument.fs" />
         <Compile Include="Hover.fs" />

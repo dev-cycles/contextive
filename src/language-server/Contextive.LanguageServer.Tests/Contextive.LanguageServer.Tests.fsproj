@@ -6,28 +6,28 @@
         <GenerateProgramFile>false</GenerateProgramFile>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="Helpers/Fixtures.fs"/>
-        <Compile Include="Helpers/Definitions.fs"/>
-        <Compile Include="Helpers/Completion.fs"/>
-        <Compile Include="Helpers/ConditionAwaiter.fs"/>
-        <Compile Include="Helpers/WatchedFiles.fs"/>
-        <Compile Include="Helpers/ServerLog.fs"/>
-        <Compile Include="Helpers/Window.fs"/>
-        <Compile Include="Helpers/Workspace.fs"/>
-        <Compile Include="Helpers/TestClient.fs"/>
-        <Compile Include="Helpers/ConfigurationSection.fs"/>
-        <Compile Include="DefinitionsInitializationTests.fs"/>
-        <Compile Include="RenderingTests.fs"/>
-        <Compile Include="FileLoaderTests.fs"/>
-        <Compile Include="PathResolverTests.fs"/>
-        <Compile Include="ConfigurationTests.fs"/>
-        <Compile Include="DefinitionsTests.fs"/>
-        <Compile Include="WatchedFilesTests.fs"/>
-        <Compile Include="TextDocumentTests.fs"/>
-        <Compile Include="CompletionTests.fs"/>
-        <Compile Include="HoverTests.fs"/>
-        <Compile Include="InitializationTests.fs"/>
-        <Compile Include="Program.fs"/>
+        <Compile Include="Helpers/Fixtures.fs" />
+        <Compile Include="Helpers/Definitions.fs" />
+        <Compile Include="Helpers/Completion.fs" />
+        <Compile Include="Helpers/ConditionAwaiter.fs" />
+        <Compile Include="Helpers/WatchedFiles.fs" />
+        <Compile Include="Helpers/ServerLog.fs" />
+        <Compile Include="Helpers/Window.fs" />
+        <Compile Include="Helpers/Workspace.fs" />
+        <Compile Include="Helpers/TestClient.fs" />
+        <Compile Include="Helpers/ConfigurationSection.fs" />
+        <Compile Include="RenderingTests.fs" />
+        <Compile Include="FileLoaderTests.fs" />
+        <Compile Include="PathResolverTests.fs" />
+        <Compile Include="ConfigurationTests.fs" />
+        <Compile Include="GlossaryFileTests.fs" />
+        <Compile Include="GlossaryFileInitializationTests.fs" />
+        <Compile Include="WatchedFilesTests.fs" />
+        <Compile Include="TextDocumentTests.fs" />
+        <Compile Include="CompletionTests.fs" />
+        <Compile Include="HoverTests.fs" />
+        <Compile Include="InitializationTests.fs" />
+        <Compile Include="Program.fs" />
     </ItemGroup>
     <ItemGroup>
         <Content Include="fixtures/completion_tests/empty_terms_list.yml">
@@ -68,7 +68,7 @@
         </PackageReference>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Contextive.LanguageServer\Contextive.LanguageServer.fsproj"/>
+        <ProjectReference Include="..\Contextive.LanguageServer\Contextive.LanguageServer.fsproj" />
     </ItemGroup>
-    <Import Project="..\..\.paket\Paket.Restore.targets"/>
+    <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

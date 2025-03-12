@@ -7,20 +7,20 @@ open Contextive.Core
 
 module private Filtering =
     let private termEqualsToken
-        (term: Definitions.Term)
+        (term: GlossaryFile.Term)
         (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms)
         =
-        fst tokenAndCandidateTerms |> Definitions.Term.equals term
+        fst tokenAndCandidateTerms |> GlossaryFile.Term.equals term
 
     let private termInCandidates
-        (term: Definitions.Term)
+        (term: GlossaryFile.Term)
         (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms)
         =
-        (snd tokenAndCandidateTerms) |> Seq.exists (Definitions.Term.equals term)
+        (snd tokenAndCandidateTerms) |> Seq.exists (GlossaryFile.Term.equals term)
 
     let private removeLessRelevantTerms
         (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq)
-        (terms: Definitions.Term seq)
+        (terms: GlossaryFile.Term seq)
         =
         let exactTerms =
             tokenAndCandidateTerms
@@ -46,8 +46,8 @@ module private Filtering =
             tokenAndCandidateTerms |> Seq.exists candidateMatchesTerm)
 
     let termFilterForCandidateTerms tokenAndCandidateTerms =
-        Seq.map (fun (c: Definitions.Context) ->
-            Definitions.Context.withTerms
+        Seq.map (fun (c: GlossaryFile.Context) ->
+            GlossaryFile.Context.withTerms
                 (c.Terms
                  |> findMatchingTerms tokenAndCandidateTerms
                  |> removeLessRelevantTerms tokenAndCandidateTerms)
@@ -66,14 +66,14 @@ module private Lsp =
 
     let noHoverResult = null
 
-let private hoverResult (contexts: Definitions.FindResult) =
+let private hoverResult (contexts: GlossaryFile.FindResult) =
     match Rendering.renderContexts contexts with
     | None -> Lsp.noHoverResult
     | Some(c) -> Hover(Contents = (c |> Lsp.markupContent))
 
 let private hoverContentForToken
     (uri: string)
-    (termFinder: Definitions.Finder)
+    (termFinder: GlossaryFile.Finder)
     (tokensAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq)
     =
     async {
@@ -87,7 +87,7 @@ let private hoverContentForToken
     }
 
 let handler
-    (termFinder: Definitions.Finder)
+    (termFinder: GlossaryFile.Finder)
     (tokenFinder: TextDocument.TokenFinder)
     (p: HoverParams)
     (_: HoverCapability)

@@ -1,9 +1,9 @@
-module Contextive.LanguageServer.DefinitionsInitializer
+module Contextive.LanguageServer.GlossaryFileInitializer
 
 module Models =
 
     [<CLIMutable>]
-    type InitializeDefinitionsResponse = { Success: bool }
+    type InitializeGlossaryFileResponse = { Success: bool }
 
 open OmniSharp.Extensions.LanguageServer.Protocol.Server
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
@@ -12,32 +12,32 @@ open Models
 open System.IO
 open Contextive.Core
 open Contextive.Core.File
-open Contextive.Core.Definitions
+open Contextive.Core.GlossaryFile
 
 let private introComments =
     """# yaml-language-server: $schema=contextive-schema.json
 # Welcome to Contextive!
 #
-# This initial definitions file illustrates the syntax of the file by providing definitions and examples of the terms
-# used in schema of the definitions file.
+# This initial glossary file illustrates the syntax of the file by providing definitions and examples of the terms
+# used in schema of the glossary file.
 #
 # Hover over some of the defined words, such as `context`, `term`, `definition` and `example` to see Contextive in action.
 #
-# Update the yaml below to define your specific contexts and definitions, and feel free to use markdown in definitions and examples.
+# Update the yaml below to define your specific contexts and terms, and feel free to use markdown in definitions and examples.
 """
 
 let private pathComments =
     """    # Globs are supported. Multiple paths may be included. If any match the currently open file, the context will be used.
 """
 
-let private defaultDefinitions =
+let private defaultGlossaryFile =
     { Contexts =
         [| { Name = "Demo"
-             DomainVisionStatement = "To illustrate the usage of the contextive definitions file."
+             DomainVisionStatement = "To illustrate the usage of the contextive glossary file."
              Paths = [| "**" |] |> ResizeArray
              Terms =
                [| { Name = "context"
-                    Definition = Some "A bounded set of definitions within which words have specific meanings."
+                    Definition = Some "A boundare within which words have specific meanings."
                     Examples =
                       [| "In the _Sales_ context, the language focuses on activities associated with selling products."
                          "Are you sure you're thinking of the definition from the right context?" |]
@@ -94,17 +94,17 @@ let private handler pathGetter (showDocument: ShowDocumentParams -> System.Threa
                 | Ok({ Path = p }) ->
                     async {
                         if not <| File.Exists(p) then
-                            let defaultDefinitionsText =
-                                Definitions.serialize defaultDefinitions
+                            let defaultGlossaryFileText =
+                                GlossaryFile.serialize defaultGlossaryFile
                                 |> insertComment "contexts:" introComments
                                 |> insertComment "    paths:" pathComments
 
                             ensureDirectoryExists p
-                            File.WriteAllText(p, defaultDefinitionsText)
+                            File.WriteAllText(p, defaultGlossaryFileText)
 
                         let folder = Path.GetDirectoryName(p)
                         let schemaPath = Path.Combine(folder, schemaFileName)
-                        File.WriteAllText(schemaPath, DefinitionsSchema.schema)
+                        File.WriteAllText(schemaPath, GlossaryFileSchema.schema)
 
                         do!
                             showDocument (ShowDocumentParams(Uri = p, External = false))

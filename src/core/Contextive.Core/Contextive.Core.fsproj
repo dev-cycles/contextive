@@ -11,8 +11,8 @@
   <ItemGroup>
     <Compile Include="ValidatingDeserializer.fs" />
     <Compile Include="File.fs" />
-    <Compile Include="DefinitionsSchema.fs" />
-    <Compile Include="Definitions.fs" />
+    <Compile Include="GlossaryFileSchema.fs" />
+    <Compile Include="GlossaryFile.fs" />
     <Compile Include="CandidateTerms.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

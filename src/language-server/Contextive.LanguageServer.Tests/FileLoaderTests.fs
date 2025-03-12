@@ -14,14 +14,14 @@ let tests =
 
           testAsync "Path is in error state" {
               let pathGetter () = async.Return <| Error("No path")
-              let! file = (FileLoader.loader pathGetter) ()
+              let! file = (FileReader.reader pathGetter) ()
               test <@ file = Error(PathInvalid("No path")) @>
           }
 
           testAsync "Path Doesn't exist" {
               let path = configuredPath "/file/not/found"
               let pathGetter () = async.Return <| Ok(path)
-              let! file = (FileLoader.loader pathGetter) ()
+              let! file = (FileReader.reader pathGetter) ()
 
               match file with
               | Error(e) -> failtest <| e.ToString()
@@ -36,7 +36,7 @@ let tests =
                   |> configuredPath
 
               let pathGetter () = async.Return <| Ok(path)
-              let! file = (FileLoader.loader pathGetter) ()
+              let! file = (FileReader.reader pathGetter) ()
 
               match file with
               | Error(e) -> failtest <| e.ToString()

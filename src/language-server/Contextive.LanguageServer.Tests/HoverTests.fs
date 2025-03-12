@@ -6,11 +6,11 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open System.IO
 open Contextive.LanguageServer
-open Contextive.Core.Definitions
+open Contextive.Core.GlossaryFile
 open Helpers.TestClient
 open Contextive.LanguageServer.Tests.Helpers
 
-module DH = Definitions
+module GlossaryFile = GlossaryFile
 
 [<Tests>]
 let tests =
@@ -169,7 +169,7 @@ let tests =
 
               let hoverHandler =
                   Hover.handler
-                      (DH.mockTermNamesFinder
+                      (GlossaryFile.mockTermNamesFinder
                           { Context.Default with
                               Name = "TestContext" }
                           terms)
