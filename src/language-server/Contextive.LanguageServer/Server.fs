@@ -1,6 +1,5 @@
 module Contextive.LanguageServer.Server
 
-open Contextive.Core.File
 open System.Threading.Tasks
 open OmniSharp.Extensions.LanguageServer.Server
 open OmniSharp.Extensions.LanguageServer.Protocol.Server
@@ -22,14 +21,14 @@ let version =
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
         .InformationalVersion
 
-let private onStartupConfigureServer (subGlossary : SubGlossary.T) =
+let private onStartupConfigureServer (glossary : Glossary.T) =
     OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
         async {
             s.Window.LogInfo $"Starting {name} v{version}..."
 
-            let subGlossaryLoader = SubGlossary.loader subGlossary
+            let glossaryReloader = Glossary.reloader glossary
 
-            let registerWatchedFiles = Some <| WatchedFiles.register s subGlossaryLoader
+            let registerWatchedFiles = Some <| WatchedFiles.register s glossaryReloader
 
             let showWarning =
                 if s.Window.ClientSettings.Capabilities.Window.ShowMessage.IsSupported then
@@ -39,8 +38,8 @@ let private onStartupConfigureServer (subGlossary : SubGlossary.T) =
 
             let! glossaryFileReader = DefaultGlossaryFileProvider.getDefaultGlossaryFileReader s
 
-            SubGlossary.init
-                subGlossary
+            Glossary.init
+                glossary
                 (fun m ->
                     s.Window.Log(m)
                     Serilog.Log.Logger.Information(m))
@@ -48,7 +47,7 @@ let private onStartupConfigureServer (subGlossary : SubGlossary.T) =
                 registerWatchedFiles
                 showWarning
 
-            subGlossaryLoader ()
+            glossaryReloader ()
 
         }
         |> Async.StartAsTask
@@ -56,13 +55,13 @@ let private onStartupConfigureServer (subGlossary : SubGlossary.T) =
 
 
 let private configureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
-    let sbbGlossary = SubGlossary.create ()
+    let glossary = Glossary.create ()
 
     opts
         .WithInput(input)
         .WithOutput(output)
 
-        .OnStarted(onStartupConfigureServer sbbGlossary)
+        .OnStarted(onStartupConfigureServer glossary)
         .WithConfigurationSection(DefaultGlossaryFileProvider.ConfigSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z ->
             z
@@ -72,12 +71,13 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
             |> ignore)
         .WithServerInfo(ServerInfo(Name = name, Version = version))
 
-        .OnDidChangeConfiguration(Configuration.handler <| SubGlossary.loader sbbGlossary)
+        .OnDidChangeConfiguration(Configuration.handler <| Glossary.reloader glossary)
         .OnCompletion(
-            Completion.handler <| SubGlossary.find sbbGlossary <| TextDocument.findToken,
+            Completion.handler <| Glossary.find glossary <| TextDocument.findToken,
             Completion.registrationOptions
         )
-        .OnHover(Hover.handler <| SubGlossary.find sbbGlossary <| TextDocument.findToken, Hover.registrationOptions)
+        .OnHover(Hover.handler <| Glossary.find glossary <| TextDocument.findToken,
+        Hover.registrationOptions)
 
     |> TextDocument.onSync
 

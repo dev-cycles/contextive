@@ -6,7 +6,7 @@ open Contextive.LanguageServer
 open Contextive.Core.GlossaryFile
 open Contextive.LanguageServer.Tests.Helpers
 
-module GlossaryFile = Helpers.GlossaryFile
+module SubGlossaryHelper = Helpers.SubGlossaryHelper
 
 [<Tests>]
 let tests =
@@ -136,7 +136,7 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_""")
                           Name = "TestContext"
                           DomainVisionStatement = "supporting the test" }
                   }
-                  |> GlossaryFile.allContextsWithTermNames [ "term" ]
+                  |> SubGlossaryHelper.allContextsWithTermNames [ "term" ]
 
               let rendering = Rendering.renderContexts contexts
 
@@ -157,7 +157,7 @@ _Vision: supporting the test_
                       { Context.Default with Name = "Test" }
                       { Context.Default with Name = "Other" }
                   }
-                  |> GlossaryFile.allContextsWithTermNames [ "term" ]
+                  |> SubGlossaryHelper.allContextsWithTermNames [ "term" ]
 
               let rendering = Rendering.renderContexts contexts
 
@@ -183,7 +183,7 @@ _Vision: supporting the test_
                           Name = "Test"
                           DomainVisionStatement = "vision statement should still be italic" + System.Environment.NewLine }
                   }
-                  |> GlossaryFile.allContextsWithTermNames [ "term" ]
+                  |> SubGlossaryHelper.allContextsWithTermNames [ "term" ]
 
               let rendering = Rendering.renderContexts contexts
 
@@ -205,7 +205,7 @@ _Vision: vision statement should still be italic_
                           Name = "Test"
                           DomainVisionStatement = "vision statement should still be italic " }
                   }
-                  |> GlossaryFile.allContextsWithTermNames [ "term" ]
+                  |> SubGlossaryHelper.allContextsWithTermNames [ "term" ]
 
               let rendering = Rendering.renderContexts contexts
 

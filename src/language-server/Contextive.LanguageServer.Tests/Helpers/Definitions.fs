@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.Helpers.GlossaryFile
+module Contextive.LanguageServer.Tests.Helpers.SubGlossaryHelper
 
 open Contextive.Core.GlossaryFile
 

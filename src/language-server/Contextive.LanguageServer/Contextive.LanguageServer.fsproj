@@ -39,10 +39,10 @@
         <Compile Include="PathResolver.fs" />
         <Compile Include="Tokeniser.fs" />
         <Compile Include="SubGlossary.fs" />
-        <Compile Include="DefinitionsSet.fs" />
         <Compile Include="GlossaryFileInitializer.fs" />
         <Compile Include="Configuration.fs" />
         <Compile Include="DefaultGlossaryFileProvider.fs" />
+        <Compile Include="Glossary.fs" />
         <Compile Include="WatchedFiles.fs" />        
         <Compile Include="TextDocument.fs" />
         <Compile Include="Hover.fs" />

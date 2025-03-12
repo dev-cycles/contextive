@@ -42,9 +42,9 @@ let tests =
                   let glossaryFilePath = getFileName subGlossaryFilename
                   let workspaceFolder = Some ""
                   let configGetter = (fun _ -> async.Return <| Option.map configuredPath glossaryFilePath)
-                  let! glossaryFile = getSubGlossary configGetter workspaceFolder
-                  let! contexts = SubGlossary.find glossaryFile termFileUri id
-                  return contexts |> GlossaryFile.FindResult.allTerms
+                  let! subGlossary = getSubGlossary configGetter workspaceFolder
+                  let! contexts = SubGlossary.find subGlossary termFileUri id
+                  return contexts |> SubGlossaryHelper.FindResult.allTerms
               }
 
           let getTermsFromSubGlossary = getTermsFromSubGlossaryInContext ""
@@ -135,18 +135,18 @@ let tests =
 
                   let onErrorLoading = fun msg -> ConditionAwaiter.received errorMessageAwaiter msg
 
-                  let! glossaryFile = getSubGlossaryWithErrorHandler onErrorLoading configGetter workspaceFolder
-                  let! termsWhenInvalid = SubGlossary.find glossaryFile "" id
+                  let! subGlossary = getSubGlossaryWithErrorHandler onErrorLoading configGetter workspaceFolder
+                  let! termsWhenInvalid = SubGlossary.find subGlossary "" id
 
                   let! errorMessage = ConditionAwaiter.waitForAny errorMessageAwaiter
                   test <@ errorMessage.Value = expectedErrorMessage @>
                   test <@ Seq.length termsWhenInvalid = 0 @>
 
                   path <- getFileName "one"
-                  (SubGlossary.loader glossaryFile) ()
+                  (SubGlossary.loader subGlossary) ()
 
-                  let! contexts = SubGlossary.find glossaryFile "" id
-                  let foundNames = contexts |> GlossaryFile.FindResult.allTerms |> Seq.map getName
+                  let! contexts = SubGlossary.find subGlossary "" id
+                  let foundNames = contexts |> SubGlossaryHelper.FindResult.allTerms |> Seq.map getName
 
                   test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>
               }
