@@ -38,7 +38,7 @@
         <Compile Include="FileReader.fs" />
         <Compile Include="PathResolver.fs" />
         <Compile Include="Tokeniser.fs" />
-        <Compile Include="GlossaryFile.fs" />
+        <Compile Include="SubGlossary.fs" />
         <Compile Include="DefinitionsSet.fs" />
         <Compile Include="GlossaryFileInitializer.fs" />
         <Compile Include="Configuration.fs" />

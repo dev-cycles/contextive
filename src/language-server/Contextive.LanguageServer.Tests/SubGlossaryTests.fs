@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.GlossaryFileTests
+module Contextive.LanguageServer.Tests.SubGlossaryTests
 
 open Expecto
 open Swensen.Unquote
@@ -12,53 +12,53 @@ open Contextive.LanguageServer.Tests.Helpers
 [<Tests>]
 let tests =
     testList
-        "LanguageServer.GlossaryFile Tests"
+        "LanguageServer.SubGlossary Tests"
         [
 
           let getName (t: GlossaryFile.Term) = t.Name
 
-          let getGlossaryFileWithErrorHandler onErrorAction configGetter workspaceFolder =
+          let getSubGlossaryWithErrorHandler onErrorAction configGetter workspaceFolder =
               async {
-                  let glossaryFile = GlossaryFile.create ()
+                  let subGlossary = SubGlossary.create ()
 
                   let glossaryFileReader =
                       PathResolver.resolvePath workspaceFolder
                       |> Configuration.resolvedPathGetter configGetter
                       |> FileReader.reader
 
-                  GlossaryFile.init glossaryFile (fun _ -> ()) glossaryFileReader None onErrorAction
-                  (GlossaryFile.loader glossaryFile) ()
-                  return glossaryFile
+                  SubGlossary.init subGlossary (fun _ -> ()) glossaryFileReader None onErrorAction
+                  (SubGlossary.loader subGlossary) ()
+                  return subGlossary
               }
 
-          let getGlossaryFile = getGlossaryFileWithErrorHandler (fun _ -> ())
+          let getSubGlossary = getSubGlossaryWithErrorHandler (fun _ -> ())
 
           let getFileName glossaryFileName =
               Path.Combine("fixtures", "completion_tests", $"{glossaryFileName}.yml")
               |> Some
 
-          let getTermsFromFileInContext termFileUri glossaryFileName =
+          let getTermsFromSubGlossaryInContext termFileUri subGlossaryFilename =
               async {
-                  let glossaryFilePath = getFileName glossaryFileName
+                  let glossaryFilePath = getFileName subGlossaryFilename
                   let workspaceFolder = Some ""
                   let configGetter = (fun _ -> async.Return <| Option.map configuredPath glossaryFilePath)
-                  let! glossaryFile = getGlossaryFile configGetter workspaceFolder
-                  let! contexts = GlossaryFile.find glossaryFile termFileUri id
+                  let! glossaryFile = getSubGlossary configGetter workspaceFolder
+                  let! contexts = SubGlossary.find glossaryFile termFileUri id
                   return contexts |> GlossaryFile.FindResult.allTerms
               }
 
-          let getTermsFromFile = getTermsFromFileInContext ""
+          let getTermsFromSubGlossary = getTermsFromSubGlossaryInContext ""
 
           let compareList = Seq.compareWith compare
 
           testAsync "Can load term Names" {
-              let! terms = getTermsFromFile "one"
+              let! terms = getTermsFromSubGlossary "one"
               let foundNames = terms |> Seq.map getName
               test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>
           }
 
           testAsync "Can load term Definitions" {
-              let! terms = getTermsFromFile "one"
+              let! terms = getTermsFromSubGlossary "one"
               let foundDefinitions = terms |> Seq.map (fun t -> t.Definition) |> Seq.choose id
 
               let expectedDefinitions =
@@ -70,7 +70,7 @@ let tests =
           }
 
           testAsync "Can load term UsageExamples" {
-              let! terms = getTermsFromFile "one"
+              let! terms = getTermsFromSubGlossary "one"
 
               let foundDefinitions =
                   terms
@@ -88,7 +88,7 @@ let tests =
           }
 
           testAsync "Can load multi-context definitions" {
-              let! terms = getTermsFromFileInContext "/primary/secondary/test.txt" "multi" // Path contains both context's globs
+              let! terms = getTermsFromSubGlossaryInContext "/primary/secondary/test.txt" "multi" // Path contains both context's globs
               let foundNames = terms |> Seq.map getName
               test <@ (foundNames, seq [ "termInPrimary"; "termInSecondary" ]) ||> compareList = 0 @>
           }
@@ -97,7 +97,7 @@ let tests =
               let pathName = path.Replace(".", "_dot_")
 
               testAsync $"with path {pathName}, expecting {expectedTerms}" {
-                  let! terms = getTermsFromFileInContext path "multi"
+                  let! terms = getTermsFromSubGlossaryInContext path "multi"
                   let foundNames = terms |> Seq.map getName
                   test <@ (foundNames, seq expectedTerms) ||> compareList = 0 @>
               }
@@ -135,17 +135,17 @@ let tests =
 
                   let onErrorLoading = fun msg -> ConditionAwaiter.received errorMessageAwaiter msg
 
-                  let! glossaryFile = getGlossaryFileWithErrorHandler onErrorLoading configGetter workspaceFolder
-                  let! termsWhenInvalid = GlossaryFile.find glossaryFile "" id
+                  let! glossaryFile = getSubGlossaryWithErrorHandler onErrorLoading configGetter workspaceFolder
+                  let! termsWhenInvalid = SubGlossary.find glossaryFile "" id
 
                   let! errorMessage = ConditionAwaiter.waitForAny errorMessageAwaiter
                   test <@ errorMessage.Value = expectedErrorMessage @>
                   test <@ Seq.length termsWhenInvalid = 0 @>
 
                   path <- getFileName "one"
-                  (GlossaryFile.loader glossaryFile) ()
+                  (SubGlossary.loader glossaryFile) ()
 
-                  let! contexts = GlossaryFile.find glossaryFile "" id
+                  let! contexts = SubGlossary.find glossaryFile "" id
                   let foundNames = contexts |> GlossaryFile.FindResult.allTerms |> Seq.map getName
 
                   test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>

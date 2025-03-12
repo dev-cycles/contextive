@@ -22,12 +22,12 @@ let version =
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
         .InformationalVersion
 
-let private onStartupConfigureServer (glossaryFile : GlossaryFile.T) =
+let private onStartupConfigureServer (glossaryFile : SubGlossary.T) =
     OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
         async {
             s.Window.LogInfo $"Starting {name} v{version}..."
 
-            let glossaryFileLoader = GlossaryFile.loader glossaryFile
+            let glossaryFileLoader = SubGlossary.loader glossaryFile
 
             let registerWatchedFiles = Some <| WatchedFiles.register s glossaryFileLoader
 
@@ -39,7 +39,7 @@ let private onStartupConfigureServer (glossaryFile : GlossaryFile.T) =
 
             let! glossaryFileReader = DefaultGlossaryFileProvider.getDefaultGlossaryFileReader s
 
-            GlossaryFile.init
+            SubGlossary.init
                 glossaryFile
                 (fun m ->
                     s.Window.Log(m)
@@ -56,7 +56,7 @@ let private onStartupConfigureServer (glossaryFile : GlossaryFile.T) =
 
 
 let private configureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
-    let definitions = GlossaryFile.create ()
+    let definitions = SubGlossary.create ()
 
     opts
         .WithInput(input)
@@ -72,12 +72,12 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
             |> ignore)
         .WithServerInfo(ServerInfo(Name = name, Version = version))
 
-        .OnDidChangeConfiguration(Configuration.handler <| GlossaryFile.loader definitions)
+        .OnDidChangeConfiguration(Configuration.handler <| SubGlossary.loader definitions)
         .OnCompletion(
-            Completion.handler <| GlossaryFile.find definitions <| TextDocument.findToken,
+            Completion.handler <| SubGlossary.find definitions <| TextDocument.findToken,
             Completion.registrationOptions
         )
-        .OnHover(Hover.handler <| GlossaryFile.find definitions <| TextDocument.findToken, Hover.registrationOptions)
+        .OnHover(Hover.handler <| SubGlossary.find definitions <| TextDocument.findToken, Hover.registrationOptions)
 
     |> TextDocument.onSync
 

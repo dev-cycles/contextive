@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.GlossaryFile
+module Contextive.LanguageServer.SubGlossary
 
 open DotNet.Globbing
 
@@ -14,7 +14,7 @@ type private State =
     { WorkspaceFolder: string option
       Logger: (string -> unit)
       GlossaryFilePath: string option
-      Glossary: GlossaryFile
+      GlossaryFile: GlossaryFile
       FileLoader: FileLoader
       RegisterWatchedFile: (string option -> Unregisterer) option
       UnregisterLastWatchedFile: Unregisterer option
@@ -25,7 +25,7 @@ type private State =
           Logger = fun _ -> ()
           GlossaryFilePath = None
           FileLoader = fun _ -> async.Return <| Error(NotYetLoaded)
-          Glossary = GlossaryFile.Default
+          GlossaryFile = GlossaryFile.Default
           RegisterWatchedFile = None
           UnregisterLastWatchedFile = None
           OnErrorLoading = fun _ -> () }
@@ -103,7 +103,7 @@ module private Handle =
                 match defs with
                 | Ok defs ->
                     state.Logger "Successfully loaded."
-                    { state with Glossary = defs }
+                    { state with GlossaryFile = defs }
                 | Error fileError ->
                     match fileError with
                     | DefaultFileNotFound ->
@@ -115,7 +115,7 @@ module private Handle =
                         state.OnErrorLoading msg
 
                     { state with
-                        Glossary = GlossaryFile.Default }
+                        GlossaryFile = GlossaryFile.Default }
 
             return updateFileWatchers newState file
         }
@@ -142,7 +142,7 @@ module private Handle =
         let matchOpenFileUri = matchGlobs findMsg.OpenFileUri
 
         let foundContexts =
-            state.Glossary.Contexts |> Seq.filter matchOpenFileUri |> findMsg.Filter
+            state.GlossaryFile.Contexts |> Seq.filter matchOpenFileUri |> findMsg.Filter
 
         findMsg.ReplyChannel.Reply foundContexts
         state
@@ -176,19 +176,19 @@ let create () =
 
         loop <| State.Initial())
 
-let init (glossaryFileManager: MailboxProcessor<Message>) logger fileReader registerWatchedFile onErrorLoading =
+let init (subGlossaryManager: MailboxProcessor<Message>) logger fileReader registerWatchedFile onErrorLoading =
     Init(
         { Logger = logger
           FileReader = fileReader
           RegisterWatchedFile = registerWatchedFile
           OnErrorLoading = onErrorLoading }
     )
-    |> glossaryFileManager.Post
+    |> subGlossaryManager.Post
 
-let loader (glossaryFileManager: MailboxProcessor<Message>) =
-    fun () -> Load |> glossaryFileManager.Post
+let loader (subGlossaryManager: MailboxProcessor<Message>) =
+    fun () -> Load |> subGlossaryManager.Post
 
-let find (glossaryFileManager: MailboxProcessor<Message>) (openFileUri: string) (filter: Filter) =
+let find (subGlossaryManager: MailboxProcessor<Message>) (openFileUri: string) (filter: Filter) =
     let msgBuilder =
         fun rc ->
             Find(
@@ -197,4 +197,4 @@ let find (glossaryFileManager: MailboxProcessor<Message>) (openFileUri: string) 
                   ReplyChannel = rc }
             )
 
-    glossaryFileManager.PostAndAsyncReply(msgBuilder, 1000)
+    subGlossaryManager.PostAndAsyncReply(msgBuilder, 1000)
