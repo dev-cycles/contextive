@@ -4,7 +4,27 @@
     ],
     "plugins": [
         "@semantic-release/commit-analyzer",
-        "@semantic-release/release-notes-generator",
+        [
+            "@semantic-release/release-notes-generator",
+            {
+                "preset": "conventionalcommits",
+                "writerOpts": {
+                    "headerPartial": "{{#if isPatch~}}  ## ⚡ {{~else~}}  # 🚀 {{~/if}} [{{version}}](https://github.com/dev-cycles/contextive/releases/tag/v{{version}}) {{~#if title}} \"{{title}}\"{{~/if}}{{~#if date}} ({{date}}){{/if}}\n\n[📘 Docs](https://docs.contextive.tech/ide/v/{{version}}) | [⚖️ Compare with {{previousTag}}](https://github.com/dev-cycles/contextive/compare/{{previousTag}}...{{currentTag}})"
+                },
+                "presetConfig": {
+                    "types": [
+                        {
+                            "type": "feat",
+                            "section": "🌟 Features"
+                        },
+                        {
+                            "type": "fix",
+                            "section": "🐛 Bug Fixes"
+                        }
+                    ]
+                }
+            }
+        ],
         [
             "@semantic-release/changelog",
             {
