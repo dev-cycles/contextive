@@ -52,6 +52,8 @@ type Message =
     | Load
     | Find of FindPayload
 
+type T = MailboxProcessor<Message>
+
 let private loadFile (state: State) (file: Result<File, FileError>) =
     match file with
     | Error(e) -> Error(e)

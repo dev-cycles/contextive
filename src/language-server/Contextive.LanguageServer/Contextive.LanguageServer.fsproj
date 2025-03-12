@@ -23,33 +23,35 @@
         <DebuggerSupport>false</DebuggerSupport>
     </PropertyGroup>
     <ItemGroup>
-        <TrimmerRootAssembly Include="OmniSharp.Extensions.LanguageServer"/>
-        <TrimmerRootAssembly Include="OmniSharp.Extensions.JsonRpc"/>
-        <TrimmerRootAssembly Include="OmniSharp.Extensions.LanguageProtocol"/>
-        <TrimmerRootAssembly Include="OmniSharp.Extensions.LanguageServer.Shared"/>
-        <TrimmerRootAssembly Include="Newtonsoft.Json"/>
-        <TrimmerRootAssembly Include="MediatR"/>
-        <TrimmerRootAssembly Include="Contextive.Core"/>
-        <TrimmerRootAssembly Include="FSharp.Core"/>
+        <TrimmerRootAssembly Include="OmniSharp.Extensions.LanguageServer" />
+        <TrimmerRootAssembly Include="OmniSharp.Extensions.JsonRpc" />
+        <TrimmerRootAssembly Include="OmniSharp.Extensions.LanguageProtocol" />
+        <TrimmerRootAssembly Include="OmniSharp.Extensions.LanguageServer.Shared" />
+        <TrimmerRootAssembly Include="Newtonsoft.Json" />
+        <TrimmerRootAssembly Include="MediatR" />
+        <TrimmerRootAssembly Include="Contextive.Core" />
+        <TrimmerRootAssembly Include="FSharp.Core" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Seq.fs"/>
-        <Compile Include="Rendering.fs"/>
-        <Compile Include="FileLoader.fs"/>
-        <Compile Include="PathResolver.fs"/>
-        <Compile Include="Tokeniser.fs"/>
-        <Compile Include="Definitions.fs"/>
-        <Compile Include="DefinitionsInitializer.fs"/>
-        <Compile Include="WatchedFiles.fs"/>
-        <Compile Include="Configuration.fs"/>
-        <Compile Include="TextDocument.fs"/>
-        <Compile Include="Hover.fs"/>
-        <Compile Include="Completion.fs"/>
-        <Compile Include="Server.fs"/>
-        <Compile Include="Program.fs"/>
+        <Compile Include="Seq.fs" />        
+        <Compile Include="Rendering.fs" />
+        <Compile Include="FileLoader.fs" />
+        <Compile Include="PathResolver.fs" />
+        <Compile Include="Tokeniser.fs" />
+        <Compile Include="Definitions.fs" />
+        <Compile Include="DefinitionsSet.fs" />
+        <Compile Include="DefinitionsInitializer.fs" />
+        <Compile Include="Configuration.fs" />
+        <Compile Include="DefaultDefinitionsProvider.fs" />
+        <Compile Include="WatchedFiles.fs" />        
+        <Compile Include="TextDocument.fs" />
+        <Compile Include="Hover.fs" />
+        <Compile Include="Completion.fs" />
+        <Compile Include="Server.fs" />
+        <Compile Include="Program.fs" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\core\Contextive.Core\Contextive.Core.fsproj"/>
+        <ProjectReference Include="..\..\core\Contextive.Core\Contextive.Core.fsproj" />
     </ItemGroup>
-    <Import Project="..\..\.paket\Paket.Restore.targets"/>
+    <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
