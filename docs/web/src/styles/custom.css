@@ -4,8 +4,14 @@
 	--sl-font: 'Atkinson Hyperlegible';
 }
 
-h1 {
-	font-family: 'Forrest'
+h1,
+h2,
+h3 {
+	font-family: 'Forrest';
+}
+
+:root {
+	--sl-content-width: 70rem;
 }
 
 /* See  https://starlight.astro.build/guides/css-and-tailwind/#color-theme-editor */
@@ -54,5 +60,23 @@ h1 {
 
 	span.version {
 		font-weight: bold;
+	}
+}
+
+:root {
+	--sl-text-h1: var(--sl-text-3xl);
+	--sl-text-h2: var(--sl-text-2xl);
+	--sl-text-h3: var(--sl-text-xl);
+	--sl-text-h4: var(--sl-text-lg);
+	--sl-text-h5: var(--sl-text-base);
+}
+
+@media (min-width:50em) {
+	:root {
+		--sl-text-h1: var(--sl-text-4xl);
+		--sl-text-h2: var(--sl-text-3xl);
+		--sl-text-h3: var(--sl-text-2xl);
+		--sl-text-h4: var(--sl-text-xl);
+		--sl-text-h5: var(--sl-text-lg);
 	}
 }

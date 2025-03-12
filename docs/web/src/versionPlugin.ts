@@ -26,7 +26,7 @@ const versionBannerMiddleware = defineRouteMiddleware(context => {
         entry.data.hero?.actions.push({
             text: release_label,
             ...release_link,
-            variant: 'secondary',
+            variant: 'minimal',
             icon: { type: 'icon', name: 'github' }
         })
     }
