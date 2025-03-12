@@ -13,37 +13,37 @@ It should help new team members get up to speed more quickly in understanding do
 > 
 > The main issue for most use cases is that the extension doesn't work when opening a solution file, only when opening a folder.  See [Issue #75](https://github.com/dev-cycles/contextive/issues/75) for details.
 >
-> See [known issues](https://github.com/dev-cycles/contextive/blob/v1.14.0/src/visualstudio/contextive/contextive/README.md#known-issues) for others.
+> See [known issues](https://github.com/dev-cycles/contextive/blob/v1.14.1/src/visualstudio/contextive/contextive/README.md#known-issues) for others.
 
 ## Installation
 
-See [Visual Studio Instructions](https://docs.contextive.tech/ide/v/1.14.0/guides/installation/#visual-studio-2022).
+See [Visual Studio Instructions](https://docs.contextive.tech/ide/v/1.14.1/guides/installation/#visual-studio-2022).
 
 ## Getting Started
 
 Create a folder in your project root called `.contextive`.  Create a file in that folder called `definitions.yml`.
 
-Start defining your definitions following the schema specified in our [usage guide](https://docs.contextive.tech/ide/v/1.14.0/guides/usage/). You might like to start by copying our [default definitions](https://github.com/dev-cycles/contextive/blob/v1.14.0/src/language-server/Contextive.LanguageServer.Tests/DefinitionsInitializationTests.Default%20Definitions.verified.txt) file that defines the terms used in the definitions file itself.
+Start defining your definitions following the schema specified in our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/). You might like to start by copying our [default definitions](https://github.com/dev-cycles/contextive/blob/v1.14.1/src/language-server/Contextive.LanguageServer.Tests/DefinitionsInitializationTests.Default%20Definitions.verified.txt) file that defines the terms used in the definitions file itself.
 
 ## Usage Guide
 
-See our [usage guide](https://docs.contextive.tech/ide/v/1.14.0/guides/usage/) for details on the definitions file format and available options. 
+See our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/) for details on the definitions file format and available options. 
 
 ## Features
 
 * Initialize your Contextive Definitions
-* [Auto-complete](https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#smart-auto-complete) from your Contextive Definitions
+* [Auto-complete](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#smart-auto-complete) from your Contextive Definitions
   * Shows definitions in auto-complete details
 * Hover to show definitions from your Contextive Definitions
-  * Hover over elements with [suffixes & prefixes](https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#suffixes-and-prefixes)
-  * Hover over usage of [multiple terms](https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
-  * Hover over [multi-word](https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#multi-word-terms) terms
-  * Hover over [plural](https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#plural-words) of defined terms
-  * Hover over [aliases](https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#term-aliases) of defined terms
+  * Hover over elements with [suffixes & prefixes](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#suffixes-and-prefixes)
+  * Hover over usage of [multiple terms](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
+  * Hover over [multi-word](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multi-word-terms) terms
+  * Hover over [plural](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#plural-words) of defined terms
+  * Hover over [aliases](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#term-aliases) of defined terms
 * Supported Repository Layouts:
-  * A [repository per context](https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#multiple-bounded-contexts-repository-per-context)
-  * [Multiple contexts in the same repository](https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#multiple-bounded-contexts-single-repository-single-root-monorepo) (monorepo) (identified by path globs)
-  * Context distributed over [multiple repositories](https://docs.contextive.tech/ide/v/1.14.0/guides/usage/#single-bounded-context-multiple-repositories) ([#36](https://github.com/dev-cycles/contextive/issues/36))
+  * A [repository per context](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multiple-bounded-contexts-repository-per-context)
+  * [Multiple contexts in the same repository](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multiple-bounded-contexts-single-repository-single-root-monorepo) (monorepo) (identified by path globs)
+  * Context distributed over [multiple repositories](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#single-bounded-context-multiple-repositories) ([#36](https://github.com/dev-cycles/contextive/issues/36))
 
 ### Coming Soon
 
