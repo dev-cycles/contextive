@@ -36,39 +36,52 @@ let ErrorMessages =
         (Fs)
             "Workflow run for hash '%s' is still '%s'. Wait for it to complete successfully before releasing. See %s for details." |}
 
-let ghRunListCmd hash =
+let ghRunListCmd workflowName hash  =
     sprintf
-        """gh run list -w Contextive --json databaseId,conclusion,displayTitle,status,headSha,url -q '[.[]|select(.headSha=="%s")][0]'"""
-        hash
+        """gh run list -w '%s' --json databaseId,conclusion,displayTitle,status,headSha,url -q '[.[]|select(.headSha=="%s")][0]'"""
+        workflowName hash
 
 let tryParseGitHubRun hash (json: string) =    
     try
         if json.Trim() = "" then
-            Error(sprintf ErrorMessages.NoRunFound hash)
+            Ok(None)
         else
-            Ok(GitHubRun.Parse(json))
+            Ok(Some <| GitHubRun.Parse(json))
     with e ->
         Error(sprintf ErrorMessages.ParsingError hash (e))
     |> AsyncResult.ofResult
 
 let checkConclusion hash =
     function
-    | (ghRun: GitHubRun.Root) when ghRun.Status <> "completed" ->
-        sprintf ErrorMessages.InProgressRun hash ghRun.Status ghRun.Url |> ghError
-    | ghRun when ghRun.Conclusion = "success" -> Ok(ghRun)
-    | ghRun -> sprintf ErrorMessages.FailedRun hash ghRun.Conclusion ghRun.Url |> ghError
+    | Some(ghRun: GitHubRun.Root) when ghRun.Status <> "completed" ->
+        sprintf ErrorMessages.InProgressRun hash ghRun.Status ghRun.Url |> Error
+    | Some(ghRun) when ghRun.Conclusion = "success" -> Ok(Some ghRun)
+    | Some(ghRun) -> sprintf ErrorMessages.FailedRun hash ghRun.Conclusion ghRun.Url |> Error    
+    | None -> Ok(None)
     >> AsyncResult.ofResult
 
-let getRunForHash hash ctx =
-    hash |> ghRunListCmd |> runBashCaptureOutput <| ctx
+let getRunForHash hash workflowName  ctx =
+    hash |> ghRunListCmd workflowName |> runBashCaptureOutput <| ctx
 
 let logSuccess (ghRun: GitHubRun.Root) =
     printfn "::notice ::See %s for the Workflow Run used to validate this release." ghRun.Url
     Ok() |> AsyncResult.ofResult
 
-let checkReleaseStatus (ctx: Internal.StageContext) =
+let checkReleaseStatus (ctx: Internal.StageContext) = async {
     let hash = ctx.GetEnvVar(args.headSha.Name)
-    getRunForHash hash ctx >>= (tryParseGitHubRun hash) >>= (checkConclusion hash) >>= logSuccess
+    let! contextiveRun = getRunForHash hash "Contextive" ctx >>= tryParseGitHubRun hash >>= checkConclusion hash
+    let! contextiveDocsRun = getRunForHash hash "Contextive Docs" ctx >>= (tryParseGitHubRun hash) >>= (checkConclusion hash)
+       
+    // If either ended in error, log an error.
+    // If neither has a build at all, log the no run found error
+    // If either passed and the other is either norun or also a pass, then go ahead.
+    return!
+        match contextiveRun, contextiveDocsRun with
+        | Error(msg), _ | _, Error(msg) -> ghError msg
+        | Ok(None), Ok(None) -> sprintf ErrorMessages.NoRunFound hash |> ghError
+        | Ok(Some(ghRun)), Ok(_) | Ok(_), Ok(Some(ghRun)) -> Ok(ghRun)        
+        |> Async.singleton
+        |> AsyncResult.bind logSuccess}
 
 pipeline "Contextive Release" {
     noPrefixForStep
