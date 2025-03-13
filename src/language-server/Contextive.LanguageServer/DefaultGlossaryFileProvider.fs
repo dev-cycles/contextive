@@ -13,7 +13,7 @@ let private pathKey = "path"
 [<Literal>]
 let private defaultContextiveGlossaryFilePath = ".contextive/definitions.yml"
 
-let private getConfig (s: ILanguageServer) section key =
+let private getConfigValue (s: ILanguageServer) section key =
     async {
         Log.Logger.Information $"Getting {section} {key} config..."
 
@@ -64,7 +64,7 @@ let initGlossaryFileInitializer (s: ILanguageServer) pathGetter =
     GlossaryFileInitializer.registerHandler s pathGetter showDocument
 
 let getDefaultGlossaryFileReader (s: ILanguageServer) = async {
-    let configGetter () = getConfig s ConfigSection pathKey
+    let configGetter () = getConfigValue s ConfigSection pathKey
     // Not sure if this is needed to ensure configuration is loaded, or allow a task/context switch
     // Either way, if it's not here, then getWorkspaceFolder returns null
     let! _ = configGetter ()

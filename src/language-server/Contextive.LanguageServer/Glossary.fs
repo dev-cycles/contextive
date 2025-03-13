@@ -9,7 +9,11 @@ let create = SubGlossary.create
 
 let init = SubGlossary.init
 
-let reloader = SubGlossary.loader
+// will trigger an update the default glossary
+let onDefaultGlossaryFileLocationChanged = SubGlossary.loader
+
+// will identify which glossary has changed and reload it
+let onGlossaryFileChanged = SubGlossary.loader
 
 let find = SubGlossary.find
 

@@ -26,28 +26,31 @@ let private onStartupConfigureServer (glossary : Glossary.T) =
         async {
             s.Window.LogInfo $"Starting {name} v{version}..."
 
-            let glossaryReloader = Glossary.reloader glossary
+            let onGlossaryFileChangedHandler = Glossary.onGlossaryFileChanged glossary
 
-            let registerWatchedFiles = Some <| WatchedFiles.register s glossaryReloader
+            let registerFileWatcher = Some <| WatchedFiles.register s onGlossaryFileChangedHandler
 
             let showWarning =
                 if s.Window.ClientSettings.Capabilities.Window.ShowMessage.IsSupported then
                     s.Window.ShowWarning
                 else
                     fun _ -> ()
+                    
+            let logger = 
+                fun (m:string) ->
+                    s.Window.Log(m)
+                    Serilog.Log.Logger.Information(m)
 
             let! glossaryFileReader = DefaultGlossaryFileProvider.getDefaultGlossaryFileReader s
 
             Glossary.init
                 glossary
-                (fun m ->
-                    s.Window.Log(m)
-                    Serilog.Log.Logger.Information(m))
+                logger
                 glossaryFileReader
-                registerWatchedFiles
+                registerFileWatcher
                 showWarning
 
-            glossaryReloader ()
+            onGlossaryFileChangedHandler ()
 
         }
         |> Async.StartAsTask
@@ -71,7 +74,7 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
             |> ignore)
         .WithServerInfo(ServerInfo(Name = name, Version = version))
 
-        .OnDidChangeConfiguration(Configuration.handler <| Glossary.reloader glossary)
+        .OnDidChangeConfiguration(Configuration.handler <| Glossary.onDefaultGlossaryFileLocationChanged glossary)
         .OnCompletion(
             Completion.handler <| Glossary.find glossary <| TextDocument.findToken,
             Completion.registrationOptions

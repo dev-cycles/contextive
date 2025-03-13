@@ -7,7 +7,7 @@ open Contextive.Core.GlossaryFile
 
 type FileLoader = unit -> Async<Result<File, FileError>>
 
-type Reloader = unit -> unit
+type OnChangedHandler = unit -> unit
 type Unregisterer = unit -> unit
 
 type private State =
