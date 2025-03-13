@@ -6,7 +6,12 @@ in
 pkgs.mkShellNoCC {
   packages = with pkgs; [
     dotnet-sdk_8
+    fantomas
   ];
+
+  DOTNET_ROOT = "${pkgs.dotnet-sdk_8}";
+  CONTEXTIVE_DEBUG=1;
+
   shellHook = ''
     pushd src
      dotnet tool restore
@@ -16,7 +21,5 @@ pkgs.mkShellNoCC {
     pushd src/vscode/contextive
      npm install
     popd
-
-    export CONTEXTIVE_DEBUG=1
   '';
 }
