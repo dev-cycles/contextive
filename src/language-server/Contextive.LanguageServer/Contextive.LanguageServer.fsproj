@@ -42,7 +42,7 @@
         <Compile Include="GlossaryFileInitializer.fs" />
         <Compile Include="Configuration.fs" />
         <Compile Include="DefaultGlossaryFileProvider.fs" />
-        <Compile Include="Glossary.fs" />
+        
         <Compile Include="WatchedFiles.fs" />        
         <Compile Include="TextDocument.fs" />
         <Compile Include="Hover.fs" />
