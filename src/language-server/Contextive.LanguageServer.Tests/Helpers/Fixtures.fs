@@ -18,6 +18,8 @@ module One =
               "third_term"
               "third-term" ]
 
+    let path = System.IO.Path.Combine("fixtures", "completion_tests", "one.yml")
+
 module Two =
     let expectedCompletionLabels =
         seq

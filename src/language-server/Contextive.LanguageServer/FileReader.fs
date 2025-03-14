@@ -11,6 +11,7 @@ let private tryReadFile (pathConfig: PathConfiguration) =
             match pathConfig with
             | { IsDefault = true } -> DefaultFileNotFound
             | { IsDefault = false } -> FileNotFound
+
         Error(fileError)
 
 let private readFromPath path =
@@ -27,3 +28,9 @@ let reader pathGetter =
             let! absolutePath = pathGetter ()
             return readFromPath absolutePath
         }
+
+let pathReader (path: string) =
+    { Path = path; IsDefault = false }
+    |> Ok
+    |> readFromPath
+    |> Result.bind (fun r -> r.Contents)

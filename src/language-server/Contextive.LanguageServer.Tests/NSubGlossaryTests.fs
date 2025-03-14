@@ -15,6 +15,10 @@ let tests =
         """contexts:
   - terms:"""
 
+    let getName (t: Contextive.Core.GlossaryFile.Term) = t.Name
+    let compareList = Seq.compareWith compare
+
+
     testList
         "LanguageServer.SubGlossary Tests"
         [ testAsync "When starting a subglossary it should read the file at the provided path" {
@@ -100,5 +104,19 @@ let tests =
               test <@ result.Count() = 1 @>
               test <@ (terms |> Seq.head).Name = "subGlossary1" @>
           }
+
+          testList
+              "Integration"
+              [ testAsync "SubGlossary can collaborate with FileReader" {
+                    let subGlossary =
+                        NSubGlossary.create FileReader.pathReader Helpers.Fixtures.One.path
+
+                    let! result = NSubGlossary.lookup subGlossary id
+                    let terms = FindResult.allTerms result
+
+                    let foundNames = terms |> Seq.map getName
+                    test <@ (foundNames, Helpers.Fixtures.One.expectedTerms) ||> compareList = 0 @>
+
+                } ]
 
           ]
