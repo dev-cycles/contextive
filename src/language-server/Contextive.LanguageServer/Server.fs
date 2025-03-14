@@ -56,13 +56,6 @@ let private onStartupConfigureServer (glossary: SubGlossary.T) =
 let private configureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
     let subGlossary = SubGlossary.create ()
 
-    let glossary =
-        Glossary.create
-        <| { FileScanner = fun _ -> []
-             SubGlossaryOps =
-               { Start = NSubGlossary.start FileReader.pathReader
-                 Reload = NSubGlossary.reload } }
-
     opts
         .WithInput(input)
         .WithOutput(output)
@@ -83,6 +76,57 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
             Completion.registrationOptions
         )
         .OnHover(Hover.handler <| SubGlossary.find subGlossary <| TextDocument.findToken, Hover.registrationOptions)
+
+    |> TextDocument.onSync
+
+    |> ignore
+
+let private nOnStartupConfigureServer (glossary: Glossary.T) =
+    OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
+        async {
+            s.Window.LogInfo $"Starting {name} v{version}..."
+
+            let! defaultSubGlossaryPathResolver = DefaultGlossaryFileProvider.getDefaultGlossaryFilePathResolver s
+
+            { Glossary.InitGlossary.DefaultSubGlossaryPathResolver = defaultSubGlossaryPathResolver
+              Glossary.InitGlossary.Log = { info = fun _ -> () }
+              Glossary.InitGlossary.RegisterWatchedFiles = WatchedFiles.nRegister s }
+            |> Glossary.init glossary
+
+            Glossary.reloadDefaultGlossaryFile glossary ()
+
+        }
+        |> Async.StartAsTask
+        :> Task)
+
+let private nConfigureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
+    let glossary =
+        Glossary.create
+        <| { FileScanner = fun _ -> []
+             SubGlossaryOps =
+               { Start = NSubGlossary.start FileReader.pathReader
+                 Reload = NSubGlossary.reload } }
+
+    opts
+        .WithInput(input)
+        .WithOutput(output)
+
+        .OnStarted(nOnStartupConfigureServer glossary)
+        .WithConfigurationSection(DefaultGlossaryFileProvider.ConfigSection) // Add back in when implementing didConfigurationChanged handling
+        .ConfigureLogging(fun z ->
+            z
+                .AddLanguageProtocolLogging()
+                .AddSerilog(Log.Logger)
+                .SetMinimumLevel(LogLevel.Trace)
+            |> ignore)
+        .WithServerInfo(ServerInfo(Name = name, Version = version))
+
+        .OnDidChangeConfiguration(Configuration.handler <| Glossary.reloadDefaultGlossaryFile glossary)
+        .OnCompletion(
+            Completion.handler <| Glossary.lookup glossary <| TextDocument.findToken,
+            Completion.registrationOptions
+        )
+        .OnHover(Hover.handler <| Glossary.lookup glossary <| TextDocument.findToken, Hover.registrationOptions)
 
     |> TextDocument.onSync
 

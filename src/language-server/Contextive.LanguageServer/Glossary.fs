@@ -28,16 +28,16 @@ type CreateGlossary =
 // InitGlossary with dynamic dependencies that rely on the language server having already started
 type InitGlossary =
     { Log: Logger
-      RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string -> DeRegisterWatch
-      DefaultGlossaryPathResolver: unit -> string option }
+      RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string option -> DeRegisterWatch
+      DefaultSubGlossaryPathResolver: unit -> Async<string option> }
 
 type State =
-    { RegisterWatchedFiles: string -> DeRegisterWatch
+    { RegisterWatchedFiles: string option -> DeRegisterWatch
       SubGlossaries: Map<string, NSubGlossary.T>
       SubGlossaryOps: SubGlossaryOperations
-      DefaultGlossaryPathResolver: unit -> string option
+      DefaultSubGlossaryPathResolver: unit -> Async<string option>
       DefaultSubGlossary: NSubGlossary.T option
-      DeRegisterDefaultGlossaryFileWatcher: DeRegisterWatch option }
+      DeRegisterDefaultSubGlossaryFileWatcher: DeRegisterWatch option }
 
 type Lookup =
     { Filter: Filter
@@ -67,21 +67,22 @@ module private Handlers =
             { RegisterWatchedFiles = fun _ -> fun () -> ()
               SubGlossaries = Map []
               SubGlossaryOps = createGlossary.SubGlossaryOps
-              DefaultGlossaryPathResolver = fun _ -> None
+              DefaultSubGlossaryPathResolver = fun _ -> async.Return None
               DefaultSubGlossary = None
-              DeRegisterDefaultGlossaryFileWatcher = None }
+              DeRegisterDefaultSubGlossaryFileWatcher = None }
 
         state
 
     let init (state: State) (initGlossary: InitGlossary) (watchedFileshandlers: OnWatchedFilesEventHandlers) =
         let state =
             { state with
-                DefaultGlossaryPathResolver = initGlossary.DefaultGlossaryPathResolver
+                DefaultSubGlossaryPathResolver = initGlossary.DefaultSubGlossaryPathResolver
                 RegisterWatchedFiles = initGlossary.RegisterWatchedFiles watchedFileshandlers }
 
-        state.RegisterWatchedFiles GLOSSARY_FILE_GLOB |> ignore
+        Some GLOSSARY_FILE_GLOB |> state.RegisterWatchedFiles |> ignore
 
         state
+
 
     let watchedFileChanged (state: State) path =
         let subGlossary = state.SubGlossaries[path]
@@ -101,19 +102,23 @@ module private Handlers =
                 SubGlossaries = newSubGlossaries }
 
     let reloadDefaultGlossaryFile (state: State) =
+        async {
 
-        match state.DeRegisterDefaultGlossaryFileWatcher with
-        | Some deregister -> deregister ()
-        | _ -> ()
+            match state.DeRegisterDefaultSubGlossaryFileWatcher with
+            | Some deregister -> deregister ()
+            | _ -> ()
 
-        let path = state.DefaultGlossaryPathResolver().Value
+            let! pathOpt = state.DefaultSubGlossaryPathResolver()
+            let path = pathOpt.Value
 
-        let defaultSubGlossary = state.SubGlossaryOps.Start path
+            let defaultSubGlossary = state.SubGlossaryOps.Start path
 
-        { state with
-            DefaultSubGlossary = defaultSubGlossary |> Some
-            SubGlossaries = state.SubGlossaries.Add(path, defaultSubGlossary)
-            DeRegisterDefaultGlossaryFileWatcher = state.RegisterWatchedFiles path |> Some }
+            return
+                { state with
+                    DefaultSubGlossary = defaultSubGlossary |> Some
+                    SubGlossaries = state.SubGlossaries.Add(path, defaultSubGlossary)
+                    DeRegisterDefaultSubGlossaryFileWatcher = Some path |> state.RegisterWatchedFiles |> Some }
+        }
 
     let lookup (state: State) (lookup: Lookup) =
         async {
@@ -132,7 +137,7 @@ let private handleMessage (state: State) (msg: Message) =
             match msg with
             | Init(initGlossary, watchedFileHandlers) ->
                 Handlers.init state initGlossary watchedFileHandlers |> async.Return
-            | ReloadDefaultGlossaryFile -> Handlers.reloadDefaultGlossaryFile state |> async.Return
+            | ReloadDefaultGlossaryFile -> Handlers.reloadDefaultGlossaryFile state
             | WatchedFileCreated path -> Handlers.watchedFileCreated state path |> async.Return
             | WatchedFileChanged path -> Handlers.watchedFileChanged state path |> async.Return
             | Lookup lookup -> Handlers.lookup state lookup

@@ -31,3 +31,16 @@ let register (s: ILanguageServer) onChangedHandler fullPath =
             |> ignore)
 
     fun () -> registration.Dispose()
+
+
+let nHandler (watchedFileChangedHandlers: Glossary.OnWatchedFilesEventHandlers) (p: DidChangeWatchedFilesParams) _ _ =
+    //p.Changes |> Seq.head |> (fun s -> s.Type = Chan)
+    Task.CompletedTask
+
+let nRegister (s: ILanguageServer) (watchedFileChangedHandlers: Glossary.OnWatchedFilesEventHandlers) glob =
+    let registration =
+        s.Register(fun reg ->
+            reg.OnDidChangeWatchedFiles(nHandler watchedFileChangedHandlers, registrationOptions glob)
+            |> ignore)
+
+    fun () -> registration.Dispose()

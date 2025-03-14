@@ -35,7 +35,7 @@ let newCreateClossary () =
 
 let newInitGlossary () =
     { Glossary.Log = { info = noop1 }
-      Glossary.DefaultGlossaryPathResolver = fun _ -> None
+      Glossary.DefaultSubGlossaryPathResolver = fun _ -> async.Return None
       Glossary.RegisterWatchedFiles = fun _ _ -> noop }
 
 [<Literal>]
@@ -94,7 +94,7 @@ let tests =
                         { newInitGlossary () with
                             RegisterWatchedFiles = mockRegisterWatchedFiles }
 
-                    do! CA.expectMessage awaiter EXPECTED_GLOSSARY_FILE_GLOB
+                    do! CA.expectMessage awaiter <| Some EXPECTED_GLOSSARY_FILE_GLOB
                 }
 
                 ]
@@ -114,11 +114,11 @@ let tests =
                         glossary
                         { newInitGlossary () with
                             RegisterWatchedFiles = mockRegisterWatchedFiles
-                            DefaultGlossaryPathResolver = fun () -> Some "path" }
+                            DefaultSubGlossaryPathResolver = fun () -> async.Return <| Some "path" }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
-                    do! CA.expectMessage awaiter "path"
+                    do! CA.expectMessage awaiter <| Some "path"
                 }
 
                 testAsync "It should create a subglossary at the watched location" {
@@ -138,7 +138,7 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultGlossaryPathResolver = fun () -> Some "path1" }
+                            DefaultSubGlossaryPathResolver = fun () -> async.Return <| Some "path1" }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
@@ -157,7 +157,7 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultGlossaryPathResolver = fun () -> currentPath |> Some
+                            DefaultSubGlossaryPathResolver = fun () -> currentPath |> Some |> async.Return
                             RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
@@ -288,7 +288,7 @@ let tests =
                           Glossary.init
                               glossary
                               { newInitGlossary () with
-                                  DefaultGlossaryPathResolver = fun () -> "pathA" |> Some
+                                  DefaultSubGlossaryPathResolver = fun () -> "pathA" |> Some |> async.Return
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                           Glossary.reloadDefaultGlossaryFile glossary ()
@@ -337,7 +337,7 @@ let tests =
                           Glossary.init
                               glossary
                               { newInitGlossary () with
-                                  DefaultGlossaryPathResolver = fun () -> "pathA" |> Some
+                                  DefaultSubGlossaryPathResolver = fun () -> "pathA" |> Some|> async.Return
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                           Glossary.reloadDefaultGlossaryFile glossary ()
@@ -377,7 +377,7 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultGlossaryPathResolver = fun () -> Helpers.Fixtures.One.path |> Some }
+                            DefaultSubGlossaryPathResolver = fun () -> Helpers.Fixtures.One.path |> Some |> async.Return}
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
@@ -399,7 +399,7 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultGlossaryPathResolver = fun () -> Helpers.Fixtures.One.path |> Some }
+                            DefaultSubGlossaryPathResolver = fun () -> Helpers.Fixtures.One.path |> Some |> async.Return}
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
