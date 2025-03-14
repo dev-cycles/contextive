@@ -44,7 +44,9 @@ module Handlers =
 
                     fileContents
                     |> Result.bind deserialize
-                    |> Result.map (fun r -> { state with GlossaryFile = r })
+                    |> Result.map (fun r ->
+                        state.Log.info "Successfully loaded."
+                        { state with GlossaryFile = r })
                     |> Result.mapError (fun fileError ->
                         match fileError with
                         | DefaultFileNotFound ->
@@ -82,7 +84,7 @@ let private handleMessage (state: State) (msg: Message) =
     }
 
 
-let start fileReader (startSubGlossary: StartSubGlossary) : T =
+let start fileReader isDefault (startSubGlossary: StartSubGlossary) : T =
     let subGlossary =
         MailboxProcessor.Start(fun inbox ->
             let rec loop (state: State) =
@@ -96,7 +98,7 @@ let start fileReader (startSubGlossary: StartSubGlossary) : T =
 
             loop
             <| { State.Initial with
-                   FileReader = fileReader
+                   FileReader = fileReader isDefault
                    Path = None })
 
     Start startSubGlossary |> subGlossary.Post

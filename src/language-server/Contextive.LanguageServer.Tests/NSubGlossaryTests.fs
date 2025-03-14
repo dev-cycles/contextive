@@ -27,11 +27,11 @@ let tests =
         [ testAsync "When starting a subglossary it should read the file at the provided path" {
               let awaiter = CA.create ()
 
-              let fileReader p =
+              let fileReader _ p =
                   CA.received awaiter p
                   Ok(emptyGlossary)
 
-              let _ = NSubGlossary.start fileReader <| newStartSubGlossary "path1"
+              let _ = NSubGlossary.start fileReader false <| newStartSubGlossary "path1"
 
               do! CA.expectMessage awaiter "path1"
           }
@@ -39,11 +39,11 @@ let tests =
           testAsync "When starting a subglossary it should log the fact that it's loading the path" {
               let awaiter = CA.create ()
 
-              let fileReader _ = Ok emptyGlossary
+              let fileReader _ _ = Ok emptyGlossary
 
               { NSubGlossary.StartSubGlossary.Path = "path1"
                 NSubGlossary.StartSubGlossary.Log = { info = CA.received awaiter } }
-              |> NSubGlossary.start fileReader
+              |> NSubGlossary.start fileReader false
               |> ignore
 
 
@@ -53,11 +53,11 @@ let tests =
           testAsync "When reloading a subglossary it should read the file at the path provided when it was created" {
               let awaiter = CA.create ()
 
-              let fileReader p =
+              let fileReader _ p =
                   CA.received awaiter p
                   Ok(emptyGlossary)
 
-              let subGlossary = NSubGlossary.start fileReader <| newStartSubGlossary "path1"
+              let subGlossary = NSubGlossary.start fileReader false <| newStartSubGlossary "path1"
 
               do! CA.expectMessage awaiter "path1"
 
@@ -71,7 +71,7 @@ let tests =
           testAsync "When looking up a term in a subglossary it should return terms" {
               let awaiter = CA.create ()
 
-              let fileReader p =
+              let fileReader _ p =
                   CA.received awaiter p
 
                   """contexts:
@@ -79,7 +79,7 @@ let tests =
     - name: subGlossary1"""
                   |> Ok
 
-              let subGlossary = NSubGlossary.start fileReader <| newStartSubGlossary "path1"
+              let subGlossary = NSubGlossary.start fileReader false <| newStartSubGlossary "path1"
 
               let! result = NSubGlossary.lookup subGlossary id
 
@@ -102,11 +102,11 @@ let tests =
 
               let mutable fileResult = ErrorFileResult
 
-              let fileReader p =
+              let fileReader _ p =
                   CA.received awaiter p
                   fileResult
 
-              let subGlossary = NSubGlossary.start fileReader <| newStartSubGlossary "path1"
+              let subGlossary = NSubGlossary.start fileReader false <| newStartSubGlossary "path1"
 
               let! result = NSubGlossary.lookup subGlossary id
 
@@ -126,7 +126,7 @@ let tests =
               "Integration"
               [ testAsync "SubGlossary can collaborate with FileReader" {
                     let subGlossary =
-                        NSubGlossary.start FileReader.pathReader
+                        NSubGlossary.start FileReader.pathReader false
                         <| newStartSubGlossary Helpers.Fixtures.One.path
 
                     let! result = NSubGlossary.lookup subGlossary id

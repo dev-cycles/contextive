@@ -30,7 +30,7 @@ let noop1 _ = ()
 let newCreateClossary () =
     { Glossary.FileScanner = fun _ -> []
       Glossary.SubGlossaryOps =
-        { Start = fun _ -> noopMailboxProcessor ()
+        { Start = fun _ _ -> noopMailboxProcessor ()
           Reload = noop1 } }
 
 let newInitGlossary () =
@@ -65,7 +65,7 @@ let tests =
                         else
                             []
 
-                    let mockStartSubGlossary (path: NSubGlossary.StartSubGlossary) =
+                    let mockStartSubGlossary _ (path: NSubGlossary.StartSubGlossary) =
                         CA.received awaiter path.Path
                         noopMailboxProcessor ()
 
@@ -127,7 +127,7 @@ let tests =
                 testAsync "It should create a subglossary at the watched location" {
                     let awaiter = CA.create ()
 
-                    let mockStartSubGlossary (path: NSubGlossary.StartSubGlossary) =
+                    let mockStartSubGlossary _ (path: NSubGlossary.StartSubGlossary) =
                         CA.received awaiter path.Path
                         noopMailboxProcessor ()
 
@@ -206,7 +206,7 @@ let tests =
 
                           let subGlossaryCreatedAwaiter = CA.create ()
 
-                          let mockStartSubGlossary (path: NSubGlossary.StartSubGlossary) =
+                          let mockStartSubGlossary _ (path: NSubGlossary.StartSubGlossary) =
                               CA.received subGlossaryCreatedAwaiter path.Path
                               noopMailboxProcessor ()
 
@@ -245,7 +245,7 @@ let tests =
 
                           let subGlossary = noopMailboxProcessor ()
 
-                          let mockStartSubGlossary path = subGlossary
+                          let mockStartSubGlossary _ path = subGlossary
 
                           let mockReloadSubGlossary subGlossary =
                               CA.received subGlossaryReloadedAwaiter subGlossary
@@ -294,7 +294,7 @@ let tests =
 
                           let defaultGlossaryCreatedAwaiter = CA.create ()
 
-                          let mockStartSubGlossary (path: NSubGlossary.StartSubGlossary) =
+                          let mockStartSubGlossary _ (path: NSubGlossary.StartSubGlossary) =
                               CA.received defaultGlossaryCreatedAwaiter path.Path
                               subGlossary
 
@@ -343,7 +343,7 @@ let tests =
 
                           let defaultGlossaryCreatedAwaiter = CA.create ()
 
-                          let mockStartSubGlossary (path: NSubGlossary.StartSubGlossary) =
+                          let mockStartSubGlossary _ (path: NSubGlossary.StartSubGlossary) =
                               CA.received defaultGlossaryCreatedAwaiter path.Path
                               subGlossary
 
@@ -382,7 +382,7 @@ let tests =
               [ testAsync "with default subglossary only" {
                     let awaiter = CA.create ()
 
-                    let fileReader p =
+                    let fileReader _ p =
                         CA.received awaiter p
 
                         """contexts:

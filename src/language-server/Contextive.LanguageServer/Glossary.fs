@@ -17,7 +17,7 @@ type OnWatchedFilesEventHandlers =
 type DeRegisterWatch = unit -> unit
 
 type SubGlossaryOperations =
-    { Start: NSubGlossary.StartSubGlossary -> NSubGlossary.T
+    { Start: bool -> NSubGlossary.StartSubGlossary -> NSubGlossary.T
       Reload: NSubGlossary.T -> unit }
 
 // Create glossary with static dependencies
@@ -85,7 +85,7 @@ module private Handlers =
         let glossaryFiles = state.FileScanner GLOSSARY_FILE_GLOB
 
         glossaryFiles
-        |> Seq.iter (fun p -> state.SubGlossaryOps.Start { Path = p; Log = state.Log } |> ignore)
+        |> Seq.iter (fun p -> state.SubGlossaryOps.Start false { Path = p; Log = state.Log } |> ignore)
 
         state
 
@@ -101,7 +101,7 @@ module private Handlers =
         if exists then
             watchedFileChanged state path
         else
-            let subGlossary = state.SubGlossaryOps.Start { Path = path; Log = state.Log }
+            let subGlossary = state.SubGlossaryOps.Start false { Path = path; Log = state.Log }
             let newSubGlossaries = state.SubGlossaries.Add(path, subGlossary)
 
             { state with
@@ -119,7 +119,8 @@ module private Handlers =
             return
                 pathOpt
                 |> Result.map (fun path ->
-                    let defaultSubGlossary = state.SubGlossaryOps.Start { Path = path; Log = state.Log }
+                    let defaultSubGlossary =
+                        state.SubGlossaryOps.Start true { Path = path; Log = state.Log }
 
                     { state with
                         DefaultSubGlossary = defaultSubGlossary |> Some
