@@ -36,6 +36,20 @@ let tests =
               do! CA.expectMessage awaiter "path1"
           }
 
+          testAsync "When starting a subglossary it should log the fact that it's loading the path" {
+              let awaiter = CA.create ()
+
+              let fileReader _ = Ok emptyGlossary
+
+              { NSubGlossary.StartSubGlossary.Path = "path1"
+                NSubGlossary.StartSubGlossary.Log = { info = CA.received awaiter } }
+              |> NSubGlossary.start fileReader
+              |> ignore
+
+
+              do! CA.expectMessage awaiter $"Loading contextive from path1..."
+          }
+
           testAsync "When reloading a subglossary it should read the file at the path provided when it was created" {
               let awaiter = CA.create ()
 

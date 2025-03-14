@@ -39,6 +39,7 @@ module Handlers =
                 match state.Path with
                 | None -> state
                 | Some p ->
+                    state.Log.info $"Loading contextive from {p}..."
                     let fileContents = state.FileReader p
 
                     fileContents
@@ -48,14 +49,11 @@ module Handlers =
         }
 
     let start state (startSubGlossary: StartSubGlossary) =
-        async {
-            let _ = state.FileReader startSubGlossary.Path
+        reload
+            { state with
+                Path = Some startSubGlossary.Path
+                Log = startSubGlossary.Log }
 
-            return!
-                reload
-                    { state with
-                        Path = Some startSubGlossary.Path }
-        }
 
 
     let lookup (state: State) (lookup: Lookup) =
