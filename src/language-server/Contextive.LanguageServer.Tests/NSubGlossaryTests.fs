@@ -66,4 +66,39 @@ let tests =
 
               test <@ result.Count() = 1 @>
               test <@ (terms |> Seq.head).Name = "subGlossary1" @>
-          } ]
+          }
+
+          testAsync "SubGlossary can recover from FileReading Failure" {
+              let awaiter = CA.create ()
+
+              let ErrorFileResult = Error(Contextive.Core.File.FileError.FileNotFound)
+
+              let OkFileResult =
+                  """contexts:
+  - terms:
+    - name: subGlossary1"""
+                  |> Ok
+
+              let mutable fileResult = ErrorFileResult
+
+              let fileReader p =
+                  CA.received awaiter p
+                  fileResult
+
+              let subGlossary = NSubGlossary.create fileReader "path1"
+
+              let! result = NSubGlossary.lookup subGlossary id
+
+              test <@ result.Count() = 0 @>
+
+              fileResult <- OkFileResult
+              NSubGlossary.reload subGlossary
+
+              let! result = NSubGlossary.lookup subGlossary id
+              let terms = FindResult.allTerms result
+
+              test <@ result.Count() = 1 @>
+              test <@ (terms |> Seq.head).Name = "subGlossary1" @>
+          }
+
+          ]
