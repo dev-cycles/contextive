@@ -18,6 +18,8 @@ let tests =
     let getName (t: Contextive.Core.GlossaryFile.Term) = t.Name
     let compareList = Seq.compareWith compare
 
+    let newStartSubGlossary path : NSubGlossary.StartSubGlossary = { Path = path }
+
 
     testList
         "LanguageServer.SubGlossary Tests"
@@ -28,7 +30,7 @@ let tests =
                   CA.received awaiter p
                   Ok(emptyGlossary)
 
-              let _ = NSubGlossary.start fileReader "path1"
+              let _ = NSubGlossary.start fileReader { Path = "path1" }
 
               do! CA.expectMessage awaiter "path1"
           }
@@ -40,7 +42,7 @@ let tests =
                   CA.received awaiter p
                   Ok(emptyGlossary)
 
-              let subGlossary = NSubGlossary.start fileReader "path1"
+              let subGlossary = NSubGlossary.start fileReader <| newStartSubGlossary"path1"
 
               do! CA.expectMessage awaiter "path1"
 
@@ -62,7 +64,7 @@ let tests =
     - name: subGlossary1"""
                   |> Ok
 
-              let subGlossary = NSubGlossary.start fileReader "path1"
+              let subGlossary = NSubGlossary.start fileReader <| newStartSubGlossary"path1"
 
               let! result = NSubGlossary.lookup subGlossary id
 
@@ -89,7 +91,7 @@ let tests =
                   CA.received awaiter p
                   fileResult
 
-              let subGlossary = NSubGlossary.start fileReader "path1"
+              let subGlossary = NSubGlossary.start fileReader  <| newStartSubGlossary"path1"
 
               let! result = NSubGlossary.lookup subGlossary id
 
@@ -108,7 +110,7 @@ let tests =
           testList
               "Integration"
               [ testAsync "SubGlossary can collaborate with FileReader" {
-                    let subGlossary = NSubGlossary.start FileReader.pathReader Helpers.Fixtures.One.path
+                    let subGlossary = NSubGlossary.start FileReader.pathReader  <| newStartSubGlossary Helpers.Fixtures.One.path
 
                     let! result = NSubGlossary.lookup subGlossary id
 

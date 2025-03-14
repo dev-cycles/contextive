@@ -3,15 +3,16 @@ module Contextive.LanguageServer.NSubGlossary
 open Contextive.Core.GlossaryFile
 open Contextive.Core.File
 
+type StartSubGlossary = { Path: string }
+
 type Lookup =
     { Filter: Filter
       Rc: AsyncReplyChannel<FindResult> }
 
 type Message =
-    | Start of string
+    | Start of StartSubGlossary
     | Reload
     | Lookup of Lookup
-
 
 type FileReaderFn = string -> Result<string, FileError>
 
@@ -43,10 +44,14 @@ module Handlers =
                     |> Result.defaultValue state
         }
 
-    let start state path =
+    let start state (startSubGlossary: StartSubGlossary) =
         async {
-            let _ = state.FileReader path
-            return! reload { state with Path = Some path }
+            let _ = state.FileReader startSubGlossary.Path
+
+            return!
+                reload
+                    { state with
+                        Path = Some startSubGlossary.Path }
         }
 
 
@@ -60,13 +65,13 @@ let private handleMessage (state: State) (msg: Message) =
     async {
         return!
             match msg with
-            | Start path -> Handlers.start state path
+            | Start startSubGlossary -> Handlers.start state startSubGlossary
             | Reload -> Handlers.reload state
             | Lookup p -> Handlers.lookup state p
     }
 
 
-let start fileReader path : T =
+let start fileReader (startSubGlossary: StartSubGlossary) : T =
     let subGlossary =
         MailboxProcessor.Start(fun inbox ->
             let rec loop (state: State) =
@@ -83,7 +88,7 @@ let start fileReader path : T =
                    FileReader = fileReader
                    Path = None })
 
-    Start(path) |> subGlossary.Post
+    Start startSubGlossary |> subGlossary.Post
 
     subGlossary
 
