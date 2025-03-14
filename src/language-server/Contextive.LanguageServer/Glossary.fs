@@ -14,21 +14,27 @@ type Logger = { info: string -> unit }
 
 type DeRegisterWatch = unit -> unit
 
-type SubGlossaryOperations = { Create: string -> NSubGlossary.T }
+type SubGlossaryOperations =
+    { Create: string -> NSubGlossary.T
+      Reload: NSubGlossary.T -> unit }
 
 type CreateGlossary =
     { FileScanner: string -> string list
       Log: Logger
-      RegisterWatchedFiles: string -> OnWatchedFilesEventHandlers -> DeRegisterWatch
+      RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string -> DeRegisterWatch
       SubGlossaryOps: SubGlossaryOperations }
 
 type State =
-    { RegisterWatchedFiles: string -> OnWatchedFilesEventHandlers -> DeRegisterWatch
+    { RegisterWatchedFiles: string -> DeRegisterWatch
+      SubGlossaries: Map<string, NSubGlossary.T>
       SubGlossaryOps: SubGlossaryOperations
       DefaultGlossaryFile: string option
       DeRegisterDefaultGlossaryFileWatcher: DeRegisterWatch option }
 
-type Message = SetDefaultGlossaryFile of string
+type Message =
+    | SetDefaultGlossaryFile of string
+    | WatchedFileCreated of string
+    | WatchedFileChanged of string
 
 type T = MailboxProcessor<Message>
 
@@ -36,7 +42,8 @@ type T = MailboxProcessor<Message>
 let private GLOSSARY_FILE_GLOB = "**/*.contextive.yml"
 
 module private Handlers =
-    let create (createGlossary: CreateGlossary) =
+
+    let create (createGlossary: CreateGlossary) (watchedFileHandlers: OnWatchedFilesEventHandlers) =
         let glossaryFiles = createGlossary.FileScanner GLOSSARY_FILE_GLOB
 
         glossaryFiles
@@ -44,13 +51,18 @@ module private Handlers =
             createGlossary.Log.info $"Found definitions file at '{p}'..."
             createGlossary.SubGlossaryOps.Create p |> ignore)
 
-        createGlossary.RegisterWatchedFiles GLOSSARY_FILE_GLOB OnWatchedFilesEventHandlers.Default
-        |> ignore
+        let state =
+            { RegisterWatchedFiles = createGlossary.RegisterWatchedFiles watchedFileHandlers
+              SubGlossaries = Map []
+              SubGlossaryOps = createGlossary.SubGlossaryOps
+              DefaultGlossaryFile = None
+              DeRegisterDefaultGlossaryFileWatcher = None }
 
-        { RegisterWatchedFiles = createGlossary.RegisterWatchedFiles
-          SubGlossaryOps = createGlossary.SubGlossaryOps
-          DefaultGlossaryFile = None
-          DeRegisterDefaultGlossaryFileWatcher = None }
+        state.RegisterWatchedFiles GLOSSARY_FILE_GLOB |> ignore
+
+        state
+
+
 
     let setDefaultGlossaryFile (state: State) path =
 
@@ -62,15 +74,33 @@ module private Handlers =
 
         { state with
             DefaultGlossaryFile = Some path
-            DeRegisterDefaultGlossaryFileWatcher =
-                state.RegisterWatchedFiles path OnWatchedFilesEventHandlers.Default |> Some }
+            DeRegisterDefaultGlossaryFileWatcher = state.RegisterWatchedFiles path |> Some }
+
+    let watchedFileCreated (state: State) path =
+        let subGlossary = state.SubGlossaryOps.Create path
+        let newSubGlossaries = state.SubGlossaries.Add(path, subGlossary)
+
+        { state with
+            SubGlossaries = newSubGlossaries }
+
+    let watchedFileChanged (state: State) path =
+        let subGlossary = state.SubGlossaries[path]
+        state.SubGlossaryOps.Reload subGlossary
+        state
 
 let private handleMessage (state: State) (msg: Message) =
     async {
         return
             match msg with
             | SetDefaultGlossaryFile path -> Handlers.setDefaultGlossaryFile state path
+            | WatchedFileCreated path -> Handlers.watchedFileCreated state path
+            | WatchedFileChanged path -> Handlers.watchedFileChanged state path
     }
+
+let watchedFileHandlers (glossary: T) =
+    { OnWatchedFilesEventHandlers.Default with
+        OnCreated = fun p -> glossary.Post(WatchedFileCreated(p))
+        OnChanged = fun p -> glossary.Post(WatchedFileChanged(p)) }
 
 let create (createGlossary: CreateGlossary) : T =
     MailboxProcessor.Start(fun inbox ->
@@ -83,7 +113,7 @@ let create (createGlossary: CreateGlossary) : T =
                 return! loop newState
             }
 
-        loop <| Handlers.create createGlossary)
+        loop <| Handlers.create createGlossary (watchedFileHandlers inbox))
 
 
 let setDefaultGlossaryFile (glossary: T) path =
