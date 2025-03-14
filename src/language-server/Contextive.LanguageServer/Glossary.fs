@@ -129,7 +129,6 @@ module private Handlers =
                 |> Result.mapError (fun fileError ->
                     let errorMessage = fileErrorMessage fileError
                     let msg = $"Error loading glossary: {errorMessage}"
-                    state.Log.info msg
                     state.Log.error msg)
                 |> Result.defaultValue state
         }

@@ -19,5 +19,8 @@ let forLanguageServer (s: ILanguageServer) =
       error =
         fun (m: string) ->
             s.Window.LogError(m)
-            s.Window.ShowWarning(m)
+
+            if s.Window.ClientSettings.Capabilities.Window.ShowMessage.IsSupported then
+                s.Window.ShowWarning m
+
             Serilog.Log.Logger.Error(m) }
