@@ -3,6 +3,8 @@ module Contextive.LanguageServer.Tests.GlossaryTests
 open Expecto
 open Swensen.Unquote
 open Contextive.LanguageServer
+open System.Linq
+open Helpers.SubGlossaryHelper
 
 module CA = Contextive.LanguageServer.Tests.Helpers.ConditionAwaiter
 
@@ -38,8 +40,13 @@ let private EXPECTED_GLOSSARY_FILE_GLOB = "**/*.contextive.yml"
 
 [<Tests>]
 let tests =
+
+    let getName (t: Contextive.Core.GlossaryFile.Term) = t.Name
+    let compareList = Seq.compareWith compare
+
+
     testList
-        "LanguageServer.SubGlossary Tests"
+        "LanguageServer.Glossary Tests"
         [
 
           testList
@@ -330,4 +337,53 @@ let tests =
 
                           do! CA.expectMessage subGlossaryReloadedAwaiter subGlossary
 
-                      } ] ] ]
+                      } ] ]
+          testList
+              "When doing a lookup"
+              [ testAsync "with default subglossary only" {
+                    let awaiter = CA.create ()
+
+                    let fileReader p =
+                        CA.received awaiter p
+
+                        """contexts:
+  - terms:
+    - name: subGlossary1"""
+                        |> Ok
+
+
+                    let glossary =
+                        Glossary.create
+                            { newCreateClossary () with
+                                SubGlossaryOps =
+                                    { Start = NSubGlossary.start fileReader
+                                      Reload = NSubGlossary.reload } }
+
+                    Glossary.setDefaultGlossaryFile glossary Helpers.Fixtures.One.path
+
+                    let! result = Glossary.lookup glossary id
+
+                    test <@ result.Count() = 1 @>
+
+                } ]
+          testList
+              "Integration"
+              [ testAsync "Can collaborate with subGlossaries" {
+                    let glossary =
+                        Glossary.create
+                            { newCreateClossary () with
+                                SubGlossaryOps =
+                                    { Start = NSubGlossary.start FileReader.pathReader
+                                      Reload = NSubGlossary.reload } }
+
+                    Glossary.setDefaultGlossaryFile glossary Helpers.Fixtures.One.path
+
+                    let! result = Glossary.lookup glossary id
+
+                    test <@ result.Count() = 1 @>
+
+                    let terms = FindResult.allTerms result
+
+                    let foundNames = terms |> Seq.map getName
+                    test <@ (foundNames, Helpers.Fixtures.One.expectedTerms) ||> compareList = 0 @>
+                } ] ]

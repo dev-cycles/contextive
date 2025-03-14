@@ -66,7 +66,7 @@ let private handleMessage (state: State) (msg: Message) =
     }
 
 
-let create fileReader path : T =
+let start fileReader path : T =
     let subGlossary =
         MailboxProcessor.Start(fun inbox ->
             let rec loop (state: State) =

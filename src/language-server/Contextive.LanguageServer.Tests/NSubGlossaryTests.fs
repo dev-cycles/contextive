@@ -28,7 +28,7 @@ let tests =
                   CA.received awaiter p
                   Ok(emptyGlossary)
 
-              let _ = NSubGlossary.create fileReader "path1"
+              let _ = NSubGlossary.start fileReader "path1"
 
               do! CA.expectMessage awaiter "path1"
           }
@@ -40,7 +40,7 @@ let tests =
                   CA.received awaiter p
                   Ok(emptyGlossary)
 
-              let subGlossary = NSubGlossary.create fileReader "path1"
+              let subGlossary = NSubGlossary.start fileReader "path1"
 
               do! CA.expectMessage awaiter "path1"
 
@@ -62,7 +62,7 @@ let tests =
     - name: subGlossary1"""
                   |> Ok
 
-              let subGlossary = NSubGlossary.create fileReader "path1"
+              let subGlossary = NSubGlossary.start fileReader "path1"
 
               let! result = NSubGlossary.lookup subGlossary id
 
@@ -89,7 +89,7 @@ let tests =
                   CA.received awaiter p
                   fileResult
 
-              let subGlossary = NSubGlossary.create fileReader "path1"
+              let subGlossary = NSubGlossary.start fileReader "path1"
 
               let! result = NSubGlossary.lookup subGlossary id
 
@@ -108,10 +108,10 @@ let tests =
           testList
               "Integration"
               [ testAsync "SubGlossary can collaborate with FileReader" {
-                    let subGlossary =
-                        NSubGlossary.create FileReader.pathReader Helpers.Fixtures.One.path
+                    let subGlossary = NSubGlossary.start FileReader.pathReader Helpers.Fixtures.One.path
 
                     let! result = NSubGlossary.lookup subGlossary id
+
                     let terms = FindResult.allTerms result
 
                     let foundNames = terms |> Seq.map getName

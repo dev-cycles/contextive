@@ -1,5 +1,7 @@
 module Contextive.LanguageServer.Glossary
 
+open Contextive.Core.GlossaryFile
+
 type OnWatchedFilesEventHandlers =
     { OnCreated: string -> unit
       OnChanged: string -> unit
@@ -31,10 +33,15 @@ type State =
       DefaultGlossaryFile: string option
       DeRegisterDefaultGlossaryFileWatcher: DeRegisterWatch option }
 
+type Lookup =
+    { Filter: Filter
+      Rc: AsyncReplyChannel<FindResult> }
+
 type Message =
     | SetDefaultGlossaryFile of string
     | WatchedFileCreated of string
     | WatchedFileChanged of string
+    | Lookup of Lookup
 
 type T = MailboxProcessor<Message>
 
@@ -91,13 +98,26 @@ module private Handlers =
             DefaultGlossaryFile = Some path
             DeRegisterDefaultGlossaryFileWatcher = state.RegisterWatchedFiles path |> Some }
 
+    let lookup (state: State) (lookup: Lookup) =
+        async {
+            match state.DefaultGlossaryFile with
+            | Some path ->
+                let subGlossary = state.SubGlossaries[path]
+                let! result = NSubGlossary.lookup subGlossary lookup.Filter
+                lookup.Rc.Reply(result)
+            | None -> lookup.Rc.Reply(Seq.empty)
+
+            return state
+        }
+
 let private handleMessage (state: State) (msg: Message) =
     async {
-        return
+        return!
             match msg with
-            | SetDefaultGlossaryFile path -> Handlers.setDefaultGlossaryFile state path
-            | WatchedFileCreated path -> Handlers.watchedFileCreated state path
-            | WatchedFileChanged path -> Handlers.watchedFileChanged state path
+            | SetDefaultGlossaryFile path -> Handlers.setDefaultGlossaryFile state path |> async.Return
+            | WatchedFileCreated path -> Handlers.watchedFileCreated state path |> async.Return
+            | WatchedFileChanged path -> Handlers.watchedFileChanged state path |> async.Return
+            | Lookup lookup -> Handlers.lookup state lookup
     }
 
 let watchedFileHandlers (glossary: T) =
@@ -121,3 +141,6 @@ let create (createGlossary: CreateGlossary) : T =
 
 let setDefaultGlossaryFile (glossary: T) path =
     SetDefaultGlossaryFile(path) |> glossary.Post
+
+let lookup (glossary: T) (filter: Filter) =
+    glossary.PostAndAsyncReply(fun rc -> Lookup { Filter = filter; Rc = rc })
