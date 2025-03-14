@@ -398,12 +398,19 @@ let tests =
                                     { Start = NSubGlossary.start FileReader.pathReader
                                       Reload = NSubGlossary.reload } }
 
+                    let startupAwaiter = CA.create ()
+
+                    let path = Helpers.Fixtures.One.path
+
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultSubGlossaryPathResolver = fun () -> Helpers.Fixtures.One.path |> Some |> async.Return }
+                            Log = { info = CA.received startupAwaiter }
+                            DefaultSubGlossaryPathResolver = fun () -> path |> Some |> async.Return }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
+
+                    do! CA.expectMessage startupAwaiter $"Loading contextive from {path}..."
 
                     let! result = Glossary.lookup glossary "" id
 

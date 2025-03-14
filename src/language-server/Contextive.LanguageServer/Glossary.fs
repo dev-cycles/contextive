@@ -76,7 +76,8 @@ module private Handlers =
         let state =
             { state with
                 DefaultSubGlossaryPathResolver = initGlossary.DefaultSubGlossaryPathResolver
-                RegisterWatchedFiles = initGlossary.RegisterWatchedFiles watchedFileshandlers }
+                RegisterWatchedFiles = initGlossary.RegisterWatchedFiles watchedFileshandlers
+                Log = initGlossary.Log }
 
         Some GLOSSARY_FILE_GLOB |> state.RegisterWatchedFiles |> ignore
 
