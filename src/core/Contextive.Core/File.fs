@@ -5,7 +5,6 @@ type PathConfiguration = { Path: string; IsDefault: bool }
 let configuredPath p = { Path = p; IsDefault = false }
 
 type FileError =
-    | Uninitialized
     | PathInvalid of string
     | DefaultFileNotFound
     | FileNotFound
@@ -19,7 +18,6 @@ type File =
 
 let fileErrorMessage =
     function
-    | Uninitialized -> "Attempting to load file before the system is initialized."
     | PathInvalid(m) -> $"Invalid Path: {m}"
     | ParsingError(m) -> $"Parsing Error: {m}"
     | ValidationError(m) -> $"Validation Error: {m}"

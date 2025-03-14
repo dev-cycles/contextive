@@ -6,6 +6,7 @@ open Contextive.LanguageServer
 open System.Linq
 open Helpers.SubGlossaryHelper
 open Contextive.LanguageServer.Logger
+open Contextive.Core.File
 
 module CA = Helpers.ConditionAwaiter
 
@@ -21,17 +22,20 @@ let tests =
 
     let newStartSubGlossary path : NSubGlossary.StartSubGlossary = { Path = path; Log = Logger.Noop }
 
+    let pc p : PathConfiguration = { Path = p; IsDefault = false }
+
 
     testList
         "LanguageServer.SubGlossary Tests"
         [ testAsync "When starting a subglossary it should read the file at the provided path" {
               let awaiter = CA.create ()
 
-              let fileReader _ p =
-                  CA.received awaiter p
+              let fileReader (p: PathConfiguration) =
+                  CA.received awaiter p.Path
                   Ok(emptyGlossary)
 
-              let _ = NSubGlossary.start fileReader false <| newStartSubGlossary "path1"
+
+              let _ = pc "path1" |> newStartSubGlossary |> NSubGlossary.start fileReader
 
               do! CA.expectMessage awaiter "path1"
           }
@@ -39,13 +43,13 @@ let tests =
           testAsync "When starting a subglossary it should log the fact that it's loading the path" {
               let awaiter = CA.create ()
 
-              let fileReader _ _ = Ok emptyGlossary
+              let fileReader _ = Ok emptyGlossary
 
-              { NSubGlossary.StartSubGlossary.Path = "path1"
+              { NSubGlossary.StartSubGlossary.Path = pc "path1"
                 NSubGlossary.StartSubGlossary.Log =
                   { info = CA.received awaiter
                     error = fun _ -> () } }
-              |> NSubGlossary.start fileReader false
+              |> NSubGlossary.start fileReader
               |> ignore
 
 
@@ -55,11 +59,12 @@ let tests =
           testAsync "When if reading the file fails, it should log the error" {
               let awaiter = CA.create ()
 
-              let fileReader _ p = Error(Contextive.Core.File.FileError.ParsingError "parsing error")
+              let fileReader p =
+                  Error(Contextive.Core.File.FileError.ParsingError "parsing error")
 
               let _ =
-                  NSubGlossary.start fileReader false
-                  <| { Path = "path1"
+                  NSubGlossary.start fileReader
+                  <| { Path = pc "path1"
                        Log =
                          { info = fun _ -> ()
                            error = CA.received awaiter } }
@@ -70,11 +75,11 @@ let tests =
           testAsync "When reloading a subglossary it should read the file at the path provided when it was created" {
               let awaiter = CA.create ()
 
-              let fileReader _ p =
-                  CA.received awaiter p
+              let fileReader p =
+                  CA.received awaiter p.Path
                   Ok(emptyGlossary)
 
-              let subGlossary = NSubGlossary.start fileReader false <| newStartSubGlossary "path1"
+              let subGlossary = pc "path1" |> newStartSubGlossary |> NSubGlossary.start fileReader
 
               do! CA.expectMessage awaiter "path1"
 
@@ -88,15 +93,15 @@ let tests =
           testAsync "When looking up a term in a subglossary it should return terms" {
               let awaiter = CA.create ()
 
-              let fileReader _ p =
-                  CA.received awaiter p
+              let fileReader p =
+                  CA.received awaiter p.Path
 
                   """contexts:
   - terms:
     - name: subGlossary1"""
                   |> Ok
 
-              let subGlossary = NSubGlossary.start fileReader false <| newStartSubGlossary "path1"
+              let subGlossary = pc "path1" |> newStartSubGlossary |> NSubGlossary.start fileReader
 
               let! result = NSubGlossary.lookup subGlossary id
 
@@ -119,11 +124,11 @@ let tests =
 
               let mutable fileResult = ErrorFileResult
 
-              let fileReader _ p =
-                  CA.received awaiter p
+              let fileReader p =
+                  CA.received awaiter p.Path
                   fileResult
 
-              let subGlossary = NSubGlossary.start fileReader false <| newStartSubGlossary "path1"
+              let subGlossary = pc "path1" |> newStartSubGlossary |> NSubGlossary.start fileReader
 
               let! result = NSubGlossary.lookup subGlossary id
 
@@ -143,8 +148,9 @@ let tests =
               "Integration"
               [ testAsync "SubGlossary can collaborate with FileReader" {
                     let subGlossary =
-                        NSubGlossary.start FileReader.pathReader false
-                        <| newStartSubGlossary Helpers.Fixtures.One.path
+                        pc Helpers.Fixtures.One.path
+                        |> newStartSubGlossary
+                        |> NSubGlossary.start FileReader.pathReader
 
                     let! result = NSubGlossary.lookup subGlossary id
 

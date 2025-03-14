@@ -17,7 +17,7 @@ type OnWatchedFilesEventHandlers =
 type DeRegisterWatch = unit -> unit
 
 type SubGlossaryOperations =
-    { Start: bool -> NSubGlossary.StartSubGlossary -> NSubGlossary.T
+    { Start: NSubGlossary.StartSubGlossary -> NSubGlossary.T
       Reload: NSubGlossary.T -> unit }
 
 // Create glossary with static dependencies
@@ -29,7 +29,7 @@ type CreateGlossary =
 type InitGlossary =
     { Log: Logger
       RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string option -> DeRegisterWatch
-      DefaultSubGlossaryPathResolver: unit -> Async<Result<string, FileError>> }
+      DefaultSubGlossaryPathResolver: unit -> Async<Result<PathConfiguration, FileError>> }
 
 type State =
     { Log: Logger
@@ -37,7 +37,7 @@ type State =
       RegisterWatchedFiles: string option -> DeRegisterWatch
       SubGlossaries: Map<string, NSubGlossary.T>
       SubGlossaryOps: SubGlossaryOperations
-      DefaultSubGlossaryPathResolver: unit -> Async<Result<string, FileError>>
+      DefaultSubGlossaryPathResolver: unit -> Async<Result<PathConfiguration, FileError>>
       DefaultSubGlossary: NSubGlossary.T option
       DeRegisterDefaultSubGlossaryFileWatcher: DeRegisterWatch option }
 
@@ -67,7 +67,7 @@ module private Handlers =
               RegisterWatchedFiles = fun _ -> fun () -> ()
               SubGlossaries = Map []
               SubGlossaryOps = createGlossary.SubGlossaryOps
-              DefaultSubGlossaryPathResolver = fun _ -> FileError.Uninitialized |> Error |> async.Return
+              DefaultSubGlossaryPathResolver = fun _ -> FileError.NotYetLoaded |> Error |> async.Return
               DefaultSubGlossary = None
               DeRegisterDefaultSubGlossaryFileWatcher = None }
 
@@ -85,7 +85,11 @@ module private Handlers =
         let glossaryFiles = state.FileScanner GLOSSARY_FILE_GLOB
 
         glossaryFiles
-        |> Seq.iter (fun p -> state.SubGlossaryOps.Start false { Path = p; Log = state.Log } |> ignore)
+        |> Seq.iter (fun p ->
+            state.SubGlossaryOps.Start
+                { Path = { Path = p; IsDefault = false }
+                  Log = state.Log }
+            |> ignore)
 
         state
 
@@ -101,7 +105,11 @@ module private Handlers =
         if exists then
             watchedFileChanged state path
         else
-            let subGlossary = state.SubGlossaryOps.Start false { Path = path; Log = state.Log }
+            let subGlossary =
+                state.SubGlossaryOps.Start
+                    { Path = { Path = path; IsDefault = false }
+                      Log = state.Log }
+
             let newSubGlossaries = state.SubGlossaries.Add(path, subGlossary)
 
             { state with
@@ -119,13 +127,12 @@ module private Handlers =
             return
                 pathOpt
                 |> Result.map (fun path ->
-                    let defaultSubGlossary =
-                        state.SubGlossaryOps.Start true { Path = path; Log = state.Log }
+                    let defaultSubGlossary = state.SubGlossaryOps.Start { Path = path; Log = state.Log }
 
                     { state with
                         DefaultSubGlossary = defaultSubGlossary |> Some
-                        SubGlossaries = state.SubGlossaries.Add(path, defaultSubGlossary)
-                        DeRegisterDefaultSubGlossaryFileWatcher = Some path |> state.RegisterWatchedFiles |> Some })
+                        SubGlossaries = state.SubGlossaries.Add(path.Path, defaultSubGlossary)
+                        DeRegisterDefaultSubGlossaryFileWatcher = Some path.Path |> state.RegisterWatchedFiles |> Some })
                 |> Result.mapError (fun fileError ->
                     let errorMessage = fileErrorMessage fileError
                     let msg = $"Error loading glossary: {errorMessage}"

@@ -29,8 +29,5 @@ let reader pathGetter =
             return readFromPath absolutePath
         }
 
-let pathReader isDefault (path: string) =
-    { Path = path; IsDefault = isDefault }
-    |> Ok
-    |> readFromPath
-    |> Result.bind (fun r -> r.Contents)
+let pathReader (path: PathConfiguration) =
+    path |> Ok |> readFromPath |> Result.bind (fun r -> r.Contents)

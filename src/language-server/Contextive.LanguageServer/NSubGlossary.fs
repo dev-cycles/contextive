@@ -4,7 +4,8 @@ open Contextive.Core.GlossaryFile
 open Contextive.Core.File
 open Logger
 
-type StartSubGlossary = { Path: string; Log: Logger }
+type StartSubGlossary =
+    { Path: PathConfiguration; Log: Logger }
 
 type Lookup =
     { Filter: Filter
@@ -15,13 +16,13 @@ type Message =
     | Reload
     | Lookup of Lookup
 
-type FileReaderFn = string -> Result<string, FileError>
+type FileReaderFn = PathConfiguration -> Result<string, FileError>
 
 type State =
     { FileReader: FileReaderFn
       GlossaryFile: GlossaryFile
       Log: Logger
-      Path: string option }
+      Path: PathConfiguration option }
 
     static member Initial =
         { FileReader = fun _ -> Error(NotYetLoaded)
@@ -39,7 +40,7 @@ module Handlers =
                 match state.Path with
                 | None -> state
                 | Some p ->
-                    state.Log.info $"Loading contextive from {p}..."
+                    state.Log.info $"Loading contextive from {p.Path}..."
                     let fileContents = state.FileReader p
 
                     fileContents
@@ -84,7 +85,7 @@ let private handleMessage (state: State) (msg: Message) =
     }
 
 
-let start fileReader isDefault (startSubGlossary: StartSubGlossary) : T =
+let start fileReader (startSubGlossary: StartSubGlossary) : T =
     let subGlossary =
         MailboxProcessor.Start(fun inbox ->
             let rec loop (state: State) =
@@ -98,7 +99,7 @@ let start fileReader isDefault (startSubGlossary: StartSubGlossary) : T =
 
             loop
             <| { State.Initial with
-                   FileReader = fileReader isDefault
+                   FileReader = fileReader
                    Path = None })
 
     Start startSubGlossary |> subGlossary.Post

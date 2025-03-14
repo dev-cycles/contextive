@@ -5,6 +5,7 @@ open Swensen.Unquote
 open Contextive.LanguageServer
 open System.Linq
 open Helpers.SubGlossaryHelper
+open Contextive.Core.File
 
 module CA = Contextive.LanguageServer.Tests.Helpers.ConditionAwaiter
 
@@ -31,13 +32,13 @@ let noop1 _ = ()
 let newCreateClossary () =
     { Glossary.FileScanner = fun _ -> []
       Glossary.SubGlossaryOps =
-        { Start = fun _ _ -> noopMailboxProcessor ()
+        { Start = fun _ -> noopMailboxProcessor ()
           Reload = noop1 } }
 
 let newInitGlossary () =
     { Glossary.Log = { info = noop1; error = noop1 }
       Glossary.DefaultSubGlossaryPathResolver =
-        fun _ -> async.Return <| Error Contextive.Core.File.FileError.Uninitialized
+        fun _ -> async.Return <| Error Contextive.Core.File.FileError.NotYetLoaded
       Glossary.RegisterWatchedFiles = fun _ _ -> noop }
 
 [<Literal>]
@@ -48,6 +49,8 @@ let tests =
 
     let getName (t: Contextive.Core.GlossaryFile.Term) = t.Name
     let compareList = Seq.compareWith compare
+
+    let pc p : PathConfiguration = { Path = p; IsDefault = false }
 
     testList
         "LanguageServer.Glossary Tests"
@@ -66,8 +69,8 @@ let tests =
                         else
                             []
 
-                    let mockStartSubGlossary _ (path: NSubGlossary.StartSubGlossary) =
-                        CA.received awaiter path.Path
+                    let mockStartSubGlossary (path: NSubGlossary.StartSubGlossary) =
+                        CA.received awaiter path.Path.Path
                         noopMailboxProcessor ()
 
                     let glossary =
@@ -118,7 +121,7 @@ let tests =
                         glossary
                         { newInitGlossary () with
                             RegisterWatchedFiles = mockRegisterWatchedFiles
-                            DefaultSubGlossaryPathResolver = fun () -> async.Return <| Ok "path" }
+                            DefaultSubGlossaryPathResolver = fun () -> "path" |> pc |> Ok |> async.Return }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
@@ -128,8 +131,8 @@ let tests =
                 testAsync "It should create a subglossary at the watched location" {
                     let awaiter = CA.create ()
 
-                    let mockStartSubGlossary _ (path: NSubGlossary.StartSubGlossary) =
-                        CA.received awaiter path.Path
+                    let mockStartSubGlossary (path: NSubGlossary.StartSubGlossary) =
+                        CA.received awaiter path.Path.Path
                         noopMailboxProcessor ()
 
                     let glossary =
@@ -142,7 +145,7 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultSubGlossaryPathResolver = fun () -> async.Return <| Ok "path1" }
+                            DefaultSubGlossaryPathResolver = fun () -> "path1" |> pc |> Ok |> async.Return }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
@@ -161,7 +164,7 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultSubGlossaryPathResolver = fun () -> currentPath |> Ok |> async.Return
+                            DefaultSubGlossaryPathResolver = fun () -> currentPath |> pc |> Ok |> async.Return
                             RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
@@ -209,8 +212,8 @@ let tests =
 
                           let subGlossaryCreatedAwaiter = CA.create ()
 
-                          let mockStartSubGlossary _ (path: NSubGlossary.StartSubGlossary) =
-                              CA.received subGlossaryCreatedAwaiter path.Path
+                          let mockStartSubGlossary (path: NSubGlossary.StartSubGlossary) =
+                              CA.received subGlossaryCreatedAwaiter path.Path.Path
                               noopMailboxProcessor ()
 
                           let glossary =
@@ -248,7 +251,7 @@ let tests =
 
                           let subGlossary = noopMailboxProcessor ()
 
-                          let mockStartSubGlossary _ path = subGlossary
+                          let mockStartSubGlossary path = subGlossary
 
                           let mockReloadSubGlossary subGlossary =
                               CA.received subGlossaryReloadedAwaiter subGlossary
@@ -297,8 +300,8 @@ let tests =
 
                           let defaultGlossaryCreatedAwaiter = CA.create ()
 
-                          let mockStartSubGlossary _ (path: NSubGlossary.StartSubGlossary) =
-                              CA.received defaultGlossaryCreatedAwaiter path.Path
+                          let mockStartSubGlossary (path: NSubGlossary.StartSubGlossary) =
+                              CA.received defaultGlossaryCreatedAwaiter path.Path.Path
                               subGlossary
 
                           let mockReloadSubGlossary subGlossary =
@@ -315,7 +318,7 @@ let tests =
                           Glossary.init
                               glossary
                               { newInitGlossary () with
-                                  DefaultSubGlossaryPathResolver = fun () -> "pathA" |> Ok |> async.Return
+                                  DefaultSubGlossaryPathResolver = fun () -> "pathA" |> pc |> Ok |> async.Return
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                           Glossary.reloadDefaultGlossaryFile glossary ()
@@ -346,8 +349,8 @@ let tests =
 
                           let defaultGlossaryCreatedAwaiter = CA.create ()
 
-                          let mockStartSubGlossary _ (path: NSubGlossary.StartSubGlossary) =
-                              CA.received defaultGlossaryCreatedAwaiter path.Path
+                          let mockStartSubGlossary (path: NSubGlossary.StartSubGlossary) =
+                              CA.received defaultGlossaryCreatedAwaiter path.Path.Path
                               subGlossary
 
                           let mockReloadSubGlossary subGlossary =
@@ -364,7 +367,7 @@ let tests =
                           Glossary.init
                               glossary
                               { newInitGlossary () with
-                                  DefaultSubGlossaryPathResolver = fun () -> "pathA" |> Ok |> async.Return
+                                  DefaultSubGlossaryPathResolver = fun () -> "pathA" |> pc |> Ok |> async.Return
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                           Glossary.reloadDefaultGlossaryFile glossary ()
@@ -385,8 +388,8 @@ let tests =
               [ testAsync "with default subglossary only" {
                     let awaiter = CA.create ()
 
-                    let fileReader _ p =
-                        CA.received awaiter p
+                    let fileReader p =
+                        CA.received awaiter p.Path
 
                         """contexts:
   - terms:
@@ -404,7 +407,8 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultSubGlossaryPathResolver = fun () -> Helpers.Fixtures.One.path |> Ok |> async.Return }
+                            DefaultSubGlossaryPathResolver =
+                                fun () -> Helpers.Fixtures.One.path |> pc |> Ok |> async.Return }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
@@ -433,7 +437,7 @@ let tests =
                             Log =
                                 { info = CA.received startupAwaiter
                                   error = noop1 }
-                            DefaultSubGlossaryPathResolver = fun () -> path |> Ok |> async.Return }
+                            DefaultSubGlossaryPathResolver = fun () -> path |> pc |> Ok |> async.Return }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
