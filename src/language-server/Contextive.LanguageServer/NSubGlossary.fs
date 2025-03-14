@@ -1,6 +1,7 @@
 module Contextive.LanguageServer.NSubGlossary
 
 open Contextive.Core.GlossaryFile
+open Contextive.Core.File
 
 type Lookup =
     { Filter: Filter
@@ -12,7 +13,7 @@ type Message =
     | Lookup of Lookup
 
 
-type FileReaderFn = string -> string
+type FileReaderFn = string -> Result<string, FileError>
 
 type State =
     { FileReader: FileReaderFn
@@ -20,7 +21,7 @@ type State =
       Path: string option }
 
     static member Initial =
-        { FileReader = fun _ -> ""
+        { FileReader = fun _ -> Error(NotYetLoaded)
           GlossaryFile = GlossaryFile.Default
           Path = None }
 
@@ -35,11 +36,11 @@ module Handlers =
                 | None -> state
                 | Some p ->
                     let fileContents = state.FileReader p
-                    let deserializeResult = deserialize fileContents
 
-                    match deserializeResult with
-                    | Ok(r) -> { state with GlossaryFile = r }
-                    | Error(e) -> state // ignoring errors for now
+                    fileContents
+                    |> Result.bind deserialize
+                    |> Result.map (fun r -> { state with GlossaryFile = r })
+                    |> Result.defaultValue state
         }
 
     let start state path =

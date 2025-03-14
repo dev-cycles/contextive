@@ -22,7 +22,7 @@ let tests =
 
               let fileReader p =
                   CA.received awaiter p
-                  emptyGlossary
+                  Ok(emptyGlossary)
 
               let _ = NSubGlossary.create fileReader "path1"
 
@@ -34,7 +34,7 @@ let tests =
 
               let fileReader p =
                   CA.received awaiter p
-                  emptyGlossary
+                  Ok(emptyGlossary)
 
               let subGlossary = NSubGlossary.create fileReader "path1"
 
@@ -56,6 +56,7 @@ let tests =
                   """contexts:
   - terms:
     - name: subGlossary1"""
+                  |> Ok
 
               let subGlossary = NSubGlossary.create fileReader "path1"
 
