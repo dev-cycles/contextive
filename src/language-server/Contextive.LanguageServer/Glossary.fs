@@ -12,17 +12,21 @@ type OnWatchedFilesEventHandlers =
 
 type Logger = { info: string -> unit }
 
+type DeRegisterWatch = unit -> unit
+
 type SubGlossaryOperations = { Create: string -> NSubGlossary.T }
 
 type CreateGlossary =
     { FileScanner: string -> string list
       Log: Logger
-      RegisterWatchedFiles: string -> OnWatchedFilesEventHandlers -> unit
+      RegisterWatchedFiles: string -> OnWatchedFilesEventHandlers -> DeRegisterWatch
       SubGlossaryOps: SubGlossaryOperations }
 
 type State =
-    { RegisterWatchedFiles: string -> OnWatchedFilesEventHandlers -> unit
-      DefaultGlossaryFile: string option }
+    { RegisterWatchedFiles: string -> OnWatchedFilesEventHandlers -> DeRegisterWatch
+      SubGlossaryOps: SubGlossaryOperations
+      DefaultGlossaryFile: string option
+      DeRegisterDefaultGlossaryFileWatcher: DeRegisterWatch option }
 
 type Message = SetDefaultGlossaryFile of string
 
@@ -41,15 +45,25 @@ module private Handlers =
             createGlossary.SubGlossaryOps.Create p |> ignore)
 
         createGlossary.RegisterWatchedFiles GLOSSARY_FILE_GLOB OnWatchedFilesEventHandlers.Default
+        |> ignore
 
         { RegisterWatchedFiles = createGlossary.RegisterWatchedFiles
-          DefaultGlossaryFile = None }
+          SubGlossaryOps = createGlossary.SubGlossaryOps
+          DefaultGlossaryFile = None
+          DeRegisterDefaultGlossaryFileWatcher = None }
 
     let setDefaultGlossaryFile (state: State) path =
-        state.RegisterWatchedFiles path OnWatchedFilesEventHandlers.Default
+
+        match state.DeRegisterDefaultGlossaryFileWatcher with
+        | Some deregister -> deregister ()
+        | _ -> ()
+
+        state.SubGlossaryOps.Create path |> ignore
 
         { state with
-            DefaultGlossaryFile = Some path }
+            DefaultGlossaryFile = Some path
+            DeRegisterDefaultGlossaryFileWatcher =
+                state.RegisterWatchedFiles path OnWatchedFilesEventHandlers.Default |> Some }
 
 let private handleMessage (state: State) (msg: Message) =
     async {
