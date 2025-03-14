@@ -32,7 +32,7 @@
         <TrimmerRootAssembly Include="Contextive.Core" />
         <TrimmerRootAssembly Include="FSharp.Core" />
     </ItemGroup>
-    <ItemGroup><Compile Include="NSubGlossary.fs" /><Compile Include="Glossary.fs" />
+    <ItemGroup><Compile Include="Logger.fs" /><Compile Include="NSubGlossary.fs" /><Compile Include="Glossary.fs" />
         <Compile Include="Seq.fs" />        
         <Compile Include="Rendering.fs" />
         <Compile Include="FileReader.fs" />

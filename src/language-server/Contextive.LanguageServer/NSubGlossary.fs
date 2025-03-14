@@ -2,8 +2,9 @@ module Contextive.LanguageServer.NSubGlossary
 
 open Contextive.Core.GlossaryFile
 open Contextive.Core.File
+open Logger
 
-type StartSubGlossary = { Path: string }
+type StartSubGlossary = { Path: string; Log: Logger }
 
 type Lookup =
     { Filter: Filter
@@ -19,11 +20,13 @@ type FileReaderFn = string -> Result<string, FileError>
 type State =
     { FileReader: FileReaderFn
       GlossaryFile: GlossaryFile
+      Log: Logger
       Path: string option }
 
     static member Initial =
         { FileReader = fun _ -> Error(NotYetLoaded)
           GlossaryFile = GlossaryFile.Default
+          Log = Logger.Noop
           Path = None }
 
 type T = MailboxProcessor<Message>

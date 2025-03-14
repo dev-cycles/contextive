@@ -14,7 +14,7 @@ let newTestLogger () =
 
     {| loggedMessages = loggedMessagesStore
        logger =
-        { Glossary.Logger.info =
+        { Logger.info =
             fun msg ->
                 loggedMessagesStore.Add(msg)
                 CA.received awaiter msg } |},
@@ -68,13 +68,15 @@ let tests =
                         CA.received awaiter path.Path
                         noopMailboxProcessor ()
 
-                    let _ =
+                    let glossary =
                         Glossary.create
                             { newCreateClossary () with
                                 FileScanner = mockFileScanner
                                 SubGlossaryOps =
                                     { Start = mockStartSubGlossary
                                       Reload = noop1 } }
+
+                    Glossary.init glossary <| newInitGlossary ()
 
                     do! CA.expectMessage awaiter "path1"
                 }

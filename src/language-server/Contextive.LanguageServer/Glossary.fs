@@ -1,6 +1,7 @@
 module Contextive.LanguageServer.Glossary
 
 open Contextive.Core.GlossaryFile
+open Contextive.LanguageServer.Logger
 
 type OnWatchedFilesEventHandlers =
     { OnCreated: string -> unit
@@ -11,8 +12,6 @@ type OnWatchedFilesEventHandlers =
         { OnChanged = fun _ -> ()
           OnCreated = fun _ -> ()
           OnDeleted = fun _ -> () }
-
-type Logger = { info: string -> unit }
 
 type DeRegisterWatch = unit -> unit
 
@@ -32,7 +31,9 @@ type InitGlossary =
       DefaultSubGlossaryPathResolver: unit -> Async<string option> }
 
 type State =
-    { RegisterWatchedFiles: string option -> DeRegisterWatch
+    { Log: Logger
+      FileScanner: string -> string list
+      RegisterWatchedFiles: string option -> DeRegisterWatch
       SubGlossaries: Map<string, NSubGlossary.T>
       SubGlossaryOps: SubGlossaryOperations
       DefaultSubGlossaryPathResolver: unit -> Async<string option>
@@ -58,13 +59,11 @@ let private GLOSSARY_FILE_GLOB = "**/*.contextive.yml"
 module private Handlers =
 
     let create (createGlossary: CreateGlossary) =
-        let glossaryFiles = createGlossary.FileScanner GLOSSARY_FILE_GLOB
-
-        glossaryFiles
-        |> Seq.iter (fun p -> createGlossary.SubGlossaryOps.Start { Path = p } |> ignore)
 
         let state =
-            { RegisterWatchedFiles = fun _ -> fun () -> ()
+            { FileScanner = createGlossary.FileScanner
+              Log = Logger.Noop
+              RegisterWatchedFiles = fun _ -> fun () -> ()
               SubGlossaries = Map []
               SubGlossaryOps = createGlossary.SubGlossaryOps
               DefaultSubGlossaryPathResolver = fun _ -> async.Return None
@@ -81,6 +80,11 @@ module private Handlers =
 
         Some GLOSSARY_FILE_GLOB |> state.RegisterWatchedFiles |> ignore
 
+        let glossaryFiles = state.FileScanner GLOSSARY_FILE_GLOB
+
+        glossaryFiles
+        |> Seq.iter (fun p -> state.SubGlossaryOps.Start { Path = p; Log = state.Log } |> ignore)
+
         state
 
 
@@ -95,7 +99,7 @@ module private Handlers =
         if exists then
             watchedFileChanged state path
         else
-            let subGlossary = state.SubGlossaryOps.Start { Path = path }
+            let subGlossary = state.SubGlossaryOps.Start { Path = path; Log = state.Log }
             let newSubGlossaries = state.SubGlossaries.Add(path, subGlossary)
 
             { state with
@@ -111,7 +115,7 @@ module private Handlers =
             let! pathOpt = state.DefaultSubGlossaryPathResolver()
             let path = pathOpt.Value
 
-            let defaultSubGlossary = state.SubGlossaryOps.Start { Path = path }
+            let defaultSubGlossary = state.SubGlossaryOps.Start { Path = path; Log = state.Log }
 
             return
                 { state with
