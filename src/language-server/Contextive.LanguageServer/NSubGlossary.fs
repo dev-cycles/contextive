@@ -55,7 +55,8 @@ module Handlers =
                             let errorMessage = fileErrorMessage fileError
                             let msg = $"Error loading glossary: {errorMessage}"
                             state.Log.info msg
-                        //     state.OnErrorLoading msg
+                            state.Log.error msg
+
                         fileError)
                     |> Result.defaultValue state
         }

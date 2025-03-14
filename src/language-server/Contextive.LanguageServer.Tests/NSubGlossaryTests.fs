@@ -42,12 +42,29 @@ let tests =
               let fileReader _ _ = Ok emptyGlossary
 
               { NSubGlossary.StartSubGlossary.Path = "path1"
-                NSubGlossary.StartSubGlossary.Log = { info = CA.received awaiter } }
+                NSubGlossary.StartSubGlossary.Log =
+                  { info = CA.received awaiter
+                    error = fun _ -> () } }
               |> NSubGlossary.start fileReader false
               |> ignore
 
 
               do! CA.expectMessage awaiter $"Loading contextive from path1..."
+          }
+
+          testAsync "When if reading the file fails, it should log the error" {
+              let awaiter = CA.create ()
+
+              let fileReader _ p = Error(Contextive.Core.File.FileError.ParsingError "parsing error")
+
+              let _ =
+                  NSubGlossary.start fileReader false
+                  <| { Path = "path1"
+                       Log =
+                         { info = fun _ -> ()
+                           error = CA.received awaiter } }
+
+              do! CA.expectMessage awaiter "Error loading glossary: Parsing Error: parsing error"
           }
 
           testAsync "When reloading a subglossary it should read the file at the path provided when it was created" {

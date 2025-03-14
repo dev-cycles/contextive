@@ -17,7 +17,8 @@ let newTestLogger () =
         { Logger.info =
             fun msg ->
                 loggedMessagesStore.Add(msg)
-                CA.received awaiter msg } |},
+                CA.received awaiter msg
+          Logger.error = fun _ -> () } |},
     awaiter
 
 
@@ -34,7 +35,7 @@ let newCreateClossary () =
           Reload = noop1 } }
 
 let newInitGlossary () =
-    { Glossary.Log = { info = noop1 }
+    { Glossary.Log = { info = noop1; error = noop1 }
       Glossary.DefaultSubGlossaryPathResolver =
         fun _ -> async.Return <| Error Contextive.Core.File.FileError.Uninitialized
       Glossary.RegisterWatchedFiles = fun _ _ -> noop }
@@ -172,15 +173,18 @@ let tests =
                     do! CA.expectMessage awaiter true
                 }
 
-                testAsync "It should log if unable to get the path of the configured filed" {
-                    let awaiter = CA.create ()
+                testAsync "It should log and error if unable to get the path of the configured filed" {
+                    let logAwaiter = CA.create ()
+                    let errorAwaiter = CA.create ()
 
                     let glossary = newCreateClossary () |> Glossary.create
 
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            Log = { info = CA.received awaiter }
+                            Log =
+                                { info = CA.received logAwaiter
+                                  error = CA.received errorAwaiter }
                             DefaultSubGlossaryPathResolver =
                                 fun () ->
                                     Error(Contextive.Core.File.FileError.PathInvalid "testing error")
@@ -188,7 +192,8 @@ let tests =
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
-                    do! CA.expectMessage awaiter "Error loading glossary: Invalid Path: testing error"
+                    do! CA.expectMessage logAwaiter "Error loading glossary: Invalid Path: testing error"
+                    do! CA.expectMessage errorAwaiter "Error loading glossary: Invalid Path: testing error"
                 }
 
                 ]
@@ -427,7 +432,9 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            Log = { info = CA.received startupAwaiter }
+                            Log =
+                                { info = CA.received startupAwaiter
+                                  error = noop1 }
                             DefaultSubGlossaryPathResolver = fun () -> path |> Ok |> async.Return }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
