@@ -156,5 +156,5 @@ let init (glossary: T) (initGlossary: InitGlossary) =
 let setDefaultGlossaryFile (glossary: T) path =
     SetDefaultGlossaryFile(path) |> glossary.Post
 
-let lookup (glossary: T) (filter: Filter) =
+let lookup (glossary: T) (_: string) (filter: Filter) =
     glossary.PostAndAsyncReply(fun rc -> Lookup { Filter = filter; Rc = rc })

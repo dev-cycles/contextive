@@ -363,7 +363,7 @@ let tests =
 
                     Glossary.setDefaultGlossaryFile glossary Helpers.Fixtures.One.path
 
-                    let! result = Glossary.lookup glossary id
+                    let! result = Glossary.lookup glossary "" id
 
                     test <@ result.Count() = 1 @>
 
@@ -380,7 +380,7 @@ let tests =
 
                     Glossary.setDefaultGlossaryFile glossary Helpers.Fixtures.One.path
 
-                    let! result = Glossary.lookup glossary id
+                    let! result = Glossary.lookup glossary "" id
 
                     test <@ result.Count() = 1 @>
 
