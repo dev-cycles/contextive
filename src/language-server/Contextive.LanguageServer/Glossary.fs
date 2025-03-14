@@ -20,11 +20,15 @@ type SubGlossaryOperations =
     { Start: string -> NSubGlossary.T
       Reload: NSubGlossary.T -> unit }
 
+// Create glossary with static dependencies
 type CreateGlossary =
     { FileScanner: string -> string list
-      Log: Logger
-      RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string -> DeRegisterWatch
       SubGlossaryOps: SubGlossaryOperations }
+
+// InitGlossary with dynamic dependencies that rely on the language server having already started
+type InitGlossary =
+    { Log: Logger
+      RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string -> DeRegisterWatch }
 
 type State =
     { RegisterWatchedFiles: string -> DeRegisterWatch
@@ -38,6 +42,7 @@ type Lookup =
       Rc: AsyncReplyChannel<FindResult> }
 
 type Message =
+    | Init of InitGlossary * OnWatchedFilesEventHandlers
     | SetDefaultGlossaryFile of string
     | WatchedFileCreated of string
     | WatchedFileChanged of string
@@ -50,20 +55,25 @@ let private GLOSSARY_FILE_GLOB = "**/*.contextive.yml"
 
 module private Handlers =
 
-    let create (createGlossary: CreateGlossary) (watchedFileHandlers: OnWatchedFilesEventHandlers) =
+    let create (createGlossary: CreateGlossary) =
         let glossaryFiles = createGlossary.FileScanner GLOSSARY_FILE_GLOB
 
         glossaryFiles
-        |> Seq.iter (fun p ->
-            createGlossary.Log.info $"Found definitions file at '{p}'..."
-            createGlossary.SubGlossaryOps.Start p |> ignore)
+        |> Seq.iter (fun p -> createGlossary.SubGlossaryOps.Start p |> ignore)
 
         let state =
-            { RegisterWatchedFiles = createGlossary.RegisterWatchedFiles watchedFileHandlers
+            { RegisterWatchedFiles = fun _ -> fun () -> ()
               SubGlossaries = Map []
               SubGlossaryOps = createGlossary.SubGlossaryOps
               DefaultGlossaryFile = None
               DeRegisterDefaultGlossaryFileWatcher = None }
+
+        state
+
+    let init (state: State) (initGlossary: InitGlossary) (watchedFileshandlers: OnWatchedFilesEventHandlers) =
+        let state =
+            { state with
+                RegisterWatchedFiles = initGlossary.RegisterWatchedFiles watchedFileshandlers }
 
         state.RegisterWatchedFiles GLOSSARY_FILE_GLOB |> ignore
 
@@ -114,6 +124,8 @@ let private handleMessage (state: State) (msg: Message) =
     async {
         return!
             match msg with
+            | Init(initGlossary, watchedFileHandlers) ->
+                Handlers.init state initGlossary watchedFileHandlers |> async.Return
             | SetDefaultGlossaryFile path -> Handlers.setDefaultGlossaryFile state path |> async.Return
             | WatchedFileCreated path -> Handlers.watchedFileCreated state path |> async.Return
             | WatchedFileChanged path -> Handlers.watchedFileChanged state path |> async.Return
@@ -136,8 +148,10 @@ let create (createGlossary: CreateGlossary) : T =
                 return! loop newState
             }
 
-        loop <| Handlers.create createGlossary (watchedFileHandlers inbox))
+        loop <| Handlers.create createGlossary)
 
+let init (glossary: T) (initGlossary: InitGlossary) =
+    Init(initGlossary, watchedFileHandlers glossary) |> glossary.Post
 
 let setDefaultGlossaryFile (glossary: T) path =
     SetDefaultGlossaryFile(path) |> glossary.Post

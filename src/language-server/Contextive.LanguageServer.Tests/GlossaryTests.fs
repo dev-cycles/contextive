@@ -29,11 +29,13 @@ let noop1 _ = ()
 
 let newCreateClossary () =
     { Glossary.FileScanner = fun _ -> []
-      Glossary.Log = { info = noop1 }
-      Glossary.RegisterWatchedFiles = fun _ _ -> noop
       Glossary.SubGlossaryOps =
         { Start = fun _ -> noopMailboxProcessor ()
           Reload = noop1 } }
+
+let newInitGlossary () =
+    { Glossary.Log = { info = noop1 }
+      Glossary.RegisterWatchedFiles = fun _ _ -> noop }
 
 [<Literal>]
 let private EXPECTED_GLOSSARY_FILE_GLOB = "**/*.contextive.yml"
@@ -44,35 +46,13 @@ let tests =
     let getName (t: Contextive.Core.GlossaryFile.Term) = t.Name
     let compareList = Seq.compareWith compare
 
-
     testList
         "LanguageServer.Glossary Tests"
         [
 
           testList
               "When creating a glossary"
-              [ testAsync "It should scan for files" {
-
-                    let mockFileScanner glob =
-                        if glob = EXPECTED_GLOSSARY_FILE_GLOB then
-                            [ "path1"; "path2" ]
-                        else
-                            []
-
-                    let testLogger, logAwaiter = newTestLogger ()
-
-                    let _ =
-                        Glossary.create
-                            { newCreateClossary () with
-                                FileScanner = mockFileScanner
-                                Log = testLogger.logger }
-
-                    do! CA.expectMessage logAwaiter "Found definitions file at 'path1'..."
-                    do! CA.expectMessage logAwaiter "Found definitions file at 'path2'..."
-                    test <@ testLogger.loggedMessages.Count = 2 @>
-                }
-
-                testAsync "It should start a subglossary for each discovered file" {
+              [ testAsync "It should start a subglossary for each discovered file" {
 
                     let awaiter = CA.create ()
 
@@ -106,10 +86,12 @@ let tests =
                         CA.received awaiter glob
                         noop
 
-                    let _ =
-                        Glossary.create
-                            { newCreateClossary () with
-                                RegisterWatchedFiles = mockRegisterWatchedFiles }
+                    let glossary = newCreateClossary () |> Glossary.create
+
+                    Glossary.init
+                        glossary
+                        { newInitGlossary () with
+                            RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                     do! CA.expectMessage awaiter EXPECTED_GLOSSARY_FILE_GLOB
                 }
@@ -125,10 +107,12 @@ let tests =
                         CA.received awaiter glob
                         noop
 
-                    let glossary =
-                        Glossary.create
-                            { newCreateClossary () with
-                                RegisterWatchedFiles = mockRegisterWatchedFiles }
+                    let glossary = newCreateClossary () |> Glossary.create
+
+                    Glossary.init
+                        glossary
+                        { newInitGlossary () with
+                            RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                     Glossary.setDefaultGlossaryFile glossary "path"
 
@@ -160,10 +144,12 @@ let tests =
 
                     let mockRegisterWatchedFiles _ glob = (fun () -> CA.received awaiter true)
 
-                    let glossary =
-                        Glossary.create
-                            { newCreateClossary () with
-                                RegisterWatchedFiles = mockRegisterWatchedFiles }
+                    let glossary = newCreateClossary () |> Glossary.create
+
+                    Glossary.init
+                        glossary
+                        { newInitGlossary () with
+                            RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                     Glossary.setDefaultGlossaryFile glossary "path1"
 
@@ -192,10 +178,14 @@ let tests =
                           let glossary =
                               Glossary.create
                                   { newCreateClossary () with
-                                      RegisterWatchedFiles = mockRegisterWatchedFiles
                                       SubGlossaryOps =
                                           { Start = mockStartSubGlossary
                                             Reload = noop1 } }
+
+                          Glossary.init
+                              glossary
+                              { newInitGlossary () with
+                                  RegisterWatchedFiles = mockRegisterWatchedFiles }
 
 
                           let! watchedFilesHandlers = CA.waitForAny watchedFilesAwaiter
@@ -229,10 +219,14 @@ let tests =
                           let glossary =
                               Glossary.create
                                   { newCreateClossary () with
-                                      RegisterWatchedFiles = mockRegisterWatchedFiles
                                       SubGlossaryOps =
                                           { Start = mockStartSubGlossary
                                             Reload = mockReloadSubGlossary } }
+
+                          Glossary.init
+                              glossary
+                              { newInitGlossary () with
+                                  RegisterWatchedFiles = mockRegisterWatchedFiles }
 
 
                           let! watchedFilesHandlers = CA.waitForAny watchedFilesAwaiter
@@ -276,10 +270,14 @@ let tests =
                           let glossary =
                               Glossary.create
                                   { newCreateClossary () with
-                                      RegisterWatchedFiles = mockRegisterWatchedFiles
                                       SubGlossaryOps =
                                           { Start = mockStartSubGlossary
                                             Reload = mockReloadSubGlossary } }
+
+                          Glossary.init
+                              glossary
+                              { newInitGlossary () with
+                                  RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                           Glossary.setDefaultGlossaryFile glossary "pathA"
 
@@ -320,10 +318,14 @@ let tests =
                           let glossary =
                               Glossary.create
                                   { newCreateClossary () with
-                                      RegisterWatchedFiles = mockRegisterWatchedFiles
                                       SubGlossaryOps =
                                           { Start = mockStartSubGlossary
                                             Reload = mockReloadSubGlossary } }
+
+                          Glossary.init
+                              glossary
+                              { newInitGlossary () with
+                                  RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                           Glossary.setDefaultGlossaryFile glossary "pathA"
 

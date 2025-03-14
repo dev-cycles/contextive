@@ -21,34 +21,30 @@ let version =
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
         .InformationalVersion
 
-let private onStartupConfigureServer (glossary : SubGlossary.T) =
+let private onStartupConfigureServer (glossary: SubGlossary.T) =
     OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
         async {
             s.Window.LogInfo $"Starting {name} v{version}..."
 
             let onGlossaryFileChangedHandler = SubGlossary.loader glossary
 
-            let registerFileWatcher = Some <| WatchedFiles.register s onGlossaryFileChangedHandler
+            let registerFileWatcher =
+                Some <| WatchedFiles.register s onGlossaryFileChangedHandler
 
             let showWarning =
                 if s.Window.ClientSettings.Capabilities.Window.ShowMessage.IsSupported then
                     s.Window.ShowWarning
                 else
                     fun _ -> ()
-                    
-            let logger = 
-                fun (m:string) ->
+
+            let logger =
+                fun (m: string) ->
                     s.Window.Log(m)
                     Serilog.Log.Logger.Information(m)
 
             let! glossaryFileReader = DefaultGlossaryFileProvider.getDefaultGlossaryFileReader s
 
-            SubGlossary.init
-                glossary
-                logger
-                glossaryFileReader
-                registerFileWatcher
-                showWarning
+            SubGlossary.init glossary logger glossaryFileReader registerFileWatcher showWarning
 
             onGlossaryFileChangedHandler ()
 
@@ -79,8 +75,7 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
             Completion.handler <| SubGlossary.find glossary <| TextDocument.findToken,
             Completion.registrationOptions
         )
-        .OnHover(Hover.handler <| SubGlossary.find glossary <| TextDocument.findToken,
-        Hover.registrationOptions)
+        .OnHover(Hover.handler <| SubGlossary.find glossary <| TextDocument.findToken, Hover.registrationOptions)
 
     |> TextDocument.onSync
 
