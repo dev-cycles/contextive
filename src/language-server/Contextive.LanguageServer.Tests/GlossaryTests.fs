@@ -35,6 +35,7 @@ let newCreateClossary () =
 
 let newInitGlossary () =
     { Glossary.Log = { info = noop1 }
+      Glossary.DefaultGlossaryPathResolver = fun _ -> None
       Glossary.RegisterWatchedFiles = fun _ _ -> noop }
 
 [<Literal>]
@@ -112,9 +113,10 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            RegisterWatchedFiles = mockRegisterWatchedFiles }
+                            RegisterWatchedFiles = mockRegisterWatchedFiles
+                            DefaultGlossaryPathResolver = fun () -> Some "path" }
 
-                    Glossary.setDefaultGlossaryFile glossary "path"
+                    Glossary.reloadDefaultGlossaryFile glossary
 
                     do! CA.expectMessage awaiter "path"
                 }
@@ -133,8 +135,12 @@ let tests =
                                     { Start = mockStartSubGlossary
                                       Reload = noop1 } }
 
+                    Glossary.init
+                        glossary
+                        { newInitGlossary () with
+                            DefaultGlossaryPathResolver = fun () -> Some "path1" }
 
-                    Glossary.setDefaultGlossaryFile glossary "path1"
+                    Glossary.reloadDefaultGlossaryFile glossary
 
                     do! CA.expectMessage awaiter "path1"
                 }
@@ -146,14 +152,19 @@ let tests =
 
                     let glossary = newCreateClossary () |> Glossary.create
 
+                    let mutable currentPath = "path1"
+
                     Glossary.init
                         glossary
                         { newInitGlossary () with
+                            DefaultGlossaryPathResolver = fun () -> currentPath |> Some
                             RegisterWatchedFiles = mockRegisterWatchedFiles }
 
-                    Glossary.setDefaultGlossaryFile glossary "path1"
+                    Glossary.reloadDefaultGlossaryFile glossary
 
-                    Glossary.setDefaultGlossaryFile glossary "path2"
+                    currentPath <- "path2"
+
+                    Glossary.reloadDefaultGlossaryFile glossary
 
                     do! CA.expectMessage awaiter true
                 } ]
@@ -277,9 +288,10 @@ let tests =
                           Glossary.init
                               glossary
                               { newInitGlossary () with
+                                  DefaultGlossaryPathResolver = fun () -> "pathA" |> Some
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
 
-                          Glossary.setDefaultGlossaryFile glossary "pathA"
+                          Glossary.reloadDefaultGlossaryFile glossary
 
                           do! CA.expectMessage defaultGlossaryCreatedAwaiter "pathA"
 
@@ -325,9 +337,10 @@ let tests =
                           Glossary.init
                               glossary
                               { newInitGlossary () with
+                                  DefaultGlossaryPathResolver = fun () -> "pathA" |> Some
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
 
-                          Glossary.setDefaultGlossaryFile glossary "pathA"
+                          Glossary.reloadDefaultGlossaryFile glossary
 
                           do! CA.expectMessage defaultGlossaryCreatedAwaiter "pathA"
 
@@ -361,7 +374,12 @@ let tests =
                                     { Start = NSubGlossary.start fileReader
                                       Reload = NSubGlossary.reload } }
 
-                    Glossary.setDefaultGlossaryFile glossary Helpers.Fixtures.One.path
+                    Glossary.init
+                        glossary
+                        { newInitGlossary () with
+                            DefaultGlossaryPathResolver = fun () -> Helpers.Fixtures.One.path |> Some }
+
+                    Glossary.reloadDefaultGlossaryFile glossary
 
                     let! result = Glossary.lookup glossary "" id
 
@@ -378,7 +396,12 @@ let tests =
                                     { Start = NSubGlossary.start FileReader.pathReader
                                       Reload = NSubGlossary.reload } }
 
-                    Glossary.setDefaultGlossaryFile glossary Helpers.Fixtures.One.path
+                    Glossary.init
+                        glossary
+                        { newInitGlossary () with
+                            DefaultGlossaryPathResolver = fun () -> Helpers.Fixtures.One.path |> Some }
+
+                    Glossary.reloadDefaultGlossaryFile glossary
 
                     let! result = Glossary.lookup glossary "" id
 
