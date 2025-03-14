@@ -54,13 +54,20 @@ let private onStartupConfigureServer (glossary: SubGlossary.T) =
 
 
 let private configureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
-    let glossary = SubGlossary.create ()
+    let subGlossary = SubGlossary.create ()
+
+    let glossary =
+        Glossary.create
+        <| { FileScanner = fun _ -> []
+             SubGlossaryOps =
+               { Start = NSubGlossary.start FileReader.pathReader
+                 Reload = NSubGlossary.reload } }
 
     opts
         .WithInput(input)
         .WithOutput(output)
 
-        .OnStarted(onStartupConfigureServer glossary)
+        .OnStarted(onStartupConfigureServer subGlossary)
         .WithConfigurationSection(DefaultGlossaryFileProvider.ConfigSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z ->
             z
@@ -70,12 +77,12 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
             |> ignore)
         .WithServerInfo(ServerInfo(Name = name, Version = version))
 
-        .OnDidChangeConfiguration(Configuration.handler <| SubGlossary.loader glossary)
+        .OnDidChangeConfiguration(Configuration.handler <| SubGlossary.loader subGlossary)
         .OnCompletion(
-            Completion.handler <| SubGlossary.find glossary <| TextDocument.findToken,
+            Completion.handler <| SubGlossary.find subGlossary <| TextDocument.findToken,
             Completion.registrationOptions
         )
-        .OnHover(Hover.handler <| SubGlossary.find glossary <| TextDocument.findToken, Hover.registrationOptions)
+        .OnHover(Hover.handler <| SubGlossary.find subGlossary <| TextDocument.findToken, Hover.registrationOptions)
 
     |> TextDocument.onSync
 
