@@ -1,5 +1,7 @@
 module Contextive.LanguageServer.Tests.Helpers.ConditionAwaiter
 
+open Swensen.Unquote
+
 type WaitForCondition<'T> =
     { ReplyChannel: AsyncReplyChannel<'T>
       Condition: 'T -> bool }
@@ -85,3 +87,12 @@ let waitForAny awaiter =
     waitForAnyTimeout DEFAULT_TIMEOUT_MS awaiter
 
 let clear (awaiter: Awaiter<'T>) = awaiter.Post(Clear)
+
+let waitForMessage awaiter msg =
+    async { return! waitFor awaiter (fun m -> m = msg) }
+
+let expectMessage awaiter msg =
+    async {
+        let! m = waitForMessage awaiter msg
+        test <@ m = Some msg @>
+    }
