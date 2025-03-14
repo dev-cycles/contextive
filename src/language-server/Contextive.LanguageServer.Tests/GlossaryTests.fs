@@ -29,8 +29,8 @@ let newCreateClossary () =
       Glossary.Log = { info = noop1 }
       Glossary.RegisterWatchedFiles = fun _ _ -> noop
       Glossary.SubGlossaryOps =
-        { Create = fun _ -> noopMailboxProcessor ()
-          Reload = fun _ -> () } }
+        { Start = fun _ -> noopMailboxProcessor ()
+          Reload = noop1 } }
 
 [<Literal>]
 let private EXPECTED_GLOSSARY_FILE_GLOB = "**/*.contextive.yml"
@@ -73,7 +73,7 @@ let tests =
                     test <@ testLogger.loggedMessages.Count = 2 @>
                 }
 
-                testAsync "It should create a glossary for each discovered file" {
+                testAsync "It should start a subglossary for each discovered file" {
 
                     let awaiter = ConditionAwaiter.create ()
 
@@ -84,7 +84,7 @@ let tests =
                         else
                             []
 
-                    let mockCreateSubGlossary path =
+                    let mockStartSubGlossary path =
                         ConditionAwaiter.received awaiter path
                         noopMailboxProcessor ()
 
@@ -93,7 +93,7 @@ let tests =
                             { newCreateClossary () with
                                 FileScanner = mockFileScanner
                                 SubGlossaryOps =
-                                    { Create = mockCreateSubGlossary
+                                    { Start = mockStartSubGlossary
                                       Reload = noop1 } }
 
                     do! expectMessage awaiter "path1"
@@ -136,10 +136,10 @@ let tests =
                     do! expectMessage awaiter "path"
                 }
 
-                testAsync "It should create a glossary at the watched location" {
+                testAsync "It should create a subglossary at the watched location" {
                     let awaiter = ConditionAwaiter.create ()
 
-                    let mockCreateSubGlossary path =
+                    let mockStartSubGlossary path =
                         ConditionAwaiter.received awaiter path
                         noopMailboxProcessor ()
 
@@ -147,7 +147,7 @@ let tests =
                         Glossary.create
                             { newCreateClossary () with
                                 SubGlossaryOps =
-                                    { Create = mockCreateSubGlossary
+                                    { Start = mockStartSubGlossary
                                       Reload = noop1 } }
 
 
@@ -177,8 +177,8 @@ let tests =
           testList
               "Given watched files"
               [ testList
-                    "When watched file is created"
-                    [ testAsync "It should create a subglossary for the watched file" {
+                    "When watched file"
+                    [ testAsync "is created it should start a subglossary for the watched file" {
                           let watchedFilesAwaiter = ConditionAwaiter.create ()
 
                           let mockRegisterWatchedFiles watchedFilesHandlers glob =
@@ -187,7 +187,7 @@ let tests =
 
                           let subGlossaryCreatedAwaiter = ConditionAwaiter.create ()
 
-                          let mockCreateSubGlossary path =
+                          let mockStartSubGlossary path =
                               ConditionAwaiter.received subGlossaryCreatedAwaiter path
                               noopMailboxProcessor ()
 
@@ -196,7 +196,7 @@ let tests =
                                   { newCreateClossary () with
                                       RegisterWatchedFiles = mockRegisterWatchedFiles
                                       SubGlossaryOps =
-                                          { Create = mockCreateSubGlossary
+                                          { Start = mockStartSubGlossary
                                             Reload = noop1 } }
 
 
@@ -208,12 +208,10 @@ let tests =
 
                           do! expectMessage subGlossaryCreatedAwaiter "pathA"
 
-                      } ]
+                      }
 
 
-                testList
-                    "When watched file is updated"
-                    [ testAsync "It should reload the subglossary" {
+                      testAsync "is updated it should reload the subglossary" {
                           let watchedFilesAwaiter = ConditionAwaiter.create ()
 
                           let mockRegisterWatchedFiles watchedFilesHandlers glob =
@@ -224,7 +222,7 @@ let tests =
 
                           let subGlossary = noopMailboxProcessor ()
 
-                          let mockCreateSubGlossary path = subGlossary
+                          let mockStartSubGlossary path = subGlossary
 
                           let mockReloadSubGlossary subGlossary =
                               ConditionAwaiter.received subGlossaryReloadedAwaiter subGlossary
@@ -235,7 +233,7 @@ let tests =
                                   { newCreateClossary () with
                                       RegisterWatchedFiles = mockRegisterWatchedFiles
                                       SubGlossaryOps =
-                                          { Create = mockCreateSubGlossary
+                                          { Start = mockStartSubGlossary
                                             Reload = mockReloadSubGlossary } }
 
 
@@ -246,6 +244,98 @@ let tests =
                           | Some wfh ->
                               wfh.OnCreated "pathA"
                               wfh.OnChanged "pathA"
+
+                          do! expectMessage subGlossaryReloadedAwaiter subGlossary
+
+                      } ]
+
+
+
+
+                testList
+                    "When default file"
+                    [ testAsync "is created it should reload the existing glossary for the default file" {
+                          let watchedFilesAwaiter = ConditionAwaiter.create ()
+
+                          let mockRegisterWatchedFiles watchedFilesHandlers glob =
+                              ConditionAwaiter.received watchedFilesAwaiter watchedFilesHandlers
+                              noop
+
+                          let subGlossaryReloadedAwaiter = ConditionAwaiter.create ()
+
+                          let subGlossary = noopMailboxProcessor ()
+
+                          let defaultGlossaryCreatedAwaiter = ConditionAwaiter.create ()
+
+                          let mockStartSubGlossary path =
+                              ConditionAwaiter.received defaultGlossaryCreatedAwaiter path
+                              subGlossary
+
+                          let mockReloadSubGlossary subGlossary =
+                              ConditionAwaiter.received subGlossaryReloadedAwaiter subGlossary
+                              ()
+
+                          let glossary =
+                              Glossary.create
+                                  { newCreateClossary () with
+                                      RegisterWatchedFiles = mockRegisterWatchedFiles
+                                      SubGlossaryOps =
+                                          { Start = mockStartSubGlossary
+                                            Reload = mockReloadSubGlossary } }
+
+                          Glossary.setDefaultGlossaryFile glossary "pathA"
+
+                          do! expectMessage defaultGlossaryCreatedAwaiter "pathA"
+
+                          let! watchedFilesHandlers = ConditionAwaiter.waitForAny watchedFilesAwaiter
+
+                          match watchedFilesHandlers with
+                          | None -> test <@ watchedFilesHandlers.IsSome @>
+                          | Some wfh -> wfh.OnCreated "pathA"
+
+                          do! expectMessage subGlossaryReloadedAwaiter subGlossary
+
+                      }
+
+
+                      testAsync "is updated it should reload the subglossary" {
+                          let watchedFilesAwaiter = ConditionAwaiter.create ()
+
+                          let mockRegisterWatchedFiles watchedFilesHandlers glob =
+                              ConditionAwaiter.received watchedFilesAwaiter watchedFilesHandlers
+                              noop
+
+                          let subGlossaryReloadedAwaiter = ConditionAwaiter.create ()
+
+                          let subGlossary = noopMailboxProcessor ()
+
+                          let defaultGlossaryCreatedAwaiter = ConditionAwaiter.create ()
+
+                          let mockStartSubGlossary path =
+                              ConditionAwaiter.received defaultGlossaryCreatedAwaiter path
+                              subGlossary
+
+                          let mockReloadSubGlossary subGlossary =
+                              ConditionAwaiter.received subGlossaryReloadedAwaiter subGlossary
+                              ()
+
+                          let glossary =
+                              Glossary.create
+                                  { newCreateClossary () with
+                                      RegisterWatchedFiles = mockRegisterWatchedFiles
+                                      SubGlossaryOps =
+                                          { Start = mockStartSubGlossary
+                                            Reload = mockReloadSubGlossary } }
+
+                          Glossary.setDefaultGlossaryFile glossary "pathA"
+
+                          do! expectMessage defaultGlossaryCreatedAwaiter "pathA"
+
+                          let! watchedFilesHandlers = ConditionAwaiter.waitForAny watchedFilesAwaiter
+
+                          match watchedFilesHandlers with
+                          | None -> test <@ watchedFilesHandlers.IsSome @>
+                          | Some wfh -> wfh.OnChanged "pathA"
 
                           do! expectMessage subGlossaryReloadedAwaiter subGlossary
 

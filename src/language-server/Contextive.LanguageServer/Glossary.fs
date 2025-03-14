@@ -15,7 +15,7 @@ type Logger = { info: string -> unit }
 type DeRegisterWatch = unit -> unit
 
 type SubGlossaryOperations =
-    { Create: string -> NSubGlossary.T
+    { Start: string -> NSubGlossary.T
       Reload: NSubGlossary.T -> unit }
 
 type CreateGlossary =
@@ -49,7 +49,7 @@ module private Handlers =
         glossaryFiles
         |> Seq.iter (fun p ->
             createGlossary.Log.info $"Found definitions file at '{p}'..."
-            createGlossary.SubGlossaryOps.Create p |> ignore)
+            createGlossary.SubGlossaryOps.Start p |> ignore)
 
         let state =
             { RegisterWatchedFiles = createGlossary.RegisterWatchedFiles watchedFileHandlers
@@ -62,7 +62,22 @@ module private Handlers =
 
         state
 
+    let watchedFileChanged (state: State) path =
+        let subGlossary = state.SubGlossaries[path]
+        state.SubGlossaryOps.Reload subGlossary
+        state
 
+    let watchedFileCreated (state: State) path =
+        let exists = state.SubGlossaries.ContainsKey(path)
+
+        if exists then
+            watchedFileChanged state path
+        else
+            let subGlossary = state.SubGlossaryOps.Start path
+            let newSubGlossaries = state.SubGlossaries.Add(path, subGlossary)
+
+            { state with
+                SubGlossaries = newSubGlossaries }
 
     let setDefaultGlossaryFile (state: State) path =
 
@@ -70,23 +85,11 @@ module private Handlers =
         | Some deregister -> deregister ()
         | _ -> ()
 
-        state.SubGlossaryOps.Create path |> ignore
+        let state = watchedFileCreated state path
 
         { state with
             DefaultGlossaryFile = Some path
             DeRegisterDefaultGlossaryFileWatcher = state.RegisterWatchedFiles path |> Some }
-
-    let watchedFileCreated (state: State) path =
-        let subGlossary = state.SubGlossaryOps.Create path
-        let newSubGlossaries = state.SubGlossaries.Add(path, subGlossary)
-
-        { state with
-            SubGlossaries = newSubGlossaries }
-
-    let watchedFileChanged (state: State) path =
-        let subGlossary = state.SubGlossaries[path]
-        state.SubGlossaryOps.Reload subGlossary
-        state
 
 let private handleMessage (state: State) (msg: Message) =
     async {
