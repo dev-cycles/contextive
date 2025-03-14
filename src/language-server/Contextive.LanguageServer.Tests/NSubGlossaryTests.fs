@@ -6,7 +6,7 @@ open Contextive.LanguageServer
 open System.Linq
 open Helpers.SubGlossaryHelper
 
-module CA = Contextive.LanguageServer.Tests.Helpers.ConditionAwaiter
+module CA = Helpers.ConditionAwaiter
 
 [<Tests>]
 let tests =
@@ -47,7 +47,7 @@ let tests =
               do! CA.expectMessage awaiter "path1"
           }
 
-          testAsync "When looking up a term in a subglossary it should return the matching terms" {
+          testAsync "When looking up a term in a subglossary it should return terms" {
               let awaiter = CA.create ()
 
               let fileReader p =
@@ -65,6 +65,4 @@ let tests =
 
               test <@ result.Count() = 1 @>
               test <@ (terms |> Seq.head).Name = "subGlossary1" @>
-          }
-
-          ]
+          } ]

@@ -34,14 +34,16 @@ let tests =
           let getSubGlossary = getSubGlossaryWithErrorHandler (fun _ -> ())
 
           let getFileName glossaryFileName =
-              Path.Combine("fixtures", "completion_tests", $"{glossaryFileName}.yml")
-              |> Some
+              Path.Combine("fixtures", "completion_tests", $"{glossaryFileName}.yml") |> Some
 
           let getTermsFromSubGlossaryInContext termFileUri subGlossaryFilename =
               async {
                   let glossaryFilePath = getFileName subGlossaryFilename
                   let workspaceFolder = Some ""
-                  let configGetter = (fun _ -> async.Return <| Option.map configuredPath glossaryFilePath)
+
+                  let configGetter =
+                      (fun _ -> async.Return <| Option.map configuredPath glossaryFilePath)
+
                   let! subGlossary = getSubGlossary configGetter workspaceFolder
                   let! contexts = SubGlossary.find subGlossary termFileUri id
                   return contexts |> SubGlossaryHelper.FindResult.allTerms
@@ -146,7 +148,9 @@ let tests =
                   (SubGlossary.loader subGlossary) ()
 
                   let! contexts = SubGlossary.find subGlossary "" id
-                  let foundNames = contexts |> SubGlossaryHelper.FindResult.allTerms |> Seq.map getName
+
+                  let foundNames =
+                      contexts |> SubGlossaryHelper.FindResult.allTerms |> Seq.map getName
 
                   test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>
               }

@@ -7,7 +7,7 @@
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="Helpers/Fixtures.fs" />
-        <Compile Include="Helpers/Definitions.fs" />
+        <Compile Include="Helpers/SubGlossaryHelper.fs" />
         <Compile Include="Helpers/Completion.fs" />
         <Compile Include="Helpers/ConditionAwaiter.fs" />
         <Compile Include="Helpers/WatchedFiles.fs" />
