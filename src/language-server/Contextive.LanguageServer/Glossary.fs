@@ -159,7 +159,7 @@ let create (createGlossary: CreateGlossary) : T =
 let init (glossary: T) (initGlossary: InitGlossary) =
     Init(initGlossary, watchedFileHandlers glossary) |> glossary.Post
 
-let reloadDefaultGlossaryFile (glossary: T) =
+let reloadDefaultGlossaryFile (glossary: T) () =
     ReloadDefaultGlossaryFile |> glossary.Post
 
 let lookup (glossary: T) (_: string) (filter: Filter) =

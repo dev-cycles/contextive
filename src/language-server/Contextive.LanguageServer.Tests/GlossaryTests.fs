@@ -116,7 +116,7 @@ let tests =
                             RegisterWatchedFiles = mockRegisterWatchedFiles
                             DefaultGlossaryPathResolver = fun () -> Some "path" }
 
-                    Glossary.reloadDefaultGlossaryFile glossary
+                    Glossary.reloadDefaultGlossaryFile glossary ()
 
                     do! CA.expectMessage awaiter "path"
                 }
@@ -140,7 +140,7 @@ let tests =
                         { newInitGlossary () with
                             DefaultGlossaryPathResolver = fun () -> Some "path1" }
 
-                    Glossary.reloadDefaultGlossaryFile glossary
+                    Glossary.reloadDefaultGlossaryFile glossary ()
 
                     do! CA.expectMessage awaiter "path1"
                 }
@@ -160,11 +160,11 @@ let tests =
                             DefaultGlossaryPathResolver = fun () -> currentPath |> Some
                             RegisterWatchedFiles = mockRegisterWatchedFiles }
 
-                    Glossary.reloadDefaultGlossaryFile glossary
+                    Glossary.reloadDefaultGlossaryFile glossary ()
 
                     currentPath <- "path2"
 
-                    Glossary.reloadDefaultGlossaryFile glossary
+                    Glossary.reloadDefaultGlossaryFile glossary ()
 
                     do! CA.expectMessage awaiter true
                 } ]
@@ -291,7 +291,7 @@ let tests =
                                   DefaultGlossaryPathResolver = fun () -> "pathA" |> Some
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
 
-                          Glossary.reloadDefaultGlossaryFile glossary
+                          Glossary.reloadDefaultGlossaryFile glossary ()
 
                           do! CA.expectMessage defaultGlossaryCreatedAwaiter "pathA"
 
@@ -340,7 +340,7 @@ let tests =
                                   DefaultGlossaryPathResolver = fun () -> "pathA" |> Some
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
 
-                          Glossary.reloadDefaultGlossaryFile glossary
+                          Glossary.reloadDefaultGlossaryFile glossary ()
 
                           do! CA.expectMessage defaultGlossaryCreatedAwaiter "pathA"
 
@@ -379,7 +379,7 @@ let tests =
                         { newInitGlossary () with
                             DefaultGlossaryPathResolver = fun () -> Helpers.Fixtures.One.path |> Some }
 
-                    Glossary.reloadDefaultGlossaryFile glossary
+                    Glossary.reloadDefaultGlossaryFile glossary ()
 
                     let! result = Glossary.lookup glossary "" id
 
@@ -401,7 +401,7 @@ let tests =
                         { newInitGlossary () with
                             DefaultGlossaryPathResolver = fun () -> Helpers.Fixtures.One.path |> Some }
 
-                    Glossary.reloadDefaultGlossaryFile glossary
+                    Glossary.reloadDefaultGlossaryFile glossary ()
 
                     let! result = Glossary.lookup glossary "" id
 

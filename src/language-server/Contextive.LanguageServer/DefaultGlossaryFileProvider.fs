@@ -55,7 +55,7 @@ let private getWorkspaceFolder (s: ILanguageServer) =
         None
 
 
-let initGlossaryFileInitializer (s: ILanguageServer) pathGetter = 
+let initGlossaryFileInitializer (s: ILanguageServer) pathGetter =
     let showDocument =
         match s.ClientSettings.Capabilities.Window.ShowDocument.IsSupported with
         | true -> s.Window.ShowDocument
@@ -63,19 +63,42 @@ let initGlossaryFileInitializer (s: ILanguageServer) pathGetter =
 
     GlossaryFileInitializer.registerHandler s pathGetter showDocument
 
-let getDefaultGlossaryFileReader (s: ILanguageServer) = async {
-    let configGetter () = getConfigValue s ConfigSection pathKey
-    // Not sure if this is needed to ensure configuration is loaded, or allow a task/context switch
-    // Either way, if it's not here, then getWorkspaceFolder returns null
-    let! _ = configGetter ()
+let private getResolvedPathGetter (s: ILanguageServer) =
+    async {
+        let configGetter () = getConfigValue s ConfigSection pathKey
+        // Not sure if this is needed to ensure configuration is loaded, or allow a task/context switch
+        // Either way, if it's not here, then getWorkspaceFolder returns null
+        let! _ = configGetter ()
 
-    let workspaceFolder = getWorkspaceFolder s
+        let workspaceFolder = getWorkspaceFolder s
 
-    let pathGetter =
-        PathResolver.resolvePath workspaceFolder
-        |> Configuration.resolvedPathGetter configGetter
+        return
+            PathResolver.resolvePath workspaceFolder
+            |> Configuration.resolvedPathGetter configGetter
+    }
 
-    initGlossaryFileInitializer s pathGetter
+let getDefaultGlossaryFileReader (s: ILanguageServer) =
+    async {
+        let! pathGetter = getResolvedPathGetter s
 
-    return pathGetter |> FileReader.reader
-}
+        initGlossaryFileInitializer s pathGetter
+
+        return pathGetter |> FileReader.reader
+    }
+
+let getDefaultGlossaryFilePathResolver (s: ILanguageServer) =
+    async {
+        let! pathGetter = getResolvedPathGetter s
+
+        return
+            fun () ->
+                async {
+                    let! path = pathGetter ()
+
+                    return
+                        match path with
+                        | Ok(p) -> Some p.Path
+                        | Error(_) -> None
+                }
+
+    }
