@@ -2,6 +2,7 @@ module Contextive.LanguageServer.Glossary
 
 open Contextive.Core.GlossaryFile
 open Contextive.LanguageServer.Logger
+open Contextive.Core.File
 
 type OnWatchedFilesEventHandlers =
     { OnCreated: string -> unit
@@ -28,7 +29,7 @@ type CreateGlossary =
 type InitGlossary =
     { Log: Logger
       RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string option -> DeRegisterWatch
-      DefaultSubGlossaryPathResolver: unit -> Async<string option> }
+      DefaultSubGlossaryPathResolver: unit -> Async<Result<string, FileError>> }
 
 type State =
     { Log: Logger
@@ -36,7 +37,7 @@ type State =
       RegisterWatchedFiles: string option -> DeRegisterWatch
       SubGlossaries: Map<string, NSubGlossary.T>
       SubGlossaryOps: SubGlossaryOperations
-      DefaultSubGlossaryPathResolver: unit -> Async<string option>
+      DefaultSubGlossaryPathResolver: unit -> Async<Result<string, FileError>>
       DefaultSubGlossary: NSubGlossary.T option
       DeRegisterDefaultSubGlossaryFileWatcher: DeRegisterWatch option }
 
@@ -66,7 +67,7 @@ module private Handlers =
               RegisterWatchedFiles = fun _ -> fun () -> ()
               SubGlossaries = Map []
               SubGlossaryOps = createGlossary.SubGlossaryOps
-              DefaultSubGlossaryPathResolver = fun _ -> async.Return None
+              DefaultSubGlossaryPathResolver = fun _ -> FileError.Uninitialized |> Error |> async.Return
               DefaultSubGlossary = None
               DeRegisterDefaultSubGlossaryFileWatcher = None }
 
@@ -114,15 +115,21 @@ module private Handlers =
             | _ -> ()
 
             let! pathOpt = state.DefaultSubGlossaryPathResolver()
-            let path = pathOpt.Value
-
-            let defaultSubGlossary = state.SubGlossaryOps.Start { Path = path; Log = state.Log }
 
             return
-                { state with
-                    DefaultSubGlossary = defaultSubGlossary |> Some
-                    SubGlossaries = state.SubGlossaries.Add(path, defaultSubGlossary)
-                    DeRegisterDefaultSubGlossaryFileWatcher = Some path |> state.RegisterWatchedFiles |> Some }
+                pathOpt
+                |> Result.map (fun path ->
+                    let defaultSubGlossary = state.SubGlossaryOps.Start { Path = path; Log = state.Log }
+
+                    { state with
+                        DefaultSubGlossary = defaultSubGlossary |> Some
+                        SubGlossaries = state.SubGlossaries.Add(path, defaultSubGlossary)
+                        DeRegisterDefaultSubGlossaryFileWatcher = Some path |> state.RegisterWatchedFiles |> Some })
+                |> Result.mapError (fun fileError ->
+                    let errorMessage = fileErrorMessage fileError
+                    let msg = $"Error loading glossary: {errorMessage}"
+                    state.Log.info msg)
+                |> Result.defaultValue state
         }
 
     let lookup (state: State) (lookup: Lookup) =

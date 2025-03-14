@@ -89,7 +89,7 @@ let private nOnStartupConfigureServer (glossary: Glossary.T) =
             let! defaultSubGlossaryPathResolver = DefaultGlossaryFileProvider.getDefaultGlossaryFilePathResolver s
 
             { Glossary.InitGlossary.DefaultSubGlossaryPathResolver = defaultSubGlossaryPathResolver
-              Glossary.InitGlossary.Log = { info = fun _ -> () }
+              Glossary.InitGlossary.Log = Logger.forLanguageServer s
               Glossary.InitGlossary.RegisterWatchedFiles = WatchedFiles.nRegister s }
             |> Glossary.init glossary
 

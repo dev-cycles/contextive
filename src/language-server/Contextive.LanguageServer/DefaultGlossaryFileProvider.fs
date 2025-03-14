@@ -96,9 +96,9 @@ let getDefaultGlossaryFilePathResolver (s: ILanguageServer) =
                     let! path = pathGetter ()
 
                     return
-                        match path with
-                        | Ok(p) -> Some p.Path
-                        | Error(_) -> None
+                        path
+                        |> Result.map (fun p -> p.Path)
+                        |> Result.mapError (fun e -> FileError.PathInvalid e)
                 }
 
     }

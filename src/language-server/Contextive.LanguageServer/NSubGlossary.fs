@@ -45,6 +45,16 @@ module Handlers =
                     fileContents
                     |> Result.bind deserialize
                     |> Result.map (fun r -> { state with GlossaryFile = r })
+                    |> Result.mapError (fun fileError ->
+                        match fileError with
+                        | DefaultFileNotFound ->
+                            state.Log.info "No glossary file configured, and default file not found."
+                        | _ ->
+                            let errorMessage = fileErrorMessage fileError
+                            let msg = $"Error loading glossary: {errorMessage}"
+                            state.Log.info msg
+                        //     state.OnErrorLoading msg
+                        fileError)
                     |> Result.defaultValue state
         }
 

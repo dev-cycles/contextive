@@ -35,7 +35,8 @@ let newCreateClossary () =
 
 let newInitGlossary () =
     { Glossary.Log = { info = noop1 }
-      Glossary.DefaultSubGlossaryPathResolver = fun _ -> async.Return None
+      Glossary.DefaultSubGlossaryPathResolver =
+        fun _ -> async.Return <| Error Contextive.Core.File.FileError.Uninitialized
       Glossary.RegisterWatchedFiles = fun _ _ -> noop }
 
 [<Literal>]
@@ -116,7 +117,7 @@ let tests =
                         glossary
                         { newInitGlossary () with
                             RegisterWatchedFiles = mockRegisterWatchedFiles
-                            DefaultSubGlossaryPathResolver = fun () -> async.Return <| Some "path" }
+                            DefaultSubGlossaryPathResolver = fun () -> async.Return <| Ok "path" }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
@@ -140,7 +141,7 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultSubGlossaryPathResolver = fun () -> async.Return <| Some "path1" }
+                            DefaultSubGlossaryPathResolver = fun () -> async.Return <| Ok "path1" }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
@@ -159,7 +160,7 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultSubGlossaryPathResolver = fun () -> currentPath |> Some |> async.Return
+                            DefaultSubGlossaryPathResolver = fun () -> currentPath |> Ok |> async.Return
                             RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
@@ -169,7 +170,28 @@ let tests =
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
                     do! CA.expectMessage awaiter true
-                } ]
+                }
+
+                testAsync "It should log if unable to get the path of the configured filed" {
+                    let awaiter = CA.create ()
+
+                    let glossary = newCreateClossary () |> Glossary.create
+
+                    Glossary.init
+                        glossary
+                        { newInitGlossary () with
+                            Log = { info = CA.received awaiter }
+                            DefaultSubGlossaryPathResolver =
+                                fun () ->
+                                    Error(Contextive.Core.File.FileError.PathInvalid "testing error")
+                                    |> async.Return }
+
+                    Glossary.reloadDefaultGlossaryFile glossary ()
+
+                    do! CA.expectMessage awaiter "Error loading glossary: Invalid Path: testing error"
+                }
+
+                ]
 
           testList
               "Given watched files"
@@ -290,7 +312,7 @@ let tests =
                           Glossary.init
                               glossary
                               { newInitGlossary () with
-                                  DefaultSubGlossaryPathResolver = fun () -> "pathA" |> Some |> async.Return
+                                  DefaultSubGlossaryPathResolver = fun () -> "pathA" |> Ok |> async.Return
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                           Glossary.reloadDefaultGlossaryFile glossary ()
@@ -339,7 +361,7 @@ let tests =
                           Glossary.init
                               glossary
                               { newInitGlossary () with
-                                  DefaultSubGlossaryPathResolver = fun () -> "pathA" |> Some |> async.Return
+                                  DefaultSubGlossaryPathResolver = fun () -> "pathA" |> Ok |> async.Return
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
 
                           Glossary.reloadDefaultGlossaryFile glossary ()
@@ -379,7 +401,7 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultSubGlossaryPathResolver = fun () -> Helpers.Fixtures.One.path |> Some |> async.Return }
+                            DefaultSubGlossaryPathResolver = fun () -> Helpers.Fixtures.One.path |> Ok |> async.Return }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
@@ -406,7 +428,7 @@ let tests =
                         glossary
                         { newInitGlossary () with
                             Log = { info = CA.received startupAwaiter }
-                            DefaultSubGlossaryPathResolver = fun () -> path |> Some |> async.Return }
+                            DefaultSubGlossaryPathResolver = fun () -> path |> Ok |> async.Return }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
