@@ -53,14 +53,14 @@ let tests =
               |> ignore
 
 
-              do! CA.expectMessage awaiter $"Loading contextive from path1..."
+              do! CA.expectMessage awaiter "Loading contextive from path1..."
           }
 
           testAsync "When if reading the file fails, it should log the error" {
               let awaiter = CA.create ()
 
-              let fileReader p =
-                  Error(Contextive.Core.File.FileError.ParsingError "parsing error")
+              let fileReader _ =
+                  Error(FileError.ParsingError "parsing error")
 
               let _ =
                   SubGlossary.start fileReader
@@ -114,7 +114,7 @@ let tests =
           testAsync "SubGlossary can recover from FileReading Failure" {
               let awaiter = CA.create ()
 
-              let ErrorFileResult = Error(Contextive.Core.File.FileError.FileNotFound)
+              let ErrorFileResult = Error(FileError.FileNotFound)
 
               let OkFileResult =
                   """contexts:

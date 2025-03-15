@@ -30,4 +30,4 @@ let reader pathGetter =
         }
 
 let pathReader (path: PathConfiguration) =
-    path |> Ok |> readFromPath |> Result.bind (fun r -> r.Contents)
+    path |> Ok |> readFromPath |> Result.bind (_.Contents)

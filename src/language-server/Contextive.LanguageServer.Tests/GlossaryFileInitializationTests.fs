@@ -8,7 +8,6 @@ open Contextive.LanguageServer.Tests.Helpers.Window
 open Helpers.TestClient
 open System.IO
 open VerifyExpecto
-open VerifyTests
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 
 [<CLIMutable>]

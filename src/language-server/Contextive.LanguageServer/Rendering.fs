@@ -5,7 +5,7 @@ open Contextive.Core
 let private emojifyTerm t = "📗 " + t
 let private emphasise t = $"`{t}`"
 
-let private doubleBlankLine = $"\n\n"
+let private doubleBlankLine = "\n\n"
 
 let private renderDefinition d =
     match d with

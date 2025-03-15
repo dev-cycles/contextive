@@ -31,7 +31,7 @@ let tests =
                   [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
                     ConfigurationSection.contextivePathLoaderBuilder pathLoader ]
 
-              let! (client, logAwaiter) = TestClient(config) |> initAndGetLogAwaiter
+              let! client, logAwaiter = TestClient(config) |> initAndGetLogAwaiter
               use client = client
 
               path <- "two.yml"

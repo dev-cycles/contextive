@@ -14,7 +14,7 @@ let private jTokenFromMap values =
 
     values
     |> Map.iter (fun k (v: obj) ->
-        configValue.[k] <-
+        configValue[k] <-
             match v with
             | :? JToken as jv -> jv
             | _ -> JValue(v))
@@ -22,12 +22,12 @@ let private jTokenFromMap values =
     configValue
 
 let private configSectionResultFromMap values =
-    let results = new List<JToken>()
+    let results = List<JToken>()
     results.Add(jTokenFromMap values)
     Container(results)
 
 let private includesSection section (configRequest: ConfigurationParams) =
-    configRequest.Items |> Seq.map (fun ci -> ci.Section) |> Seq.contains section
+    configRequest.Items |> Seq.map (_.Section) |> Seq.contains section
 
 let private createHandler section configValuesLoader =
     fun (configRequest: ConfigurationParams) ->
@@ -97,7 +97,7 @@ let didChangePath (client: ILanguageClient) path (logAwaiter: ConditionAwaiter.A
         if Option.isNone reply then
             failwith "Server never loaded configuration after changing the path"
         else
-            Serilog.Log.Logger.Debug(sprintf "Server did load contextive with: %s" reply.Value)
+            Serilog.Log.Logger.Debug $"Server did load contextive with: %s{reply.Value}"
 
         match logAwaiter with
         | None -> ()

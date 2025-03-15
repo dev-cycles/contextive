@@ -6,13 +6,11 @@ open Swensen.Unquote
 open System.IO
 open System.Linq
 open System.Collections.Generic
-open Contextive.LanguageServer
 open OmniSharp.Extensions.LanguageServer.Protocol.Client
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open Contextive.LanguageServer.Tests.Helpers
 open Helpers.TestClient
-open Helpers.WatchedFiles
 
 let didChangeWatchedFiles (client: ILanguageClient) (uri: string) =
     client.SendNotification(
@@ -33,7 +31,7 @@ let tests =
 
           let isAbsoluteRegistration =
               function
-              | Registered(_, opts) -> opts.Watchers.Any(fun w -> not <| w.GlobPattern.Pattern.Contains("**"))
+              | WatchedFiles.Registered(_, opts) -> opts.Watchers.Any(fun w -> not <| w.GlobPattern.Pattern.Contains("**"))
               | _ -> false
 
           testAsync "Server registers to receive watched file changes" {
@@ -41,7 +39,7 @@ let tests =
 
               let config =
                   [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                    ConfigurationSection.contextivePathBuilder $"one.yml"
+                    ConfigurationSection.contextivePathBuilder "one.yml"
                     WatchedFiles.optionsBuilder registrationAwaiter ]
 
               use! client = TestClient(config) |> init
@@ -53,7 +51,7 @@ let tests =
               test <@ registrationMsg.IsSome @>
 
               match registrationMsg with
-              | Some(Registered(_, opts)) -> test <@ opts.Watchers |> watcherIsForFile "one.yml" @>
+              | Some(WatchedFiles.Registered(_, opts)) -> test <@ opts.Watchers |> watcherIsForFile "one.yml" @>
               | _ -> test <@ false @>
           }
 
@@ -70,7 +68,7 @@ let tests =
                         ConfigurationSection.contextivePathLoaderBuilder pathLoader
                         WatchedFiles.optionsBuilder registrationAwaiter ]
 
-                  let! (client, logAwaiter) = TestClient(config) |> initAndGetLogAwaiter
+                  let! client, logAwaiter = TestClient(config) |> initAndGetLogAwaiter
                   use client = client
 
                   let! initialRegistrationMsg = ConditionAwaiter.waitFor registrationAwaiter isAbsoluteRegistration
@@ -83,21 +81,21 @@ let tests =
                   let! secondRegistrationMsg =
                       ConditionAwaiter.waitFor registrationAwaiter (fun m ->
                           match m with
-                          | Registered(_) -> true
+                          | WatchedFiles.Registered _ -> true
                           | _ -> false)
 
                   let! unregistrationMsg =
                       ConditionAwaiter.waitFor registrationAwaiter (fun m ->
                           match m with
-                          | Unregistered(_) -> true
+                          | WatchedFiles.Unregistered _ -> true
                           | _ -> false)
 
                   match secondRegistrationMsg with
-                  | Some(Registered(_, opts)) -> test <@ opts.Watchers |> watcherIsForFile newDefinitionsFile @>
+                  | Some(WatchedFiles.Registered(_, opts)) -> test <@ opts.Watchers |> watcherIsForFile newDefinitionsFile @>
                   | _ -> failtest "no registration to watch after config changed"
 
                   match initialRegistrationMsg, unregistrationMsg with
-                  | Some(Registered(regoId, _)), Some(Unregistered(unregoId)) -> test <@ regoId = unregoId @>
+                  | Some(WatchedFiles.Registered(regoId, _)), Some(WatchedFiles.Unregistered(unregoId)) -> test <@ regoId = unregoId @>
                   | _ -> failtest "registration of initial config not unregistered"
               }
 

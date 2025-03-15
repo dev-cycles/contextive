@@ -31,7 +31,7 @@ let startAndWaitForExit =
     }
 
 [<EntryPoint>]
-let main argv =
+let main _ =
     setupLogging
     startAndWaitForExit |> Async.RunSynchronously
     0 // return an integer exit code

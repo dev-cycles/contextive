@@ -9,7 +9,7 @@ let unwrap = Result.defaultValue { Contexts = null }
 
 let unwrapError =
     function
-    | Ok(o) -> null
+    | Ok _ -> null
     | Error(msg) -> msg
 
 [<Tests>]

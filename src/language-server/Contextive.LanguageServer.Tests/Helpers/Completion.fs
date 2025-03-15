@@ -6,7 +6,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open Contextive.LanguageServer
 
 let getLabels (result: CompletionList) =
-    result.Items |> Seq.map (fun x -> x.Label)
+    result.Items |> Seq.map (_.Label)
 
 let getCompletionFromText (text: string) (uri: string) (position: Position) (client: ILanguageClient) =
     async {
@@ -36,4 +36,4 @@ let getCompletionLabels (client: ILanguageClient) =
 let emptyTokenFinder: TextDocument.TokenFinder = fun _ _ -> None
 
 let defaultParams =
-    CompletionParams(TextDocument = TextDocumentIdentifier(Uri = new System.Uri("https://test")), Position = Position())
+    CompletionParams(TextDocument = TextDocumentIdentifier(Uri = System.Uri("https://test")), Position = Position())

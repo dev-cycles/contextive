@@ -54,7 +54,7 @@ let tests =
           testAsync "Server supports full sync" {
               let config =
                   [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                    ConfigurationSection.contextivePathBuilder $"one.yml" ]
+                    ConfigurationSection.contextivePathBuilder "one.yml" ]
 
               use! client = TestClient(config) |> init
               test <@ client.ServerSettings.Capabilities.TextDocumentSync.Options.Change = TextDocumentSyncKind.Full @>
@@ -86,7 +86,7 @@ let tests =
           |> List.map openDocumentCanFindTextDoc
           |> testList "Given open text document, can find text document"
 
-          testAsync $"Given changed text document, can find text document" {
+          testAsync "Given changed text document, can find text document" {
               let textDocumentUri =
                   DocumentUri.From($"file:///{System.Guid.NewGuid().ToString()}")
 
@@ -109,7 +109,7 @@ let tests =
               test <@ token.Value = "secondterm" @>
           }
 
-          testAsync $"Given Saved document, can find text document" {
+          testAsync "Given Saved document, can find text document" {
               let textDocumentUri =
                   DocumentUri.From($"file:///{System.Guid.NewGuid().ToString()}")
 
@@ -138,7 +138,7 @@ let tests =
               test <@ token.Value = "secondterm" @>
           }
 
-          testAsync $"Given Closed document, text document not found" {
+          testAsync "Given Closed document, text document not found" {
               let textDocumentUri =
                   DocumentUri.From($"file:///{System.Guid.NewGuid().ToString()}")
 

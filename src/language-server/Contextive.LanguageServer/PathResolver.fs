@@ -30,7 +30,7 @@ let private shellOutToGetPath wsf configuredPath =
             let err = proc.StandardError.ReadToEnd()
             Error(err)
         | true ->
-            Serilog.Log.Logger.Error $"Started process."
+            Serilog.Log.Logger.Error "Started process."
             let loc = proc.StandardOutput.ReadToEnd().Trim()
             let err = proc.StandardError.ReadToEnd().Trim()
 

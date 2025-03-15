@@ -28,7 +28,7 @@ let showMessageRequestHandlerBuilder
     (opts: LanguageClientOptions)
     : LanguageClientOptions =
     opts
-        .WithCapability(new ShowMessageClientCapability())
+        .WithCapability(ShowMessageClientCapability())
         .OnShowMessageRequest(handler)
     |> ignore
 
@@ -38,7 +38,7 @@ let showMessageHandlerBuilder
     (handler: NotificationHandler<ShowMessageParams>)
     (opts: LanguageClientOptions)
     : LanguageClientOptions =
-    opts.WithCapability(new ShowMessageClientCapability()).OnShowMessage(handler)
+    opts.WithCapability(ShowMessageClientCapability()).OnShowMessage(handler)
     |> ignore
 
     opts
@@ -48,7 +48,7 @@ let showDocumentRequestHandlerBuilder
     (opts: LanguageClientOptions)
     : LanguageClientOptions =
     opts
-        .WithCapability(new ShowDocumentClientCapabilities())
+        .WithCapability(ShowDocumentClientCapabilities())
         .OnShowDocument(handler)
     |> ignore
 

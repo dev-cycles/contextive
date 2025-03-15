@@ -31,7 +31,7 @@ type Lexer =
 
     member this.Length =
         match this with
-        | Token(line, start, end') -> end' - start |> Some
+        | Token(_, start, end') -> end' - start |> Some
         | _ -> None
 
     member this.HasLength =

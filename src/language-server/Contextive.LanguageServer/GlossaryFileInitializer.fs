@@ -90,12 +90,12 @@ let private handler pathGetter (showDocument: ShowDocumentParams -> System.Threa
 
             return!
                 match path with
-                | Error(e) -> async { return { Success = false } }
+                | Error _ -> async { return { Success = false } }
                 | Ok({ Path = p }) ->
                     async {
                         if not <| File.Exists(p) then
                             let defaultGlossaryFileText =
-                                GlossaryFile.serialize defaultGlossaryFile
+                                serialize defaultGlossaryFile
                                 |> insertComment "contexts:" introComments
                                 |> insertComment "    paths:" pathComments
 

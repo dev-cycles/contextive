@@ -163,7 +163,7 @@ let tests =
           |> List.map testLessRelevantTermNotFound
           |> testList "Less relevant term NOT found when hovering"
 
-          testAsync $"Test hover with context info and no match" {
+          testAsync "Test hover with context info and no match" {
               let terms = []
               let foundToken = Some "term"
 

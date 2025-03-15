@@ -58,7 +58,7 @@ module private TextDocument =
     let getTokenAtPosition (p: HoverParams) (tokenFinder: TextDocument.TokenFinder) =
         match p.TextDocument with
         | null -> None
-        | document -> tokenFinder (document.Uri) p.Position
+        | document -> tokenFinder document.Uri p.Position
 
 module private Lsp =
     let markupContent content =
@@ -104,7 +104,7 @@ let handler
     }
     |> Async.StartAsTask
 
-let private registrationOptionsProvider (hc: HoverCapability) (cc: ClientCapabilities) = HoverRegistrationOptions()
+let private registrationOptionsProvider (_: HoverCapability) (_: ClientCapabilities) = HoverRegistrationOptions()
 
 let registrationOptions =
     RegistrationOptionsDelegate<HoverRegistrationOptions, HoverCapability>(registrationOptionsProvider)

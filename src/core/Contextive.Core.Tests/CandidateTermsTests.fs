@@ -14,7 +14,7 @@ let tokenAndPartsTests =
               ((fst t1, fst t2) ||> compare) + ((snd t1, snd t2) ||> Seq.compareWith compare)
 
 
-          let testCandidateTermFinding (token, (expectedCandidateTerms: TokenAndCandidateTerms seq)) =
+          let testCandidateTermFinding (token, expectedCandidateTerms: TokenAndCandidateTerms seq) =
               let expectedCandidateTermsList = sprintf "%A" <| Seq.toList expectedCandidateTerms
 
               testCase $"Token {token}: finds candidates {expectedCandidateTermsList}"

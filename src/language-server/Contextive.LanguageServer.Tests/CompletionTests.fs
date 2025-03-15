@@ -9,8 +9,6 @@ open Contextive.Core.GlossaryFile
 open Contextive.LanguageServer.Tests.Helpers
 open Contextive.LanguageServer.Tests.Helpers.TestClient
 
-module SubGlossaryHelper = Helpers.SubGlossaryHelper
-
 [<Tests>]
 let tests =
     testList
@@ -51,10 +49,10 @@ let tests =
           |> List.map testFileReader
           |> testList "File reading tests"
 
-          let singleWordCompletion (term, (tokenAtPosition: string option), expectedLabel: string) =
+          let singleWordCompletion (term, tokenAtPosition: string option, expectedLabel: string) =
               testCase $"Completion of \"{term}\" with {tokenAtPosition} at position, returns \"{expectedLabel}\""
               <| fun () ->
-                  let finder: Finder = SubGlossaryHelper.mockTermNamesFinder Context.Default ([ term ])
+                  let finder: Finder = SubGlossaryHelper.mockTermNamesFinder Context.Default [ term ]
 
                   let tokenFinder: TextDocument.TokenFinder = fun _ _ -> tokenAtPosition
 
@@ -78,14 +76,14 @@ let tests =
           |> testList "Single Word Completion"
 
 
-          let multiWordCompletion (term, (tokenAtPosition: string option), expectedCompletionLabels: string seq) =
+          let multiWordCompletion (term, tokenAtPosition: string option, expectedCompletionLabels: string seq) =
               let expectedCompletionLabelsList =
                   sprintf "%A" <| Seq.toList expectedCompletionLabels
 
               testCase
                   $"Completion of \"{term}\" with {tokenAtPosition} at position, returns \"{expectedCompletionLabelsList}\""
               <| fun () ->
-                  let finder: Finder = SubGlossaryHelper.mockTermNamesFinder Context.Default ([ term ])
+                  let finder: Finder = SubGlossaryHelper.mockTermNamesFinder Context.Default [ term ]
 
                   let tokenFinder: TextDocument.TokenFinder = fun _ _ -> tokenAtPosition
 
@@ -158,7 +156,7 @@ let tests =
                       SubGlossaryHelper.mockTermNamesFinder
                           { Context.Default with
                               Name = contextName }
-                          ([ "term" ])
+                          [ "term" ]
 
                   let completionItem =
                       (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null)

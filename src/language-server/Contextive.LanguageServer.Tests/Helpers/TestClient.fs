@@ -24,7 +24,7 @@ type private TestClient() =
         let serverPipe = Pipe()
 
         async {
-            let! server = setupAndStartLanguageServer (serverPipe.Reader.AsStream()) (clientPipe.Writer.AsStream())
+            let! _ = setupAndStartLanguageServer (serverPipe.Reader.AsStream()) (clientPipe.Writer.AsStream())
             // this.AddToDisposable server
             ()
         }
@@ -54,7 +54,7 @@ let private initAndWaitForConfigLoaded testClientConfig (loadMessage: string opt
 
         let clientOptionsBuilder = List.fold (>>) id allBuilders
 
-        let! (client, _, _) = Some clientOptionsBuilder |> createTestClient
+        let! client, _, _ = Some clientOptionsBuilder |> createTestClient
 
         let! reply =
             (defaultArg loadMessage "Loading contextive")
@@ -77,13 +77,13 @@ let initAndWaitForReply initOptions =
 
 let initAndGetLogAwaiter o =
     async {
-        let! (client, _, logAwaiter) = initAndWaitForReply o
+        let! client, _, logAwaiter = initAndWaitForReply o
         return client, logAwaiter
     }
 
 
 let init o =
     async {
-        let! (client, _) = initAndGetLogAwaiter o
+        let! client, _ = initAndGetLogAwaiter o
         return client
     }

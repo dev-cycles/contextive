@@ -56,7 +56,7 @@ let create<'T> () =
 
             loop WaitState<'T>.Initial)
 
-    awaiter.Error.Add(fun e -> printfn "%A" e)
+    awaiter.Error.Add(printfn "%A") 
     awaiter
 
 let received (awaiter: Awaiter<'T>) msg = awaiter.Post(Received(msg))

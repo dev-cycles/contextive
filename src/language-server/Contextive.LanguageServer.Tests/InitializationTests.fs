@@ -31,7 +31,7 @@ let tests =
                   [ Workspace.optionsBuilder ""
                     ConfigurationSection.contextivePathBuilder pathValue ]
 
-              let! (client, reply, _) = TestClient(config) |> initAndWaitForReply
+              let! client, reply, _ = TestClient(config) |> initAndWaitForReply
               use client = client
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
@@ -46,7 +46,7 @@ let tests =
                   [ Workspace.rootOptionsBuilder ""
                     ConfigurationSection.contextivePathBuilder pathValue ]
 
-              let! (client, reply, _) = TestClient(config) |> initAndWaitForReply
+              let! client, reply, _ = TestClient(config) |> initAndWaitForReply
               use client = client
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
@@ -59,7 +59,7 @@ let tests =
 
               let config = [ ConfigurationSection.contextivePathBuilder $"/tmp/{pathValue}" ]
 
-              let! (client, reply, _) = TestClient(config) |> initAndWaitForReply
+              let! client, reply, _ = TestClient(config) |> initAndWaitForReply
               use client = client
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
@@ -71,7 +71,7 @@ let tests =
               let pathValue = Guid.NewGuid().ToString()
               let config = [ ConfigurationSection.contextivePathBuilder pathValue ]
 
-              let! (client, reply, _) = TestClientWithCustomInitWait(config, Some pathValue) |> initAndWaitForReply
+              let! client, reply, _ = TestClientWithCustomInitWait(config, Some pathValue) |> initAndWaitForReply
               use client = client
 
               test <@ client.ClientSettings.Capabilities.Workspace.Configuration.IsSupported @>
@@ -90,8 +90,8 @@ let tests =
 
               let expectedResult = Some "Successfully loaded."
 
-              let! (client, reply, _) = TestClientWithCustomInitWait(config, expectedResult) |> initAndWaitForReply
-              use client = client
+              let! client, reply, _ = TestClientWithCustomInitWait(config, expectedResult) |> initAndWaitForReply
+              use _ = client
 
               test <@ reply = expectedResult @>
           }
@@ -107,8 +107,8 @@ let tests =
 
               let expectedResult = Some "No glossary file configured, and default file not found."
 
-              let! (client, reply, _) = TestClientWithCustomInitWait(config, expectedResult) |> initAndWaitForReply
-              use client = client
+              let! client, reply, _ = TestClientWithCustomInitWait(config, expectedResult) |> initAndWaitForReply
+              use _ = client
               
               let! receivedMessage = ConditionAwaiter.waitForAnyTimeout 1 showErrorAwaiter
 
@@ -128,8 +128,8 @@ let tests =
 
               let expectedResult = Some "Error loading glossary: Glossary file not found."
 
-              let! (client, reply, _) = TestClientWithCustomInitWait(config, expectedResult) |> initAndWaitForReply
-              use client = client
+              let! client, reply, _ = TestClientWithCustomInitWait(config, expectedResult) |> initAndWaitForReply
+              use _ = client
               
               let! receivedMessage = ConditionAwaiter.waitForAny showErrorAwaiter
 

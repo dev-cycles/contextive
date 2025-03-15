@@ -62,7 +62,7 @@ let private (|PascalCase|_|) (ct: string) =
         None
 
 let private (|UpperCase|_|) (ct: string) =
-    if ct.Length > 1 && ct |> Seq.forall (System.Char.IsUpper) then
+    if ct.Length > 1 && ct |> Seq.forall System.Char.IsUpper then
         Some()
     else
         None
@@ -99,7 +99,7 @@ let private termToCaseMatchedCompletionData
     |> createCompletionItemData term
 
 let private transform
-    ((separator, headTransformer, tailTransformer): (string * (string -> string) * (string -> string)))
+    ((separator, headTransformer, tailTransformer): string * (string -> string) * (string -> string))
     (candidateTerms: CandidateTerms.CandidateTerms)
     =
     Seq.append [ candidateTerms |> Seq.head |> headTransformer ] (candidateTerms |> Seq.tail |> Seq.map tailTransformer)
@@ -144,24 +144,24 @@ let private termToListOptions (caseTemplate: string option) (term: GlossaryFile.
     else
         seq { termToCaseMatchedCompletionData caseTemplate token term }
 
-let private getContextCompletionLabelData (termToListOptionsWithCase) (context: GlossaryFile.Context) =
+let private getContextCompletionLabelData termToListOptionsWithCase (context: GlossaryFile.Context) =
     { ContextName = context.Name
       CompletionItems = (context.Terms |> Seq.collect termToListOptionsWithCase) }
 
-let private getCaseTemplate (tokenFinder: TextDocument.TokenFinder) (textDocument: TextDocumentIdentifier) (position) =
+let private getCaseTemplate (tokenFinder: TextDocument.TokenFinder) (textDocument: TextDocumentIdentifier) position =
     match textDocument with
     | null -> None
-    | _ -> tokenFinder (textDocument.Uri) position
+    | _ -> tokenFinder textDocument.Uri position
 
 let handler
     (termFinder: GlossaryFile.Finder)
     (tokenFinder: TextDocument.TokenFinder)
     (p: CompletionParams)
-    (hc: CompletionCapability)
+    (_: CompletionCapability)
     _
     =
     async {
-        let caseTemplate = getCaseTemplate tokenFinder (p.TextDocument) p.Position
+        let caseTemplate = getCaseTemplate tokenFinder p.TextDocument p.Position
 
         let getCompletionLabelDataWithCase =
             termToListOptions caseTemplate |> getContextCompletionLabelData
@@ -174,7 +174,7 @@ let handler
     }
     |> Async.StartAsTask
 
-let private registrationOptionsProvider (hc: CompletionCapability) (cc: ClientCapabilities) =
+let private registrationOptionsProvider (_: CompletionCapability) (_: ClientCapabilities) =
     CompletionRegistrationOptions()
 
 let registrationOptions =

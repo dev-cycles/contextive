@@ -6,8 +6,6 @@ open Contextive.LanguageServer
 open Contextive.Core.GlossaryFile
 open Contextive.LanguageServer.Tests.Helpers
 
-module SubGlossaryHelper = Helpers.SubGlossaryHelper
-
 [<Tests>]
 let tests =
     testList
@@ -15,7 +13,7 @@ let tests =
         [
 
           let testTermRender (terms: Term list, expectedHover: string) =
-              testCase $"Terms: {terms |> List.map (fun t -> t.Name)}"
+              testCase $"Terms: {terms |> List.map (_.Name)}"
               <| fun _ ->
                   let contexts = seq { Context.defaultWithTerms terms }
 

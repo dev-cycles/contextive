@@ -61,8 +61,8 @@ module Context =
     let Default =
         { Name = ""
           DomainVisionStatement = ""
-          Paths = new ResizeArray<string>()
-          Terms = new ResizeArray<Term>() }
+          Paths = ResizeArray<string>()
+          Terms = ResizeArray<Term>() }
 
     let defaultWithTerms terms = Default |> withTerms terms
 
@@ -76,7 +76,7 @@ module Context =
 type GlossaryFile = { Contexts: ResizeArray<Context> }
 
 module GlossaryFile =
-    let Default = { Contexts = new ResizeArray<Context>() }
+    let Default = { Contexts = ResizeArray<Context>() }
 
 type FindResult = Context seq
 type Filter = FindResult -> FindResult
@@ -89,7 +89,7 @@ let private replaceNullsWithEmptyLists (glossaryFile: GlossaryFile) =
 let deserialize (yml: string) =
     try
         let deserializer =
-            (new DeserializerBuilder())
+            DeserializerBuilder()
                 .WithNodeDeserializer(ValidatingDeserializer.factory, ValidatingDeserializer.where)
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build()
@@ -118,23 +118,23 @@ open YamlDotNet.Core.Events
 type OptionStringTypeConverter() =
     interface IYamlTypeConverter with
         member this.Accepts(``type``: System.Type) : bool =
-            ``type``.FullName = (typeof<option<string>>).FullName
+            ``type``.FullName = typeof<option<string>>.FullName
 
-        member this.ReadYaml(parser: IParser, ``type``: System.Type, _: ObjectDeserializer) : obj =
+        member this.ReadYaml(parser: IParser, _: System.Type, _: ObjectDeserializer) : obj =
             let value = parser.Consume<Scalar>().Value
             if value = null then None else Some value
 
         member this.WriteYaml
-            (emitter: IEmitter, value: obj, ``type``: System.Type, _: ObjectSerializer)
+            (emitter: IEmitter, value: obj, _: System.Type, _: ObjectSerializer)
             : unit =
             match (value :?> option<string>) with
-            | None -> emitter.Emit(new Scalar(""))
-            | Some v -> emitter.Emit(new Scalar(v))
+            | None -> emitter.Emit(Scalar(""))
+            | Some v -> emitter.Emit(Scalar(v))
 
 
 let serialize (glossaryFile: GlossaryFile) =
     let serializer =
-        (new SerializerBuilder())
+        SerializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
             .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitEmptyCollections)
             .WithTypeConverter(OptionStringTypeConverter())

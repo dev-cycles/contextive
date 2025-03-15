@@ -38,7 +38,7 @@ let newCreateClossary () =
 let newInitGlossary () =
     { Glossary.Log = { info = noop1; error = noop1 }
       Glossary.DefaultSubGlossaryPathResolver =
-        fun _ -> async.Return <| Error Contextive.Core.File.FileError.NotYetLoaded
+        fun _ -> async.Return <| Error FileError.NotYetLoaded
       Glossary.RegisterWatchedFiles = fun _ _ -> noop }
 
 [<Literal>]
@@ -155,7 +155,7 @@ let tests =
                 testAsync "It should stop watching the old file if a new file is provided" {
                     let awaiter = CA.create ()
 
-                    let mockRegisterWatchedFiles _ glob = (fun () -> CA.received awaiter true)
+                    let mockRegisterWatchedFiles _ _ = (fun () -> CA.received awaiter true)
 
                     let glossary = newCreateClossary () |> Glossary.create
 
@@ -189,7 +189,7 @@ let tests =
                                   error = CA.received errorAwaiter }
                             DefaultSubGlossaryPathResolver =
                                 fun () ->
-                                    Error(Contextive.Core.File.FileError.PathInvalid "testing error")
+                                    Error(FileError.PathInvalid "testing error")
                                     |> async.Return }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
@@ -206,7 +206,7 @@ let tests =
                     [ testAsync "is created it should start a subglossary for the watched file" {
                           let watchedFilesAwaiter = CA.create ()
 
-                          let mockRegisterWatchedFiles watchedFilesHandlers glob =
+                          let mockRegisterWatchedFiles watchedFilesHandlers _ =
                               CA.received watchedFilesAwaiter watchedFilesHandlers
                               noop
 
@@ -243,7 +243,7 @@ let tests =
                       testAsync "is updated it should reload the subglossary" {
                           let watchedFilesAwaiter = CA.create ()
 
-                          let mockRegisterWatchedFiles watchedFilesHandlers glob =
+                          let mockRegisterWatchedFiles watchedFilesHandlers _ =
                               CA.received watchedFilesAwaiter watchedFilesHandlers
                               noop
 
@@ -251,7 +251,7 @@ let tests =
 
                           let subGlossary = noopMailboxProcessor ()
 
-                          let mockStartSubGlossary path = subGlossary
+                          let mockStartSubGlossary _ = subGlossary
 
                           let mockReloadSubGlossary subGlossary =
                               CA.received subGlossaryReloadedAwaiter subGlossary
@@ -290,7 +290,7 @@ let tests =
                     [ testAsync "is created it should reload the existing glossary for the default file" {
                           let watchedFilesAwaiter = CA.create ()
 
-                          let mockRegisterWatchedFiles watchedFilesHandlers glob =
+                          let mockRegisterWatchedFiles watchedFilesHandlers _ =
                               CA.received watchedFilesAwaiter watchedFilesHandlers
                               noop
 
@@ -339,7 +339,7 @@ let tests =
                       testAsync "is updated it should reload the subglossary" {
                           let watchedFilesAwaiter = CA.create ()
 
-                          let mockRegisterWatchedFiles watchedFilesHandlers glob =
+                          let mockRegisterWatchedFiles watchedFilesHandlers _ =
                               CA.received watchedFilesAwaiter watchedFilesHandlers
                               noop
 

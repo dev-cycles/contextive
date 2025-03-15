@@ -25,4 +25,4 @@ let mockTermNamesFinder (defaultContext: Context) (termNames: string list) =
 
 module FindResult =
     let allTerms (contexts: FindResult) : Term seq =
-        contexts |> Seq.collect (fun c -> c.Terms)
+        contexts |> Seq.collect (_.Terms)

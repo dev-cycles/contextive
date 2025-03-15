@@ -11,7 +11,7 @@ open System.Collections.Generic
 
 open Contextive.LanguageServer.Tokeniser
 
-let private documents = new ConcurrentDictionary<string, IList<string>>()
+let private documents = ConcurrentDictionary<string, IList<string>>()
 
 let private getDocument (documentUri: DocumentUri) =
     let mutable text = null :> IList<string>
@@ -37,7 +37,7 @@ let findToken (documentUri: DocumentUri) (position: Position) =
 let private linesFromText (document: string) : IList<string> =
     document.ReplaceLineEndings().Split(System.Environment.NewLine)
 
-let private registrationOptionsProvider (hc: TextSynchronizationCapability) (cc: ClientCapabilities) =
+let private registrationOptionsProvider (_: TextSynchronizationCapability) (_: ClientCapabilities) =
     TextDocumentSyncRegistrationOptions(Change = TextDocumentSyncKind.Full)
 
 let registrationOptions =
@@ -59,7 +59,7 @@ module DidChange =
         |> ignore
 
 module DidSave =
-    let handler (p: DidSaveTextDocumentParams) = ()
+    let handler (_: DidSaveTextDocumentParams) = ()
 
 module DidClose =
     let handler (p: DidCloseTextDocumentParams) =
