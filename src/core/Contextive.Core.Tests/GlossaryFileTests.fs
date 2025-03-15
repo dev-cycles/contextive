@@ -289,7 +289,19 @@ contexts:
                 testCase "Error when file is empty"
                 <| fun () ->
                     let result = deserialize ""
-                    test <@ result = Error(ParsingError("Glossary file is empty.")) @>
+                    test <@ result = Error(ParsingError "Glossary file is empty.") @>
+
+                testCase "Success with null context"
+                <| fun () ->
+                    let result =
+                        unwrap
+                        <| deserialize
+                            """
+contexts:
+  -"""
+
+                    test <@ result.Contexts.Count = 1 @>
+                    test <@ result.Contexts |> Seq.head |> _.Terms.Count = 0 @>
 
                 testCase "Error with unexpected key"
                 <| fun () ->
@@ -302,9 +314,8 @@ unknown:
                     test
                         <@
                             result = Error(
-                                ParsingError(
+                                ParsingError
                                     "Object starting line 2, column 1 - Property 'unknown' not found on type 'Contextive.Core.GlossaryFile+GlossaryFile'."
-                                )
                             )
                         @>
 
@@ -322,9 +333,8 @@ contexts:
                     test
                         <@
                             result = Error(
-                                ParsingError(
+                                ParsingError
                                     "Object starting line 5, column 19 - Mapping values are not allowed in this context."
-                                )
                             )
                         @> ]
           testList
@@ -339,4 +349,4 @@ contexts:
     - name:
 """
 
-                    test <@ result = Error(ValidationError("The Name field is required. See line 4, column 7.")) @> ] ]
+                    test <@ result = Error(ValidationError "The Name field is required. See line 4, column 7.") @> ] ]

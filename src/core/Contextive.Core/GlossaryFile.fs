@@ -62,8 +62,11 @@ module Context =
 
     let defaultWithTerms terms = Default |> withTerms terms
 
+    let defaultIfNull context =
+        if context |> box = null then Default else context
+
     let withDefaultTermsIfNull context =
-        if (context.Terms <> null) then
+        if context.Terms <> null then
             context
         else
             withTerms (ResizeArray<Term>()) context
@@ -74,18 +77,29 @@ type GlossaryFile = { Contexts: ResizeArray<Context> }
 module GlossaryFile =
     let Default = { Contexts = ResizeArray<Context>() }
 
+    let private replaceNullContextsWithDefaults (glossaryFile: GlossaryFile) =
+        { glossaryFile with
+            Contexts = ResizeArray(glossaryFile.Contexts |> Seq.map Context.defaultIfNull) }
+
+    let private replaceNullContextListWithDefault (glossaryFile: GlossaryFile) =
+        match glossaryFile.Contexts with
+        | null -> Default
+        | _ -> glossaryFile
+
+    let private replaceNullTermsWithDefault (glossaryFile: GlossaryFile) =
+        { glossaryFile with
+            Contexts = ResizeArray(Seq.map Context.withDefaultTermsIfNull glossaryFile.Contexts) }
+
+    let fixNulls (glossaryFile: GlossaryFile) =
+        glossaryFile
+        |> replaceNullContextListWithDefault
+        |> replaceNullContextsWithDefaults
+        |> replaceNullTermsWithDefault
+
 type FindResult = Context seq
 type Filter = FindResult -> FindResult
 type Finder = string -> Filter -> Async<FindResult>
 
-let private replaceNullContextsWithEmptyLists (glossaryFile: GlossaryFile) =
-    match glossaryFile.Contexts with
-    | null -> GlossaryFile.Default
-    | _ -> glossaryFile
-
-let private replaceNullTermsWithEmptyLists (glossaryFile: GlossaryFile) =
-    { glossaryFile with
-        Contexts = ResizeArray(Seq.map Context.withDefaultTermsIfNull glossaryFile.Contexts) }
 
 let deserialize (yml: string) =
     try
@@ -99,7 +113,7 @@ let deserialize (yml: string) =
 
         match glossary |> box with
         | null -> Error(ParsingError("Glossary file is empty."))
-        | _ -> Ok(glossary |> replaceNullContextsWithEmptyLists |> replaceNullTermsWithEmptyLists)
+        | _ -> glossary |> GlossaryFile.fixNulls |> Ok
     with :? YamlDotNet.Core.YamlException as e ->
         match e.InnerException with
         | :? ValidationException as ve ->
