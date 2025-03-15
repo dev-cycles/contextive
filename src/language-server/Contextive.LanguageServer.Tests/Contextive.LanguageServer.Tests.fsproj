@@ -21,8 +21,8 @@
         <Compile Include="FileLoaderTests.fs" />
         <Compile Include="PathResolverTests.fs" />
         <Compile Include="ConfigurationTests.fs" />
+        
         <Compile Include="SubGlossaryTests.fs" />
-        <Compile Include="NSubGlossaryTests.fs" />
         <Compile Include="GlossaryFileInitializationTests.fs" />
         <Compile Include="WatchedFilesTests.fs" />
         <Compile Include="TextDocumentTests.fs" />

@@ -2,196 +2,163 @@ module Contextive.LanguageServer.Tests.SubGlossaryTests
 
 open Expecto
 open Swensen.Unquote
-open System.IO
 open Contextive.LanguageServer
-open Helpers.TestClient
-open Contextive.Core
+open System.Linq
+open Helpers.SubGlossaryHelper
+open Contextive.LanguageServer.Logger
 open Contextive.Core.File
-open Contextive.LanguageServer.Tests.Helpers
+
+module CA = Helpers.ConditionAwaiter
 
 [<Tests>]
 let tests =
+
+    let emptyGlossary =
+        """contexts:
+  - terms:"""
+
+    let getName (t: Contextive.Core.GlossaryFile.Term) = t.Name
+    let compareList = Seq.compareWith compare
+
+    let newStartSubGlossary path : SubGlossary.StartSubGlossary = { Path = path; Log = Logger.Noop }
+
+    let pc p : PathConfiguration = { Path = p; IsDefault = false }
+
+
     testList
         "LanguageServer.SubGlossary Tests"
-        [
+        [ testAsync "When starting a subglossary it should read the file at the provided path" {
+              let awaiter = CA.create ()
 
-          let getName (t: GlossaryFile.Term) = t.Name
+              let fileReader (p: PathConfiguration) =
+                  CA.received awaiter p.Path
+                  Ok(emptyGlossary)
 
-          let getSubGlossaryWithErrorHandler onErrorAction configGetter workspaceFolder =
-              async {
-                  let subGlossary = SubGlossary.create ()
 
-                  let glossaryFileReader =
-                      PathResolver.resolvePath workspaceFolder
-                      |> Configuration.resolvedPathGetter configGetter
-                      |> FileReader.reader
+              let _ = pc "path1" |> newStartSubGlossary |> SubGlossary.start fileReader
 
-                  SubGlossary.init subGlossary (fun _ -> ()) glossaryFileReader None onErrorAction
-                  (SubGlossary.loader subGlossary) ()
-                  return subGlossary
-              }
-
-          let getSubGlossary = getSubGlossaryWithErrorHandler (fun _ -> ())
-
-          let getFileName glossaryFileName =
-              Path.Combine("fixtures", "completion_tests", $"{glossaryFileName}.yml") |> Some
-
-          let getTermsFromSubGlossaryInContext termFileUri subGlossaryFilename =
-              async {
-                  let glossaryFilePath = getFileName subGlossaryFilename
-                  let workspaceFolder = Some ""
-
-                  let configGetter =
-                      (fun _ -> async.Return <| Option.map configuredPath glossaryFilePath)
-
-                  let! subGlossary = getSubGlossary configGetter workspaceFolder
-                  let! contexts = SubGlossary.find subGlossary termFileUri id
-                  return contexts |> SubGlossaryHelper.FindResult.allTerms
-              }
-
-          let getTermsFromSubGlossary = getTermsFromSubGlossaryInContext ""
-
-          let compareList = Seq.compareWith compare
-
-          testAsync "Can load term Names" {
-              let! terms = getTermsFromSubGlossary "one"
-              let foundNames = terms |> Seq.map getName
-              test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>
+              do! CA.expectMessage awaiter "path1"
           }
 
-          testAsync "Can load term Definitions" {
-              let! terms = getTermsFromSubGlossary "one"
-              let foundDefinitions = terms |> Seq.map (fun t -> t.Definition) |> Seq.choose id
+          testAsync "When starting a subglossary it should log the fact that it's loading the path" {
+              let awaiter = CA.create ()
 
-              let expectedDefinitions =
-                  seq
-                      [ "The first term in our definitions list"
-                        "The second term in our definitions list" ]
+              let fileReader _ = Ok emptyGlossary
 
-              test <@ (foundDefinitions, expectedDefinitions) ||> compareList = 0 @>
+              { SubGlossary.StartSubGlossary.Path = pc "path1"
+                SubGlossary.StartSubGlossary.Log =
+                  { info = CA.received awaiter
+                    error = fun _ -> () } }
+              |> SubGlossary.start fileReader
+              |> ignore
+
+
+              do! CA.expectMessage awaiter $"Loading contextive from path1..."
           }
 
-          testAsync "Can load term UsageExamples" {
-              let! terms = getTermsFromSubGlossary "one"
+          testAsync "When if reading the file fails, it should log the error" {
+              let awaiter = CA.create ()
 
-              let foundDefinitions =
-                  terms
-                  |> Seq.map (fun t -> t.Examples)
-                  |> Seq.filter ((<>) null)
-                  |> Seq.map Seq.cast
+              let fileReader p =
+                  Error(Contextive.Core.File.FileError.ParsingError "parsing error")
 
-              let expectedDefinitions =
-                  seq
-                      [ seq
-                            [ "An arbitrary usage of secondTerm"
-                              "Don't forget to secondTerm the firstTerms" ] ]
+              let _ =
+                  SubGlossary.start fileReader
+                  <| { Path = pc "path1"
+                       Log =
+                         { info = fun _ -> ()
+                           error = CA.received awaiter } }
 
-              test <@ (foundDefinitions, expectedDefinitions) ||> Seq.compareWith compareList = 0 @>
+              do! CA.expectMessage awaiter "Error loading glossary: Parsing Error: parsing error"
           }
 
-          testAsync "Can load multi-context definitions" {
-              let! terms = getTermsFromSubGlossaryInContext "/primary/secondary/test.txt" "multi" // Path contains both context's globs
-              let foundNames = terms |> Seq.map getName
-              test <@ (foundNames, seq [ "termInPrimary"; "termInSecondary" ]) ||> compareList = 0 @>
+          testAsync "When reloading a subglossary it should read the file at the path provided when it was created" {
+              let awaiter = CA.create ()
+
+              let fileReader p =
+                  CA.received awaiter p.Path
+                  Ok(emptyGlossary)
+
+              let subGlossary = pc "path1" |> newStartSubGlossary |> SubGlossary.start fileReader
+
+              do! CA.expectMessage awaiter "path1"
+
+              CA.clear awaiter
+
+              SubGlossary.reload subGlossary
+
+              do! CA.expectMessage awaiter "path1"
           }
 
-          let testInPath ((path: string), expectedTerms) =
-              let pathName = path.Replace(".", "_dot_")
+          testAsync "When looking up a term in a subglossary it should return terms" {
+              let awaiter = CA.create ()
 
-              testAsync $"with path {pathName}, expecting {expectedTerms}" {
-                  let! terms = getTermsFromSubGlossaryInContext path "multi"
-                  let foundNames = terms |> Seq.map getName
-                  test <@ (foundNames, seq expectedTerms) ||> compareList = 0 @>
-              }
+              let fileReader p =
+                  CA.received awaiter p.Path
 
-          [ ("/some/path/with/primary/in/it.txt", [ "termInPrimary" ])
-            ("/some/path/with/primary.txt", [ "termInPrimary" ])
-            ("/some/path/with/primary", [ "termInPrimary" ])
-            ("/some/path/with/test.js", [ "termInPrimary" ])
-            ("/primary", [ "termInPrimary" ])
-            ("/some/path/with/secondary/in/it.txt", [ "termInSecondary" ])
-            ("/some/path/with/secondary.txt", [ "termInSecondary" ])
-            ("/some/path/with/secondary", [ "termInSecondary" ])
-            ("/secondary", [ "termInSecondary" ])
-            ("/some/path", [])
-            ("/some/path/test.cs", []) ]
-          |> List.map testInPath
-          |> testList "Can load definition from correct context"
+                  """contexts:
+  - terms:
+    - name: subGlossary1"""
+                  |> Ok
 
-          let invalidScenarios =
-              [ ("invalid_empty", "Error loading glossary: Parsing Error: Glossary file is empty.")
-                ("invalid_schema",
-                 "Error loading glossary: Parsing Error: Object starting line 6, column 9 - Property 'example' not found on type 'Contextive.Core.GlossaryFile+Term'.")
-                ("invalid_schema2",
-                 "Error loading glossary: Parsing Error: Object starting line 5, column 19 - Mapping values are not allowed in this context.")
-                ("no_file", "Error loading glossary: Glossary file not found.") ]
+              let subGlossary = pc "path1" |> newStartSubGlossary |> SubGlossary.start fileReader
 
-          let canRecoverFromInvalidGlossaryFile (fileName, expectedErrorMessage) =
-              testAsync fileName {
-                  let mutable path = getFileName fileName
+              let! result = SubGlossary.lookup subGlossary "" id
 
-                  let workspaceFolder = Some ""
-                  let configGetter = (fun _ -> async.Return <| Option.map configuredPath path)
+              let terms = FindResult.allTerms result
 
-                  let errorMessageAwaiter = ConditionAwaiter.create ()
+              test <@ result.Count() = 1 @>
+              test <@ (terms |> Seq.head).Name = "subGlossary1" @>
+          }
 
-                  let onErrorLoading = fun msg -> ConditionAwaiter.received errorMessageAwaiter msg
+          testAsync "SubGlossary can recover from FileReading Failure" {
+              let awaiter = CA.create ()
 
-                  let! subGlossary = getSubGlossaryWithErrorHandler onErrorLoading configGetter workspaceFolder
-                  let! termsWhenInvalid = SubGlossary.find subGlossary "" id
+              let ErrorFileResult = Error(Contextive.Core.File.FileError.FileNotFound)
 
-                  let! errorMessage = ConditionAwaiter.waitForAny errorMessageAwaiter
-                  test <@ errorMessage.Value = expectedErrorMessage @>
-                  test <@ Seq.length termsWhenInvalid = 0 @>
+              let OkFileResult =
+                  """contexts:
+  - terms:
+    - name: subGlossary1"""
+                  |> Ok
 
-                  path <- getFileName "one"
-                  (SubGlossary.loader subGlossary) ()
+              let mutable fileResult = ErrorFileResult
 
-                  let! contexts = SubGlossary.find subGlossary "" id
+              let fileReader p =
+                  CA.received awaiter p.Path
+                  fileResult
 
-                  let foundNames =
-                      contexts |> SubGlossaryHelper.FindResult.allTerms |> Seq.map getName
+              let subGlossary = pc "path1" |> newStartSubGlossary |> SubGlossary.start fileReader
 
-                  test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>
-              }
+              let! result = SubGlossary.lookup subGlossary "" id
 
-          invalidScenarios
-          |> List.map canRecoverFromInvalidGlossaryFile
-          |> testList "Can recover from invalid glossary file"
+              test <@ result.Count() = 0 @>
 
-          let canRecoverFromInvalidGlossaryFileWhenConfigChanges (fileName, _) =
-              testAsync fileName {
-                  let validPath = "one.yml"
-                  let mutable path = validPath
+              fileResult <- OkFileResult
+              SubGlossary.reload subGlossary
 
-                  let pathLoader () : obj = path
+              let! result = SubGlossary.lookup subGlossary "" id
+              let terms = FindResult.allTerms result
 
-                  let config =
-                      [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
-                        ConfigurationSection.contextivePathLoaderBuilder pathLoader ]
+              test <@ result.Count() = 1 @>
+              test <@ (terms |> Seq.head).Name = "subGlossary1" @>
+          }
 
-                  let! (client, _, logAwaiter) =
-                      TestClientWithCustomInitWait(config, Some "Successfully loaded.")
-                      |> initAndWaitForReply
+          testList
+              "Integration"
+              [ testAsync "SubGlossary can collaborate with FileReader" {
+                    let subGlossary =
+                        pc Helpers.Fixtures.One.path
+                        |> newStartSubGlossary
+                        |> SubGlossary.start FileReader.pathReader
 
-                  use client = client
+                    let! result = SubGlossary.lookup subGlossary "" id
 
-                  let! termsWhenValidAtStart = Completion.getCompletionLabels client
-                  test <@ (termsWhenValidAtStart, Fixtures.One.expectedCompletionLabels) ||> compareList = 0 @>
+                    let terms = FindResult.allTerms result
 
-                  path <- $"{fileName}.yml"
-                  do! ConfigurationSection.didChangePath client path logAwaiter
+                    let foundNames = terms |> Seq.map getName
+                    test <@ (foundNames, Helpers.Fixtures.One.expectedTerms) ||> compareList = 0 @>
 
-                  let! termsWhenInvalid = Completion.getCompletionLabels client
-                  test <@ Seq.length termsWhenInvalid = 0 @>
+                } ]
 
-                  path <- validPath
-                  do! ConfigurationSection.didChangePath client path logAwaiter
-
-                  let! termsWhenValidAtEnd = Completion.getCompletionLabels client
-                  test <@ (termsWhenValidAtEnd, Fixtures.One.expectedCompletionLabels) ||> compareList = 0 @>
-              }
-
-          invalidScenarios
-          |> List.map canRecoverFromInvalidGlossaryFileWhenConfigChanges
-          |> testList "Can recover from invalid glossary file when config changes" ]
+          ]

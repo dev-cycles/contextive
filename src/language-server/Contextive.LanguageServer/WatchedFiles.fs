@@ -7,7 +7,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 open System.Threading.Tasks
 
-let handler (onChangedHandler: SubGlossary.OnChangedHandler) (p: DidChangeWatchedFilesParams) _ _ =
+let handler onChangedHandler (_: DidChangeWatchedFilesParams) _ _ =
     onChangedHandler ()
     Task.CompletedTask
 

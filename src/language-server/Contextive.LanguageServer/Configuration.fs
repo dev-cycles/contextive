@@ -8,6 +8,6 @@ let resolvedPathGetter configGetter pathResolver () =
         return pathResolver path
     }
 
-let handler (onDefaultGlossaryLocationChanged: SubGlossary.OnChangedHandler) _ =
+let handler onDefaultGlossaryLocationChanged _ =
     onDefaultGlossaryLocationChanged ()
     Task.CompletedTask

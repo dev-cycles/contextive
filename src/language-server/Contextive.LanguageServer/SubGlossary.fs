@@ -1,179 +1,126 @@
 module Contextive.LanguageServer.SubGlossary
 
-open Contextive.Core.File
 open Contextive.Core.GlossaryFile
+open Contextive.Core.File
+open Logger
 open Globs
 
-type FileLoader = unit -> Async<Result<File, FileError>>
+type StartSubGlossary =
+    { Path: PathConfiguration; Log: Logger }
 
-type OnChangedHandler = unit -> unit
-type Unregisterer = unit -> unit
-
-type private State =
-    { WorkspaceFolder: string option
-      Logger: (string -> unit)
-      GlossaryFilePath: string option
-      GlossaryFile: GlossaryFile
-      FileLoader: FileLoader
-      RegisterWatchedFile: (string option -> Unregisterer) option
-      UnregisterLastWatchedFile: Unregisterer option
-      OnErrorLoading: (string -> unit) }
-
-    static member Initial() =
-        { WorkspaceFolder = None
-          Logger = fun _ -> ()
-          GlossaryFilePath = None
-          FileLoader = fun _ -> async.Return <| Error(NotYetLoaded)
-          GlossaryFile = GlossaryFile.Default
-          RegisterWatchedFile = None
-          UnregisterLastWatchedFile = None
-          OnErrorLoading = fun _ -> () }
-
-type LoadReply = string option
-
-type InitPayload =
-    { Logger: (string -> unit)
-      FileReader: FileLoader
-      RegisterWatchedFile: (string option -> Unregisterer) option
-      OnErrorLoading: (string -> unit) }
-
-type AddFolderPayload = { WorkspaceFolder: string option }
-
-type FindReplyChannel = AsyncReplyChannel<FindResult>
-
-type FindPayload =
-    { OpenFileUri: string
-      Filter: Filter
-      ReplyChannel: FindReplyChannel }
+type Lookup =
+    { Filter: Filter
+      OpenFileUri: string
+      Rc: AsyncReplyChannel<FindResult> }
 
 type Message =
-    | Init of InitPayload
-    | Load
-    | Find of FindPayload
+    | Start of StartSubGlossary
+    | Reload
+    | Lookup of Lookup
+
+type FileReaderFn = PathConfiguration -> Result<string, FileError>
+
+type State =
+    { FileReader: FileReaderFn
+      GlossaryFile: GlossaryFile
+      Log: Logger
+      Path: PathConfiguration option }
+
+    static member Initial =
+        { FileReader = fun _ -> Error(NotYetLoaded)
+          GlossaryFile = GlossaryFile.Default
+          Log = Logger.Noop
+          Path = None }
 
 type T = MailboxProcessor<Message>
 
-let private loadFile (state: State) (file: Result<File, FileError>) =
-    match file with
-    | Error(e) -> Error(e)
-    | Ok({ AbsolutePath = ap
-           Contents = contents }) ->
-        state.Logger $"Loading contextive from {ap}..."
+module Handlers =
 
-        match contents with
-        | Ok(c) -> deserialize c
-        | Error(e) -> Error(e)
-
-module private Handle =
-    let init state (initMsg: InitPayload) : State =
-        { state with
-            Logger = initMsg.Logger
-            RegisterWatchedFile = initMsg.RegisterWatchedFile
-            OnErrorLoading = initMsg.OnErrorLoading
-            FileLoader = initMsg.FileReader }
-
-    let updateFileWatchers (state: State) (file: Result<File, FileError>) =
-        match state.GlossaryFilePath, file with
-        | Some existingPath, Ok({ AbsolutePath = newPath }) when existingPath = newPath -> state
-        | _, Ok({ AbsolutePath = newPath }) ->
-            match state.UnregisterLastWatchedFile with
-            | Some unregister -> unregister ()
-            | None -> ()
-
-            let path = Some newPath
-
-            let unregisterer =
-                match state.RegisterWatchedFile with
-                | Some rwf -> rwf path |> Some
-                | None -> None
-
-            { state with
-                UnregisterLastWatchedFile = unregisterer
-                GlossaryFilePath = path }
-        | _, _ -> state
-
-    let load (state: State) : Async<State> =
+    let reload (state: State) =
         async {
-            let! file = state.FileLoader()
+            return
+                match state.Path with
+                | None -> state
+                | Some p ->
+                    state.Log.info $"Loading contextive from {p.Path}..."
+                    let fileContents = state.FileReader p
 
-            let defs = loadFile state file
+                    fileContents
+                    |> Result.bind deserialize
+                    |> Result.map (fun r ->
+                        state.Log.info "Successfully loaded."
+                        { state with GlossaryFile = r })
+                    |> Result.mapError (fun fileError ->
+                        match fileError with
+                        | DefaultFileNotFound ->
+                            state.Log.info "No glossary file configured, and default file not found."
+                        | _ ->
+                            let errorMessage = fileErrorMessage fileError
+                            let msg = $"Error loading glossary: {errorMessage}"
+                            state.Log.error msg
 
-            let newState =
-                match defs with
-                | Ok defs ->
-                    state.Logger "Successfully loaded."
-                    { state with GlossaryFile = defs }
-                | Error fileError ->
-                    match fileError with
-                    | DefaultFileNotFound -> state.Logger "No glossary file configured, and default file not found."
-                    | _ ->
-                        let errorMessage = fileErrorMessage fileError
-                        let msg = $"Error loading glossary: {errorMessage}"
-                        state.Logger msg
-                        state.OnErrorLoading msg
-
-                    { state with
-                        GlossaryFile = GlossaryFile.Default }
-
-            return updateFileWatchers newState file
+                        fileError)
+                    |> Result.defaultValue state
         }
 
-    let find (state: State) (findMsg: FindPayload) : State =
-        let matchOpenFileUri = matchGlobs findMsg.OpenFileUri
+    let start state (startSubGlossary: StartSubGlossary) =
+        reload
+            { state with
+                Path = Some startSubGlossary.Path
+                Log = startSubGlossary.Log }
 
-        let foundContexts =
-            state.GlossaryFile.Contexts |> Seq.filter matchOpenFileUri |> findMsg.Filter
 
-        findMsg.ReplyChannel.Reply foundContexts
-        state
+
+    let lookup (state: State) (lookup: Lookup) =
+        async {
+
+            let matchOpenFileUri = matchGlobs lookup.OpenFileUri
+
+            state.GlossaryFile.Contexts
+            |> Seq.filter matchOpenFileUri
+            |> lookup.Filter
+            |> lookup.Rc.Reply
+
+            return state
+        }
 
 let private handleMessage (state: State) (msg: Message) =
     async {
         return!
             match msg with
-            | Init(initMsg) -> Handle.init state initMsg |> async.Return
-            | Load -> Handle.load state
-            | Find(findMsg) -> Handle.find state findMsg |> async.Return
+            | Start startSubGlossary -> Handlers.start state startSubGlossary
+            | Reload -> Handlers.reload state
+            | Lookup p -> Handlers.lookup state p
     }
 
 
-let create () =
-    MailboxProcessor.Start(fun inbox ->
-        let rec loop (state: State) =
-            async {
-                let! (msg: Message) = inbox.Receive()
+let start fileReader (startSubGlossary: StartSubGlossary) : T =
+    let subGlossary =
+        MailboxProcessor.Start(fun inbox ->
+            let rec loop (state: State) =
+                async {
+                    let! (msg: Message) = inbox.Receive()
 
-                let! newState =
-                    try
-                        handleMessage state msg
-                    with e ->
-                        printfn "%A" e
-                        state.Logger <| e.ToString()
-                        async.Return state
+                    let! newState = handleMessage state msg
 
-                return! loop newState
-            }
+                    return! loop newState
+                }
 
-        loop <| State.Initial())
+            loop
+            <| { State.Initial with
+                   FileReader = fileReader
+                   Path = None })
 
-let init (subGlossary: MailboxProcessor<Message>) logger fileReader registerWatchedFile onErrorLoading =
-    Init(
-        { Logger = logger
-          FileReader = fileReader
-          RegisterWatchedFile = registerWatchedFile
-          OnErrorLoading = onErrorLoading }
-    )
-    |> subGlossary.Post
+    Start startSubGlossary |> subGlossary.Post
 
-let loader (subGlossary: MailboxProcessor<Message>) = fun () -> Load |> subGlossary.Post
+    subGlossary
 
-let find (subGlossary: MailboxProcessor<Message>) (openFileUri: string) (filter: Filter) =
-    let msgBuilder =
-        fun rc ->
-            Find(
-                { OpenFileUri = openFileUri
-                  Filter = filter
-                  ReplyChannel = rc }
-            )
+let reload (subGlossary: T) = Reload |> subGlossary.Post
 
-    subGlossary.PostAndAsyncReply(msgBuilder, 1000)
+let lookup (subGlossary: T) openFileUri (filter: Filter) =
+    subGlossary.PostAndAsyncReply(fun rc ->
+        Lookup(
+            { Filter = filter
+              OpenFileUri = openFileUri
+              Rc = rc }
+        ))

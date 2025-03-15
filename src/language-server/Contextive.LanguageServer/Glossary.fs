@@ -17,8 +17,8 @@ type OnWatchedFilesEventHandlers =
 type DeRegisterWatch = unit -> unit
 
 type SubGlossaryOperations =
-    { Start: NSubGlossary.StartSubGlossary -> NSubGlossary.T
-      Reload: NSubGlossary.T -> unit }
+    { Start: SubGlossary.StartSubGlossary -> SubGlossary.T
+      Reload: SubGlossary.T -> unit }
 
 // Create glossary with static dependencies
 type CreateGlossary =
@@ -35,10 +35,10 @@ type State =
     { Log: Logger
       FileScanner: string -> string list
       RegisterWatchedFiles: string option -> DeRegisterWatch
-      SubGlossaries: Map<string, NSubGlossary.T>
+      SubGlossaries: Map<string, SubGlossary.T>
       SubGlossaryOps: SubGlossaryOperations
       DefaultSubGlossaryPathResolver: unit -> Async<Result<PathConfiguration, FileError>>
-      DefaultSubGlossary: NSubGlossary.T option
+      DefaultSubGlossary: SubGlossary.T option
       DeRegisterDefaultSubGlossaryFileWatcher: DeRegisterWatch option }
 
 type Lookup =
@@ -145,7 +145,7 @@ module private Handlers =
         async {
             match state.DefaultSubGlossary with
             | Some subGlossary ->
-                let! result = NSubGlossary.lookup subGlossary lookup.OpenFileUri lookup.Filter
+                let! result = SubGlossary.lookup subGlossary lookup.OpenFileUri lookup.Filter
                 lookup.Rc.Reply result
             | None -> lookup.Rc.Reply Seq.empty
 

@@ -21,67 +21,7 @@ let version =
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
         .InformationalVersion
 
-let private onStartupConfigureServer (glossary: SubGlossary.T) =
-    OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
-        async {
-            s.Window.LogInfo $"Starting {name} v{version}..."
-
-            let onGlossaryFileChangedHandler = SubGlossary.loader glossary
-
-            let registerFileWatcher =
-                Some <| WatchedFiles.register s onGlossaryFileChangedHandler
-
-            let showWarning =
-                if s.Window.ClientSettings.Capabilities.Window.ShowMessage.IsSupported then
-                    s.Window.ShowWarning
-                else
-                    fun _ -> ()
-
-            let logger =
-                fun (m: string) ->
-                    s.Window.Log(m)
-                    Serilog.Log.Logger.Information(m)
-
-            let! glossaryFileReader = DefaultGlossaryFileProvider.getDefaultGlossaryFileReader s
-
-            SubGlossary.init glossary logger glossaryFileReader registerFileWatcher showWarning
-
-            onGlossaryFileChangedHandler ()
-
-        }
-        |> Async.StartAsTask
-        :> Task)
-
-
-let private configureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
-    let subGlossary = SubGlossary.create ()
-
-    opts
-        .WithInput(input)
-        .WithOutput(output)
-
-        .OnStarted(onStartupConfigureServer subGlossary)
-        .WithConfigurationSection(DefaultGlossaryFileProvider.ConfigSection) // Add back in when implementing didConfigurationChanged handling
-        .ConfigureLogging(fun z ->
-            z
-                .AddLanguageProtocolLogging()
-                .AddSerilog(Log.Logger)
-                .SetMinimumLevel(LogLevel.Trace)
-            |> ignore)
-        .WithServerInfo(ServerInfo(Name = name, Version = version))
-
-        .OnDidChangeConfiguration(Configuration.handler <| SubGlossary.loader subGlossary)
-        .OnCompletion(
-            Completion.handler <| SubGlossary.find subGlossary <| TextDocument.findToken,
-            Completion.registrationOptions
-        )
-        .OnHover(Hover.handler <| SubGlossary.find subGlossary <| TextDocument.findToken, Hover.registrationOptions)
-
-    |> TextDocument.onSync
-
-    |> ignore
-
-let private nOnStartupConfigureServer (glossary: Glossary.T) =
+let private onStartupConfigureServer (glossary: Glossary.T) =
     OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
         async {
             s.Window.LogInfo $"Starting {name} v{version}..."
@@ -99,19 +39,19 @@ let private nOnStartupConfigureServer (glossary: Glossary.T) =
         |> Async.StartAsTask
         :> Task)
 
-let private nConfigureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
+let private configureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
     let glossary =
         Glossary.create
         <| { FileScanner = fun _ -> []
              SubGlossaryOps =
-               { Start = NSubGlossary.start FileReader.pathReader
-                 Reload = NSubGlossary.reload } }
+               { Start = SubGlossary.start FileReader.pathReader
+                 Reload = SubGlossary.reload } }
 
     opts
         .WithInput(input)
         .WithOutput(output)
 
-        .OnStarted(nOnStartupConfigureServer glossary)
+        .OnStarted(onStartupConfigureServer glossary)
         .WithConfigurationSection(DefaultGlossaryFileProvider.ConfigSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z ->
             z
