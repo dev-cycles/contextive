@@ -48,6 +48,11 @@ let glossaryFileTests =
               "Successful Parsing"
               [
 
+                testCase "Minimum, no contexts defined"
+                <| fun () ->
+                    let result = deserialize """contexts:""" |> unwrap
+                    test <@ result.Contexts.Count = 0 @>
+
                 testCase "Minimal parse has parse defaults"
                 <| fun () ->
                     let glossaryFile =

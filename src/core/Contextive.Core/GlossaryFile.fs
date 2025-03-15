@@ -24,11 +24,7 @@ module Term =
           Aliases = null }
 
     let private nameEquals (candidateTerm: string) (termName: string) =
-        let normalisedTerm =
-            termName
-                .Replace(" ", "")
-                .Replace("_", "")
-                .Replace("-", "")
+        let normalisedTerm = termName.Replace(" ", "").Replace("_", "").Replace("-", "")
 
         let singularEquals =
             normalisedTerm.Equals(candidateTerm, System.StringComparison.InvariantCultureIgnoreCase)
@@ -82,7 +78,12 @@ type FindResult = Context seq
 type Filter = FindResult -> FindResult
 type Finder = string -> Filter -> Async<FindResult>
 
-let private replaceNullsWithEmptyLists (glossaryFile: GlossaryFile) =
+let private replaceNullContextsWithEmptyLists (glossaryFile: GlossaryFile) =
+    match glossaryFile.Contexts with
+    | null -> GlossaryFile.Default
+    | _ -> glossaryFile
+
+let private replaceNullTermsWithEmptyLists (glossaryFile: GlossaryFile) =
     { glossaryFile with
         Contexts = ResizeArray(Seq.map Context.withDefaultTermsIfNull glossaryFile.Contexts) }
 
@@ -98,7 +99,7 @@ let deserialize (yml: string) =
 
         match glossary |> box with
         | null -> Error(ParsingError("Glossary file is empty."))
-        | _ -> Ok(glossary |> replaceNullsWithEmptyLists)
+        | _ -> Ok(glossary |> replaceNullContextsWithEmptyLists |> replaceNullTermsWithEmptyLists)
     with :? YamlDotNet.Core.YamlException as e ->
         match e.InnerException with
         | :? ValidationException as ve ->
@@ -124,9 +125,7 @@ type OptionStringTypeConverter() =
             let value = parser.Consume<Scalar>().Value
             if value = null then None else Some value
 
-        member this.WriteYaml
-            (emitter: IEmitter, value: obj, _: System.Type, _: ObjectSerializer)
-            : unit =
+        member this.WriteYaml(emitter: IEmitter, value: obj, _: System.Type, _: ObjectSerializer) : unit =
             match (value :?> option<string>) with
             | None -> emitter.Emit(Scalar(""))
             | Some v -> emitter.Emit(Scalar(v))
