@@ -37,8 +37,8 @@ let nHandler (watchedFileChangedHandlers: Glossary.OnWatchedFilesEventHandlers) 
     p.Changes
     |> Seq.iter (fun c ->
         match c.Type with
-        | FileChangeType.Created -> watchedFileChangedHandlers.OnCreated <| c.Uri.ToUri().AbsolutePath
-        | FileChangeType.Changed -> watchedFileChangedHandlers.OnChanged <| c.Uri.ToUri().AbsolutePath
+        | FileChangeType.Created -> watchedFileChangedHandlers.OnCreated <| c.Uri.ToUri().LocalPath
+        | FileChangeType.Changed -> watchedFileChangedHandlers.OnChanged <| c.Uri.ToUri().LocalPath
         | _ -> ())
 
     Task.CompletedTask
