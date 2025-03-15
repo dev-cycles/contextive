@@ -1,9 +1,8 @@
 module Contextive.LanguageServer.SubGlossary
 
-open DotNet.Globbing
-
 open Contextive.Core.File
 open Contextive.Core.GlossaryFile
+open Globs
 
 type FileLoader = unit -> Async<Result<File, FileError>>
 
@@ -106,8 +105,7 @@ module private Handle =
                     { state with GlossaryFile = defs }
                 | Error fileError ->
                     match fileError with
-                    | DefaultFileNotFound ->
-                        state.Logger "No glossary file configured, and default file not found."
+                    | DefaultFileNotFound -> state.Logger "No glossary file configured, and default file not found."
                     | _ ->
                         let errorMessage = fileErrorMessage fileError
                         let msg = $"Error loading glossary: {errorMessage}"
@@ -119,24 +117,6 @@ module private Handle =
 
             return updateFileWatchers newState file
         }
-
-    let matchPreciseGlob (openFileUri: string) pathGlob =
-        Glob.Parse(pathGlob).IsMatch(openFileUri)
-
-    let matchGlob (openFileUri: string) pathGlob =
-        let formats: Printf.StringFormat<string -> string> list =
-            [ "%s"; "**%s"; "**%s*"; "**%s**" ]
-
-        formats
-        |> List.map (fun s -> sprintf s pathGlob)
-        |> List.exists (matchPreciseGlob openFileUri)
-
-    let matchGlobs openFileUri (context: Context) =
-        let matchOpenFileUri = matchGlob openFileUri
-
-        match context.Paths with
-        | null -> true
-        | _ -> context.Paths |> Seq.exists matchOpenFileUri
 
     let find (state: State) (findMsg: FindPayload) : State =
         let matchOpenFileUri = matchGlobs findMsg.OpenFileUri
@@ -185,8 +165,7 @@ let init (subGlossary: MailboxProcessor<Message>) logger fileReader registerWatc
     )
     |> subGlossary.Post
 
-let loader (subGlossary: MailboxProcessor<Message>) =
-    fun () -> Load |> subGlossary.Post
+let loader (subGlossary: MailboxProcessor<Message>) = fun () -> Load |> subGlossary.Post
 
 let find (subGlossary: MailboxProcessor<Message>) (openFileUri: string) (filter: Filter) =
     let msgBuilder =

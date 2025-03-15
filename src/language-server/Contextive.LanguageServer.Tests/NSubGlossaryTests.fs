@@ -103,7 +103,7 @@ let tests =
 
               let subGlossary = pc "path1" |> newStartSubGlossary |> NSubGlossary.start fileReader
 
-              let! result = NSubGlossary.lookup subGlossary id
+              let! result = NSubGlossary.lookup subGlossary "" id
 
               let terms = FindResult.allTerms result
 
@@ -130,14 +130,14 @@ let tests =
 
               let subGlossary = pc "path1" |> newStartSubGlossary |> NSubGlossary.start fileReader
 
-              let! result = NSubGlossary.lookup subGlossary id
+              let! result = NSubGlossary.lookup subGlossary "" id
 
               test <@ result.Count() = 0 @>
 
               fileResult <- OkFileResult
               NSubGlossary.reload subGlossary
 
-              let! result = NSubGlossary.lookup subGlossary id
+              let! result = NSubGlossary.lookup subGlossary "" id
               let terms = FindResult.allTerms result
 
               test <@ result.Count() = 1 @>
@@ -152,7 +152,7 @@ let tests =
                         |> newStartSubGlossary
                         |> NSubGlossary.start FileReader.pathReader
 
-                    let! result = NSubGlossary.lookup subGlossary id
+                    let! result = NSubGlossary.lookup subGlossary "" id
 
                     let terms = FindResult.allTerms result
 

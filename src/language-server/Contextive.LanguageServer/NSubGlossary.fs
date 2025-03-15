@@ -3,12 +3,14 @@ module Contextive.LanguageServer.NSubGlossary
 open Contextive.Core.GlossaryFile
 open Contextive.Core.File
 open Logger
+open Globs
 
 type StartSubGlossary =
     { Path: PathConfiguration; Log: Logger }
 
 type Lookup =
     { Filter: Filter
+      OpenFileUri: string
       Rc: AsyncReplyChannel<FindResult> }
 
 type Message =
@@ -71,10 +73,13 @@ module Handlers =
 
     let lookup (state: State) (lookup: Lookup) =
         async {
-            lookup.Rc.Reply(
-                state.GlossaryFile.Contexts :> System.Collections.Generic.IEnumerable<Context>
-                |> lookup.Filter
-            )
+
+            let matchOpenFileUri = matchGlobs lookup.OpenFileUri
+
+            state.GlossaryFile.Contexts
+            |> Seq.filter matchOpenFileUri
+            |> lookup.Filter
+            |> lookup.Rc.Reply
 
             return state
         }
@@ -112,5 +117,10 @@ let start fileReader (startSubGlossary: StartSubGlossary) : T =
 
 let reload (subGlossary: T) = Reload |> subGlossary.Post
 
-let lookup (subGlossary: T) (filter: Filter) =
-    subGlossary.PostAndAsyncReply(fun rc -> Lookup({ Filter = filter; Rc = rc }))
+let lookup (subGlossary: T) openFileUri (filter: Filter) =
+    subGlossary.PostAndAsyncReply(fun rc ->
+        Lookup(
+            { Filter = filter
+              OpenFileUri = openFileUri
+              Rc = rc }
+        ))

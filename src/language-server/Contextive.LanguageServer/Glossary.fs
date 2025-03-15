@@ -43,6 +43,7 @@ type State =
 
 type Lookup =
     { Filter: Filter
+      OpenFileUri: string
       Rc: AsyncReplyChannel<FindResult> }
 
 type Message =
@@ -144,7 +145,7 @@ module private Handlers =
         async {
             match state.DefaultSubGlossary with
             | Some subGlossary ->
-                let! result = NSubGlossary.lookup subGlossary lookup.Filter
+                let! result = NSubGlossary.lookup subGlossary lookup.OpenFileUri lookup.Filter
                 lookup.Rc.Reply result
             | None -> lookup.Rc.Reply Seq.empty
 
@@ -187,5 +188,9 @@ let init (glossary: T) (initGlossary: InitGlossary) =
 let reloadDefaultGlossaryFile (glossary: T) () =
     ReloadDefaultGlossaryFile |> glossary.Post
 
-let lookup (glossary: T) (_: string) (filter: Filter) =
-    glossary.PostAndAsyncReply(fun rc -> Lookup { Filter = filter; Rc = rc })
+let lookup (glossary: T) (openFileUri: string) (filter: Filter) =
+    glossary.PostAndAsyncReply(fun rc ->
+        Lookup
+            { Filter = filter
+              OpenFileUri = openFileUri
+              Rc = rc })
