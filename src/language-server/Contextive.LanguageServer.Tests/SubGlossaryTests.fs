@@ -144,6 +144,39 @@ let tests =
               test <@ (terms |> Seq.head).Name = "subGlossary1" @>
           }
 
+          testAsync "SubGlossary can recover from FileReading Exception" {
+              let ErrorFileResult = Error(FileError.NotYetLoaded)
+
+              let OkFileResult =
+                  """contexts:
+  - terms:
+    - name: subGlossary1"""
+                  |> Ok
+
+              let mutable fileResult = ErrorFileResult
+
+              let fileReader p =
+                  if fileResult.IsError then
+                      System.Exception("Unexpected error") |> raise
+                  else
+                      fileResult
+
+              let subGlossary = pc "path1" |> newStartSubGlossary |> SubGlossary.start fileReader
+
+              let! result = SubGlossary.lookup subGlossary "" id
+
+              test <@ result.Count() = 0 @>
+
+              fileResult <- OkFileResult
+              SubGlossary.reload subGlossary
+
+              let! result = SubGlossary.lookup subGlossary "" id
+              let terms = FindResult.allTerms result
+
+              test <@ result.Count() = 1 @>
+              test <@ (terms |> Seq.head).Name = "subGlossary1" @>
+          }
+
           testList
               "Integration"
               [ testAsync "SubGlossary can collaborate with FileReader" {

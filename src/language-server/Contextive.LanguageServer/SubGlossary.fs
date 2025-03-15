@@ -63,13 +63,11 @@ module Handlers =
                     |> Result.defaultValue state
         }
 
-    let start state (startSubGlossary: StartSubGlossary) =
-        reload
-            { state with
-                Path = Some startSubGlossary.Path
-                Log = startSubGlossary.Log }
-
-
+    let start (state: State) (startSubGlossary: StartSubGlossary) =
+        { state with
+            Path = Some startSubGlossary.Path
+            Log = startSubGlossary.Log }
+        |> reload
 
     let lookup (state: State) (lookup: Lookup) =
         async {
@@ -93,6 +91,11 @@ let private handleMessage (state: State) (msg: Message) =
             | Lookup p -> Handlers.lookup state p
     }
 
+let private safeFileReader fileReader p : Result<string, FileError> =
+    try
+        fileReader p
+    with e ->
+        $"Unexpected error reading file {p}: {e.ToString()}" |> ParsingError |> Error
 
 let start fileReader (startSubGlossary: StartSubGlossary) : T =
     let subGlossary =
@@ -108,7 +111,7 @@ let start fileReader (startSubGlossary: StartSubGlossary) : T =
 
             loop
             <| { State.Initial with
-                   FileReader = fileReader
+                   FileReader = safeFileReader fileReader
                    Path = None })
 
     Start startSubGlossary |> subGlossary.Post

@@ -114,7 +114,8 @@ let deserialize (yml: string) =
         match glossary |> box with
         | null -> Error(ParsingError("Glossary file is empty."))
         | _ -> glossary |> GlossaryFile.fixNulls |> Ok
-    with :? YamlDotNet.Core.YamlException as e ->
+    with
+    | :? YamlDotNet.Core.YamlException as e ->
         match e.InnerException with
         | :? ValidationException as ve ->
             Error(ValidationError($"{ve.Message} See line {e.Start.Line}, column {e.Start.Column}."))
@@ -126,6 +127,7 @@ let deserialize (yml: string) =
                     e.InnerException.Message
 
             Error(ParsingError($"Object starting line {e.Start.Line}, column {e.Start.Column} - {msg}"))
+    | e -> Error(ParsingError($"Unexpected parsing error: {e.ToString()}"))
 
 open YamlDotNet.Core
 open YamlDotNet.Core.Events
