@@ -45,16 +45,23 @@ let private shellOutToGetPath wsf configuredPath =
         Serilog.Log.Logger.Error $"Got {e}"
         Error(e.ToString())
 
+let normalizePath (path: string) =
+    path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
+
+let computePath (path: string) workspaceFolder =
+    if Path.IsPathRooted path then
+        Ok path
+    else if path.Contains("$(") then
+        shellOutToGetPath workspaceFolder path
+    else
+        match workspaceFolder with
+        | Some wsf -> Path.Combine(wsf, path) |> Ok
+        | None -> Error $"Unable to locate path '{path}' as not in a workspace."
+
 let resolvePath workspaceFolder (path: PathConfiguration option) =
     match path with
-    | None -> Error("No path defined - please check \"contextive.path\" setting.")
+    | None -> Error "No path defined - please check \"contextive.path\" setting."
     | Some p ->
-        if Path.IsPathRooted(p.Path) then
-            Ok(p)
-        else if p.Path.Contains("$(") then
-            shellOutToGetPath workspaceFolder p.Path
-            |> Result.map (fun newPath -> { p with Path = newPath })
-        else
-            match workspaceFolder with
-            | Some wsf -> Ok({ p with Path = Path.Combine(wsf, p.Path) })
-            | None -> Error($"Unable to locate path '{p.Path}' as not in a workspace.")
+        computePath p.Path workspaceFolder
+        |> Result.map normalizePath
+        |> Result.map (fun newP -> { p with Path = newP })
