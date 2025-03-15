@@ -37,7 +37,7 @@ let private defaultGlossaryFile =
              Paths = [| "**" |] |> ResizeArray
              Terms =
                [| { Name = "context"
-                    Definition = Some "A boundare within which words have specific meanings."
+                    Definition = Some "A boundary within which words have specific meanings."
                     Examples =
                       [| "In the _Sales_ context, the language focuses on activities associated with selling products."
                          "Are you sure you're thinking of the definition from the right context?" |]

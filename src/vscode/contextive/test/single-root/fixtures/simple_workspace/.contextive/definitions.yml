@@ -15,7 +15,7 @@ contexts:
       - '**'
     terms:
       - name: context
-        definition: A boundare within which words have specific meanings.
+        definition: A boundary within which words have specific meanings.
         examples:
           - In the _Sales_ context, the language focuses on activities associated with selling products.
           - Are you sure you're thinking of the definition from the right context?
