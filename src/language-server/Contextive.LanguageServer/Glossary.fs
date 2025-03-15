@@ -145,8 +145,8 @@ module private Handlers =
             match state.DefaultSubGlossary with
             | Some subGlossary ->
                 let! result = NSubGlossary.lookup subGlossary lookup.Filter
-                lookup.Rc.Reply(result)
-            | None -> lookup.Rc.Reply(Seq.empty)
+                lookup.Rc.Reply result
+            | None -> lookup.Rc.Reply Seq.empty
 
             return state
         }

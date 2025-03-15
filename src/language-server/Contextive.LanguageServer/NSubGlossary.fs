@@ -71,7 +71,11 @@ module Handlers =
 
     let lookup (state: State) (lookup: Lookup) =
         async {
-            lookup.Rc.Reply(state.GlossaryFile.Contexts)
+            lookup.Rc.Reply(
+                state.GlossaryFile.Contexts :> System.Collections.Generic.IEnumerable<Context>
+                |> lookup.Filter
+            )
+
             return state
         }
 
