@@ -90,6 +90,8 @@ let getDefaultGlossaryFilePathResolver (s: ILanguageServer) =
     async {
         let! pathGetter = getResolvedPathGetter s
 
+        initGlossaryFileInitializer s pathGetter
+
         return
             fun () ->
                 async {
