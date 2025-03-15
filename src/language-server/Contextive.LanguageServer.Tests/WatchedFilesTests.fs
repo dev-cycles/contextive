@@ -31,6 +31,11 @@ let tests =
                   watcher.GlobPattern.Pattern.Contains(fileName)
                   && watcher.Kind = WatchKind.Change + WatchKind.Create)
 
+          let isAbsoluteRegistration =
+              function
+              | Registered(_, opts) -> opts.Watchers.Any(fun w -> not <| w.GlobPattern.Pattern.Contains("**"))
+              | _ -> false
+
           testAsync "Server registers to receive watched file changes" {
               let registrationAwaiter = ConditionAwaiter.create ()
 
@@ -41,7 +46,7 @@ let tests =
 
               use! client = TestClient(config) |> init
 
-              let! registrationMsg = ConditionAwaiter.waitForAny registrationAwaiter
+              let! registrationMsg = ConditionAwaiter.waitFor registrationAwaiter isAbsoluteRegistration
 
               test <@ client.ClientSettings.Capabilities.Workspace.DidChangeWatchedFiles.IsSupported @>
 
@@ -68,7 +73,7 @@ let tests =
                   let! (client, logAwaiter) = TestClient(config) |> initAndGetLogAwaiter
                   use client = client
 
-                  let! initialRegistrationMsg = ConditionAwaiter.waitForAny registrationAwaiter
+                  let! initialRegistrationMsg = ConditionAwaiter.waitFor registrationAwaiter isAbsoluteRegistration
 
                   ConditionAwaiter.clear registrationAwaiter
 

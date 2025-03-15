@@ -34,7 +34,13 @@ let register (s: ILanguageServer) onChangedHandler fullPath =
 
 
 let nHandler (watchedFileChangedHandlers: Glossary.OnWatchedFilesEventHandlers) (p: DidChangeWatchedFilesParams) _ _ =
-    //p.Changes |> Seq.head |> (fun s -> s.Type = Chan)
+    p.Changes
+    |> Seq.iter (fun c ->
+        match c.Type with
+        | FileChangeType.Created -> watchedFileChangedHandlers.OnCreated <| c.Uri.ToUri().AbsolutePath
+        | FileChangeType.Changed -> watchedFileChangedHandlers.OnChanged <| c.Uri.ToUri().AbsolutePath
+        | _ -> ())
+
     Task.CompletedTask
 
 let nRegister (s: ILanguageServer) (watchedFileChangedHandlers: Glossary.OnWatchedFilesEventHandlers) glob =
