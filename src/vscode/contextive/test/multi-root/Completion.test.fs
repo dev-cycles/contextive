@@ -7,7 +7,7 @@ open Contextive.VsCodeExtension.Tests.E2E.Helpers.Completion
 
 let tests =
 
-    let completionTest ((root: string), (expectedTerms: string seq)) =
+    let completionTest (root: string, expectedTerms: string seq) =
         testCaseAsync $"finds terms for {root}"
         <| async {
             do! Helpers.updateConfig Helpers.defaultRelativePath

@@ -1,7 +1,6 @@
 module Contextive.VsCodeExtension.Initialize
 
 open Fable.Import.LanguageServer
-open Fable.Core
 
 let handler (client: LanguageClient) _ : obj option =
     promise {

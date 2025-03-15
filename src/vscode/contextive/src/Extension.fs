@@ -1,7 +1,6 @@
 ﻿module Contextive.VsCodeExtension.Extension
 
 open Fable.Core.JsInterop
-open Fable.Import.VSCode
 open Fable.Import.VSCode.Vscode
 open Fable.Import.LanguageServer
 open Fable.Import.LanguageServer.Client

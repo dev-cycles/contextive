@@ -4,7 +4,6 @@ open Fable.Mocha
 open Fable.Import.VSCode.Vscode
 open Contextive.VsCodeExtension.Extension
 open Contextive.VsCodeExtension.Waiter
-open Contextive.VsCodeExtension.Tests.E2E.Helpers
 open Contextive.VsCodeExtension.Tests.E2E.Helpers.Helpers
 
 let waitForExtensionIsActive extensionId =
@@ -40,7 +39,7 @@ let tests =
 
           testCase "Extension has no default path config"
           <| fun () ->
-              let config = workspace.getConfiguration ("contextive")
+              let config = workspace.getConfiguration "contextive"
               let path = config["path"]
               Expect.isNone path "contextive.path config is present"
 

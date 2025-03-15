@@ -12,7 +12,7 @@ let tests =
         "Initialize Tests"
         [ testCaseAsync "Extension has Initialize Project Command"
           <| async {
-              let! registeredCommands = commands.getCommands (false)
+              let! registeredCommands = commands.getCommands false
               Expect.exists registeredCommands (fun c -> c = "contextive.initialize") "Initialize command doesn't exist"
           }
 

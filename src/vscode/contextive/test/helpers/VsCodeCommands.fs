@@ -11,16 +11,16 @@ let hover docUri position : JS.Promise<ResizeArray<Hover option>> =
 
 let initialize () =
     promise {
-        let! res = commands.executeCommand ("contextive.initialize")
+        let! res = commands.executeCommand "contextive.initialize"
         do! Promise.sleep 50
         return res
     }
 
 let closeActiveEditor () =
-    promise { return! commands.executeCommand ("workbench.action.closeActiveEditor") }
+    promise { return! commands.executeCommand "workbench.action.closeActiveEditor" }
 
 let closeAllEditors () =
-    promise { return! commands.executeCommand ("workbench.action.closeAllEditors") }
+    promise { return! commands.executeCommand "workbench.action.closeAllEditors" }
 
 let openFolder docUri =
     promise { return! commands.executeCommand ("vscode.openFolder", Some docUri) }
