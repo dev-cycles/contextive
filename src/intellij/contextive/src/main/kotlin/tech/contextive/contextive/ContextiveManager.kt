@@ -5,9 +5,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 
 class ContextiveManager(
-    val lsDownloader: LanguageServerDownloadScheduler,
+    private val lsDownloader: LanguageServerDownloadScheduler,
     val project: Project,
-    val serverStarter: LspServerSupportProvider.LspServerStarter
+    private val serverStarter: LspServerSupportProvider.LspServerStarter
 ) {
     fun startIfRequired() {
         val contextiveGlossaryFile =

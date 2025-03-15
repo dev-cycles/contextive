@@ -11,7 +11,7 @@ import java.util.*
 class LspDescriptorTest {
 
     @Test
-    public fun shouldSupportAllFiles()
+    fun shouldSupportAllFiles()
     {
         // Arrange
         val descriptor = LspDescriptor(
@@ -27,7 +27,7 @@ class LspDescriptorTest {
     }
 
     @Test
-    public fun shouldCreateCommandLineFromPath()
+    fun shouldCreateCommandLineFromPath()
     {
         // Arrange
         val path = Path.of("/" + UUID.randomUUID())

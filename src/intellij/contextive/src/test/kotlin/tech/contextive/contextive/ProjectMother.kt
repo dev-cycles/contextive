@@ -8,7 +8,7 @@ import io.mockk.every
 import io.mockk.mockk
 
 fun getMockedProject(isContextiveFilePresent: Boolean): Project {
-    val baseDirectory = mockk<VirtualFile>() {
+    val baseDirectory = mockk<VirtualFile> {
         every { findFileByRelativePath(".contextive/definitions.yml") } returns
                 mockk {
                     every { exists() } returns isContextiveFilePresent

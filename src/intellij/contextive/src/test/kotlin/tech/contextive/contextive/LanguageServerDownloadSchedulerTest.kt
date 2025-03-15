@@ -3,9 +3,8 @@ package tech.contextive.contextive
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import io.mockk.*
-import org.bouncycastle.util.test.SimpleTest.runTest
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.net.URI
 import java.nio.file.Path

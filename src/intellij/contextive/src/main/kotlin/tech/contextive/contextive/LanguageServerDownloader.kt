@@ -1,12 +1,10 @@
 package tech.contextive.contextive
 
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.platform.ide.progress.withBackgroundProgress
-import com.intellij.platform.util.progress.*
 import com.intellij.openapi.project.Project
-import kotlinx.coroutines.Dispatchers
+import com.intellij.platform.ide.progress.withBackgroundProgress
+import com.intellij.platform.util.progress.reportSequentialProgress
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.withContext
 import net.lingala.zip4j.io.inputstream.ZipInputStream
 import net.lingala.zip4j.model.LocalFileHeader
 import java.io.File
@@ -17,7 +15,6 @@ import java.nio.file.Path
 
 private val LOG = logger<LanguageServerDownloader>()
 
-@Suppress("DialogTitleCapitalization")
 class LanguageServerDownloader {
     suspend fun download(project: Project, uri: URI, path: Path) = withBackgroundProgress(
         project,

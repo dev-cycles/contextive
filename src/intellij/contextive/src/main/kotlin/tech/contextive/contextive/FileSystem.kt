@@ -1,6 +1,5 @@
 package tech.contextive.contextive
 
-import net.harawata.appdirs.AppDirsFactory
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.PosixFilePermission

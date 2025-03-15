@@ -17,20 +17,19 @@ open class DownloadStatus {
 }
 
 class LanguageServerDownloadScheduler(
-    val resolver: LanguageServerLocationResolver,
-    val downloader: LanguageServerDownloader,
-    val fileSystem: FileSystem,
-    val lspManager: LspManager
+    private val resolver: LanguageServerLocationResolver,
+    private val downloader: LanguageServerDownloader,
+    private val fileSystem: FileSystem,
+    private val lspManager: LspManager
 ) {
-
-    private val DOWNLOAD_CANCELLED_MSG = "You have cancelled the Contextive Language Server download.\n\nDownload won't be re-attempted until the IDE is restarted."
 
     companion object {
         private val isDownloading = AtomicBoolean()
         fun resetDownloadingStatus() = isDownloading.set(false)
+        private const val DOWNLOAD_CANCELLED_MSG = "You have cancelled the Contextive Language Server download.\n\nDownload won't be re-attempted until the IDE is restarted."
     }
 
-    suspend fun prepAndDownload(project: Project, url: URI, path: Path) {
+    private suspend fun prepAndDownload(project: Project, url: URI, path: Path) {
         fileSystem.createDirectories(path.parent)
         downloader.download(project, url, path)
         fileSystem.setExecutable(path)
@@ -56,7 +55,7 @@ class LanguageServerDownloadScheduler(
                         NotificationGroupManager.getInstance()
                             .getNotificationGroup("Contextive")
                             .createNotification(DOWNLOAD_CANCELLED_MSG, NotificationType.WARNING)
-                            .notify(project);
+                            .notify(project)
                     }
                 }
             }

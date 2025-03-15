@@ -41,7 +41,7 @@ class LanguageServerLocationResolver {
     }
 
     private val jnaNoClassPathKey = "jna.noclasspath"
-    private var jnaNoClassPath = "";
+    private var jnaNoClassPath = ""
 
     private fun pushJnaNoClassPathFalse() {
         jnaNoClassPath = System.getProperty(jnaNoClassPathKey)
