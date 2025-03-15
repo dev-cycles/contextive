@@ -17,6 +17,7 @@ import com.intellij.openapi.extensions.PluginId
 import io.mockk.unmockkAll
 import net.harawata.appdirs.AppDirsFactory
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import java.net.URI
 import java.nio.file.Path
 
@@ -59,6 +60,20 @@ class LanguageServerLocationResolverTest {
             val url = resolver.url()
 
             Assertions.assertEquals(expectedUrl, url)
+        }
+
+    }
+
+    @Test
+    fun shouldRestoreJnaNoClassPath() {
+        restoreSystemProperties {
+            System.setProperty("jna.noclasspath", "true")
+            mockPluginManager("", "1.10")
+
+            val resolver = LanguageServerLocationResolver()
+            resolver.path()
+
+            Assertions.assertEquals(System.getProperty("jna.noclasspath"), "true")
         }
 
     }

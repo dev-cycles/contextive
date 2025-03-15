@@ -40,13 +40,32 @@ class LanguageServerLocationResolver {
         return URI(LANGUAGE_SERVER_TEMPLATE.format(plugin.version, getOsCode(), getArchCode()))
     }
 
+    private val jnaNoClassPathKey = "jna.noclasspath"
+    private var jnaNoClassPath = "";
+
+    private fun pushJnaNoClassPathFalse() {
+        jnaNoClassPath = System.getProperty(jnaNoClassPathKey)
+        System.setProperty(jnaNoClassPathKey, "false")
+    }
+
+    private fun popJnaNoClassPath() {
+        System.setProperty(jnaNoClassPathKey, jnaNoClassPath)
+    }
+
     fun path(): Path =
         PluginManagerCore
             .getPlugin(PluginId.getId(CONTEXTIVE_ID))!!.run {
+
+                pushJnaNoClassPathFalse()
+
                 val appDirs = AppDirsFactory.getInstance()
-                Path.of(appDirs.getUserDataDir("Contextive", null, "tech.contextive"))
+                val path = Path.of(appDirs.getUserDataDir("Contextive", null, "tech.contextive"))
                     .resolve("language-server")
                     .resolve(this.version).resolve(getLanguageServerFileName())
+
+                popJnaNoClassPath()
+
+                return path
             }
 
 }
