@@ -24,5 +24,5 @@ let tests =
                     "folder2/folder2.contextive.yml" ]
                   |> Seq.map (fun p -> Path.Combine(basePath, p))
 
-              test <@ (files, expectedFiles) ||> Seq.compareWith compare = 0 @>
+              test <@ Set.ofSeq expectedFiles = Set.ofSeq files @>
           } ]
