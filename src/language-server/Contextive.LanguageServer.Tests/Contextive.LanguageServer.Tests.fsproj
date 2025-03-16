@@ -16,12 +16,12 @@
         <Compile Include="Helpers/Workspace.fs" />
         <Compile Include="Helpers/TestClient.fs" />
         <Compile Include="Helpers/ConfigurationSection.fs" />
+        <Compile Include="FileScannerTests.fs" />
         <Compile Include="GlossaryTests.fs" />
         <Compile Include="RenderingTests.fs" />
         <Compile Include="FileLoaderTests.fs" />
         <Compile Include="PathResolverTests.fs" />
         <Compile Include="ConfigurationTests.fs" />
-        
         <Compile Include="SubGlossaryTests.fs" />
         <Compile Include="GlossaryFileInitializationTests.fs" />
         <Compile Include="WatchedFilesTests.fs" />
@@ -32,34 +32,7 @@
         <Compile Include="Program.fs" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include="fixtures/completion_tests/empty_terms_list.yml">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="fixtures/completion_tests/one.yml">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="fixtures/completion_tests/two.yml">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="fixtures/completion_tests/three.yml">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="fixtures/completion_tests/invalid_schema.yml">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="fixtures/completion_tests/invalid_schema2.yml">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="fixtures/completion_tests/invalid_empty.yml">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="fixtures/completion_tests/multi.yml">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="fixtures/initialization_tests/existing.yml">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Include="fixtures/default_tests/.contextive/definitions.yml">
+        <Content Include="fixtures/**/*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>

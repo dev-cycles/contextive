@@ -207,6 +207,7 @@ NUGET
     Microsoft.Extensions.DependencyInjection (9.0.2)
       Microsoft.Extensions.DependencyInjection.Abstractions (>= 9.0.2)
     Microsoft.Extensions.DependencyInjection.Abstractions (9.0.2)
+    Microsoft.Extensions.FileSystemGlobbing (9.0.3)
     Microsoft.Extensions.Logging (9.0.2)
       Microsoft.Extensions.DependencyInjection (>= 9.0.2)
       Microsoft.Extensions.Logging.Abstractions (>= 9.0.2)

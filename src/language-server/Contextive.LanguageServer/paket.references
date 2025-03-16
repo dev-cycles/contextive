@@ -6,3 +6,4 @@ Microsoft.Extensions.Logging
 Serilog.Sinks.File
 OmniSharp.Extensions.LanguageServer
 DotNet.Glob
+Microsoft.Extensions.FileSystemGlobbing
