@@ -3,6 +3,7 @@ module Contextive.LanguageServer.Glossary
 open Contextive.Core.GlossaryFile
 open Contextive.LanguageServer.Logger
 open Contextive.Core.File
+open System.Collections.Generic
 open FSharp.Control
 
 type OnWatchedFilesEventHandlers =
@@ -39,6 +40,7 @@ type State =
       SubGlossaries: Map<string, SubGlossary.T>
       SubGlossaryOps: SubGlossaryOperations
       DefaultSubGlossaryPathResolver: unit -> Async<Result<PathConfiguration, FileError>>
+      DefaultSubGlossaryPath: string
       DefaultSubGlossary: SubGlossary.T option
       DeRegisterDefaultSubGlossaryFileWatcher: DeRegisterWatch option }
 
@@ -71,6 +73,7 @@ module private Handlers =
               SubGlossaryOps = createGlossary.SubGlossaryOps
               DefaultSubGlossaryPathResolver = fun _ -> FileError.NotYetLoaded |> Error |> async.Return
               DefaultSubGlossary = None
+              DefaultSubGlossaryPath = ""
               DeRegisterDefaultSubGlossaryFileWatcher = None }
 
         state
@@ -139,6 +142,7 @@ module private Handlers =
 
                     { state with
                         DefaultSubGlossary = defaultSubGlossary |> Some
+                        DefaultSubGlossaryPath = path.Path
                         SubGlossaries = state.SubGlossaries.Add(path.Path, defaultSubGlossary)
                         DeRegisterDefaultSubGlossaryFileWatcher = Some path.Path |> state.RegisterWatchedFiles |> Some })
                 |> Result.mapError (fun fileError ->
@@ -148,11 +152,13 @@ module private Handlers =
                 |> Result.defaultValue state
         }
 
-    let pathMatch (openFilePath: string) (subGlossaryPath: string) =
-        let s = System.IO.Path.GetDirectoryName subGlossaryPath |> openFilePath.StartsWith
-        s
+    let private isDefault (subGlossary: SubGlossary.T) (defaultSubGlossary: SubGlossary.T option) =
+        defaultSubGlossary.IsSome && subGlossary = defaultSubGlossary.Value
 
-    let normalizePath (p: string) =
+    let private pathMatch (openFilePath: string) (path: string) =
+        path |> System.IO.Path.GetDirectoryName |> openFilePath.StartsWith
+
+    let private normalizePath (p: string) =
         if System.String.IsNullOrEmpty(p) then
             System.IO.Path.DirectorySeparatorChar |> string
         else
@@ -165,8 +171,9 @@ module private Handlers =
 
             let results =
                 state.SubGlossaries.Keys
+                |> Seq.filter (fun p -> p <> state.DefaultSubGlossaryPath)
                 |> Seq.filter (pathMatch openFilePath)
-                |> Seq.map (fun k -> SubGlossary.lookup state.SubGlossaries[k] lookup.OpenFileUri lookup.Filter)
+                |> Seq.map (fun p -> SubGlossary.lookup state.SubGlossaries[p] lookup.OpenFileUri lookup.Filter)
                 |> AsyncSeq.ofSeqAsync
                 |> AsyncSeq.toListSynchronously
 

@@ -64,7 +64,6 @@ let tests =
                     let mockFileScanner glob =
                         if glob = EXPECTED_GLOSSARY_FILE_GLOB then
                             [ "path1" ]
-
                         else
                             []
 
@@ -481,16 +480,23 @@ let tests =
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
-                    let! result1 = Glossary.lookup glossary "/path1/file.yml" id
+                    let getNames (result: Contextive.Core.GlossaryFile.FindResult) =
+                        result |> Seq.collect _.Terms |> Seq.map _.Name |> Set.ofSeq
 
-                    test <@ result1.Count() = 1 @>
-                    test <@ result1 |> Seq.head |> _.Terms |> Seq.head |> _.Name = "defaultSubGlossary" @>
+                    let! result = Glossary.lookup glossary "/path1/file.yml" id
 
-                    let! result2 = Glossary.lookup glossary "/path2/file.yml" id
+                    test <@ result.Count() = 1 @>
+                    test <@ result |> getNames |> Set.minElement = "defaultSubGlossary" @>
 
-                    test <@ result2.Count() = 2 @>
+                    let! result = Glossary.lookup glossary "/default/pathinsamefolderasdefault.txt" id
+                    test <@ result.Count() = 1 @>
+                    test <@ result |> getNames |> Set.minElement = "defaultSubGlossary" @>
 
-                    let result2Terms = result2 |> Seq.collect _.Terms |> Seq.map _.Name |> Set.ofSeq
+                    let! result = Glossary.lookup glossary "/path2/file.yml" id
+
+                    test <@ result.Count() = 2 @>
+
+                    let result2Terms = result |> getNames
 
                     let expectedTerms =
                         Set.ofSeq
