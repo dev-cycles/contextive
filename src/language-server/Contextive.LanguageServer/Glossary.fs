@@ -3,6 +3,7 @@ module Contextive.LanguageServer.Glossary
 open Contextive.Core.GlossaryFile
 open Contextive.LanguageServer.Logger
 open Contextive.Core.File
+open FSharp.Control
 
 type OnWatchedFilesEventHandlers =
     { OnCreated: string -> unit
@@ -85,14 +86,19 @@ module private Handlers =
 
         let glossaryFiles = state.FileScanner GLOSSARY_FILE_GLOB
 
-        glossaryFiles
-        |> Seq.iter (fun p ->
-            state.SubGlossaryOps.Start
-                { Path = { Path = p; IsDefault = false }
-                  Log = state.Log }
-            |> ignore)
+        let foundSubGlossaries =
+            glossaryFiles
+            |> Seq.map (fun p ->
+                let subGlossary =
+                    state.SubGlossaryOps.Start
+                        { Path = { Path = p; IsDefault = false }
+                          Log = state.Log }
 
-        state
+                p, subGlossary)
+            |> Map
+
+        { state with
+            SubGlossaries = foundSubGlossaries }
 
 
     let watchedFileChanged (state: State) path =
@@ -141,13 +147,39 @@ module private Handlers =
                 |> Result.defaultValue state
         }
 
+    let pathMatch (openFilePath: string) (subGlossaryPath: string) =
+        let s = System.IO.Path.GetDirectoryName subGlossaryPath |> openFilePath.StartsWith
+        s
+
+    let normalizePath (p: string) =
+        if System.String.IsNullOrEmpty(p) then
+            System.IO.Path.DirectorySeparatorChar |> string
+        else
+            p
+
     let lookup (state: State) (lookup: Lookup) =
         async {
-            match state.DefaultSubGlossary with
-            | Some subGlossary ->
-                let! result = SubGlossary.lookup subGlossary lookup.OpenFileUri lookup.Filter
-                lookup.Rc.Reply result
-            | None -> lookup.Rc.Reply Seq.empty
+            let openFilePath =
+                lookup.OpenFileUri |> System.IO.Path.GetDirectoryName |> normalizePath
+
+            let results =
+                state.SubGlossaries.Keys
+                |> Seq.filter (pathMatch openFilePath)
+                |> Seq.map (fun k -> SubGlossary.lookup state.SubGlossaries[k] lookup.OpenFileUri lookup.Filter)
+                |> AsyncSeq.ofSeqAsync
+                |> AsyncSeq.toListSynchronously
+
+            let defaultSubGlossaryResult =
+                match state.DefaultSubGlossary with
+                | Some subGlossary -> seq { SubGlossary.lookup subGlossary lookup.OpenFileUri lookup.Filter }
+                | None -> seq { Seq.empty |> async.Return }
+                |> AsyncSeq.ofSeqAsync
+                |> AsyncSeq.toListSynchronously
+
+            let combined =
+                List.append results defaultSubGlossaryResult |> Seq.collect id |> List.ofSeq
+
+            lookup.Rc.Reply combined
 
             return state
         }

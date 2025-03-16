@@ -37,8 +37,7 @@ let newCreateClossary () =
 
 let newInitGlossary () =
     { Glossary.Log = { info = noop1; error = noop1 }
-      Glossary.DefaultSubGlossaryPathResolver =
-        fun _ -> async.Return <| Error FileError.NotYetLoaded
+      Glossary.DefaultSubGlossaryPathResolver = fun _ -> async.Return <| Error FileError.NotYetLoaded
       Glossary.RegisterWatchedFiles = fun _ _ -> noop }
 
 [<Literal>]
@@ -188,9 +187,7 @@ let tests =
                                 { info = noop1
                                   error = CA.received errorAwaiter }
                             DefaultSubGlossaryPathResolver =
-                                fun () ->
-                                    Error(FileError.PathInvalid "testing error")
-                                    |> async.Return }
+                                fun () -> Error(FileError.PathInvalid "testing error") |> async.Return }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
@@ -385,7 +382,7 @@ let tests =
                       } ] ]
           testList
               "When doing a lookup"
-              [ testAsync "with default subglossary only" {
+              [ testAsync "when current file undefined" {
                     let awaiter = CA.create ()
 
                     let fileReader p =
@@ -416,6 +413,93 @@ let tests =
 
                     test <@ result.Count() = 1 @>
 
+                }
+
+                testAsync "with default subglossary only" {
+                    let awaiter = CA.create ()
+
+                    let fileReader p =
+                        CA.received awaiter p.Path
+
+                        """contexts:
+  - terms:
+    - name: subGlossary1"""
+                        |> Ok
+
+
+                    let glossary =
+                        Glossary.create
+                            { newCreateClossary () with
+                                SubGlossaryOps =
+                                    { Start = SubGlossary.start fileReader
+                                      Reload = SubGlossary.reload } }
+
+                    Glossary.init
+                        glossary
+                        { newInitGlossary () with
+                            DefaultSubGlossaryPathResolver =
+                                fun () -> Helpers.Fixtures.One.path |> pc |> Ok |> async.Return }
+
+                    Glossary.reloadDefaultGlossaryFile glossary ()
+
+                    let! result = Glossary.lookup glossary "/some/file/anywhere" id
+
+                    test <@ result.Count() = 1 @>
+
+                }
+
+                testAsync "with default and one extra subglossary" {
+                    let filesMap =
+                        Map
+                            [ "/default/glossary.yml",
+                              """contexts:
+ - terms:
+   - name: defaultSubGlossary"""
+                              "/path2/path2.contextive.yml",
+                              """contexts:
+ - terms:
+   - name: subGlossary2""" ]
+
+                    let mockFileReader p = filesMap[p.Path] |> Ok
+
+                    let mockFileScanner _ = [ "/path2/path2.contextive.yml" ]
+
+                    let glossary =
+                        Glossary.create
+                            { newCreateClossary () with
+                                FileScanner = mockFileScanner
+                                SubGlossaryOps =
+                                    { Start = SubGlossary.start mockFileReader
+                                      Reload = SubGlossary.reload } }
+
+                    Glossary.init
+                        glossary
+                        { newInitGlossary () with
+                            DefaultSubGlossaryPathResolver =
+                                fun () -> "/default/glossary.yml" |> pc |> Ok |> async.Return }
+
+                    Glossary.reloadDefaultGlossaryFile glossary ()
+
+                    let! result1 = Glossary.lookup glossary "/path1/file.yml" id
+
+                    test <@ result1.Count() = 1 @>
+                    test <@ result1 |> Seq.head |> _.Terms |> Seq.head |> _.Name = "defaultSubGlossary" @>
+
+                    let! result2 = Glossary.lookup glossary "/path2/file.yml" id
+
+                    test <@ result2.Count() = 2 @>
+
+                    let result2Terms = result2 |> Seq.collect _.Terms |> Seq.map _.Name |> Set.ofSeq
+
+                    let expectedTerms =
+                        Set.ofSeq
+                        <| seq {
+                            "defaultSubGlossary"
+                            "subGlossary2"
+                        }
+
+                    test <@ result2Terms = expectedTerms @>
+
                 } ]
           testList
               "Integration"
@@ -443,7 +527,7 @@ let tests =
 
                     do! CA.expectMessage startupAwaiter $"Loading contextive from {path}..."
 
-                    let! result = Glossary.lookup glossary "" id
+                    let! result = Glossary.lookup glossary "/some/file/anywhere" id
 
                     test <@ result.Count() = 1 @>
 
