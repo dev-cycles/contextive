@@ -30,13 +30,13 @@ let noop () = ()
 let noop1 _ = ()
 
 let newCreateClossary () =
-    { Glossary.FileScanner = fun _ -> []
-      Glossary.SubGlossaryOps =
+    { Glossary.SubGlossaryOps =
         { Start = fun _ -> noopMailboxProcessor ()
           Reload = noop1 } }
 
 let newInitGlossary () =
-    { Glossary.Log = { info = noop1; error = noop1 }
+    { Glossary.FileScanner = fun _ -> []
+      Glossary.Log = { info = noop1; error = noop1 }
       Glossary.DefaultSubGlossaryPathResolver = fun _ -> async.Return <| Error FileError.NotYetLoaded
       Glossary.RegisterWatchedFiles = fun _ _ -> noop }
 
@@ -75,12 +75,13 @@ let tests =
                     let glossary =
                         Glossary.create
                             { newCreateClossary () with
-                                FileScanner = mockFileScanner
                                 SubGlossaryOps =
                                     { Start = mockStartSubGlossary
                                       Reload = noop1 } }
 
-                    Glossary.init glossary <| newInitGlossary ()
+                    Glossary.init glossary
+                    <| { newInitGlossary () with
+                           FileScanner = mockFileScanner }
 
                     do! CA.expectMessage awaiter "path1"
                 }
@@ -467,7 +468,6 @@ let tests =
                     let glossary =
                         Glossary.create
                             { newCreateClossary () with
-                                FileScanner = mockFileScanner
                                 SubGlossaryOps =
                                     { Start = SubGlossary.start mockFileReader
                                       Reload = SubGlossary.reload } }
@@ -475,6 +475,7 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
+                            FileScanner = mockFileScanner
                             DefaultSubGlossaryPathResolver =
                                 fun () -> "/default/glossary.yml" |> pc |> Ok |> async.Return }
 

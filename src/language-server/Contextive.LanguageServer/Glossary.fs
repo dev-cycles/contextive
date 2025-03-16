@@ -23,12 +23,12 @@ type SubGlossaryOperations =
 
 // Create glossary with static dependencies
 type CreateGlossary =
-    { FileScanner: string -> string list
-      SubGlossaryOps: SubGlossaryOperations }
+    { SubGlossaryOps: SubGlossaryOperations }
 
 // InitGlossary with dynamic dependencies that rely on the language server having already started
 type InitGlossary =
     { Log: Logger
+      FileScanner: string -> string list
       RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string option -> DeRegisterWatch
       DefaultSubGlossaryPathResolver: unit -> Async<Result<PathConfiguration, FileError>> }
 
@@ -64,7 +64,7 @@ module private Handlers =
     let create (createGlossary: CreateGlossary) =
 
         let state =
-            { FileScanner = createGlossary.FileScanner
+            { FileScanner = fun _ -> []
               Log = Logger.Noop
               RegisterWatchedFiles = fun _ -> fun () -> ()
               SubGlossaries = Map []
@@ -78,6 +78,7 @@ module private Handlers =
     let init (state: State) (initGlossary: InitGlossary) (watchedFileshandlers: OnWatchedFilesEventHandlers) =
         let state =
             { state with
+                FileScanner = initGlossary.FileScanner
                 DefaultSubGlossaryPathResolver = initGlossary.DefaultSubGlossaryPathResolver
                 RegisterWatchedFiles = initGlossary.RegisterWatchedFiles watchedFileshandlers
                 Log = initGlossary.Log }

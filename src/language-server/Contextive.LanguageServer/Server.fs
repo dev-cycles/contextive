@@ -12,7 +12,6 @@ open Serilog
 open System.IO
 open System.Reflection
 
-
 let assembly = Assembly.GetExecutingAssembly()
 let name = assembly.GetName().Name
 
@@ -21,29 +20,32 @@ let version =
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
         .InformationalVersion
 
-let private onStartupConfigureServer (glossary: Glossary.T) =
-    OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
-        async {
-            s.Window.LogInfo $"Starting {name} v{version}..."
+module private Startup =
+    open Glossary
 
-            let! defaultSubGlossaryPathResolver = DefaultGlossaryFileProvider.getDefaultGlossaryFilePathResolver s
+    let onStartupConfigureServer (glossary: Glossary.T) =
+        OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
+            async {
+                s.Window.LogInfo $"Starting {name} v{version}..."
 
-            { Glossary.InitGlossary.DefaultSubGlossaryPathResolver = defaultSubGlossaryPathResolver
-              Glossary.InitGlossary.Log = Logger.forLanguageServer s
-              Glossary.InitGlossary.RegisterWatchedFiles = WatchedFiles.nRegister s }
-            |> Glossary.init glossary
+                let! defaultSubGlossaryPathResolver = DefaultGlossaryFileProvider.getDefaultGlossaryFilePathResolver s
 
-            Glossary.reloadDefaultGlossaryFile glossary ()
+                { FileScanner = fun _ -> []
+                  DefaultSubGlossaryPathResolver = defaultSubGlossaryPathResolver
+                  Log = Logger.forLanguageServer s
+                  RegisterWatchedFiles = WatchedFiles.nRegister s }
+                |> Glossary.init glossary
 
-        }
-        |> Async.StartAsTask
-        :> Task)
+                Glossary.reloadDefaultGlossaryFile glossary ()
+
+            }
+            |> Async.StartAsTask
+            :> Task)
 
 let private configureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
     let glossary =
         Glossary.create
-        <| { FileScanner = fun _ -> []
-             SubGlossaryOps =
+        <| { SubGlossaryOps =
                { Start = SubGlossary.start FileReader.pathReader
                  Reload = SubGlossary.reload } }
 
@@ -51,7 +53,7 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
         .WithInput(input)
         .WithOutput(output)
 
-        .OnStarted(onStartupConfigureServer glossary)
+        .OnStarted(Startup.onStartupConfigureServer glossary)
         .WithConfigurationSection(DefaultGlossaryFileProvider.ConfigSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z ->
             z
