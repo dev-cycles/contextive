@@ -124,12 +124,12 @@ let tests =
 
           [ "inRoot.txt", "Root", Position(0, 0), "root"
             "folder1/folder1.cs", "folder1", Position(0, 0), "folder1"
-            "folder1/folder1.cs", "root", Position(0, 0), "root"
+            "folder1/folder1_root.cs", "root", Position(0, 0), "root"
             "folder1/nestedFolder/nested.cs", "nested", Position(0, 0), "nested"
-            "folder1/nestedFolder/nested.cs", "folder1", Position(0, 0), "folder1"
-            "folder1/nestedFolder/nested.cs", "root", Position(0, 0), "root"
-            "folder2/hypothetical/nested.cs", "folder2", Position(0, 0), "folder2"
-            "folder2/hypothetical/nested.cs", "root", Position(0, 0), "root" ]
+            "folder1/nestedFolder/nested_folder1.cs", "folder1", Position(0, 0), "folder1"
+            "folder1/nestedFolder/nested_root.cs", "root", Position(0, 0), "root"
+            "folder2/hypothetical/nested_folder2.cs", "folder2", Position(0, 0), "folder2"
+            "folder2/hypothetical/nested_root.cs", "root", Position(0, 0), "root" ]
           |> List.map testHoverTermFoundWithMultipleGlossaries
           |> testList "Term found when hovering in opened docs at Positions"
 
