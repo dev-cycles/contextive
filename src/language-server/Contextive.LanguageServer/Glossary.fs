@@ -29,13 +29,13 @@ type CreateGlossary =
 // InitGlossary with dynamic dependencies that rely on the language server having already started
 type InitGlossary =
     { Log: Logger
-      FileScanner: string -> string list
+      FileScanner: string -> string seq
       RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string option -> DeRegisterWatch
       DefaultSubGlossaryPathResolver: unit -> Async<Result<PathConfiguration, FileError>> }
 
 type State =
     { Log: Logger
-      FileScanner: string -> string list
+      FileScanner: string -> string seq
       RegisterWatchedFiles: string option -> DeRegisterWatch
       SubGlossaries: Map<string, SubGlossary.T>
       SubGlossaryOps: SubGlossaryOperations

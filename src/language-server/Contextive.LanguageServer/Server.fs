@@ -30,7 +30,14 @@ module private Startup =
 
                 let! defaultSubGlossaryPathResolver = DefaultGlossaryFileProvider.getDefaultGlossaryFilePathResolver s
 
-                { FileScanner = fun _ -> []
+                let workspaceFolder = Configuration.getWorkspaceFolder s
+
+                let fileScanner =
+                    match workspaceFolder with
+                    | Some wsf -> FileScanner.fileScanner wsf
+                    | None -> fun _ -> Seq.empty
+
+                { FileScanner = fileScanner
                   DefaultSubGlossaryPathResolver = defaultSubGlossaryPathResolver
                   Log = Logger.forLanguageServer s
                   RegisterWatchedFiles = WatchedFiles.nRegister s }

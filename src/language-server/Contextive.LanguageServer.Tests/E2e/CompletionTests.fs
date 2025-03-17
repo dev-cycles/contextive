@@ -22,9 +22,9 @@ let tests =
           }
 
 
-          let testFileReader (fileName, text, position, expectedCompletionLabels) =
+          let testCompletionsWithDefaultGlossary (fileName, text, position, expectedCompletionLabels) =
               testAsync
-                  $"Given {fileName} contextive, in document {text} at position {position} respond with expected completion list " {
+                  $"Given {fileName} glossary, with content '{text}' at position {position} respond with expected completion list " {
                   let config =
                       [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
                         ConfigurationSection.contextivePathBuilder $"{fileName}.yml" ]
@@ -46,8 +46,44 @@ let tests =
             ("two", "", Position(0, 0), Fixtures.Two.expectedCompletionLabels)
             ("two", "W", Position(0, 1), Fixtures.Two.expectedCompletionLabelsPascal)
             ("two", "WO", Position(0, 2), Fixtures.Two.expectedCompletionLabelsUPPER) ]
-          |> List.map testFileReader
-          |> testList "File reading tests"
+          |> List.map testCompletionsWithDefaultGlossary
+          |> testList "Test Completions with default subglossary only"
+
+          let testCompletionsWithMultipleGlossaries (fileName: string, text, position, expectedCompletionLabels) =
+              testAsync
+                  $"""Given {fileName.Replace(".", "_")} path being edited, with content '{text}' at position {position} respond with expected completion list """ {
+
+                  let workspaceRelative = Path.Combine("fixtures", "scanning_tests")
+
+                  let config =
+                      [ Workspace.optionsBuilder <| workspaceRelative
+                        ConfigurationSection.contextivePathBuilder $"{fileName}.yml" ]
+
+                  let workspaceBase =
+                      Workspace.workspaceFolderPath workspaceRelative |> _.ToUri().ToString()
+
+                  use! client = TestClient(config) |> init
+
+                  let textDocumentUri = Path.Combine(workspaceBase, fileName)
+
+                  let! result = client |> Completion.getCompletionFromText text textDocumentUri position
+
+                  test <@ result.IsIncomplete @>
+
+                  let completionLabels = Completion.getLabels result
+
+                  test <@ Set.ofSeq completionLabels = Set.ofList expectedCompletionLabels @>
+              }
+
+          [ "test.txt", "", Position(0, 0), [ "root" ]
+            "folder1/file.cs", "", Position(0, 0), [ "folder1"; "Folder1"; "folder_1"; "folder-1"; "root" ]
+            "folder1/nestedFolder/file.cs",
+            "",
+            Position(0, 0),
+            [ "folder1"; "Folder1"; "folder_1"; "folder-1"; "nested"; "root" ]
+            "folder2/hypothetical/file.cs", "", Position(0, 0), [ "folder2"; "Folder2"; "folder_2"; "folder-2"; "root" ] ]
+          |> List.map testCompletionsWithMultipleGlossaries
+          |> testList "Test Completions with multiple subglossaries"
 
           let singleWordCompletion (term, tokenAtPosition: string option, expectedLabel: string) =
               testCase $"Completion of \"{term}\" with {tokenAtPosition} at position, returns \"{expectedLabel}\""

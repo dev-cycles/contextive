@@ -131,7 +131,9 @@ let private candidateTermsToCaseMatchedCompletionData
         | Some(PascalCase) -> candidateTerms |> tokenCombinations [ pascalCase; upperSnakeCase ]
         | Some(CamelCase) -> candidateTerms |> tokenCombinations [ camelCase; snakeCase ]
         | Some(KebabCase) -> candidateTerms |> tokenCombinations [ kebabCase; snakeCase ]
-        | _ -> candidateTerms |> tokenCombinations [ camelCase; pascalCase; snakeCase; kebabCase ]
+        | _ ->
+            candidateTerms
+            |> tokenCombinations [ camelCase; pascalCase; snakeCase; kebabCase ]
 
     tokenCombinationGenerator term
 
@@ -166,7 +168,7 @@ let handler
         let getCompletionLabelDataWithCase =
             termToListOptions caseTemplate |> getContextCompletionLabelData
 
-        let uri = p.TextDocument.Uri.ToString()
+        let uri = p.TextDocument.Uri.ToUri().LocalPath
 
         let! findResult = termFinder uri termFilter
 

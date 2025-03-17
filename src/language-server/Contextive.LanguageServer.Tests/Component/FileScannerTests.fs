@@ -14,7 +14,7 @@ let tests =
               let basePath = workspaceFolderPath "fixtures/scanning_tests" |> _.ToUri().LocalPath
 
               let scanner = FileScanner.fileScanner basePath
-              let files = scanner ()
+              let files = scanner "**/*.contextive.yml"
 
               let expectedFiles =
                   [ "root.contextive.yml"

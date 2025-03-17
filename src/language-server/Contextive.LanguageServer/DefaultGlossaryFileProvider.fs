@@ -43,18 +43,6 @@ let private getConfigValue (s: ILanguageServer) section key =
         return value
     }
 
-let private getWorkspaceFolder (s: ILanguageServer) =
-    let workspaceFolders = s.WorkspaceFolderManager.CurrentWorkspaceFolders
-
-    if not (Seq.isEmpty workspaceFolders) then
-        let workspaceRoot = workspaceFolders |> Seq.head
-        Some <| workspaceRoot.Uri.ToUri().LocalPath
-    else if s.Client.ClientSettings.RootUri <> null then
-        Some <| s.Client.ClientSettings.RootUri.ToUri().LocalPath
-    else
-        None
-
-
 let initGlossaryFileInitializer (s: ILanguageServer) pathGetter =
     let showDocument =
         match s.ClientSettings.Capabilities.Window.ShowDocument.IsSupported with
@@ -70,7 +58,7 @@ let private getResolvedPathGetter (s: ILanguageServer) =
         // Either way, if it's not here, then getWorkspaceFolder returns null
         let! _ = configGetter ()
 
-        let workspaceFolder = getWorkspaceFolder s
+        let workspaceFolder = Configuration.getWorkspaceFolder s
 
         return
             PathResolver.resolvePath workspaceFolder

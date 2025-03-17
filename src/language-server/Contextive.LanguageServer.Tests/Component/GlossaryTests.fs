@@ -64,9 +64,9 @@ let tests =
 
                     let mockFileScanner glob =
                         if glob = EXPECTED_GLOSSARY_FILE_GLOB then
-                            [ "path1" ]
+                            seq { "path1" }
                         else
-                            []
+                            Seq.empty
 
                     let mockStartSubGlossary (path: SubGlossary.StartSubGlossary) =
                         CA.received awaiter path.Path.Path
@@ -461,7 +461,7 @@ let tests =
 
                     let mockFileReader p = filesMap[p.Path] |> Ok
 
-                    let mockFileScanner _ = [ "/path2/path2.contextive.yml" ]
+                    let mockFileScanner _ = seq { "/path2/path2.contextive.yml" }
 
                     let glossary =
                         Glossary.create

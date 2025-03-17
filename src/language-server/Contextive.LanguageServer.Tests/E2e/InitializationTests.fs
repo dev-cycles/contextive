@@ -28,7 +28,7 @@ let tests =
               let pathValue = Guid.NewGuid().ToString()
 
               let config =
-                  [ Workspace.optionsBuilder ""
+                  [ Workspace.optionsBuilder "default_tests"
                     ConfigurationSection.contextivePathBuilder pathValue ]
 
               let! client, reply, _ = TestClient(config) |> initAndWaitForReply
@@ -43,7 +43,7 @@ let tests =
               let pathValue = Guid.NewGuid().ToString()
 
               let config =
-                  [ Workspace.rootOptionsBuilder ""
+                  [ Workspace.rootOptionsBuilder "default_tests"
                     ConfigurationSection.contextivePathBuilder pathValue ]
 
               let! client, reply, _ = TestClient(config) |> initAndWaitForReply
