@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.TextDocumentTests
+module Contextive.LanguageServer.Tests.Component.TextDocumentTests
 
 open Expecto
 open Swensen.Unquote
@@ -8,7 +8,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities
 open System.IO
 open Contextive.LanguageServer.Tests.Helpers
-open Helpers.TestClient
+open Tests.Helpers.TestClient
 
 [<Tests>]
 let tests =
@@ -87,8 +87,7 @@ let tests =
           |> testList "Given open text document, can find text document"
 
           testAsync "Given changed text document, can find text document" {
-              let textDocumentUri =
-                  DocumentUri.From($"file:///{System.Guid.NewGuid().ToString()}")
+              let textDocumentUri = DocumentUri.From $"file:///{System.Guid.NewGuid().ToString()}"
 
               TextDocument.DidOpen.handler (
                   DidOpenTextDocumentParams(

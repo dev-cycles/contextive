@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.PathResolverTests
+module Contextive.LanguageServer.Tests.Component.PathResolverTests
 
 open Expecto
 open Contextive.LanguageServer

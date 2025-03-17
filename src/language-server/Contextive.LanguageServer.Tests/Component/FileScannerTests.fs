@@ -1,7 +1,6 @@
-module Contextive.LanguageServer.Tests.FileScannerTests
+module Contextive.LanguageServer.Tests.Component.FileScannerTests
 
 open Expecto
-open Contextive.Core.File
 open Contextive.LanguageServer
 open Swensen.Unquote
 open System.IO

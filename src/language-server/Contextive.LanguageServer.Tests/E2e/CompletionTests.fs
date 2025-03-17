@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.CompletionTests
+module Contextive.LanguageServer.Tests.E2e.CompletionTests
 
 open Expecto
 open Swensen.Unquote
@@ -195,7 +195,8 @@ let tests =
 
           testCase "Completion Kind Is Reference"
           <| fun () ->
-              let finder: Finder = SubGlossaryHelper.mockDefinitionsFinder Context.Default [ Term.Default ]
+              let finder: Finder =
+                  SubGlossaryHelper.mockDefinitionsFinder Context.Default [ Term.Default ]
 
               let completionItem =
                   (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null)

@@ -1,13 +1,14 @@
-module Contextive.LanguageServer.Tests.GlossaryTests
+module Contextive.LanguageServer.Tests.Component.GlossaryTests
 
 open Expecto
 open Swensen.Unquote
 open Contextive.LanguageServer
 open System.Linq
-open Helpers.SubGlossaryHelper
+open Tests.Helpers.SubGlossaryHelper
 open Contextive.Core.File
+open Contextive.LanguageServer.Tests.Helpers
 
-module CA = Contextive.LanguageServer.Tests.Helpers.ConditionAwaiter
+module CA = ConditionAwaiter
 
 let newTestLogger () =
     let loggedMessagesStore = ResizeArray<string>()
@@ -404,8 +405,7 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultSubGlossaryPathResolver =
-                                fun () -> Helpers.Fixtures.One.path |> pc |> Ok |> async.Return }
+                            DefaultSubGlossaryPathResolver = fun () -> Fixtures.One.path |> pc |> Ok |> async.Return }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
@@ -437,8 +437,7 @@ let tests =
                     Glossary.init
                         glossary
                         { newInitGlossary () with
-                            DefaultSubGlossaryPathResolver =
-                                fun () -> Helpers.Fixtures.One.path |> pc |> Ok |> async.Return }
+                            DefaultSubGlossaryPathResolver = fun () -> Fixtures.One.path |> pc |> Ok |> async.Return }
 
                     Glossary.reloadDefaultGlossaryFile glossary ()
 
@@ -520,7 +519,7 @@ let tests =
 
                     let startupAwaiter = CA.create ()
 
-                    let path = Helpers.Fixtures.One.path
+                    let path = Fixtures.One.path
 
                     Glossary.init
                         glossary
@@ -541,5 +540,5 @@ let tests =
                     let terms = FindResult.allTerms result
 
                     let foundNames = terms |> Seq.map getName
-                    test <@ (foundNames, Helpers.Fixtures.One.expectedTerms) ||> compareList = 0 @>
+                    test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>
                 } ] ]

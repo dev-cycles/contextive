@@ -1,9 +1,9 @@
-module Contextive.LanguageServer.Tests.ConfigurationTests
+module Contextive.LanguageServer.Tests.E2e.ConfigurationTests
 
 open Expecto
 open Swensen.Unquote
 open System.IO
-open Helpers.TestClient
+open Contextive.LanguageServer.Tests.Helpers.TestClient
 open Contextive.LanguageServer.Tests.Helpers
 
 [<Tests>]

@@ -1,11 +1,11 @@
-module Contextive.LanguageServer.Tests.GlossaryFileInitializationTests
+module Contextive.LanguageServer.Tests.E2e.GlossaryFileInitializationTests
 
 open System
 open Expecto
 open Swensen.Unquote
 open Contextive.LanguageServer.Tests.Helpers
 open Contextive.LanguageServer.Tests.Helpers.Window
-open Helpers.TestClient
+open Contextive.LanguageServer.Tests.Helpers.TestClient
 open System.IO
 open VerifyExpecto
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
@@ -81,7 +81,10 @@ let tests =
 
               do! Verifier.Verify("Default Glossary File in Non-existent Path", contents).ToTask()
 
-              do! Verifier.Verify("Default Glossary File Schema in Non-existent Path", schemaContents).ToTask()
+              do!
+                  Verifier
+                      .Verify("Default Glossary File Schema in Non-existent Path", schemaContents)
+                      .ToTask()
           }
 
           testAsync "Initialization command opens new glossary file" {

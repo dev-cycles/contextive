@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.RenderingTests
+module Contextive.LanguageServer.Tests.Component.RenderingTests
 
 open Expecto
 open Swensen.Unquote

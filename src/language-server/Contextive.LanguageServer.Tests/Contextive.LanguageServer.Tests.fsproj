@@ -16,19 +16,19 @@
         <Compile Include="Helpers/Workspace.fs" />
         <Compile Include="Helpers/TestClient.fs" />
         <Compile Include="Helpers/ConfigurationSection.fs" />
-        <Compile Include="FileScannerTests.fs" />
-        <Compile Include="GlossaryTests.fs" />
-        <Compile Include="RenderingTests.fs" />
-        <Compile Include="FileLoaderTests.fs" />
-        <Compile Include="PathResolverTests.fs" />
-        <Compile Include="ConfigurationTests.fs" />
-        <Compile Include="SubGlossaryTests.fs" />
-        <Compile Include="GlossaryFileInitializationTests.fs" />
-        <Compile Include="WatchedFilesTests.fs" />
-        <Compile Include="TextDocumentTests.fs" />
-        <Compile Include="CompletionTests.fs" />
-        <Compile Include="HoverTests.fs" />
-        <Compile Include="InitializationTests.fs" />
+        <Compile Include="Component/FileScannerTests.fs" />
+        <Compile Include="Component/GlossaryTests.fs" />
+        <Compile Include="Component/RenderingTests.fs" />
+        <Compile Include="Component/FileLoaderTests.fs" />
+        <Compile Include="Component/PathResolverTests.fs" />
+        <Compile Include="Component/TextDocumentTests.fs" />
+        <Compile Include="Component/SubGlossaryTests.fs" />
+        <Compile Include="E2e/ConfigurationTests.fs" />
+        <Compile Include="E2e/GlossaryFileInitializationTests.fs" />
+        <Compile Include="E2e/WatchedFilesTests.fs" />
+        <Compile Include="E2e/CompletionTests.fs" />
+        <Compile Include="E2e/HoverTests.fs" />
+        <Compile Include="E2e/InitializationTests.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
     <ItemGroup>

@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.WatchedFilesTests
+module Contextive.LanguageServer.Tests.E2e.WatchedFilesTests
 
 open System
 open Expecto
@@ -10,7 +10,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Client
 open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open Contextive.LanguageServer.Tests.Helpers
-open Helpers.TestClient
+open Contextive.LanguageServer.Tests.Helpers.TestClient
 
 let didChangeWatchedFiles (client: ILanguageClient) (uri: string) =
     client.SendNotification(
@@ -31,7 +31,8 @@ let tests =
 
           let isAbsoluteRegistration =
               function
-              | WatchedFiles.Registered(_, opts) -> opts.Watchers.Any(fun w -> not <| w.GlobPattern.Pattern.Contains("**"))
+              | WatchedFiles.Registered(_, opts) ->
+                  opts.Watchers.Any(fun w -> not <| w.GlobPattern.Pattern.Contains("**"))
               | _ -> false
 
           testAsync "Server registers to receive watched file changes" {
@@ -91,11 +92,13 @@ let tests =
                           | _ -> false)
 
                   match secondRegistrationMsg with
-                  | Some(WatchedFiles.Registered(_, opts)) -> test <@ opts.Watchers |> watcherIsForFile newDefinitionsFile @>
+                  | Some(WatchedFiles.Registered(_, opts)) ->
+                      test <@ opts.Watchers |> watcherIsForFile newDefinitionsFile @>
                   | _ -> failtest "no registration to watch after config changed"
 
                   match initialRegistrationMsg, unregistrationMsg with
-                  | Some(WatchedFiles.Registered(regoId, _)), Some(WatchedFiles.Unregistered(unregoId)) -> test <@ regoId = unregoId @>
+                  | Some(WatchedFiles.Registered(regoId, _)), Some(WatchedFiles.Unregistered(unregoId)) ->
+                      test <@ regoId = unregoId @>
                   | _ -> failtest "registration of initial config not unregistered"
               }
 

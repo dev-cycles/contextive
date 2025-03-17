@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.FileLoaderTests
+module Contextive.LanguageServer.Tests.Component.FileLoaderTests
 
 open Expecto
 open Contextive.Core.File

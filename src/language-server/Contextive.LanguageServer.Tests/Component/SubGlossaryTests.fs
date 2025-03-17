@@ -1,14 +1,15 @@
-module Contextive.LanguageServer.Tests.SubGlossaryTests
+module Contextive.LanguageServer.Tests.Component.SubGlossaryTests
 
 open Expecto
 open Swensen.Unquote
 open Contextive.LanguageServer
 open System.Linq
-open Helpers.SubGlossaryHelper
+open Tests.Helpers.SubGlossaryHelper
 open Contextive.LanguageServer.Logger
 open Contextive.Core.File
+open Contextive.LanguageServer.Tests.Helpers
 
-module CA = Helpers.ConditionAwaiter
+module CA = Tests.Helpers.ConditionAwaiter
 
 [<Tests>]
 let tests =
@@ -181,7 +182,7 @@ let tests =
               "Integration"
               [ testAsync "SubGlossary can collaborate with FileReader" {
                     let subGlossary =
-                        pc Helpers.Fixtures.One.path
+                        pc Fixtures.One.path
                         |> newStartSubGlossary
                         |> SubGlossary.start FileReader.pathReader
 
@@ -190,7 +191,7 @@ let tests =
                     let terms = FindResult.allTerms result
 
                     let foundNames = terms |> Seq.map getName
-                    test <@ (foundNames, Helpers.Fixtures.One.expectedTerms) ||> compareList = 0 @>
+                    test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>
 
                 } ]
 

@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.HoverTests
+module Contextive.LanguageServer.Tests.E2e.HoverTests
 
 open Expecto
 open Swensen.Unquote
@@ -7,7 +7,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open System.IO
 open Contextive.LanguageServer
 open Contextive.Core.GlossaryFile
-open Helpers.TestClient
+open Tests.Helpers.TestClient
 open Contextive.LanguageServer.Tests.Helpers
 
 module GlossaryFile = SubGlossaryHelper
