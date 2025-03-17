@@ -100,7 +100,7 @@ let handler
             | tokenAtPosition ->
                 tokenAtPosition
                 |> CandidateTerms.tokenToTokenAndCandidateTerms
-                |> hoverContentForToken (p.TextDocument.Uri.ToString()) termFinder
+                |> hoverContentForToken (p.TextDocument.Uri.ToUri().LocalPath) termFinder
     }
     |> Async.StartAsTask
 

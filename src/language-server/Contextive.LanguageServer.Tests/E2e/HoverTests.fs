@@ -31,7 +31,7 @@ let tests =
           let multiLineToSingleLine (t: string) =
               t.Replace("\n", "\\n").Replace("\r", "\\r")
 
-          let testHoverTermFound (text, position: Position, expectedTerm: string, fileName: string) =
+          let testHoverTermFoundWithDefaultGlossary (text, position: Position, expectedTerm: string, fileName: string) =
               testAsync
                   $"Given definitions file '{fileName}' and file contents '{multiLineToSingleLine text}', server responds to hover request at Position {position} with '{expectedTerm}'" {
                   let config =
@@ -82,7 +82,55 @@ let tests =
             ("snake_word", Position(0, 0), "snake_word", "three")
             ("kebab-word", Position(0, 0), "kebab-word", "three")
             ("single", Position(0, 0), "single", "empty_terms_list") ]
-          |> List.map testHoverTermFound
+          |> List.map testHoverTermFoundWithDefaultGlossary
+          |> testList "Term found when hovering in opened docs at Positions"
+
+          let testHoverTermFoundWithMultipleGlossaries
+              (fileName: string, text, position: Position, expectedTerm: string)
+              =
+              testAsync
+                  $"""Given editing file '{fileName.Replace(".", "_")}' and file contents '{multiLineToSingleLine text}', server responds to hover request at Position {position} with '{expectedTerm}'""" {
+
+                  let workspaceRelative = Path.Combine("fixtures", "scanning_tests")
+                  let config = [ Workspace.optionsBuilder <| workspaceRelative ]
+
+                  use! client = TestClient(config) |> init
+
+                  let workspaceBase =
+                      Workspace.workspaceFolderPath workspaceRelative |> _.ToUri().ToString()
+
+                  let textDocumentUri = Path.Combine(workspaceBase, fileName)
+
+                  client.TextDocument.DidOpenTextDocument(
+                      DidOpenTextDocumentParams(
+                          TextDocument =
+                              TextDocumentItem(
+                                  LanguageId = "plaintext",
+                                  Version = 0,
+                                  Text = text,
+                                  Uri = textDocumentUri
+                              )
+                      )
+                  )
+
+                  let hoverParams = HoverParams(TextDocument = textDocumentUri, Position = position)
+
+                  let! hover = client.TextDocument.RequestHover hoverParams |> Async.AwaitTask
+
+                  test <@ hover.Contents.HasMarkupContent @>
+                  test <@ hover.Contents.MarkupContent.Kind = MarkupKind.Markdown @>
+                  test <@ hover.Contents.MarkupContent.Value.Contains expectedTerm @>
+              }
+
+          [ "inRoot.txt", "Root", Position(0, 0), "root"
+            "folder1/folder1.cs", "folder1", Position(0, 0), "folder1"
+            "folder1/folder1.cs", "root", Position(0, 0), "root"
+            "folder1/nestedFolder/nested.cs", "nested", Position(0, 0), "nested"
+            "folder1/nestedFolder/nested.cs", "folder1", Position(0, 0), "folder1"
+            "folder1/nestedFolder/nested.cs", "root", Position(0, 0), "root"
+            "folder2/hypothetical/nested.cs", "folder2", Position(0, 0), "folder2"
+            "folder2/hypothetical/nested.cs", "root", Position(0, 0), "root" ]
+          |> List.map testHoverTermFoundWithMultipleGlossaries
           |> testList "Term found when hovering in opened docs at Positions"
 
           let testHoverTermNotFound (text, position: Position, fileName: string) =
