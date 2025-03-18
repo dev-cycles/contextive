@@ -2,11 +2,27 @@
 title: Configuration
 description: How to configure Contextive
 sidebar:
-  order: 1
+  order: 3
+  badge:
+    text: Deprecated
+    variant: caution
+    size: small
 ---
 
-Contextive has a single LSP setting: `contextive.path` which defines the location of the glossary file.  The default value is `.contextive/definitions.yml`, a relative path to the workspace root.
+:::caution[Deprecated Feature Since [v1.15.0](https://github.com/dev-cycles/contextive/releases/tag/v1.15.0)]
+Since [v1.15.0](https://github.com/dev-cycles/contextive/releases/tag/v1.15.0), the configuration approach described here is deprecated in favour of multiple glossary files co-located with the code they apply to.
 
-If you'd like to store the glossary file in a different location, use your IDE's settings/configuration feature to modify the `contextive.path` setting.  Consult your IDE for details on how to change plugin/extension/language server configuration.  If your IDE is referenced in our [Installation Guide](../installation) it should include an example.
+It is still supported for backwards compatibility but may be removed in a future version.
 
-Another IDE-specific mechanism is the way the workspace root is identified.  Some IDEs use the folder you opened them in, some support multi-root configurations via special files, and others have searching techniques for finding the root, such as travelling up the folder hierarchy looking for a `.git` folder.  Consult your IDE documentation for details.
+See [setting up glossaries](../setting-up-glossaries/) for guidance on the currently recommended approach.
+:::
+
+## Legacy Default Glossary Configuration
+
+Contextive has a single LSP setting: `contextive.path` which defines the location of the default glossary file.  The default value is `.contextive/definitions.yml`, a relative path to the workspace root.
+
+If you'd like to store the default glossary file in a different location, use your IDE's settings/configuration feature to modify the `contextive.path` setting.  Consult your IDE for details on how to change plugin/extension/language server configuration.
+
+Another IDE-specific mechanism is the way the workspace root is identified.  Since the default location is relative to the workspace root, this affects the absolute location to put this file. Some IDEs use the folder you opened them in, some support multi-root configurations via special files, and others have searching techniques for finding the root, such as travelling up the folder hierarchy looking for a `.git` folder.  Consult your IDE documentation for details.
+
+Since the introductiong of support for multiple colocated glossaries (see [setting up glossaries](../setting-up-glossaries/)), the glossary file defined by the `contextive.path` setting is considered a 'default' glossary file that applies to all files in the workspace regardless of where it is located. 

@@ -7,7 +7,7 @@ sidebar:
 
 import Link from '../../../components/VersionedLink.astro';
 
-There are two primary ways to install Contextive:
+To get started with Contextive you need to install our extension/plugin into your IDE. There are two primary ways:
 
 1. As an [IDE Plugin/Extension](#ide-pluginsextensions)
 2. As a [Language Server in an IDE with LSP Support](#language-server-configurations)
@@ -84,18 +84,6 @@ lspconfig.contextive.setup {}
 
 The workspace root will be the first parent folder containing `.contextive` or `.git`.
 
-To enable a custom path for contextive terms, include these settings in the language server setup configuration.
-
-```lua
-lspconfig.contextive.setup {
-  settings = {
-    contextive = {
-      path = "./path/to/definitions.yml"
-    }
-  }
-}
-```
-
 For more information on configuring Neovim with Lua modules, see: https://neovim.io/doc/user/lua-guide.html#lua-guide-config
 
 ### Helix
@@ -109,16 +97,6 @@ Then add the following configuration to `~/.config/helix/languages.toml`:
 command = "Contextive.LanguageServer"
 ```
 
-To enable a custom path for contextive terms, include a config parameter in the language server setup configuration:
-
-```
-[language-server.contextive]
-# The path can be an absolute path, or a path relative to the LSP workspace root.
-# See `workspace-lsp-roots` in https://docs.helix-editor.com/master/configuration.html#editor-section for details.
-config = { contextive = { path = "/path/to/definitions.yml" } }
-command = "Contextive.LanguageServer"
-```
-
 Once Contextive is defined as a language sever, it can be added to specific languages, e.g.:
 
 ```
@@ -128,7 +106,6 @@ language-servers = [ { name = "typescript-language-server" }, { name = "contexti
 ```
 
 See the [helix language configuration](https://docs.helix-editor.com/languages.html?highlight=roots#language-configuration) for more details, including the `roots` setting which may be needed for non-standard workspace roots.
-
 
 See [this discussion](https://github.com/helix-editor/helix/discussions/8850) for enabling LSP servers in all files.
 
@@ -141,7 +118,6 @@ In the meantime, if your IDE supports the Language Server Protocol (LSP) try dow
 If you get it working, we'd love you to submit a PR to this README with instructions on how to get it working your favourite IDE!
 
 ## Installing Contextive Language Server
-
 
 1. Download the appropriate zip file for your operating system and architecture:
 

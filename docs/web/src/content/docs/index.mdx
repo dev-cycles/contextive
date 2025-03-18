@@ -6,25 +6,24 @@ hero:
   image:
     file: ../../assets/images/hover_intellij.png
   actions:
-    - text: Get Started in IDEs
+    - text: Get Started
       link: guides/installation/
       icon: right-arrow
-    - text: IDE Usage Guide
-      link: guides/usage/
-      icon: document
-      variant: secondary
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
+## Getting Started
 
 <CardGrid stagger>
-	<Card title="Install" icon="down-caret">
-		Check out our [installation guide](guides/installation) to find guidance on getting Contextive into your IDE.
+	<Card title="1. Install Contextive" icon="down-caret">
+		[Install Contextive](guides/installation/) into your IDE.
 	</Card>
-	<Card title="Define" icon="pencil">
-		Define your domain language in a yml file in your repository. Our [usage guide](guides/usage) will help!
+  <Card title="2. Setup your Glossaries" icon="pencil">
+		[Setup your glossary files](guides/setting-up-glossaries/) - yml in your repo with your terms.
+	</Card>
+	<Card title="3. Define your Terminology" icon="pencil">
+		[Define your terminology](guides/defining-terminology) in your glossary files.
 	</Card>
   <Card title="Change Log" icon="rocket">
 		Upgrading from an older version? Review the [change log](changelog).
