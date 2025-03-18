@@ -237,15 +237,21 @@ The following common scenarios are more fully explored in the <Link href="https:
 
 If a definition (or domain vision statement) is quite long, and you would like to include linebreaks (but not new paragraphs), you need to use one of the yaml multi-line options that ensures at least one newline is parsed, AND to render a markdown linebreak you need to add two `<SPACE>` characters at the end of the line:
 
-```yaml
+```yaml "linebreak  "
 contexts:
   - name: Demo Multiline Options
     terms:
       - name: LiteralLineBreak
         definition: |
-          This definition has multiple lines with a linebreak  
+          This definition has multiple lines with a linebreak
           achieved using the literal block indicator, a single newline, and two spaces at the end of the first line
 ```
+
+:::danger[Note:]
+We're aware of an issue with the website rendering which is stripping the critical trailing two spaces at the end of the first line.  Do not copy paste this example and expect it to work.
+
+In the <Link href="https://github.com/dev-cycles/contextive/blob/v{frontmatter.contextive_version}/docs/web/src/content/docs/guides/defining-terminology.mdx?plain=1#L246">original source</Link> it _does_ have two spaces after `linebreak`
+:::
 
 Renders to:
 

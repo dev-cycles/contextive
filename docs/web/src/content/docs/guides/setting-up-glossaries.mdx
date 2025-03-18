@@ -109,7 +109,7 @@ In Domain-Driven Design, a Bounded Context is a logical boundary around a model 
 
 ### Defining a Bounded Context
 
-The top level of the yml file is a list of bounded contexts with the key contexts. A file with a single context looks like:
+The top level of the `*.glossary.yml` file is a list of bounded contexts. The key in the yml file is `contexts`. A file with a single context looks like:
 
 ```yml
 // shipping.glossary.yml
@@ -146,10 +146,12 @@ See [defining terminology](../defining-terminology) for details on defining term
 
 Following the patterns above, it is recommended to have a single context per file, but [multiple contexts per file](#multiple-bounded-contexts) is supported.
 
-### Multiple Bounded Contexts
+### Multiple Bounded Contexts in a Glossary File
 
 :::caution
 This feature is available for backwards compatibility reasons, but is not recommended.  See above for recommended patterns.
+
+It might also make sense if you are importing definitions from another source and it is simpler for you to generate a single file from your data source.
 :::
 
 Early versions of Contextive used a single glossary file with all contexts in it, and for backwards compatibility reasons, this is still supported.
@@ -174,7 +176,7 @@ For example, to achieve the same outcome, you could have a structure like:
 
 And the contexts could be defined like so:
 
-```yml {4-5} {10-11}
+```yml {5-6} {11-12}
 // project.glossary.yml
 contexts:
   - name: Shipping
