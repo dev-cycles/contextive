@@ -47,7 +47,7 @@ This is fundamentally the same as the previous pattern, but is described to be e
 
 For this approach to work, each repository must deal with different domain concepts so that the terms useful in one repository are irrelevant in the others, and visa versa.
 
-This pattern is particularly useful if each repository aligns with the concept of a Bounded Context from Domain-Driven Design.
+This pattern is particularly useful if each repository aligns with the concept of a [Bounded Context](#bounded-contexts) from Domain-Driven Design.
 
 <FileTree>
 
@@ -65,13 +65,13 @@ This pattern is particularly useful if each repository aligns with the concept o
 
 In this case, `shipping.glossary.yml` might define `Order` as `A set of parcels with a common delivery destination.`.  This definition will be shown when working on in the `shipping` repository.
 
-`payments.glossary.yml` might define `Order` as `An amount to be charged to the customer`.  This definition will be shown when working in the `payments` repository.
+`payments.glossary.yml` might define `Order` as ``An amount to be charged to the customer and the payment method to charge``.  This definition will be shown when working in the `payments` repository.
 
 ### Terms are useful only in a subfolder of the repository
 
 If the terms in a file are useful only in a subfolder, put the glossary file in the top-most folder that encompasses those relevant files.
 
-For example, if you are building a 'modular monolith', you might have your modules in separate folders, in which case you should put definitions relevant to each module in that module's folder, like so:
+For example, if you are building a 'modular monolith' in a monorepo, you might have your modules in separate folders, in which case you should put definitions relevant to each module in that module's folder, like so:
 
 <FileTree>
 
@@ -88,11 +88,12 @@ For example, if you are building a 'modular monolith', you might have your modul
 
 </FileTree>
 
-In this case, `shipping.glossary.yml` might define `Order` as `A set of parcels with a common delivery destination.`.  This definition will be shown when working on `\shipping\src\Order.cs`.
+Assuming the same definitions as before, where `shipping.glossary.yml` defines `Order` as `A set of parcels with a common delivery destination.` and `payments.glossary.yml` defines `Order` as `An amount to be charged to the customer and the payment method to charge.`, then:
 
-`payments.glossary.yml` might define `Order` as `An amount to be charged to the customer`.  This definition will be shown when working on `payments/src/Order.cs`.
+* When working on `/shipping/src/Order.cs`, hovering over the word `Order` will show `A set of parcels with a common delivery destination.`
+* When working on `/payments/src/Order.cs`, hovering over the word `Order` will show `An amount to be charged to the customer and the payment method to charge.`
 
-This pattern is particularly useful if the modules in your modular monolith align with the concept of a Bounded Context from Domain-Driven Design.
+This pattern is particularly useful if the modules in your modular monolith align with the concept of a [Bounded Context](#bounded-contexts) from Domain-Driven Design.
 
 ### Terms are useful across multiple repositories
 
@@ -106,9 +107,77 @@ A forthcoming update to Contextive will let you 'import' your glossary from a re
 
 In Domain-Driven Design, a Bounded Context is a logical boundary around a model of some portion of the domain. It's quite common for different Bounded Contexts to evolve their own unique 'languages' or 'dialects'.
 
-As described above, it's generally useful to have a separate glossary file per Bounded Context, whether you implement Bounded Contexts as separate repositories, or as folders within a repository.
+### Defining a Bounded Context
 
-However, for [legacy reasons](../configuration), glossary files support defining multiple contexts in the same file.
+The top level of the yml file is a list of bounded contexts with the key contexts. A file with a single context looks like:
 
-Ech context can be configured with a list path globs that can be used to define which paths should be considered when deciding which definitions to dplay
+```yml
+contexts:
+  - name: Shipping
+    domainVisionStatement: To manage the shipping of orders to customers.
+    terms:
+      - %list of terms%
+```
+Both the `name` and `domainVisionStatement` are optional, but if supplied, they will be shown at the top of the hover panel to provide context for the terms.
 
+![Shipping Context Headers](../../../assets/images/context-header.png)
+
+If those fields are undefined, the context can be as simple as:
+
+```yml
+contexts:
+  - terms:
+    - %list of terms%
+```
+
+Which would just show the term definition:
+
+![Shipping Context Without Headers](../../../assets/images/context-no-header.png)
+
+See [defining terminology](../defining-terminology) for details on defining terms.
+
+Following the patterns above, it is recommended to have a single context per file, but [multiple contexts per file](#multiple-bounded-contexts) is supported.
+
+### Multiple Bounded Contexts
+
+:::caution
+This feature is available for backwards compatibility reasons, but is not recommended.  See above for recommended patterns.
+:::
+
+Early versions of Contextive used a single glossary file with all contexts in it, and for backwards compatibility reasons, this is still supported.
+
+To scope the context to a particular portion of the repository, as described in [Terms are useful only in a subfolder of the repository](#terms-are-useful-only-in-a-subfolder-of-the-repository), then each context can have a list of path globs supplied and the terms in that context will only be shown for files that match the path glob.
+
+For example, to achieve the same outcome, you could have a structure like:
+
+<FileTree>
+
+- repository
+  - project.glossary.yml a glossary with all contexts and terms
+  - README.md
+  - shipping
+    - src
+      - Order.cs
+  - payments
+    - src
+      - Order.cs
+
+</FileTree>
+
+And the contexts could be defined like so:
+
+```yml
+contexts:
+  - name: Shipping
+    domainVisionStatement: To manage the shipping of orders to customers.
+    paths:
+    - shipping
+    terms:
+      - % list of terms in the shipping context
+  - name: Payments
+    domainVisionStatement: To manage handling payments, refunds & financial reconciliations for orders.
+    paths:
+    - payments
+    terms:
+      - * list of terms in the payments context
+```

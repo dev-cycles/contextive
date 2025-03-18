@@ -4,11 +4,11 @@ description: Define your language in a Contextive glossary
 sidebar:
   order: 2
 next:
-  link: /background/videos
+  link: ../../background/videos
   label: Videos
 ---
 
-This page will help you learn how to define your language in a Contextive glossary.
+This page explains how to define your language in a Contextive glossary.
 
 ## Example Domain
 
@@ -16,14 +16,12 @@ In the following sections, examples are drawn from the Cargo domain, as explored
 
 The usage examples are quoted or inspired by sample conversations in the book - ideally, your usage examples should be exact sentences as said by your domain experts.
 
-The following Contextive Glossary file was used to generate all screenshots/scenarios below:
+The following Contextive Glossary files were used to generate all screenshots/scenarios below:
 
-```
+```yml title="repo-root/cargo-module/cargo.glossary.yml"
 contexts:
   - name: Cargo
     domainVisionStatement: To manage the routing of cargo through transportation legs
-    paths:
-    - CargoDemo
     terms:
     - name: Cargo
       definition: A unit of transportation that needs moving and delivery to its delivery location.
@@ -48,10 +46,12 @@ contexts:
       examples:
         - The leg magnitude policy is selecting the fastest leg, but we need it to select the cheapest leg.
     - name: Vessel
+```
+
+```yml title="repo-root/billing-module/billing.glossary.yml"
+contexts:
   - name: Billing
     domainVisionStatement: Compute and levy charges for shipping
-    paths:
-    - BillingDemo
     terms:
     - name: Policy
       definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
@@ -61,9 +61,58 @@ contexts:
 
 The screenshots are from VsCode, but it should look similar in any IDE.
 
-## Combined Words
+## Simple Terms
 
-When working out what to show you in a hover panel, Contextive is able to identify the use of multiple defined terms in combined words when terms are combined using `camelCase`, `PascalCase`, `snake_case` or `kebab-case`.
+A simple term can be defined with just the name of the term.  e.g. yml like:
+
+```yml
+...
+    - name: Policy
+```
+
+with no definition or any othe fields, will display in the hover panel like:
+
+![Simple Term with no definition](../../../assets/images/simple-term.png)
+
+The _undefined_ definition is there to prompt adding a definition.
+
+The `name` field is the ONLY required field.
+
+### Definition
+
+By adding a definition field, we the hover panel becomes more useful:
+
+```yml
+...
+    - name: Policy
+      definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
+```
+
+![Simple Term with definition](../../../assets/images/simple-term-with-definition.png)
+
+### Usage Examples
+
+Usage examples allows to include a list of statements that represent real sentences that might be said be people working in the domain.  If provided, these are included in the hover panel to help contextualise the definitions.
+
+To defined usage examples, provide the `examples` key, like so:
+
+```yml
+...
+    - name: Policy
+```
+
+### Finding Words in Code
+
+Often terms from your clossary are used in code as part of compound word, such as `PolicyEntity` or `PolicyId`.  Since Contextive is just looking for the word without regard to language syntax, it can still find these words and show them in the hover panel.
+
+Compounding words are supported when combined with any of:
+
+* `camelCase`
+* `PascalCase`
+* `snake_case`
+* `kebab-case`
+
+This section describes some common patterns that make use of this.
 
 ### Suffixes and Prefixes
 
@@ -77,11 +126,13 @@ It's also common to end up with code elements (classes, variables or methods) th
 
 ![Example of hovering over a combined word with multiple matches.](../../../assets/images/multi-match-auto-complete-demo.gif)
 
-### Multi-word terms
+## Complex (multi-word) terms
 
-Sometimes, the combined term needs its own unique definition - just add it to your glossary file, and Contextive will work out that the more precise match is the one you want, decluttering your hover panel.  
+For terms that are phrases or compound words, just add it to your glossary file like a normal term.
 
-It can be added to your glossary file in a few different ways.  Consider a case where we alread have definitions for `Leg` and `Policy` but we want a special definition for `Leg Magnitude Policy`.  You can specify it in your glossary file in a number of ways:
+Even if the individual words are also defined as terms themselves, when hovering over code that matches the phrase or compound word, Contextive will work out that the more precise term is the one you want.  
+
+Multi-word terms can be added to your glossary file in a few different ways.  Consider a case where we alread have definitions for `Leg` and `Policy` but we want a special definition for `Leg Magnitude Policy`.  You can specify it in your glossary file in a number of ways:
 
 * `Leg Magnitude Policy` (Recommended - natural language)
 * `LegMagnitudePolicy` (PascalCase)
