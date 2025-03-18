@@ -5,86 +5,110 @@ sidebar:
   order: 1
 ---
 
+import { FileTree } from '@astrojs/starlight/components';
 
+Glossaries are files that contain lists of terms, their definitions and other attributes.
 
-## Repository Layout
+For Contextive to find your glossary file, it must match the pattern `*.glossary.yml`. You can name the prefix whatever you like, so `project.glossary.yml` and `module.glossary.yml` are both valid filenames, but `module-glossary.yml` is not.
 
-Contextive is designed to work with a variety of repository organisation schemes:
+## Glossary Location
 
-### Single Bounded Context, Multiple Repositories
+The first thing to decide is how many of these files you need and where to put them.
 
-When a single context is comprised of services, each with their own repository, it's not ideal to have to maintain a copy of the context's glossary in each repository.
-
-To facilitate this pattern, Contextive recommends storing the terms only once, in a central/common repository, and using native package management facilities to distribute the glossary file as part of any common code packages.
-
-For package managers that store the packages within the workspace, simply set `contextive.path` to the relative path of the downloaded package.  For package managers that store the packages in a global cache, Contextive allows the `contextive.path` setting to contain a shell escape code - `$(cmd)`. When `$(` is detected in the path setting, Contextive will execute `echo "%contextive.path%"` and use the result to `stdout` as the location of the glossary file.
-
-See https://github.com/dev-cycles/contextive-demo-go-service for an example of this in action using `golang` packages.
-
-
-### Multiple Bounded Contexts, Repository per Context
-
-This is the simplest option - all you need to do is define the terms for that context in the relevant repository.
-
-### Multiple Bounded Contexts, Single Repository, Single-Root (Monorepo)
-
-For projects utilising a [monorepo](https://en.wikipedia.org/wiki/Monorepo) it's not uncommon to have code relating to multiple [bounded contexts](https://martinfowler.com/bliki/BoundedContext.html) in the same repository.  At this time, Contextive tracks all definitions in the same file.  Each context has a `paths` property that defines a list of path [globs](https://en.wikipedia.org/wiki/Glob_(programming)).  When working on a file, any context with a matching path glob will be evaluated when finding matches for hover and auto-complete.
-
-This is particularly helpful if the same term (e.g. a common term, like `client`, or `invoice`) is used in multiple contexts.  The definition in each context can relate specifically to its usage in that context.
-
-Each context has optional properties `name` and `domainVisionStatement`.  When set, these names and vision statements will be included in the hover panel.
-
-Given the glossary file above, and a folder structure like so:
-
-```
-/CargoDemo
-  /LegPolicy.cs
-/BillingDemo
-  /Policy.cs
-```
-
-Contextive will match the files to the path glob configurations.
-
-When hovering over `CargoDemo/LegPolicy.cs` we get:
-
-![Example of hovering over policy in the Cargo context.](../../../assets/images/leg_policy_example.png)
-
-When hovering over `BillingDemo/Policy.cs` we get:
-
-![Example of hovering over policy in the Billing context.](../../../assets/images/billing_policy_example.png)
-
-### Multiple Bounded Contexts, Multi-Root, Shared glossary file
-
-Some IDEs support a [multi-root workspace](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#workspace_workspaceFolders) configuration which allows separate folders to be selected as 'roots' of a workspace. 
-
-So far, Contextive only supports this under ALL the following circumstances:
-
-1. You are using the VsCode IDE in a [Multi-Root](https://code.visualstudio.com/docs/editor/multi-root-workspaces) configuration AND
-2. The definitions/terminology for all roots are in a shared file (Support for separate files per root is a future enhancement) AND
-3. The value for the `contextive.path` configuration parameter is explicitly provided in the `settings` key of the `.code-workspaces` file  
-
-The reason is that the Contextive glossary file location defaults to the relative path `.contextive/definitions.yml`.  This default is defined in the language server (to ensure consistency across IDEs). In a single-root configuration it's clear what base path it is relative to, but with multi-root it's ambiguous as to which root the path is relative to.
-
-To resolve this, custom VsCode middleware rewrites the setting to an absolute path computed relative to the folder of the `.code-workspaces`, however this only works if VsCode is aware of the setting value to be re-written.
-
-:::caution[Breaking Change] 
-In the initial support for multi-root workspaces, the default value was defined in the VsCode extension, so the path rewrite worked on this default value and an explicit setting was not required.
-
-With the removal of the vscode default value, this no longer works and an explicit value is required in the `settings` key in the `.code-workspaces` file.
-
-If you are using the default location, please set this value to `.contextive/definitions.yml`, e.g. your `.code-workspaces` file should have:
-
-```
-{
-   "settings": {
-     "contextive.path": ".contextive/definitions.yml"
-   }  
-}
-```
+:::tip
+Terms in a glossary file are used by Contextive when working on any file in the same folder as the glossary or any of its child folders.
 :::
 
-Also note that the `paths` key in the Contextive glossary file relates to the paths of the roots on disk, not to their names in the vscode multi-root configuration.
+The following sections explore common patterns for where to place your glossary files.
 
-If you'd like to store the glossary file in a different location, update the setting in the `.code-workspaces` file.
+### Terms useful in a whole repository
 
-If you need multi-root support in another IDE, please raise a [github issue](https://github.com/dev-cycles/contextive/issues/new?assignees=&labels=&projects=&template=feature_request.md&title=)!
+If the terms in a file are useful for all files in the repository, then you should put the glossary file in the root.
+
+<FileTree>
+
+- repository
+  - projectName.glossary.yml a glossary relevant for the whole repository
+  - README.md
+  - frontend
+    - components
+      - SubmitOrder.ts
+  - backend
+    - domain
+      - Order.cs
+
+</FileTree>
+
+In the example above, if `projectName.glossary.yml` contains a definition for the term `Order`, then that definition will be used when editing `README.md`, `frontend\Components\SubmitOrder.ts` and `backend\domain\Order.cs`.
+
+### Different terms relevant in different repositories
+
+This is fundamentally the same as the previous pattern, but is described to be explicit for teams who are using multiple repositories.
+
+For this approach to work, each repository must deal with different domain concepts so that the terms useful in one repository are irrelevant in the others, and visa versa.
+
+This pattern is particularly useful if each repository aligns with the concept of a Bounded Context from Domain-Driven Design.
+
+<FileTree>
+
+- shipping-repository
+  - shipping.glossary.yml a glossary relevant only in the shipping repo
+  - src
+    - Order.cs
+- ...
+- payments-repository
+  - payments.glossary.yml a glossary relevant only in the payments repo
+  - src
+    - Order.cs
+
+</FileTree>
+
+In this case, `shipping.glossary.yml` might define `Order` as `A set of parcels with a common delivery destination.`.  This definition will be shown when working on in the `shipping` repository.
+
+`payments.glossary.yml` might define `Order` as `An amount to be charged to the customer`.  This definition will be shown when working in the `payments` repository.
+
+### Terms are useful only in a subfolder of the repository
+
+If the terms in a file are useful only in a subfolder, put the glossary file in the top-most folder that encompasses those relevant files.
+
+For example, if you are building a 'modular monolith', you might have your modules in separate folders, in which case you should put definitions relevant to each module in that module's folder, like so:
+
+<FileTree>
+
+- repository
+  - README.md
+  - shipping
+    - shipping.glossary.yml a glossary relevant only in the shipping repo
+    - src
+      - Order.cs
+  - payments
+    - payments.glossary.yml a glossary relevant only in the payments repo
+    - src
+      - Order.cs
+
+</FileTree>
+
+In this case, `shipping.glossary.yml` might define `Order` as `A set of parcels with a common delivery destination.`.  This definition will be shown when working on `\shipping\src\Order.cs`.
+
+`payments.glossary.yml` might define `Order` as `An amount to be charged to the customer`.  This definition will be shown when working on `payments/src/Order.cs`.
+
+This pattern is particularly useful if the modules in your modular monolith align with the concept of a Bounded Context from Domain-Driven Design.
+
+### Terms are useful across multiple repositories
+
+If you have multiple repositories that would benefit from access to the same terms, then it's recommended to define the terms in one repository and to construct a system for copying them into the other repositories.
+
+:::tip[Coming Soon]
+A forthcoming update to Contextive will let you 'import' your glossary from a remote URL, which will make this pattern much simpler. Stay tuned!
+:::
+
+## Bounded Contexts
+
+In Domain-Driven Design, a Bounded Context is a logical boundary around a model of some portion of the domain. It's quite common for different Bounded Contexts to evolve their own unique 'languages' or 'dialects'.
+
+As described above, it's generally useful to have a separate glossary file per Bounded Context, whether you implement Bounded Contexts as separate repositories, or as folders within a repository.
+
+However, for [legacy reasons](../configuration), glossary files support defining multiple contexts in the same file.
+
+Ech context can be configured with a list path globs that can be used to define which paths should be considered when deciding which definitions to dplay
+
