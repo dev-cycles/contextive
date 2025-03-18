@@ -67,7 +67,8 @@ A simple term can be defined with just the name of the term.  e.g. yml like:
 
 ```yml
 ...
-    - name: Policy
+    - terms:
+      - name: Policy
 ```
 
 with no definition or any othe fields, will display in the hover panel like:
@@ -80,32 +81,40 @@ The `name` field is the ONLY required field.
 
 ### Definition
 
-By adding a definition field, we the hover panel becomes more useful:
+By adding a definition field, the hover panel becomes more useful:
 
 ```yml
 ...
-    - name: Policy
-      definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
+    - terms:
+      - name: Policy
+        definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
 ```
 
 ![Simple Term with definition](../../../assets/images/simple-term-with-definition.png)
 
 ### Usage Examples
 
-Usage examples allows to include a list of statements that represent real sentences that might be said be people working in the domain.  If provided, these are included in the hover panel to help contextualise the definitions.
+Usage examples are a list of statements that represent real sentences that might be said be people working in the domain.  If provided, these are included in the hover panel to help contextualise the definitions.
 
-To defined usage examples, provide the `examples` key, like so:
+To define usage examples, provide the `examples` key, like so:
 
 ```yml
 ...
-    - name: Policy
+    - terms:
+      - name: Policy
+        definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
+        examples:
+          - The billing policy is to send to collections after 90 days in arrears.
+
 ```
+
+![Simple Term with definition and usage examples](../../../assets/images/simple-term-with-definition-and-examples.png)
 
 ### Finding Words in Code
 
-Often terms from your clossary are used in code as part of compound word, such as `PolicyEntity` or `PolicyId`.  Since Contextive is just looking for the word without regard to language syntax, it can still find these words and show them in the hover panel.
+Often terms from your glossary are used in code as part of compound word, such as `PolicyEntity`, `PolicyId` or `policy_service`.
 
-Compounding words are supported when combined with any of:
+These kind of compound words are supported when compounding is done with any of:
 
 * `camelCase`
 * `PascalCase`
@@ -132,7 +141,7 @@ For terms that are phrases or compound words, just add it to your glossary file 
 
 Even if the individual words are also defined as terms themselves, when hovering over code that matches the phrase or compound word, Contextive will work out that the more precise term is the one you want.  
 
-Multi-word terms can be added to your glossary file in a few different ways.  Consider a case where we alread have definitions for `Leg` and `Policy` but we want a special definition for `Leg Magnitude Policy`.  You can specify it in your glossary file in a number of ways:
+Multi-word terms can be added to your glossary file in a few different ways.  Consider a case where we alread have definitions for `Leg` and `Policy` but we want a special definition for `Leg Magnitude Policy`.  You can specify it in your glossary file using any of these patterns:
 
 * `Leg Magnitude Policy` (Recommended - natural language)
 * `LegMagnitudePolicy` (PascalCase)
@@ -141,14 +150,20 @@ Multi-word terms can be added to your glossary file in a few different ways.  Co
 * `leg-magnitude-policy` (kebab-case)
 
 :::tip[Recommendation]
-We recommend defining multi-word terms in your glossary file in natural language:
+We recommend defining multi-word terms in your glossary file in natural language, e.g.:
 
-`Leg Magnitude Policy`
+```yml
+...
+    - terms:
+      - name: Leg Magnitude Policy
+        definition: A policy that helps the routing engine select the legs with the lowest magnitude.
 
-The other options are supported as many folk are migrating from documentation systems which must match the exact usage of the terms in code.
+```
+
+The other options are supported to help folk migrating from documentation systems which must match the exact usage of the terms in code.
 :::
 
-However it's it's defined, the definitions of `Leg` and `Policy` will not be shown and only the 'multi-word' term will be shown.
+However it is defined in the glossary, the definitions of `Leg` and `Policy` will not be shown and only the 'multi-word' term will be shown.
 
 As with all combined words, it will be shown when hovering over text that matches any of the supported word combination techniques: `camelCase`, `PascalCase`, `snake_case` or `kebab-case`.
 
@@ -158,7 +173,16 @@ As with all combined words, it will be shown when hovering over text that matche
 
 ## Plural Words
 
-Contextive can detect a defined term even when it is defined in the singular and used in the plural.
+Contextive can detect a defined term even when it is defined in the singular and used in the plural.  In this example, even though defined as `Policy` the term is still shown when hovering over `PoliciesCollection`.
+
+```yml
+...
+    - terms:
+      - name: Policy
+        definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
+```
+
+![Term found when plural](../../../assets/images/term-found-when-plural.png)
 
 Coming Soon: Ability to detect a defined term when it is defined in the plural and used in the singular, and when individual words in a multi-word term are pluralised or singularised.
 
@@ -166,9 +190,40 @@ Coming Soon: Ability to detect a defined term when it is defined in the plural a
 
 Contextive supports defining a list of aliases for a given term.  These can be acronyms or just alternative words that are sometimes used interchangeably.  For example, in the cargo domain above, `unit` is an alias of `cargo`.
 
+```yml
+...
+    - terms:
+      - name: Cargo
+        definition: A unit of transportation that needs moving and delivery to its delivery location.
+        aliases:
+          - unit
+```
+
 When hovering over the word `unit`, the definition of `cargo` will be displayed:
 
 ![Example of hovering over the alias 'unit' for the term 'cargo'.](../../../assets/images/alias.png)
+
+## Smart Auto-Complete
+
+As the terms added to the auto-complete are from a glossary file, not from your code symbols, the auto-complete will work in any file of any language - including documentation, such as markdown.
+
+To ensure it's useful in a variety of scenarios, it includes a number of options to fit your required format:
+
+* camelCase
+* PascalCase
+* snake_case
+* UPPER_CASE
+* kebab-case
+
+The auto-complete options will adjust as you type:
+
+* After typing a single lower-case letter, only `camelCase`, `snake_case` & `kebab-case` will be included.
+* After typing a single upper case letter, `PascalCase` and `UPPER_CASE` will be included.
+* After typing two upper case letters, single word, snake_case and combined words will all be in `UPPERCASE`.
+* After typing any case letters and an underscore, only `snake_case` will be included.
+* After typing only lower case letters and a `-`, only `kebab-case` will be included.
+
+![Example of smart auto-complete.](../../../assets/images/markdown-demo.gif)
 
 ## Multiline YAML
 
@@ -233,25 +288,3 @@ Renders to:
 ![Example of literal multi-line with no break.](../../../assets/images/multiline_literal_nobreak.png)
 
 The line will still wrap according to the width of the hover panel.
-
-## Smart Auto-Complete
-
-As the terms added to the auto-complete are from a glossary file, not from your code symbols, the auto-complete will work in any file of any language - including documentation, such as markdown.
-
-To ensure it's useful in a variety of scenarios, it includes a number of options to fit your required format:
-
-* camelCase
-* PascalCase
-* snake_case
-* UPPER_CASE
-* kebab-case
-
-The auto-complete options will adjust as you type:
-
-* After typing a single lower-case letter, only `camelCase`, `snake_case` & `kebab-case` will be included.
-* After typing a single upper case letter, `PascalCase` and `UPPER_CASE` will be included.
-* After typing two upper case letters, single word, snake_case and combined words will all be in `UPPERCASE`.
-* After typing any case letters and an underscore, only `snake_case` will be included.
-* After typing only lower case letters and a `-`, only `kebab-case` will be included.
-
-![Example of smart auto-complete.](../../../assets/images/markdown-demo.gif)

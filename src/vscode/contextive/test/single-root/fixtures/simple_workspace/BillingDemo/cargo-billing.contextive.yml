@@ -1,8 +1,8 @@
-# yaml-language-server: $schema=../.contextive-schema.json
+# yaml-language-server: $schema=../.contextive/contextive-schema.json
 # Inspired by https://www.dddcommunity.org/book/evans_2003/
 contexts:
   - name: Billing
     domainVisionStatement: Compute and levy charges for shipping
     terms:
-    - name: Policy
-      definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
+      - name: Policy
+        definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.

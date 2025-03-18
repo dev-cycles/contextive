@@ -28,7 +28,7 @@ If the terms in a file are useful for all files in the repository, then you shou
 <FileTree>
 
 - repository
-  - projectName.glossary.yml a glossary relevant for the whole repository
+  - projectName.glossary.yml &lt;-- a glossary for the **whole repository**
   - README.md
   - frontend
     - components
@@ -52,12 +52,12 @@ This pattern is particularly useful if each repository aligns with the concept o
 <FileTree>
 
 - shipping-repository
-  - shipping.glossary.yml a glossary relevant only in the shipping repo
+  - shipping.glossary.yml &lt;-- a glossary only for **shipping**
   - src
     - Order.cs
 - ...
 - payments-repository
-  - payments.glossary.yml a glossary relevant only in the payments repo
+  - payments.glossary.yml &lt;-- a glossary only for **payments**
   - src
     - Order.cs
 
@@ -78,11 +78,11 @@ For example, if you are building a 'modular monolith' in a monorepo, you might h
 - repository
   - README.md
   - shipping
-    - shipping.glossary.yml a glossary relevant only in the shipping repo
+    - shipping.glossary.yml &lt;-- a glossary only for **shipping**
     - src
       - Order.cs
   - payments
-    - payments.glossary.yml a glossary relevant only in the payments repo
+    - payments.glossary.yml &lt;-- a glossary only for **payments**
     - src
       - Order.cs
 
@@ -112,11 +112,15 @@ In Domain-Driven Design, a Bounded Context is a logical boundary around a model 
 The top level of the yml file is a list of bounded contexts with the key contexts. A file with a single context looks like:
 
 ```yml
+// shipping.glossary.yml
 contexts:
   - name: Shipping
     domainVisionStatement: To manage the shipping of orders to customers.
     terms:
-      - %list of terms%
+      - name: Order
+        definition: A set of parcels with a common delivery destination.
+      - % other terms %
+...
 ```
 Both the `name` and `domainVisionStatement` are optional, but if supplied, they will be shown at the top of the hover panel to provide context for the terms.
 
@@ -125,9 +129,13 @@ Both the `name` and `domainVisionStatement` are optional, but if supplied, they 
 If those fields are undefined, the context can be as simple as:
 
 ```yml
+// shipping.glossary.yml
 contexts:
   - terms:
-    - %list of terms%
+      - name: Order
+        definition: A set of parcels with a common delivery destination.
+      - % other terms %
+...
 ```
 
 Which would just show the term definition:
@@ -166,7 +174,8 @@ For example, to achieve the same outcome, you could have a structure like:
 
 And the contexts could be defined like so:
 
-```yml
+```yml {4-5} {10-11}
+// project.glossary.yml
 contexts:
   - name: Shipping
     domainVisionStatement: To manage the shipping of orders to customers.
