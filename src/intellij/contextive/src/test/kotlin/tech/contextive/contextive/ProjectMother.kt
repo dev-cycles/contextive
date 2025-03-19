@@ -7,7 +7,19 @@ import com.intellij.openapi.vfs.VirtualFile
 import io.mockk.every
 import io.mockk.mockk
 
-fun getMockedProject(isContextiveFilePresent: Boolean): Project {
+
+fun getMockedProject(): Project {
+    val baseDirectory = mockk<VirtualFile>(relaxed = true)
+
+    return mockk<Project> {
+        every { getService<BaseProjectDirectories>(any()) } returns
+                mockk {
+                    every { getBaseDirectories() } returns setOf(baseDirectory)
+                }
+    }
+}
+
+fun getMockedProjectWithDefaultGlossary(isContextiveFilePresent: Boolean): Project {
     val baseDirectory = mockk<VirtualFile> {
         every { findFileByRelativePath(".contextive/definitions.yml") } returns
                 mockk {
@@ -21,4 +33,8 @@ fun getMockedProject(isContextiveFilePresent: Boolean): Project {
                     every { getBaseDirectories() } returns setOf(baseDirectory)
                 }
     }
+}
+
+fun getMockedProjectWithGlossaryFiles(files: Array<String>): Project {
+    return mockk<Project>()
 }

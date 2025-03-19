@@ -11,6 +11,10 @@ import java.util.*
 
 class ContextiveManagerTest {
 
+    private fun getContextiveActiveChecker(isActive: Boolean) = mockk<ContextiveActiveChecker> {
+        every { isActive() } returns isActive
+    }
+
     private fun getImmediateDownloadScheduler(project: Project, expectedDownloadPath: Path) : LanguageServerDownloadScheduler {
         return mockk<LanguageServerDownloadScheduler>(relaxed = true) {
             every {
@@ -23,11 +27,13 @@ class ContextiveManagerTest {
 
     @ParameterizedTest
     @CsvSource("false,0", "true,1")
-    fun givenContextiveFilePresence_EnsureStartedIfPresent(isContextiveFilePresent: Boolean, expectedServerStartInvocationCount: Int) {
+    fun givenContextiveFilePresence_EnsureStartedIfPresent(isContextiveActive: Boolean, expectedServerStartInvocationCount: Int) {
         // Arrange
-        val project = getMockedProject(isContextiveFilePresent)
+        val project = getMockedProject()
         val serverStarter = mockk<LspServerSupportProvider.LspServerStarter>(relaxed = true)
-        val contextiveManager = ContextiveManager(getImmediateDownloadScheduler(project), project, serverStarter)
+        val contextiveActiveChecker = getContextiveActiveChecker(isContextiveActive)
+
+        val contextiveManager = ContextiveManager(contextiveActiveChecker, getImmediateDownloadScheduler(project), project, serverStarter)
 
         // Act
         contextiveManager.startIfRequired()
@@ -38,13 +44,15 @@ class ContextiveManagerTest {
 
     @ParameterizedTest
     @CsvSource("false,0", "true,1")
-    fun givenStarting_EnsureLanguageServerIsDownloaded(isContextiveFilePresent: Boolean, expectedServerStartInvocationCount: Int)
+    fun givenStarting_EnsureLanguageServerIsDownloaded(isContextiveActive: Boolean, expectedServerStartInvocationCount: Int)
     {
         // Arrange
-        val project = getMockedProject(isContextiveFilePresent)
+        val project = getMockedProject()
         val serverStarter = mockk<LspServerSupportProvider.LspServerStarter>(relaxed = true)
         val contextiveLsDownloader = getImmediateDownloadScheduler(project)
-        val contextiveManager = ContextiveManager(contextiveLsDownloader, project, serverStarter)
+        val contextiveActiveChecker = getContextiveActiveChecker(isContextiveActive)
+
+        val contextiveManager = ContextiveManager(contextiveActiveChecker, contextiveLsDownloader, project, serverStarter)
 
         // Act
         contextiveManager.startIfRequired()
@@ -57,14 +65,13 @@ class ContextiveManagerTest {
     fun givenStarting_EnsureStartedWithLocationDownloadedTo()
     {
         // Arrange
-        val project = getMockedProject(true)
+        val project = getMockedProject()
         val serverStarter = mockk<LspServerSupportProvider.LspServerStarter>(relaxed = true)
         val mockPath = Path.of("/" + UUID.randomUUID())
-
+        val contextiveActiveChecker = getContextiveActiveChecker(true)
         val contextiveLsDownloader = getImmediateDownloadScheduler(project, mockPath)
 
-
-        val contextiveManager = ContextiveManager(contextiveLsDownloader, project, serverStarter)
+        val contextiveManager = ContextiveManager(contextiveActiveChecker, contextiveLsDownloader, project, serverStarter)
 
         // Act
         contextiveManager.startIfRequired()

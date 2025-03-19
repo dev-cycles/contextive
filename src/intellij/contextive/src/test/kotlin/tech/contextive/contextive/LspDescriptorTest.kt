@@ -16,7 +16,7 @@ class LspDescriptorTest {
         // Arrange
         val descriptor = LspDescriptor(
             Path.of(""),
-            getMockedProject(true)
+            getMockedProjectWithDefaultGlossary(true)
         )
 
         // Act
@@ -33,7 +33,7 @@ class LspDescriptorTest {
         val path = Path.of("/" + UUID.randomUUID())
         val descriptor = LspDescriptor(
             path,
-            getMockedProject(true)
+            getMockedProjectWithDefaultGlossary(true)
         )
 
         // Act
