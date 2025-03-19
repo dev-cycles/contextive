@@ -16,34 +16,24 @@ See [VsCode Installation Instructions](https://docs.contextive.tech/ide/v/1.14.1
 
 ## Getting Started
 
-Use the `Contextive: Initialize Glossary File` command from the command palette to create a sample glossary file. A file will be created and opened with a sample set of definitions:
-
-![Example of a Contextive definition hover over the word "context" in a yml file.](../../../docs/web/src/assets/images/example_hover.png)
-
-This sample file illustrates the use of Contextive by defining the terms used in the glossary file yml structure itself.  You can hover over the name of the terms in the file to see Contextive in action (see the sample image above).
-
-You should delete the sample definitions and replace them with your own.
-
-## Usage Guide
-
-See our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/) for details on the glossary file format and available options. 
+See [setting up glossaries](https://docs.contextive.tech/ide/v/1.14.1/guides/setting-up-glossaries/) and [defining terminology](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/) usage guides for details on getting started with Contextive.
 
 ## Features
 
 * Initialize your Contextive Glossary
-* [Auto-complete](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#smart-auto-complete) from your Contextive Glossary
+* [Auto-complete](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/#smart-auto-complete) from your Contextive Glossary
   * Shows definitions in auto-complete details
 * Hover to show definitions from your Contextive Glossary
-  * Hover over elements with [suffixes & prefixes](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#suffixes-and-prefixes)
-  * Hover over usage of [multiple terms](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
-  * Hover over [multi-word](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multi-word-terms) terms
-  * Hover over [plural](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#plural-words) of defined terms
-  * Hover over [aliases](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#term-aliases) of defined terms
-* Supported Repository Layouts:
-  * A [repository per context](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multiple-bounded-contexts-repository-per-context)
-  * [Multiple contexts in the same repository](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multiple-bounded-contexts-single-repository-single-root-monorepo) (monorepo) (identified by path globs)
-  * Context distributed over [multiple repositories](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#single-bounded-context-multiple-repositories) (#36)
-  * [Multi-root workspaces](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multiple-bounded-contexts-multi-root-shared-definitions-file)
+  * Hover over elements with [suffixes & prefixes](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/#suffixes-and-prefixes)
+  * Hover over usage of [multiple terms](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
+  * Hover over [multi-word](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/#complex-multi-word-terms) terms
+  * Hover over [plural](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/#plural-words) of defined terms
+  * Hover over [aliases](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/#term-aliases) of defined terms
+* Put your glossaries near the code they support:
+  * [Terms relevant for the whole repository](https://docs.contextive.tech/ide/v/1.14.1/guides/setting-up-glossaries/#terms-relevant-for-the-whole-repository)
+  * [Different terms relevant in different repositories](https://docs.contextive.tech/ide/v/1.14.1/guides/setting-up-glossaries/#different-terms-relevant-in-different-repositories)
+  * [Terms relevant only in a subfolder of the repository](https://docs.contextive.tech/ide/v/1.14.1/guides/setting-up-glossaries/#terms-relevant-only-in-a-subfolder-of-the-repository)
+  * [Multi-root workspaces](https://docs.contextive.tech/ide/v/1.14.1/guides/setting-up-glossaries/#multi-root-workspaces)
 * Works in all files (uses the `*` document selector)
 
 ### Coming Soon

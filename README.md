@@ -40,9 +40,9 @@ Officially supported IDEs include:
 #### [Neovim](https://docs.contextive.tech/ide/guides/installation/#neovim)
 #### [Helix](https://docs.contextive.tech/ide/guides/installation/#helix)
 
-## Configuration & Usage
+## Getting Started
 
-See our [Usage Guide](https://docs.contextive.tech/ide/guides/usage/) for details on configuring Contextive, setting up your glossary file, and the various features and options available to you in defining your domain-specific terminology.
+See [setting up glossaries](https://docs.contextive.tech/ide/v/1.14.1/guides/setting-up-glossaries/) and [defining terminology](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/) usage guides for details on getting started with Contextive.
 
 ## Features
 

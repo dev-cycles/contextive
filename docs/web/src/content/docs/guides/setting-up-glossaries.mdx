@@ -21,7 +21,7 @@ Terms in a glossary file are used by Contextive when working on any file in the 
 
 The following sections explore common patterns for where to place your glossary files.
 
-### Terms useful in a whole repository
+### Terms relevant for the whole repository
 
 If the terms in a file are useful for all files in the repository, then you should put the glossary file in the root.
 
@@ -67,7 +67,7 @@ In this case, `shipping.glossary.yml` might define `Order` as `A set of parcels 
 
 `payments.glossary.yml` might define `Order` as ``An amount to be charged to the customer and the payment method to charge``.  This definition will be shown when working in the `payments` repository.
 
-### Terms are useful only in a subfolder of the repository
+### Terms relevant only in a subfolder of the repository
 
 If the terms in a file are useful only in a subfolder, put the glossary file in the top-most folder that encompasses those relevant files.
 
@@ -95,7 +95,7 @@ Assuming the same definitions as before, where `shipping.glossary.yml` defines `
 
 This pattern is particularly useful if the modules in your modular monolith align with the concept of a [Bounded Context](#bounded-contexts) from Domain-Driven Design.
 
-### Terms are useful across multiple repositories
+### Terms relevant across multiple repositories
 
 If you have multiple repositories that would benefit from access to the same terms, then it's recommended to define the terms in one repository and to construct a system for copying them into the other repositories.
 
@@ -103,7 +103,19 @@ If you have multiple repositories that would benefit from access to the same ter
 A forthcoming update to Contextive will let you 'import' your glossary from a remote URL, which will make this pattern much simpler. Stay tuned!
 :::
 
+## Multi-root workspaces
+
+Some IDEs (e.g. VsCode) support multi-root workspaces. 
+
+Contextive will use glossary files based on their location on disk relative to the files that are being edited and will not consider the multi-root structure.
+
+However, it will only discover glossaries by searching from each of the roots, so depending on the disk layout of the roots, terms may or may not be used across multiple roots.
+
+In this approach, it's recommended to use something like [Terms relevant only in a subfolder of the repository](#terms-relevant-only-in-a-subfolder-of-the-repository), where each subfolder is 'root' in the multi-root workspace.
+
 ## Bounded Contexts
+
+Once you have determined where to put your glossary files, the next thing is to define a Bounded Context in each file.
 
 In Domain-Driven Design, a Bounded Context is a logical boundary around a model of some portion of the domain. It's quite common for different Bounded Contexts to evolve their own unique 'languages' or 'dialects'.
 
@@ -145,6 +157,14 @@ Which would just show the term definition:
 See [defining terminology](../defining-terminology) for details on defining terms.
 
 Following the patterns above, it is recommended to have a single context per file, but [multiple contexts per file](#multiple-bounded-contexts) is supported.
+
+### Glossary File Template
+
+import Link from '../../../components/VersionedLink.astro';
+
+When getting started, it could be helpful to copy the <Link href="https://github.com/dev-cycles/contextive/blob/v{contextive_version}/src/language-server/Contextive.LanguageServer.Tests/E2e/GlossaryFileInitializationTests.Default%20Glossary%20File.verified.txt">default glossary file template</Link> which contains all possible fields and is used to define the terms used in the glossary file itself.
+
+It can be used as a starting point to edit and amend to incorporate your contexts and [define your terms](../defining-terminology/).
 
 ### Multiple Bounded Contexts in a Glossary File
 

@@ -21,29 +21,23 @@ See [Visual Studio Instructions](https://docs.contextive.tech/ide/v/1.14.1/guide
 
 ## Getting Started
 
-Create a folder in your project root called `.contextive`.  Create a file in that folder called `definitions.yml`.
-
-Start defining your terms following the schema specified in our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/). You might like to start by copying our [default glossary](https://github.com/dev-cycles/contextive/blob/v1.14.1/src/language-server/Contextive.LanguageServer.Tests/GlossaryFileInitializationTests.Default%20Glossary%20File.verified.txt) file that defines the terms used in the glossary file itself.
-
-## Usage Guide
-
-See our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/) for details on the glossary file format and available options. 
+See [setting up glossaries](https://docs.contextive.tech/ide/v/1.14.1/guides/setting-up-glossaries/) and [defining terminology](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/) usage guides for details on getting started with Contextive.
 
 ## Features
 
 * Initialize your Contextive Glossary File
-* [Auto-complete](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#smart-auto-complete) from your Contextive Glossary
+* [Auto-complete](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/#smart-auto-complete) from your Contextive Glossary
   * Shows definitions in auto-complete details
 * Hover to show definitions from your Contextive Glossary
-  * Hover over elements with [suffixes & prefixes](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#suffixes-and-prefixes)
-  * Hover over usage of [multiple terms](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
-  * Hover over [multi-word](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multi-word-terms) terms
-  * Hover over [plural](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#plural-words) of defined terms
-  * Hover over [aliases](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#term-aliases) of defined terms
-* Supported Repository Layouts:
-  * A [repository per context](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multiple-bounded-contexts-repository-per-context)
-  * [Multiple contexts in the same repository](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multiple-bounded-contexts-single-repository-single-root-monorepo) (monorepo) (identified by path globs)
-  * Context distributed over [multiple repositories](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#single-bounded-context-multiple-repositories) ([#36](https://github.com/dev-cycles/contextive/issues/36))
+  * Hover over elements with [suffixes & prefixes](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/#suffixes-and-prefixes)
+  * Hover over usage of [multiple terms](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
+  * Hover over [multi-word](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/#complex-multi-word-terms) terms
+  * Hover over [plural](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/#plural-words) of defined terms
+  * Hover over [aliases](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/#term-aliases) of defined terms
+* Put your glossaries near the code they support:
+  * [Terms relevant for the whole repository](https://docs.contextive.tech/ide/v/1.14.1/guides/setting-up-glossaries/#terms-relevant-for-the-whole-repository)
+  * [Different terms relevant in different repositories](https://docs.contextive.tech/ide/v/1.14.1/guides/setting-up-glossaries/#different-terms-relevant-in-different-repositories)
+  * [Terms relevant only in a subfolder of the repository](https://docs.contextive.tech/ide/v/1.14.1/guides/setting-up-glossaries/#terms-relevant-only-in-a-subfolder-of-the-repository)
 
 ### Coming Soon
 
@@ -51,10 +45,6 @@ See our [usage guide](https://docs.contextive.tech/ide/v/1.14.1/guides/usage/) f
 * Internationalization support
 * Support for multiple contexts in separate repositories
 * Better support for key word identification in different languages (e.g. different syntax delimiters)
-
-## Extension Settings
-
-The extension does not currently support configuration.  The glossary file _must_ be in `./contextive/definitions.yml` in your open folder.
 
 ## Known Issues
 
