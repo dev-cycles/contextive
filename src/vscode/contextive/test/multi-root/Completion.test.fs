@@ -10,8 +10,6 @@ let tests =
     let completionTest (root: string, expectedTerms: string seq) =
         testCaseAsync $"finds terms for {root}"
         <| async {
-            do! Helpers.updateConfig Helpers.defaultRelativePath
-            do! Promise.sleep 100
             let testDocPath = Paths.inWorkspace $"{root}/empty.txt"
             let position = vscode.Position.Create(0, 10)
             let expectedTerms = expectedTerms

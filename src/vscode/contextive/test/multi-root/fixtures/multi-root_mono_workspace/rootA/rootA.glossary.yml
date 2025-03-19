@@ -1,0 +1,8 @@
+contexts:
+  - name: RootA
+    domainVisionStatement: To illustrate the use of the terms in RootA Context
+    terms:
+      - name: A
+        definition: A term that is only in rootA
+      - name: both
+        definition: A term found in both roots but in this case is in RootA

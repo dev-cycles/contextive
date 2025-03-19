@@ -28,7 +28,8 @@
 		"Dictionary"
 	],
 	"activationEvents": [
-		"workspaceContains:**/.contextive/**"
+		"workspaceContains:**/.contextive/**",
+		"workspaceContains:**/*.glossary.yml"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {

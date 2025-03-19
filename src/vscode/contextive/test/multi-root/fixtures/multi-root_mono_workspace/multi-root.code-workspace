@@ -5,11 +5,6 @@
 		},
 		{
 			"path": "rootB"
-		},
-		{
-			"path": "."
 		}
-	],
-	"settings": {
-	}
+	]
 }

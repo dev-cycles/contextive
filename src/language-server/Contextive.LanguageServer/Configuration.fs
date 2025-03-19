@@ -23,3 +23,15 @@ let getWorkspaceFolder (s: ILanguageServer) =
         Some <| s.Client.ClientSettings.RootUri.ToUri().LocalPath
     else
         None
+
+let getWorkspaceFolders (s: ILanguageServer) =
+    let workspaceRoots =
+        s.WorkspaceFolderManager.CurrentWorkspaceFolders
+        |> Seq.map _.Uri.ToUri().LocalPath
+
+    if not <| Seq.isEmpty workspaceRoots then
+        workspaceRoots
+    else if s.Client.ClientSettings.RootUri <> null then
+        seq { s.Client.ClientSettings.RootUri.ToUri().LocalPath }
+    else
+        Seq.empty

@@ -5,23 +5,38 @@ open Contextive.LanguageServer
 open Swensen.Unquote
 open System.IO
 open Contextive.LanguageServer.Tests.Helpers.Workspace
+open OmniSharp.Extensions.LanguageServer.Protocol
 
 [<Tests>]
 let tests =
+
+    let normalizePath (p: DocumentUri) = p.ToUri().LocalPath
+
+    let reBaseLinePaths basePath (paths: string list) =
+        paths |> List.map (fun p -> Path.Combine(basePath, p))
+
+
     testList
         "File Scanner Tests"
         [ testAsync "When scanning folder, find matching files" {
-              let basePath = workspaceFolderPath "fixtures/scanning_tests" |> _.ToUri().LocalPath
 
-              let scanner = FileScanner.fileScanner basePath
+              let base1 = workspaceFolderPath "fixtures/scanning_tests" |> normalizePath
+              let base2 = workspaceFolderPath "fixtures/scanning_tests2" |> normalizePath
+              let basePaths = [ base1; base2 ]
+
+              let scanner = FileScanner.fileScanner basePaths
               let files = scanner "**/*.glossary.yml"
 
-              let expectedFiles =
+              let expectedFiles1 =
                   [ "root.glossary.yml"
                     "folder1/folder1.glossary.yml"
                     "folder1/nestedFolder/nested.glossary.yml"
                     "folder2/folder2.glossary.yml" ]
-                  |> Seq.map (fun p -> Path.Combine(basePath, p))
+                  |> reBaseLinePaths base1
+
+              let expectedFiles2 = [ "extra.glossary.yml" ] |> reBaseLinePaths base2
+
+              let expectedFiles = List.append expectedFiles1 expectedFiles2
 
               test <@ Set.ofSeq expectedFiles = Set.ofSeq files @>
           } ]
