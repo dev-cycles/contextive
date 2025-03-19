@@ -7,7 +7,7 @@ const sha = process.env.CONTEXTIVE_SHA;
 const release_label = `Release: v${version}`;
 const release_url = sha ?
     `https://github.com/dev-cycles/contextive/commit/${sha}`
-    : `https://github.com/dev-cycles/contextive/releases/tag/v${version}`;
+    : `https://github.com/dev-cycles/contextive/releases/tag/${version}`;
 const release_link =
 {
     link: release_url,
