@@ -15,8 +15,7 @@ open Contextive.Core.File
 open Contextive.Core.GlossaryFile
 
 let private introComments =
-    """# yaml-language-server: $schema=contextive-schema.json
-# Welcome to Contextive!
+    """# Welcome to Contextive!
 #
 # This initial glossary file illustrates the syntax of the file by providing definitions and examples of the terms
 # used in schema of the glossary file.
@@ -99,10 +98,6 @@ let private handler pathGetter (showDocument: ShowDocumentParams -> System.Threa
 
                             ensureDirectoryExists p
                             File.WriteAllText(p, defaultGlossaryFileText)
-
-                        let folder = Path.GetDirectoryName(p)
-                        let schemaPath = Path.Combine(folder, schemaFileName)
-                        File.WriteAllText(schemaPath, GlossaryFileSchema.schema)
 
                         do!
                             showDocument (ShowDocumentParams(Uri = p, External = false))

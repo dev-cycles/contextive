@@ -1,5 +1,4 @@
-﻿# yaml-language-server: $schema=contextive-schema.json
-# Welcome to Contextive!
+﻿# Welcome to Contextive!
 #
 # This initial glossary file illustrates the syntax of the file by providing definitions and examples of the terms
 # used in schema of the glossary file.

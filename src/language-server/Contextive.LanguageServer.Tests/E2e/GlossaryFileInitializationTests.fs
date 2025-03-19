@@ -39,11 +39,8 @@ let initializeContextive
         let fullPath = Path.Combine(workspacePath, pathValue)
         let fileExists = File.Exists(fullPath)
         let contents = File.ReadAllText(fullPath)
-        let schemaPath = Path.GetDirectoryName(fullPath)
-        let schemaFullPath = Path.Combine(schemaPath, schemaFileName)
-        let schemaContents = File.ReadAllText(schemaFullPath)
 
-        return (res, fileExists, contents, schemaContents)
+        return (res, fileExists, contents)
     }
 
 [<Tests>]
@@ -54,7 +51,7 @@ let tests =
         [ testTask "Initialization command creates default glossary file at configured path" {
               let pathValue = Guid.NewGuid().ToString()
 
-              let! res, fileExists, contents, schemaContents = initializeContextive None pathValue []
+              let! res, fileExists, contents = initializeContextive None pathValue []
 
               File.Delete(pathValue)
 
@@ -62,15 +59,13 @@ let tests =
               test <@ fileExists @>
 
               do! Verifier.Verify("Default Glossary File", contents).ToTask()
-
-              do! Verifier.Verify("Default Glossary File Schema", schemaContents).ToTask()
           }
 
           testTask
               "Initialization command creates default glossary file at configured path when subfolder doesn't exist" {
               let pathValue = $"{Guid.NewGuid().ToString()}/{Guid.NewGuid().ToString()}"
 
-              let! res, fileExists, contents, schemaContents = initializeContextive None pathValue []
+              let! res, fileExists, contents = initializeContextive None pathValue []
 
               let folder = Path.GetDirectoryName(pathValue)
               Directory.EnumerateFiles(folder) |> Seq.iter File.Delete
@@ -80,11 +75,6 @@ let tests =
               test <@ fileExists @>
 
               do! Verifier.Verify("Default Glossary File in Non-existent Path", contents).ToTask()
-
-              do!
-                  Verifier
-                      .Verify("Default Glossary File Schema in Non-existent Path", schemaContents)
-                      .ToTask()
           }
 
           testAsync "Initialization command opens new glossary file" {
@@ -119,7 +109,7 @@ let tests =
 
               let existingContents = File.ReadAllText(fullPath)
 
-              let! _, _, newContents, _ =
+              let! _, _, newContents =
                   initializeContextive
                       (Some workspacePath)
                       pathValue
@@ -133,19 +123,6 @@ let tests =
               test <@ showDocMsg.Value.Uri.ToString().Contains(pathValue) @>
 
               test <@ newContents = existingContents @>
-          }
-
-          testAsync "Initialization command updates existing schema file" {
-              let pathValue = "existing.yml"
-              let workspacePath = Path.Combine("fixtures", "initialization_tests")
-              let schemaPath = Path.Combine(workspacePath, schemaFileName)
-
-              let existingSchemaContents = File.ReadAllText(schemaPath)
-              File.WriteAllText(schemaPath, "Temporary Schema Contents")
-
-              let! _, _, _, schemaContents = initializeContextive (Some workspacePath) pathValue []
-
-              test <@ schemaContents = existingSchemaContents @>
           }
 
           ]

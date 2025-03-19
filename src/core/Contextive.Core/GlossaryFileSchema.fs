@@ -4,12 +4,12 @@ let schema =
     """{
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "https://contextive.tech/",
-  "title": "Contextive Glossary Schema",
-  "description": "Schema for defining a ubiquitous language glossary.",
+  "title": "Contextive Glossary",
+  "description": "A Contextive Domain Language Glossary.",
   "type": "object",
   "properties": {
     "contexts": {
-      "description": "A list of contexts.",
+      "description": "A list of contexts - see https://docs.contextive.tech/ide/guides/setting-up-glossaries/.",
       "type": "array",
       "items": {
         "title": "Context",
@@ -18,156 +18,106 @@ let schema =
         "properties": {
           "name": {
             "title": "Name",
-            "description": "The name of the context.",
+            "description": "The name of the Context.",
             "type": "string",
             "examples": [
-              "Cargo"
+              "The Context's Name"
             ]
           },
           "domainVisionStatement": {
             "title": "Domain Vision Statement",
-            "description": "A statement that describes the purpose of the context.",
+            "description": "A statement that describes the purpose of the Context.",
             "type": "string",
             "examples": [
-              "To manage the routing of cargo through transportation legs"
+              "A statement that describes the purpose of the context."
             ]
           },
           "paths": {
             "title": "Paths",
-            "description": "A list of paths that the context is involved in.",
+            "description": "A list of paths that the Context is involved in.",
             "type": "array",
             "items": {
               "title": "Path",
-              "description": "A path that the context is involved in.",
-              "type": "string",
-              "examples": [
-                "CargoDemo",
-                "'**' # default, all paths"
-              ]
+              "description": "A path that the Context is involved in.",
+              "type": "string"
             },
-            "examples": [
-              [
-                "CargoDemo"
-              ]
-            ],
             "minItems": 1,
             "uniqueItems": true
           },
           "terms": {
             "title": "Terms",
-            "description": "A list of terms in the context.",
+            "description": "A list of Terms in the Context - see https://docs.contextive.tech/ide/guides/defining-terminology/.",
             "type": "array",
             "items": {
               "title": "Term",
-              "description": "A term in the context.",
+              "description": "A Term in the Context.",
               "type": "object",
               "properties": {
                 "name": {
                   "title": "Name",
-                  "description": "The name of the term.",
+                  "description": "The name of the Term.",
                   "type": "string",
                   "examples": [
-                    "Cargo"
+                    "The Term's Name"
                   ]
                 },
                 "definition": {
                   "title": "Definition",
-                  "description": "A definition of the term.",
+                  "description": "A definition of the Term in this Context.",
                   "type": "string",
                   "examples": [
-                    "A unit of transportation that needs moving and delivery to its delivery location."
+                    "A definition of the Term in this Context."
                   ]
                 },
                 "examples": {
                   "title": "Examples",
-                  "description": "A list of example sentences using the term.",
+                  "description": "A list of example sentences using the Term.",
                   "type": "array",
                   "items": {
                     "title": "Example sentence",
-                    "description": "An example sentence using the term.",
+                    "description": "An example sentence using the Term.",
                     "type": "string",
                     "examples": [
-                      "Multiple Customers are involved with a Cargo, each playing a different role.",
-                      "The Cargo delivery goal is specified."
+                      "An example sentence using the Term."
                     ]
                   },
-                  "examples": [
-                    [
-                      "Multiple Customers are involved with a Cargo, each playing a different role.",
-                      "The Cargo delivery goal is specified."
-                    ]
-                  ],
                   "minItems": 1,
                   "uniqueItems": true
                 },
                 "aliases": {
                   "title": "Aliases",
-                  "description": "A list of aliases for the term.",
+                  "description": "A list of aliases for the Term.",
                   "type": "array",
                   "items": {
                     "title": "Alias",
-                    "description": "An alias for the term.",
+                    "description": "An alias for the Term.",
                     "type": "string",
                     "examples": [
-                      "unit"
+                      "An alias for the Term."
                     ]
                   },
-                  "examples": [
-                    [
-                      "unit"
-                    ]
-                  ],
                   "minItems": 1,
                   "uniqueItems": true
                 }
               },
-              "required": ["name"]
+              "required": [
+                "name"
+              ]
             },
-            "examples": [
-              {
-                "name": "Cargo",
-                "definition": "A unit of transportation that needs moving and delivery to its delivery location.",
-                "examples": [
-                  "Multiple Customers are involved with a Cargo, each playing a different role.",
-                  "The Cargo delivery goal is specified."
-                ],
-                "aliases": [
-                  "unit"
-                ]
-              }
-            ],
             "minItems": 1,
             "uniqueItems": true
           }
         },
-        "required": ["name", "terms"]
+        "required": [
+          "terms"
+        ]
       },
       "minItems": 1,
-      "uniqueItems": true,
-      "examples": [
-        {
-          "name": "Cargo",
-          "domainVisionStatement": "To manage the routing of cargo through transportation legs",
-          "paths": [
-            "CargoDemo"
-          ],
-          "terms": [
-            {
-              "name": "Cargo",
-              "definition": "A unit of transportation that needs moving and delivery to its delivery location.",
-              "examples": [
-                "Multiple Customers are involved with a Cargo, each playing a different role.",
-                "The Cargo delivery goal is specified."
-              ],
-              "aliases": [
-                "unit"
-              ]
-            }
-          ]
-        }
-      ]
+      "uniqueItems": true
     }
   },
-  "required": ["contexts"]
+  "required": [
+    "contexts"
+  ]
 }
 """
