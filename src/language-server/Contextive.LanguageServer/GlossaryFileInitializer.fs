@@ -24,17 +24,17 @@ let private introComments =
 # Hover over some of the defined words, such as `context`, `term`, `definition` and `example` to see Contextive in action.
 #
 # Update the yaml below to define your specific contexts and terms, and feel free to use markdown in definitions and examples.
-"""
-
-let private pathComments =
-    """    # Globs are supported. Multiple paths may be included. If any match the currently open file, the context will be used.
+#
+# See https://docs.contextive.tech/ide/guides/setting-up-glossaries/ for detailed guidance on where to put this file and setting up the context.
+#
+# See https://docs.contextive.tech/ide/guides/defining-terminology/ for detailed guidance on defining your terminology.
 """
 
 let private defaultGlossaryFile =
     { Contexts =
         [| { Name = "Demo"
              DomainVisionStatement = "To illustrate the usage of the contextive glossary file."
-             Paths = [| "**" |] |> ResizeArray
+             Paths = [||] |> ResizeArray
              Terms =
                [| { Name = "context"
                     Definition = Some "A boundary within which words have specific meanings."
@@ -95,9 +95,7 @@ let private handler pathGetter (showDocument: ShowDocumentParams -> System.Threa
                     async {
                         if not <| File.Exists(p) then
                             let defaultGlossaryFileText =
-                                serialize defaultGlossaryFile
-                                |> insertComment "contexts:" introComments
-                                |> insertComment "    paths:" pathComments
+                                serialize defaultGlossaryFile |> insertComment "contexts:" introComments
 
                             ensureDirectoryExists p
                             File.WriteAllText(p, defaultGlossaryFileText)

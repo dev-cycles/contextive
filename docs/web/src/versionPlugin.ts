@@ -4,7 +4,7 @@ import { type StarlightPlugin } from "@astrojs/starlight/types";
 const version = process.env.CONTEXTIVE_VERSION;
 const archive = !!process.env.CONTEXTIVE_ARCHIVE;
 const sha = process.env.CONTEXTIVE_SHA;
-const release_label = `Release: v${version}`;
+const release_label = `Release: ${version}`;
 const release_url = sha ?
     `https://github.com/dev-cycles/contextive/commit/${sha}`
     : `https://github.com/dev-cycles/contextive/releases/tag/${version}`;
