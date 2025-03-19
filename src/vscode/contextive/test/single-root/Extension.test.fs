@@ -31,7 +31,7 @@ let tests =
 
           testCaseAsync "CSharp Extension is Active"
           <| async {
-              let! cSharpDocUri = Paths.inWorkspace "MarketingDemo.cs" |> getDocUri |> openDocument
+              let! cSharpDocUri = Paths.inWorkspace "marketing/MarketingDemo.cs" |> getDocUri |> openDocument
               let! extension = waitForExtensionIsActive "ms-dotnettools.csharp"
               do! closeDocument cSharpDocUri
               Expect.equal extension.isActive true "Extension is not active"
