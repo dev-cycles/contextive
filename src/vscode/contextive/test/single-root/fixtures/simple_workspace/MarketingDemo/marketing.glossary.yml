@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../.contextive/contextive-schema.json
+# Inspired by https://blog.hubspot.com/marketing/inbound-marketing-glossary-list
+contexts:
+  - name: Marketing
+    terms:
+      - name: Call To Action
+        definition: A text link, button, image or some type of web link that encourages a website visitor to visit a landing page and become a lead.
+        examples:
+          - The user clicked the call to action at the top of the email.
+          - Do you think our call to action is prominent enough?
+      - name: Bounce
+        definition: Occurs when a user lands on your website and then leaves without clicking on anything else or navigating to any other pages.
+      - name: Rate
+        definition: Proportion of an activity within an overall total
+        examples:
+          - Our bounce rate has been reducing, well done!
+          - We need to improve the completion rate.
+      - name: Page
+        definition: All the content displayed in a browser when a user visits a url.
+      - name: Landing Page
+        definition: The page that users arrive at from an external source.
+        examples:
+          - Our landing page needs to really capture the user's attention.
