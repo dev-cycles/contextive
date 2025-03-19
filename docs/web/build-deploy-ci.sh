@@ -2,12 +2,16 @@
 export CONTEXTIVE_VERSION=$(jq .version package.json -r)
 if [[ "$CONTEXTIVE_STAGE" != "prod" ]]; then
     export CONTEXTIVE_SHA=$(git rev-parse --short HEAD)
-    CONTEXTIVE_VERSION=$CONTEXTIVE_VERSION-$CONTEXTIVE_SHA
+    CONTEXTIVE_VERSION=$CONTEXTIVE_SHA
 fi
 export BASE_URL=/ide
 
 if [[ "$CONTEXTIVE_ARCHIVE" ]]; then
     BASE_URL=$BASE_URL/v/$CONTEXTIVE_VERSION
+fi
+
+if [[ "$CONTEXTIVE_STAGE" == "prod" ]]; then    
+    CONTEXTIVE_VERSION=v$CONTEXTIVE_VERSION
 fi
 rm -rf dist
 npm run build
