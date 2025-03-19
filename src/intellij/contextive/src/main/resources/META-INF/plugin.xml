@@ -15,17 +15,16 @@
        Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
   <description><![CDATA[<h1>Contextive README</h1>
 <p>Contextive is an IntelliJ Platform Plugin to assist developers in environments with a complex domain or project specific language, where words have a special meaning in the context of the project.</p>
-<p>It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the term definitions in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.</p>
+<p>It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the glossary in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.</p>
 <blockquote>
 <p>[!WARNING]<br>
 This plugin is considered 'beta' status, as leverages relatively new <a href="https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html">Language Server Protocol</a> support from JetBrains which is still marked as unstable in the IntelliJ Platform API. Some features may not work or may not work as expected. Please <a href="https://github.com/dev-cycles/contextive/issues/new?assignees=&amp;labels=&amp;projects=&amp;template=bug_report.md&amp;title=">report issues</a> in this project and we will liaise with JetBrains to resolve.</p>
 <p>See <a href="#known-issues">known issues</a> below</p>
 </blockquote>
 <h2>Installation</h2>
-<p>See <a href="https://docs.contextive.tech/ide/v/1.14.1/guides/installation/#intellij-plugin-platform">IntelliJ IDEs (e.g. IDEA) Installation Instructions</a>.</p>
+<p>See <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/installation/#intellij-plugin-platform">IntelliJ IDEs (e.g. IDEA) Installation Instructions</a>.</p>
 <h2>Getting Started</h2>
-<p>Create a folder in your project root called <code>.contextive</code>.  Create a file in that folder called <code>definitions.yml</code>.</p>
-<p>Start defining your definitions following the schema specified in our <a href="https://docs.contextive.tech/ide/v/1.14.1/guides/usage/">usage guide</a>.  You might like to start by copying our <a href="https://github.com/dev-cycles/contextive/blob/v1.14.1/src/language-server/Contextive.LanguageServer.Tests/DefinitionsInitializationTests.Default%20Definitions.verified.txt">default definitions</a> file that defines the terms used in the definitions file itself.</p>
+<p>See <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/setting-up-glossaries/">setting up glossaries</a> and <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/">defining terminology</a> usage guides for details on getting started with Contextive.</p>
 <h2>Supported IDEs</h2>
 <p>The plugin uses the IntelliJ Language Server Protocol support, so it's only available in the IDEs where that feature is offered.  See the <a href="https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html#supported-ides">JetBrains LSP Documentation</a> for the latest list.</p>
 <p>At time of writing, it includes:</p>
@@ -43,11 +42,9 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 <li>Rider - <a href="https://github.com/dev-cycles/contextive/issues/65">not working in C# files</a></li>
 <li>RustRover</li>
 </ul>
-<h2>Usage Guide</h2>
-<p>See our <a href="https://docs.contextive.tech/ide/v/1.14.1/guides/usage/">usage guide</a> for details on the definitions file format and available options.</p>
 <h2>Features</h2>
 <ul>
-<li><a href="https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#smart-auto-complete">Auto-complete</a> from your Contextive Definitions
+<li><a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#smart-auto-complete">Auto-complete</a> from your Contextive Glossary
 <ul>
 <li>Shows definitions in auto-complete details
 <ul>
@@ -56,41 +53,41 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 </li>
 </ul>
 </li>
-<li>Hover to show definitions from your Contextive Definitions
+<li>Hover to show definitions from your Contextive Glossary
 <ul>
-<li>Hover over elements with <a href="https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#suffixes-and-prefixes">suffixes &amp; prefixes</a></li>
-<li>Hover over usage of <a href="https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#combining-two-or-more-terms">multiple terms</a> combined using camelCase, PascalCase and snake_case</li>
-<li>Hover over <a href="https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multi-word-terms">multi-word</a> terms</li>
-<li>Hover over <a href="https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#plural-words">plural</a> of defined terms</li>
-<li>Hover over <a href="https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#term-aliases">aliases</a> of defined terms</li>
+<li>Hover over elements with <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#suffixes-and-prefixes">suffixes &amp; prefixes</a></li>
+<li>Hover over usage of <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#combining-two-or-more-terms">multiple terms</a> combined using camelCase, PascalCase and snake_case</li>
+<li>Hover over <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#complex-multi-word-terms">multi-word</a> terms</li>
+<li>Hover over <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#plural-words">plural</a> of defined terms</li>
+<li>Hover over <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#term-aliases">aliases</a> of defined terms</li>
 </ul>
 </li>
-<li>Supported Repository Layouts:
+<li>Put your glossaries near the code they support:
 <ul>
-<li>A <a href="https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multiple-bounded-contexts-repository-per-context">repository per context</a></li>
-<li><a href="https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multiple-bounded-contexts-single-repository-single-root-monorepo">Multiple contexts in the same repository</a> (monorepo) (identified by path globs)</li>
-<li>Context distributed over <a href="https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#single-bounded-context-multiple-repositories">multiple repositories</a> (<a href="https://github.com/dev-cycles/contextive/issues/36">#36</a>)</li>
-<li><a href="https://docs.contextive.tech/ide/v/1.14.1/guides/usage/#multiple-bounded-contexts-multi-root-shared-definitions-file">Multi-root workspaces</a></li>
+<li><a href="https://docs.contextive.tech/ide/v/1.15.0/guides/setting-up-glossaries/#terms-relevant-for-the-whole-repository">Terms relevant for the whole repository</a></li>
+<li><a href="https://docs.contextive.tech/ide/v/1.15.0/guides/setting-up-glossaries/#different-terms-relevant-in-different-repositories">Different terms relevant in different repositories</a></li>
+<li><a href="https://docs.contextive.tech/ide/v/1.15.0/guides/setting-up-glossaries/#terms-relevant-only-in-a-subfolder-of-the-repository">Terms relevant only in a subfolder of the repository</a></li>
+<li><a href="https://docs.contextive.tech/ide/v/1.15.0/guides/setting-up-glossaries/#multi-root-workspaces">Multi-root workspaces</a></li>
 </ul>
 </li>
 <li>Works in all files</li>
 </ul>
 <h3>Coming Soon</h3>
 <ul>
-<li>IDE command to initialize the definitions file</li>
-<li>Configure different location for the definitions file</li>
-<li>UI to edit/manage Contextive Definitions</li>
+<li>IDE command to initialize the glossary file</li>
+<li>Configure different location for the glossary file</li>
+<li>UI to edit/manage Contextive Glossary</li>
 <li>Internationalization support</li>
 <li>Support for multiple contexts in separate repositories</li>
 <li>Better support for key word identification in different languages (e.g. different syntax delimiters)</li>
 </ul>
 <h2>Plugin Configuration</h2>
-<p>The plugin does not currently support configuration.  The definitions file <em>must</em> be in <code>./contextive/definitions.yml</code> in your current project folder.</p>
+<p>The plugin does not currently support configuration.  The glossary file <em>must</em> be in <code>./contextive/definitions.yml</code> in your current project folder.</p>
 <p>This is pending IntelliJ support for the LSP <code>workspace/configuration</code> feature.</p>
 <h2>Known Issues</h2>
 <ul>
 <li>Not configurable - see <a href="#plugin-configuration">Plugin Configuration</a></li>
-<li>Autocomplete list doesn't respect the case sensitive interpretation as described in the usage guide. IntelliJ does not yet respect the `isIncomplete' flag that forces re-computation of the list and is required to adjust the case of list items.  See <a href="https://youtrack.jetbrains.com/issue/IDEA-348829">IDEA-348829</a> for details.</li>
+<li>Autocomplete list doesn't respect the case sensitive interpretation as described in the <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#smart-auto-complete">smart auto-complete</a> part of the <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/">defining terminology</a> usage guide. IntelliJ does not yet respect the `isIncomplete' flag that forces re-computation of the list and is required to adjust the case of list items.  See <a href="https://youtrack.jetbrains.com/issue/IDEA-348829">IDEA-348829</a> for details.</li>
 <li>Documentation not shown on hover in some files (files treated as 'plaintext' by the specific IDE). Use F1 to show the hover documentation at the current cursor position.  This is an IntelliJ bug, see <a href="https://youtrack.jetbrains.com/issue/IDEA-348497/Doc-popup-doesnt-appear-on-hover-in-LSP-API-based-plugins">IDEA-348497</a> for details.</li>
 <li>Auto-completion does not work at certain positions. See <a href="https://github.com/dev-cycles/contextive/issues/63">Issue #63</a></li>
 <li>In Rider, C# files do not show documentation on hover, or 'quick documentation shortcut', or documentation during auto-complete, when opened in Solution mode.  It does work when opening in file/folder mode. See <a href="https://github.com/dev-cycles/contextive/issues/65">Issue #65</a></li>
@@ -98,6 +95,22 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 ]]></description>
 
   <change-notes><![CDATA[<h1>Change Log</h1>
+<h1>🚀 <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.15.0">1.15.0</a> (2025-03-19)</h1>
+<p><a href="https://docs.contextive.tech/ide/v/1.15.0/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.14.1...v1.15.0">📋 Compare with v1.14.1</a></p>
+<h3>🌟 Features</h3>
+<ul>
+<li><strong>intellij:</strong> activate contextive in all projects to ensure the language server can scan the project for glossary files (<a href="https://github.com/dev-cycles/contextive/commit/2460ff61f0a36e014b859679bf66b04f9974a7c9">2460ff6</a>)</li>
+<li><strong>language-server:</strong> can now locate glossary files in the folder hierarchy - the definitions in the file will automatically apply to any file in the same folder or any children (closes <a href="https://github.com/dev-cycles/contextive/issues/54">#54</a>) (<a href="https://github.com/dev-cycles/contextive/commit/dece2a59d44dd09c2e559eaec32df5fcc979ebcc">dece2a5</a>)</li>
+<li><strong>language-server:</strong> glossary files across the folder hierarchy work with multi-root workspaces <a href="https://github.com/dev-cycles/contextive/issues/54">#54</a> (<a href="https://github.com/dev-cycles/contextive/commit/9c05eb7212ea6d2828d26cc61ca3ef9bc83d65a2">9c05eb7</a>)</li>
+<li><strong>language-server:</strong> remove local schema managment as the schema has been submitted to the schema registry (<a href="https://github.com/dev-cycles/contextive/commit/3bfdf60447a6fea3ff97d67738b0763802c0a910">3bfdf60</a>)</li>
+</ul>
+<h3>🐛 Bug Fixes</h3>
+<ul>
+<li>correct typo in default glossary file (<a href="https://github.com/dev-cycles/contextive/commit/24e24e0b889b70f671b0d1353e866156ff69bbb9">24e24e0</a>)</li>
+<li><strong>intellij:</strong> prevent error when starting on windows (fixes <a href="https://github.com/dev-cycles/contextive/issues/86">#86</a>) (<a href="https://github.com/dev-cycles/contextive/commit/661351d5e639bce41600fb95ecf7d42316ba3461">661351d</a>)</li>
+<li><strong>language-server:</strong> safely handle glossary files with no contexts defined (<a href="https://github.com/dev-cycles/contextive/commit/36aedecbca1da6ba1595afc547cdb4460da4e07e">36aedec</a>)</li>
+<li><strong>language-server:</strong> safely handle glossary files with null context (<a href="https://github.com/dev-cycles/contextive/commit/77fb29075443655cc88d0b45b28cb4d535b089da">77fb290</a>)</li>
+</ul>
 <h2><a href="https://github.com/dev-cycles/contextive/compare/v1.14.0...v1.14.1">1.14.1</a> (2025-03-12)</h2>
 <h3>Bug Fixes</h3>
 <ul>
