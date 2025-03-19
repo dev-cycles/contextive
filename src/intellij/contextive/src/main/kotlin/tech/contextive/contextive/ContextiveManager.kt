@@ -5,16 +5,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.platform.lsp.api.LspServerSupportProvider
 
 class ContextiveManager(
-    private val activeChecker: ContextiveActiveChecker,
     private val lsDownloader: LanguageServerDownloadScheduler,
     val project: Project,
     private val serverStarter: LspServerSupportProvider.LspServerStarter
 ) {
 
     fun startIfRequired() {
-        if (!activeChecker.isActive())
-            return
-
         val status = lsDownloader.scheduleDownloadIfRequired(project)
 
         if (status is DownloadStatus.DOWNLOADED) {

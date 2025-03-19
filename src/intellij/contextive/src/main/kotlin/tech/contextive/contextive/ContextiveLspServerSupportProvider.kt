@@ -11,7 +11,6 @@ class ContextiveLspServerSupportProvider : LspServerSupportProvider {
         serverStarter: LspServerSupportProvider.LspServerStarter
     ) {
         val contextiveManager = ContextiveManager(
-            ContextiveActiveChecker(project),
             LanguageServerDownloadScheduler(
                 LanguageServerLocationResolver(),
                 LanguageServerDownloader(),
