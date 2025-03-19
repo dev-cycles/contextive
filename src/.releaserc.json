@@ -9,7 +9,7 @@
             {
                 "preset": "conventionalcommits",
                 "writerOpts": {
-                    "headerPartial": "{{#if isPatch~}}  ## ⚡ {{~else~}}  # 🚀 {{~/if}} [{{version}}](https://github.com/dev-cycles/contextive/releases/tag/v{{version}}) {{~#if title}} \"{{title}}\"{{~/if}}{{~#if date}} ({{date}}){{/if}}\n\n[📘 Docs](https://docs.contextive.tech/ide/v/{{version}}) | [📋 Compare with {{previousTag}}](https://github.com/dev-cycles/contextive/compare/{{previousTag}}...{{currentTag}})"
+                    "headerPartial": "{{#if isPatch~}}  ## ⚡ {{~else~}}  # 🚀 {{~/if}} [{{version}}](https://github.com/dev-cycles/contextive/releases/tag/v{{version}}) {{~#if title}} \"{{title}}\"{{~/if}}{{~#if date}} ({{date}}){{/if}}\n\n[📘 Docs](https://docs.contextive.tech/ide/v/{{version}}) | [📋 Compare with {{previousTag}}](https://github.com/dev-cycles/contextive/compare/{{previousTag}}...{{currentTag}})\n"
                 },
                 "presetConfig": {
                     "types": [
@@ -199,6 +199,7 @@
                     "vscode/contextive/package.json"
                 ]
             }
-        ]
+        ],
+        "@semantic-release/github"
     ]
 }
