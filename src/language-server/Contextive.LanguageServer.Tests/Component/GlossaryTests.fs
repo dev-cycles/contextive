@@ -42,7 +42,7 @@ let newInitGlossary () =
       Glossary.RegisterWatchedFiles = fun _ _ -> noop }
 
 [<Literal>]
-let private EXPECTED_GLOSSARY_FILE_GLOB = "**/*.contextive.yml"
+let private EXPECTED_GLOSSARY_FILE_GLOB = "**/*.glossary.yml"
 
 [<Tests>]
 let tests =

@@ -59,7 +59,7 @@ type Message =
 type T = MailboxProcessor<Message>
 
 [<Literal>]
-let private GLOSSARY_FILE_GLOB = "**/*.contextive.yml"
+let private GLOSSARY_FILE_GLOB = "**/*.glossary.yml"
 
 module private Handlers =
 

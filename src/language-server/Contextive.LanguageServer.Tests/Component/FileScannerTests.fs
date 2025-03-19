@@ -14,13 +14,13 @@ let tests =
               let basePath = workspaceFolderPath "fixtures/scanning_tests" |> _.ToUri().LocalPath
 
               let scanner = FileScanner.fileScanner basePath
-              let files = scanner "**/*.contextive.yml"
+              let files = scanner "**/*.glossary.yml"
 
               let expectedFiles =
-                  [ "root.contextive.yml"
-                    "folder1/folder1.contextive.yml"
-                    "folder1/nestedFolder/nested.contextive.yml"
-                    "folder2/folder2.contextive.yml" ]
+                  [ "root.glossary.yml"
+                    "folder1/folder1.glossary.yml"
+                    "folder1/nestedFolder/nested.glossary.yml"
+                    "folder2/folder2.glossary.yml" ]
                   |> Seq.map (fun p -> Path.Combine(basePath, p))
 
               test <@ Set.ofSeq expectedFiles = Set.ofSeq files @>
