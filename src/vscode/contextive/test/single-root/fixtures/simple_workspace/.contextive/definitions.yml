@@ -7,12 +7,13 @@
 # Hover over some of the defined words, such as `context`, `term`, `definition` and `example` to see Contextive in action.
 #
 # Update the yaml below to define your specific contexts and terms, and feel free to use markdown in definitions and examples.
+#
+# See https://docs.contextive.tech/ide/guides/setting-up-glossaries/ for detailed guidance on where to put this file and setting up the context.
+#
+# See https://docs.contextive.tech/ide/guides/defining-terminology/ for detailed guidance on defining your terminology.
 contexts:
   - name: Demo
     domainVisionStatement: To illustrate the usage of the contextive glossary file.
-    # Globs are supported. Multiple paths may be included. If any match the currently open file, the context will be used.
-    paths:
-      - '**'
     terms:
       - name: context
         definition: A boundary within which words have specific meanings.
