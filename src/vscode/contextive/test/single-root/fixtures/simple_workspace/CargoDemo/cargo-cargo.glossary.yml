@@ -10,6 +10,10 @@ contexts:
         - The Cargo delivery goal is specified.
       aliases:
         - unit
+      meta:
+          👥: "[Team A](https://corporate.wiki/teams/TeamA)"
+          🌐: "[Cargo Canonical Reference](https://corporate.wiki/glosasry/cargo)"
+          🏷️: Draft
     - name: Leg
       definition: The movement of a Cargo on a specific vessel from load location to unload location.
       examples:

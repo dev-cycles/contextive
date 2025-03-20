@@ -24,6 +24,7 @@ let glossaryFileTests =
               test <@ term.Name = "" @>
               test <@ term.Definition = None @>
               test <@ term.Examples = null @>
+              test <@ term.Meta = null @>
 
           testCase "Context has default"
           <| fun () ->
@@ -137,6 +138,25 @@ contexts:
                     let examples = glossaryFile.Contexts[0].Terms[0].Examples
                     test <@ examples.Count = 2 @>
                     test <@ List.ofSeq <| examples = [ "Example 1"; "Example 2" ] @>
+
+                testCase "Can Parse Metadata"
+                <| fun () ->
+                    let glossaryFile =
+                        unwrap
+                        <| deserialize
+                            """
+contexts:
+  - terms:
+    - name: meta
+      meta: 
+        key1: value1
+        key2: value2
+"""
+
+                    let meta = glossaryFile.Contexts[0].Terms[0].Meta
+                    test <@ meta.Count = 2 @>
+                    test <@ meta["key1"] = "value1" @>
+                    test <@ meta["key2"] = "value2" @>
 
                 testCase "Can Parse Context Name"
                 <| fun () ->

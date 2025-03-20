@@ -2,15 +2,15 @@ module Contextive.LanguageServer.Rendering
 
 open Contextive.Core
 
-let private emojifyTerm t = "📗 " + t
+let private emojifyTerm t = $"### 📗 {t}"
 let private emphasise t = $"`{t}`"
 
 let private doubleBlankLine = "\n\n"
 
 let private renderDefinition d =
     match d with
-    | None -> "_undefined_"
-    | Some(def) -> def
+    | None -> "📝 _undefined_"
+    | Some(def) -> $"📝 {def}"
 
 let private renderName name = name |> emphasise |> emojifyTerm
 
@@ -29,31 +29,46 @@ let private concatIfExists (separator: string) (lines: string option seq) =
     | Seq.Empty -> None
     | s -> s |> String.concat separator |> Some
 
-let private concatWithNewLinesIfExists = concatIfExists doubleBlankLine
-
-let private renderTermDefinition (term: GlossaryFile.Term) =
+let private renderDefinitionWithAlias (t: GlossaryFile.Term) =
     seq {
-        Some $"{renderName term.Name}: {renderDefinition term.Definition}"
-        renderAliasLine term
+        t.Definition |> renderDefinition |> Some
+        renderAliasLine t
     }
     |> concatIfExists "  \n"
-    |> Seq.singleton
+
+let private concatWithNewLinesIfExists = concatIfExists doubleBlankLine
 
 let private speechify (usageExample: string) = $"💬 \"{usageExample.Trim()}\""
 
 let private renderTermUsageExamples (t: GlossaryFile.Term) =
-    t.Examples
-    |> Seq.map speechify
-    |> Seq.append (Seq.singleton $"#### {emphasise t.Name} Usage Examples:")
-    |> Seq.map Some
+    t.Examples |> Seq.map speechify |> Seq.map Some
 
 let private renderUsageExamples =
     function
     | { GlossaryFile.Term.Examples = null } -> Seq.empty
     | t -> renderTermUsageExamples t
 
+let private renderTermDefinition (term: GlossaryFile.Term) =
+    let name =
+        seq {
+            term.Name |> renderName |> Some
+            renderDefinitionWithAlias term
+        }
+
+    Seq.append name <| renderUsageExamples term
+    |> concatWithNewLinesIfExists
+    |> Seq.singleton
+
+let private renderTermMeta (t: GlossaryFile.Term) =
+    t.Meta |> Seq.map (fun kvp -> $"**{kvp.Key}** {kvp.Value}" |> Some)
+
+let private renderMetadata =
+    function
+    | { GlossaryFile.Term.Meta = null } -> Seq.empty
+    | t -> renderTermMeta t
+
 let renderTerm (terms: GlossaryFile.Term seq) =
-    [ renderTermDefinition; renderUsageExamples ]
+    [ renderTermDefinition; renderMetadata ]
     |> Seq.collect (fun p -> terms |> Seq.collect p)
     |> concatWithNewLinesIfExists
 
@@ -61,7 +76,7 @@ let private renderContextHeading (context: GlossaryFile.Context) =
     match context.Name with
     | null
     | "" -> None
-    | _ -> Some $"### 💠 {context.Name} Context"
+    | _ -> Some $"## 💠 {context.Name} Context"
 
 let private renderContextDomainVisionStatement (context: GlossaryFile.Context) =
     match context.DomainVisionStatement with

@@ -35,40 +35,41 @@ let private defaultGlossaryFile =
              DomainVisionStatement = "To illustrate the usage of the contextive glossary file."
              Paths = [||] |> ResizeArray
              Terms =
-               [| { Name = "context"
-                    Definition = Some "A boundary within which words have specific meanings."
-                    Examples =
-                      [| "In the _Sales_ context, the language focuses on activities associated with selling products."
-                         "Are you sure you're thinking of the definition from the right context?" |]
-                      |> ResizeArray
-                    Aliases = ResizeArray() }
-                  { Name = "term"
-                    Definition = Some "A protected word in a given context."
-                    Examples =
-                      [| "_Order_ is a term that is meaningful in the _Sales_ context."
-                         "What term should we use to describe what happens when a customer buys something from us?" |]
-                      |> ResizeArray
-                    Aliases = [| "word" |] |> ResizeArray }
-                  { Name = "alias"
-                    Definition =
-                      Some
-                          "An alternative word for the same concept.
+               [| { Term.Default with
+                      Name = "context"
+                      Definition = Some "A boundary within which words have specific meanings."
+                      Examples =
+                          [| "In the _Sales_ context, the language focuses on activities associated with selling products."
+                             "Are you sure you're thinking of the definition from the right context?" |]
+                          |> ResizeArray }
+                  { Term.Default with
+                      Name = "term"
+                      Definition = Some "A protected word in a given context."
+                      Examples =
+                          [| "_Order_ is a term that is meaningful in the _Sales_ context."
+                             "What term should we use to describe what happens when a customer buys something from us?" |]
+                          |> ResizeArray
+                      Aliases = [| "word" |] |> ResizeArray }
+                  { Term.Default with
+                      Name = "alias"
+                      Definition =
+                          Some
+                              "An alternative word for the same concept.
 It might be a legacy term, or an alternative term that is in common use while the ubiquitous language is still being adopted."
-                    Examples = [| "_Product_ is an alias of _Item_ in the Sales context." |] |> ResizeArray
-                    Aliases = ResizeArray() }
-                  { Name = "definition"
-                    Definition = Some "A short summary defining the meaning of a term in a context."
-                    Examples =
-                      [| "The definition of _Order_ in the _Sales_ context is: \"The set of _Items_ that are being sold as part of this _Order_\"."
-                         "Can you provide a definition of the term _Order_?" |]
-                      |> ResizeArray
-                    Aliases = ResizeArray() }
-                  { Name = "example"
-                    Definition = Some "A sentence illustrating the correct usage of the term in the context."
-                    Examples =
-                      [| "Can you give me an example of how to use the term _Order_ in this context?" |]
-                      |> ResizeArray
-                    Aliases = ResizeArray() } |]
+                      Examples = [| "_Product_ is an alias of _Item_ in the Sales context." |] |> ResizeArray }
+                  { Term.Default with
+                      Name = "definition"
+                      Definition = Some "A short summary defining the meaning of a term in a context."
+                      Examples =
+                          [| "The definition of _Order_ in the _Sales_ context is: \"The set of _Items_ that are being sold as part of this _Order_\"."
+                             "Can you provide a definition of the term _Order_?" |]
+                          |> ResizeArray }
+                  { Term.Default with
+                      Name = "example"
+                      Definition = Some "A sentence illustrating the correct usage of the term in the context."
+                      Examples =
+                          [| "Can you give me an example of how to use the term _Order_ in this context?" |]
+                          |> ResizeArray } |]
                |> ResizeArray } |]
         |> ResizeArray }
 

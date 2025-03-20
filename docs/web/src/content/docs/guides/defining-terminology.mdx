@@ -203,6 +203,25 @@ When hovering over the word `unit`, the definition of `cargo` will be displayed:
 
 ![Example of hovering over the alias 'unit' for the term 'cargo'.](../../../assets/images/alias.png)
 
+## Term Metadata
+
+Sometimes teams have extra data they'd like to display with the term, such as a link to a resource that might explain it in more detail, or some governance characteristics.
+
+These can be stored in the `meta` key, and will be shown underneath the definition. Both key and value can contain markdown. For example:
+
+```yml
+...
+    - terms:
+      - name: Cargo
+        definition: A unit of transportation that needs moving and delivery to its delivery location.
+        ...
+        meta:
+          Owner: "[Team A](https://corporate.wiki/teams/TeamA)"
+          Reference: "[Cargo Canonical Reference](https://corporate.wiki/glossary/cargo)"
+```
+
+![Example of a term with metadata.](../../../assets/images/term-meta-data.png)
+
 ## Smart Auto-Complete
 
 As the terms added to the auto-complete are from a glossary file, not from your code symbols, the auto-complete will work in any file of any language - including documentation, such as markdown.

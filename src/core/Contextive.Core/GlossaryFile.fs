@@ -5,6 +5,7 @@ open YamlDotNet.Serialization.NamingConventions
 open System.Linq
 open Contextive.Core.File
 open System.ComponentModel.DataAnnotations
+open System.Collections.Generic
 
 open Humanizer
 
@@ -14,14 +15,16 @@ type Term =
       Name: string
       Definition: string option
       Examples: ResizeArray<string>
-      Aliases: ResizeArray<string> }
+      Aliases: ResizeArray<string>
+      Meta: IDictionary<string, string> }
 
 module Term =
     let Default =
         { Name = ""
           Definition = None
           Examples = null
-          Aliases = null }
+          Aliases = null
+          Meta = null }
 
     let private nameEquals (candidateTerm: string) (termName: string) =
         let normalisedTerm = termName.Replace(" ", "").Replace("_", "").Replace("-", "")
@@ -151,7 +154,9 @@ let serialize (glossaryFile: GlossaryFile) =
     let serializer =
         SerializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitEmptyCollections)
+            .ConfigureDefaultValuesHandling(
+                DefaultValuesHandling.OmitEmptyCollections ||| DefaultValuesHandling.OmitNull
+            )
             .WithTypeConverter(OptionStringTypeConverter())
             .WithIndentedSequences()
             .Build()

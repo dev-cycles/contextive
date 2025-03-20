@@ -22,107 +22,142 @@ let tests =
                   test <@ rendering.Value.ReplaceLineEndings() = expectedHover @>
 
 
-          [ ([ { Term.Default with
-                   Name = "firstTerm"
-                   Definition = Some "The first term in our definitions list" } ],
-             "📗 `firstTerm`: The first term in our definitions list")
+          [ [ { Term.Default with
+                  Name = "firstTerm"
+                  Definition = Some "The first term in our definitions list" } ],
+            "### 📗 `firstTerm`
 
-            ([ { Term.Default with
-                   Name = "termWithAlias"
-                   Aliases = ResizeArray [ "aliasOfTerm" ] } ],
-             """📗 `termWithAlias`: _undefined_  
-_Aliases_: _aliasOfTerm_""")
+📝 The first term in our definitions list"
 
-            ([ { Term.Default with
-                   Name = "termWithAliases"
-                   Aliases = ResizeArray [ "aliasOfTerm"; "anotherAlias" ] } ],
-             """📗 `termWithAliases`: _undefined_  
-_Aliases_: _aliasOfTerm_, _anotherAlias_""")
+            [ { Term.Default with
+                  Name = "termWithAlias"
+                  Aliases = ResizeArray [ "aliasOfTerm" ] } ],
+            """### 📗 `termWithAlias`
 
-            ([ { Term.Default with
-                   Name = "SecondTerm" } ],
-             "📗 `SecondTerm`: _undefined_")
+📝 _undefined_  
+_Aliases_: _aliasOfTerm_"""
 
-            ([ { Term.Default with
-                   Name = "ThirdTerm"
-                   Examples = ResizeArray [ "Do a thing" ] } ],
-             "\
-📗 `ThirdTerm`: _undefined_
+            [ { Term.Default with
+                  Name = "termWithAliases"
+                  Aliases = ResizeArray [ "aliasOfTerm"; "anotherAlias" ] } ],
+            """### 📗 `termWithAliases`
 
-#### `ThirdTerm` Usage Examples:
+📝 _undefined_  
+_Aliases_: _aliasOfTerm_, _anotherAlias_"""
 
-💬 \"Do a thing\"")
+            [ { Term.Default with
+                  Name = "SecondTerm" } ],
+            "### 📗 `SecondTerm`
 
-            ([ { Term.Default with
-                   Name = "ThirdTermWithTrailingNewLineInUsage"
-                   Examples = ResizeArray [ "Do a thing" + System.Environment.NewLine ] } ],
-             "\
-📗 `ThirdTermWithTrailingNewLineInUsage`: _undefined_
+📝 _undefined_"
 
-#### `ThirdTermWithTrailingNewLineInUsage` Usage Examples:
+            [ { Term.Default with
+                  Name = "ThirdTerm"
+                  Examples = ResizeArray [ "Do a thing" ] } ],
+            "\
+### 📗 `ThirdTerm`
 
-💬 \"Do a thing\"")
+📝 _undefined_
 
-            ([ { Term.Default with
-                   Name = "ThirdTermWithTrailingWhitespaceInUsage"
-                   Examples = ResizeArray [ "Do a thing " ] } ],
-             "\
-📗 `ThirdTermWithTrailingWhitespaceInUsage`: _undefined_
+💬 \"Do a thing\""
 
-#### `ThirdTermWithTrailingWhitespaceInUsage` Usage Examples:
+            [ { Term.Default with
+                  Name = "ThirdTermWithTrailingNewLineInUsage"
+                  Examples = ResizeArray [ "Do a thing" + System.Environment.NewLine ] } ],
+            "\
+### 📗 `ThirdTermWithTrailingNewLineInUsage`
 
-💬 \"Do a thing\"")
+📝 _undefined_
 
-            ([ { Term.Default with
-                   Name = "ThirdTermWithLeadingWhitespaceInUsage"
-                   Examples = ResizeArray [ " Do a thing" ] } ],
-             "\
-📗 `ThirdTermWithLeadingWhitespaceInUsage`: _undefined_
+💬 \"Do a thing\""
 
-#### `ThirdTermWithLeadingWhitespaceInUsage` Usage Examples:
+            [ { Term.Default with
+                  Name = "ThirdTermWithTrailingWhitespaceInUsage"
+                  Examples = ResizeArray [ "Do a thing " ] } ],
+            "\
+### 📗 `ThirdTermWithTrailingWhitespaceInUsage`
 
-💬 \"Do a thing\"")
+📝 _undefined_
 
+💬 \"Do a thing\""
 
-            ([ { Term.Default with Name = "Second" }; { Term.Default with Name = "Term" } ],
-             "\
-📗 `Second`: _undefined_
+            [ { Term.Default with
+                  Name = "ThirdTermWithLeadingWhitespaceInUsage"
+                  Examples = ResizeArray [ " Do a thing" ] } ],
+            "\
+### 📗 `ThirdTermWithLeadingWhitespaceInUsage`
 
-📗 `Term`: _undefined_")
+📝 _undefined_
 
-            ([ { Term.Default with
-                   Name = "First"
-                   Examples = ResizeArray [ "Do a thing" ] }
-               { Term.Default with Name = "Term" } ],
-             "\
-📗 `First`: _undefined_
+💬 \"Do a thing\""
 
-📗 `Term`: _undefined_
+            [ { Term.Default with
+                  Name = "Metadata"
+                  Meta = dict [ "key", "value" ] } ],
+            "\
+### 📗 `Metadata`
 
-#### `First` Usage Examples:
+📝 _undefined_
 
-💬 \"Do a thing\"")
+**key** value"
 
-            ([ { Term.Default with
-                   Name = "TermWithExamples"
-                   Examples = ResizeArray [ "Do a thing" ] }
-               { Term.Default with
-                   Name = "AnotherTermWithExamples"
-                   Examples = ResizeArray [ "Do something else"; "Do the third thing" ] } ],
-             "\
-📗 `TermWithExamples`: _undefined_
+            [ { Term.Default with
+                  Name = "Metadata with multiple keys"
+                  Meta = dict [ "key", "value"; "key2", "value2" ] } ],
+            "\
+### 📗 `Metadata with multiple keys`
 
-📗 `AnotherTermWithExamples`: _undefined_
+📝 _undefined_
 
-#### `TermWithExamples` Usage Examples:
+**key** value
+
+**key2** value2"
+
+            [ { Term.Default with Name = "Second" }; { Term.Default with Name = "Term" } ],
+            "\
+### 📗 `Second`
+
+📝 _undefined_
+
+### 📗 `Term`
+
+📝 _undefined_"
+
+            [ { Term.Default with
+                  Name = "First"
+                  Examples = ResizeArray [ "Do a thing" ] }
+              { Term.Default with Name = "Term" } ],
+            "\
+### 📗 `First`
+
+📝 _undefined_
 
 💬 \"Do a thing\"
 
-#### `AnotherTermWithExamples` Usage Examples:
+### 📗 `Term`
+
+📝 _undefined_"
+
+            [ { Term.Default with
+                  Name = "TermWithExamples"
+                  Examples = ResizeArray [ "Do a thing" ] }
+              { Term.Default with
+                  Name = "AnotherTermWithExamples"
+                  Examples = ResizeArray [ "Do something else"; "Do the third thing" ] } ],
+            "\
+### 📗 `TermWithExamples`
+
+📝 _undefined_
+
+💬 \"Do a thing\"
+
+### 📗 `AnotherTermWithExamples`
+
+📝 _undefined_
 
 💬 \"Do something else\"
 
-💬 \"Do the third thing\"") ]
+💬 \"Do the third thing\"" ]
           |> List.map testTermRender
           |> testList "Render Terms"
 
@@ -140,11 +175,13 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_""")
 
               let expectedHover =
                   "\
-### 💠 TestContext Context
+## 💠 TestContext Context
 
 _Vision: supporting the test_
 
-📗 `term`: _undefined_"
+### 📗 `term`
+
+📝 _undefined_"
 
               test <@ rendering.Value.ReplaceLineEndings() = expectedHover @>
 
@@ -161,15 +198,19 @@ _Vision: supporting the test_
 
               let expectedHover =
                   "\
-### 💠 Test Context
+## 💠 Test Context
 
-📗 `term`: _undefined_
+### 📗 `term`
+
+📝 _undefined_
 
 ***
 
-### 💠 Other Context
+## 💠 Other Context
 
-📗 `term`: _undefined_"
+### 📗 `term`
+
+📝 _undefined_"
 
               test <@ rendering.Value.ReplaceLineEndings() = expectedHover @>
 
@@ -187,11 +228,13 @@ _Vision: supporting the test_
 
               let expectedHover =
                   "\
-### 💠 Test Context
+## 💠 Test Context
 
 _Vision: vision statement should still be italic_
 
-📗 `term`: _undefined_"
+### 📗 `term`
+
+📝 _undefined_"
 
               test <@ rendering.Value.ReplaceLineEndings() = expectedHover @>
 
@@ -209,10 +252,12 @@ _Vision: vision statement should still be italic_
 
               let expectedHover =
                   "\
-### 💠 Test Context
+## 💠 Test Context
 
 _Vision: vision statement should still be italic_
 
-📗 `term`: _undefined_"
+### 📗 `term`
+
+📝 _undefined_"
 
               test <@ rendering.Value.ReplaceLineEndings() = expectedHover @> ]
