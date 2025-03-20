@@ -1,8 +1,10 @@
 #load "../ci/common.fsx"
+#load "../language-server/app.fsx"
 
 open Fun.Build
 open Fun.Build.Github
 open Common
+open LanguageServer.App
 
 let visualStudioProjectPath = "visualstudio/contextive/contextive"
 
@@ -13,7 +15,8 @@ let visualStudioAssetPath =
 
 let visualStudioAssetFileName = "contextive.vsix"
 
-let vsixPublisherExe = """C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VSSDK\VisualStudioIntegration\Tools\Bin\VsixPublisher.exe"""
+let vsixPublisherExe =
+    """C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VSSDK\VisualStudioIntegration\Tools\Bin\VsixPublisher.exe"""
 
 pipeline "Contextive Visual Studio Extension" {
     description "Build & Test"
@@ -64,9 +67,10 @@ pipeline "Contextive Visual Studio Extension" {
         // See https://learn.microsoft.com/en-us/visualstudio/extensibility/walkthrough-publishing-a-visual-studio-extension-via-command-line?view=vs-2022
         stage "Publish to Marketplace" {
             whenComponentInRelease "visual-studio"
+
             run (fun ctx ->
-                $"\"{vsixPublisherExe}\" publish -payload \"{visualStudioAssetRelativePath}/{visualStudioAssetFileName}\"  -publishManifest \"publishmanifest.json\" -personalAccessToken \"{ctx.GetEnvVar(args.vscePat.Name)}\""
-        ) }
+                $"\"{vsixPublisherExe}\" publish -payload \"{visualStudioAssetRelativePath}/{visualStudioAssetFileName}\"  -publishManifest \"publishmanifest.json\" -personalAccessToken \"{ctx.GetEnvVar(args.vscePat.Name)}\"")
+        }
     }
 
     runIfOnlySpecified false
