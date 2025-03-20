@@ -72,7 +72,7 @@ let tests =
           testCaseAsync "Contextive Hover results appear last"
           <| async {
               let testDocPath = Paths.inWorkspace "MarketingDemo/MarketingDemo.cs"
-              let position = vscode.Position.Create(0, 15)
+              let position = vscode.Position.Create(3, 15)
               let expectedLength = 2
               let! hoverContents = getHover testDocPath position 2
 
