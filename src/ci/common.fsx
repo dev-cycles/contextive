@@ -1,3 +1,5 @@
+module Common
+
 #r "nuget: Fun.Build, 1.1.7"
 
 open Fun.Build
