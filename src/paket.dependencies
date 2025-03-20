@@ -2,6 +2,7 @@ source https://api.nuget.org/v3/index.json
 
 storage: none
 framework: net8.0
+nuget argu
 nuget DotNet.Glob
 nuget Expecto
 nuget Fable.Electron
