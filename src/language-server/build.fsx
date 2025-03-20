@@ -1,21 +1,17 @@
 #load "../ci/common.fsx"
 #load "../ci/dotnet.fsx"
+#load "app.fsx"
+#load "../core/app.fsx"
 
 open Fun.Build
 open Fun.Build.Github
 open Common
 open Dotnet
+open LanguageServer.App
+open Core.App
 
 let languageServerLabel (ctx: Internal.StageContext) =
     $"Contextive Language Server {ctx.GetCmdArg(args.release)} ({ctx.GetCmdArg(args.dotnetRuntime)})"
-
-let core =
-    { Name = "Contextive.Core"
-      Path = "core/Contextive.Core" }
-
-let languageServer =
-    { Name = "Contextive.LanguageServer"
-      Path = "language-server/Contextive.LanguageServer" }
 
 let checkRelease app =
     stage "Check Release" {

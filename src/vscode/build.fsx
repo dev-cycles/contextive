@@ -1,8 +1,10 @@
 #load "../ci/common.fsx"
+#load "../language-server/app.fsx"
 
 open Fun.Build
 open Fun.Build.Github
 open Common
+open LanguageServer.App
 
 let vsCodeAssetFileName (ctx: Internal.StageContext) =
     $"""contextive-{ctx.GetCmdArg(args.vscePlatform)}-{versionNumber (ctx.GetCmdArg(args.release))}.vsix"""
@@ -12,7 +14,7 @@ let vsCodeAssetLabel (ctx: Internal.StageContext) =
 
 let vsCodePath = "vscode/contextive"
 
-let publishTag (ctx: Internal.StageContext) = 
+let publishTag (ctx: Internal.StageContext) =
     match ctx.GetCmdArg(args.release) with
     | "" -> ctx.GetEnvVar(args.headSha.Name)
     | r -> r
@@ -21,7 +23,7 @@ pipeline "Contextive VsCode Extension" {
     description "Build & Test"
     noPrefixForStep
     collapseGithubActionLogs
-    
+
     logEnvironment
 
     stage "Install Tools" {
@@ -111,7 +113,7 @@ pipeline "Contextive VsCode Extension" {
         run "npm test"
     }
 
-    
+
     stage "Prepublish" {
         workingDir vsCodePath
         whenCmdArg args.vscePlatform
@@ -133,9 +135,14 @@ pipeline "Contextive VsCode Extension" {
 
         stage "Publish to Marketplaces" {
             whenComponentInRelease "vscode"
-            
-            stage "To Microsoft VS Marketplace" { run (fun ctx -> $"npx vsce publish --packagePath {vsCodeAssetFileName ctx}") }
-            stage "To Open-Vsx Marketplace" { run (fun ctx -> $"npx ovsx publish {vsCodeAssetFileName ctx} -p \"{ctx.GetEnvVar(args.ovsxPat.Name)}\"") }            
+
+            stage "To Microsoft VS Marketplace" {
+                run (fun ctx -> $"npx vsce publish --packagePath {vsCodeAssetFileName ctx}")
+            }
+
+            stage "To Open-Vsx Marketplace" {
+                run (fun ctx -> $"npx ovsx publish {vsCodeAssetFileName ctx} -p \"{ctx.GetEnvVar(args.ovsxPat.Name)}\"")
+            }
         }
     }
 

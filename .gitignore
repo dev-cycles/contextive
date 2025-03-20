@@ -34,3 +34,5 @@ fable_modules
 .env
 # Local Netlify folder
 .netlify
+# build outputs
+*.zip
