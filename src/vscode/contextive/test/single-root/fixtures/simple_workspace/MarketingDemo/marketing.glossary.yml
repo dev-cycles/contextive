@@ -1,4 +1,3 @@
-# yaml-language-server: $schema=../.contextive/contextive-schema.json
 # Inspired by https://blog.hubspot.com/marketing/inbound-marketing-glossary-list
 contexts:
   - name: Marketing

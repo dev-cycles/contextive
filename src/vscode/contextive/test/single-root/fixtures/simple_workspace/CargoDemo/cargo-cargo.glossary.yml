@@ -1,4 +1,3 @@
-# yaml-language-server: $schema=../.contextive/contextive-schema.json
 # Inspired by https://www.dddcommunity.org/book/evans_2003/
 contexts:
   - name: Cargo
