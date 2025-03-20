@@ -4,6 +4,27 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
+  <PropertyGroup>
+    <Version>1.15.0</Version>
+    <Authors>Chris Simon</Authors>
+    <Company>Dev Cycles</Company>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishTrimmed>true</PublishTrimmed>
+    <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
+    <DebuggerSupport>false</DebuggerSupport>
+  </PropertyGroup>
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Contextive.Core" />
+    <TrimmerRootAssembly Include="FSharp.Core" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Check.fs" />
     <Compile Include="Program.fs" />

@@ -21,7 +21,7 @@ let args =
        refName = EnvArg.Create("GITHUB_REF_NAME", isOptional = true)
        headSha = EnvArg.Create("GITHUB_SHA", isOptional = true)
        ghOutput = EnvArg.Create("GITHUB_OUTPUT", isOptional = true)
-       runnerArch = EnvArg.Create("RUNNER_ARCH", isOptional = true) 
+       runnerArch = EnvArg.Create("RUNNER_ARCH", isOptional = true)
        vscePat = EnvArg.Create("VSCE_PAT", isOptional = true)
        ovsxPat = EnvArg.Create("OVSX_PAT", isOptional = true) |}
 
@@ -67,8 +67,7 @@ let unzipCmd zipPath outputPath =
     | "" -> $"unzip {zipPath} -d {outputPath}"
     | _ -> $"7z e {zipPath} -o{outputPath}"
 
-let dotnetRestoreTools =
-    stage $"Dotnet Restore Tools" { run "dotnet tool restore" }
+let dotnetRestoreTools = stage $"Dotnet Restore Tools" { run "dotnet tool restore" }
 
 let env (envArg: EnvArg) =
     System.Environment.GetEnvironmentVariable(envArg.Name)
@@ -88,23 +87,48 @@ let logEnvironment =
 🔎 The name of your branch is {env args.ref} and your repository is {env args.repo}."""
     }
 
+let publishedBinaryName app =
+    function
+    | "Windows" -> $"{app.Name}.exe"
+    | _ -> app.Name
 
-let core =
-    { Name = "Contextive.Core"
-      Path = "core/Contextive.Core" }
+let zipAndUploadAsset app =
+    stage $"Zip And Upload {app.Name} Release Asset" {
+        stage "Zip" {
+            workingDir $"{app.Path}/publish"
 
-let languageServer =
-    { Name = "Contextive.LanguageServer"
-      Path = "language-server/Contextive.LanguageServer" }
+            run (fun ctx ->
+                let path = appZipPath app ctx
+                let os = ctx.GetEnvVar(args.os.Name)
+                let binaryName = publishedBinaryName app os
+                zipCmd binaryName path os)
 
-let whenComponentInRelease (component': string) = whenStage $"Check for component `{component'}` in LAST_RELEASE_NOTES.md" {
-    workingDir ""
-    run "pwd"
-    run "cat LAST_RELEASE_NOTES.md"
-    run (fun ctx -> 
-        seq { component'; "language-server" }
+            stage "Set output variable" {
+                whenEnvVar args.ci.Name
+                run (fun ctx -> bashCmd $"""echo "artifact-path={appZipPath app ctx}" >> $GITHUB_OUTPUT""")
+            }
+
+            stage "Upload" {
+                workingDir app.Path
+                whenCmdArg args.release
+
+                run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {appZipPath app ctx}")
+            }
+        }
+    }
+
+let whenComponentInRelease (component': string) =
+    whenStage $"Check for component `{component'}` in LAST_RELEASE_NOTES.md" {
+        workingDir ""
+        run "pwd"
+        run "cat LAST_RELEASE_NOTES.md"
+
+        run (fun ctx ->
+            seq {
+                component'
+                "language-server"
+            }
             |> String.concat "|"
             |> sprintf "grep -E (%s) LAST_RELEASE_NOTES.md"
-            |> ctx.RunCommand
-    )
-}
+            |> ctx.RunCommand)
+    }

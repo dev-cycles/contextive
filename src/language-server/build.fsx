@@ -1,36 +1,21 @@
 #load "../ci/common.fsx"
+#load "../ci/dotnet.fsx"
 
 open Fun.Build
 open Fun.Build.Github
 open Common
+open Dotnet
 
 let languageServerLabel (ctx: Internal.StageContext) =
     $"Contextive Language Server {ctx.GetCmdArg(args.release)} ({ctx.GetCmdArg(args.dotnetRuntime)})"
 
+let core =
+    { Name = "Contextive.Core"
+      Path = "core/Contextive.Core" }
 
-let dotnetTest app =
-    stage $"Test {app.Name}" {
-        workingDir $"{app.Path}.Tests"
-        whenEnvVar args.dotnetVersion
-        whenEnvVar args.os
-
-        run
-            $"""dotnet test --logger "trx;LogFileName=TestResults.{app.Name}-{env args.dotnetVersion}-{env args.os}.xml" -- Expecto.fail-on-focused-tests=true Expecto.no-spinner=true Expecto.summary=true"""
-    }
-
-let dotnetPublish app =
-    stage $"Publish {app.Name}" {
-        workingDir app.Path
-        whenCmdArg args.dotnetRuntime
-
-        run (fun ctx ->
-            let runTimeFlag =
-                match ctx.GetCmdArg(args.dotnetRuntime) with
-                | r when not <| System.String.IsNullOrEmpty(r) -> $"-r {r}"
-                | _ -> ""
-
-            $"""dotnet publish -c RELEASE {runTimeFlag} -o publish""")
-    }
+let languageServer =
+    { Name = "Contextive.LanguageServer"
+      Path = "language-server/Contextive.LanguageServer" }
 
 let checkRelease app =
     stage "Check Release" {
@@ -64,36 +49,6 @@ let checkRelease app =
         acceptExitCodes [ TIMEOUT_EXIT_CODES.TIMED_OUT; TIMEOUT_EXIT_CODES.KILLED ]
 
         run (bashCmd $"timeout -v -k 1 2 ./{app.Name}")
-    }
-
-let publishedBinaryName app =
-    function
-    | "Windows" -> $"{app.Name}.exe"
-    | _ -> app.Name
-
-let zipAndUploadAsset app =
-    stage $"Zip And Upload {app.Name} Release Asset" {
-        stage "Zip" {
-            workingDir $"{app.Path}/publish"
-
-            run (fun ctx ->
-                let path = appZipPath app ctx
-                let os = ctx.GetEnvVar(args.os.Name)
-                let binaryName = publishedBinaryName app os
-                zipCmd binaryName path os)
-
-            stage "Set output variable" {
-                whenEnvVar args.ci.Name
-                run (fun ctx -> bashCmd $"""echo "artifact-path={appZipPath app ctx}" >> $GITHUB_OUTPUT""")
-            }
-
-            stage "Upload" {
-                workingDir app.Path
-                whenCmdArg args.release
-
-                run (fun ctx -> $"gh release upload {ctx.GetCmdArg(args.release)} {appZipPath app ctx}")
-            }
-        }
     }
 
 pipeline languageServer.Name {
