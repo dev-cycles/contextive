@@ -9,7 +9,7 @@ let schema =
   "type": "object",
   "properties": {
     "contexts": {
-      "description": "A list of contexts - see https://docs.contextive.tech/ide/guides/setting-up-glossaries/.",
+      "description": "A list of contexts - see https://docs.contextive.tech/community/guides/setting-up-glossaries/.",
       "type": "array",
       "items": {
         "title": "Context",
@@ -46,7 +46,7 @@ let schema =
           },
           "terms": {
             "title": "Terms",
-            "description": "A list of Terms in the Context - see https://docs.contextive.tech/ide/guides/defining-terminology/.",
+            "description": "A list of Terms in the Context - see https://docs.contextive.tech/community/guides/defining-terminology/.",
             "type": "array",
             "items": {
               "title": "Term",

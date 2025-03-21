@@ -22,9 +22,9 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 <p>See <a href="#known-issues">known issues</a> below</p>
 </blockquote>
 <h2>Installation</h2>
-<p>See <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/installation/#intellij-plugin-platform">IntelliJ IDEs (e.g. IDEA) Installation Instructions</a>.</p>
+<p>See <a href="https://docs.contextive.tech/community/v/1.15.0/guides/installation/#intellij-plugin-platform">IntelliJ IDEs (e.g. IDEA) Installation Instructions</a>.</p>
 <h2>Getting Started</h2>
-<p>See <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/setting-up-glossaries/">setting up glossaries</a> and <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/">defining terminology</a> usage guides for details on getting started with Contextive.</p>
+<p>See <a href="https://docs.contextive.tech/community/v/1.15.0/guides/setting-up-glossaries/">setting up glossaries</a> and <a href="https://docs.contextive.tech/community/v/1.15.0/guides/defining-terminology/">defining terminology</a> usage guides for details on getting started with Contextive.</p>
 <h2>Supported IDEs</h2>
 <p>The plugin uses the IntelliJ Language Server Protocol support, so it's only available in the IDEs where that feature is offered.  See the <a href="https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html#supported-ides">JetBrains LSP Documentation</a> for the latest list.</p>
 <p>At time of writing, it includes:</p>
@@ -44,7 +44,7 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 </ul>
 <h2>Features</h2>
 <ul>
-<li><a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#smart-auto-complete">Auto-complete</a> from your Contextive Glossary
+<li><a href="https://docs.contextive.tech/community/v/1.15.0/guides/defining-terminology/#smart-auto-complete">Auto-complete</a> from your Contextive Glossary
 <ul>
 <li>Shows definitions in auto-complete details
 <ul>
@@ -55,19 +55,19 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 </li>
 <li>Hover to show definitions from your Contextive Glossary
 <ul>
-<li>Hover over elements with <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#suffixes-and-prefixes">suffixes &amp; prefixes</a></li>
-<li>Hover over usage of <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#combining-two-or-more-terms">multiple terms</a> combined using camelCase, PascalCase and snake_case</li>
-<li>Hover over <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#complex-multi-word-terms">multi-word</a> terms</li>
-<li>Hover over <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#plural-words">plural</a> of defined terms</li>
-<li>Hover over <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#term-aliases">aliases</a> of defined terms</li>
+<li>Hover over elements with <a href="https://docs.contextive.tech/community/v/1.15.0/guides/defining-terminology/#suffixes-and-prefixes">suffixes &amp; prefixes</a></li>
+<li>Hover over usage of <a href="https://docs.contextive.tech/community/v/1.15.0/guides/defining-terminology/#combining-two-or-more-terms">multiple terms</a> combined using camelCase, PascalCase and snake_case</li>
+<li>Hover over <a href="https://docs.contextive.tech/community/v/1.15.0/guides/defining-terminology/#complex-multi-word-terms">multi-word</a> terms</li>
+<li>Hover over <a href="https://docs.contextive.tech/community/v/1.15.0/guides/defining-terminology/#plural-words">plural</a> of defined terms</li>
+<li>Hover over <a href="https://docs.contextive.tech/community/v/1.15.0/guides/defining-terminology/#term-aliases">aliases</a> of defined terms</li>
 </ul>
 </li>
 <li>Put your glossaries near the code they support:
 <ul>
-<li><a href="https://docs.contextive.tech/ide/v/1.15.0/guides/setting-up-glossaries/#terms-relevant-for-the-whole-repository">Terms relevant for the whole repository</a></li>
-<li><a href="https://docs.contextive.tech/ide/v/1.15.0/guides/setting-up-glossaries/#different-terms-relevant-in-different-repositories">Different terms relevant in different repositories</a></li>
-<li><a href="https://docs.contextive.tech/ide/v/1.15.0/guides/setting-up-glossaries/#terms-relevant-only-in-a-subfolder-of-the-repository">Terms relevant only in a subfolder of the repository</a></li>
-<li><a href="https://docs.contextive.tech/ide/v/1.15.0/guides/setting-up-glossaries/#multi-root-workspaces">Multi-root workspaces</a></li>
+<li><a href="https://docs.contextive.tech/community/v/1.15.0/guides/setting-up-glossaries/#terms-relevant-for-the-whole-repository">Terms relevant for the whole repository</a></li>
+<li><a href="https://docs.contextive.tech/community/v/1.15.0/guides/setting-up-glossaries/#different-terms-relevant-in-different-repositories">Different terms relevant in different repositories</a></li>
+<li><a href="https://docs.contextive.tech/community/v/1.15.0/guides/setting-up-glossaries/#terms-relevant-only-in-a-subfolder-of-the-repository">Terms relevant only in a subfolder of the repository</a></li>
+<li><a href="https://docs.contextive.tech/community/v/1.15.0/guides/setting-up-glossaries/#multi-root-workspaces">Multi-root workspaces</a></li>
 </ul>
 </li>
 <li>Works in all files</li>
@@ -87,7 +87,7 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 <h2>Known Issues</h2>
 <ul>
 <li>Not configurable - see <a href="#plugin-configuration">Plugin Configuration</a></li>
-<li>Autocomplete list doesn't respect the case sensitive interpretation as described in the <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#smart-auto-complete">smart auto-complete</a> part of the <a href="https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/">defining terminology</a> usage guide. IntelliJ does not yet respect the `isIncomplete' flag that forces re-computation of the list and is required to adjust the case of list items.  See <a href="https://youtrack.jetbrains.com/issue/IDEA-348829">IDEA-348829</a> for details.</li>
+<li>Autocomplete list doesn't respect the case sensitive interpretation as described in the <a href="https://docs.contextive.tech/community/v/1.15.0/guides/defining-terminology/#smart-auto-complete">smart auto-complete</a> part of the <a href="https://docs.contextive.tech/community/v/1.15.0/guides/defining-terminology/">defining terminology</a> usage guide. IntelliJ does not yet respect the `isIncomplete' flag that forces re-computation of the list and is required to adjust the case of list items.  See <a href="https://youtrack.jetbrains.com/issue/IDEA-348829">IDEA-348829</a> for details.</li>
 <li>Documentation not shown on hover in some files (files treated as 'plaintext' by the specific IDE). Use F1 to show the hover documentation at the current cursor position.  This is an IntelliJ bug, see <a href="https://youtrack.jetbrains.com/issue/IDEA-348497/Doc-popup-doesnt-appear-on-hover-in-LSP-API-based-plugins">IDEA-348497</a> for details.</li>
 <li>Auto-completion does not work at certain positions. See <a href="https://github.com/dev-cycles/contextive/issues/63">Issue #63</a></li>
 <li>In Rider, C# files do not show documentation on hover, or 'quick documentation shortcut', or documentation during auto-complete, when opened in Solution mode.  It does work when opening in file/folder mode. See <a href="https://github.com/dev-cycles/contextive/issues/65">Issue #65</a></li>
@@ -96,7 +96,7 @@ This plugin is considered 'beta' status, as leverages relatively new <a href="ht
 
   <change-notes><![CDATA[<h1>Change Log</h1>
 <h1>🚀 <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.15.0">1.15.0</a> (2025-03-19)</h1>
-<p><a href="https://docs.contextive.tech/ide/v/1.15.0/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.14.1...v1.15.0">📋 Compare with v1.14.1</a></p>
+<p><a href="https://docs.contextive.tech/community/v/1.15.0/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.14.1...v1.15.0">📋 Compare with v1.14.1</a></p>
 <h3>🌟 Features</h3>
 <ul>
 <li><strong>intellij:</strong> activate contextive in all projects to ensure the language server can scan the project for glossary files (<a href="https://github.com/dev-cycles/contextive/commit/2460ff61f0a36e014b859679bf66b04f9974a7c9">2460ff6</a>)</li>

@@ -14,7 +14,7 @@ const release_link =
     attrs: { target: '_blank' },
 }
 
-const ROUTE_TO_CURRENT_VERSION = "/ide";
+const ROUTE_TO_CURRENT_VERSION = "/community";
 
 const versionBannerMiddleware = defineRouteMiddleware(context => {
     const { entry } = context.locals.starlightRoute;

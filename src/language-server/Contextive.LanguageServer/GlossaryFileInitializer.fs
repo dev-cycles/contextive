@@ -23,9 +23,9 @@ let private introComments =
 #
 # Update the yaml below to define your specific contexts and terms, and feel free to use markdown in definitions and examples.
 #
-# See https://docs.contextive.tech/ide/guides/setting-up-glossaries/ for detailed guidance on where to put this file and setting up the context.
+# See https://docs.contextive.tech/community/guides/setting-up-glossaries/ for detailed guidance on where to put this file and setting up the context.
 #
-# See https://docs.contextive.tech/ide/guides/defining-terminology/ for detailed guidance on defining your terminology.
+# See https://docs.contextive.tech/community/guides/defining-terminology/ for detailed guidance on defining your terminology.
 """
 
 let private defaultGlossaryFile =

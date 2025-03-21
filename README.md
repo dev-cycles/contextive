@@ -26,23 +26,23 @@ Interview introducing Contextive at NDC Sydney 2024:
 
 [![Video Introduction to Contextive](https://img.youtube.com/vi/Y_HzdX7nHo0/0.jpg)](https://www.youtube.com/watch?v=Y_HzdX7nHo0)
 
-[Other Videos referencing Contextive](https://docs.contextive.tech/ide/background/videos/)
+[Other Videos referencing Contextive](https://docs.contextive.tech/community/background/videos/)
 
 ## Installation
 
-See our [Installation Guide](https://docs.contextive.tech/ide/guides/installation/) for details on how to install in a few different IDEs, or any IDE that supports the Language Server Protocol.
+See our [Installation Guide](https://docs.contextive.tech/community/guides/installation/) for details on how to install in a few different IDEs, or any IDE that supports the Language Server Protocol.
 
 Officially supported IDEs include:
 
-#### [VsCode](https://docs.contextive.tech/ide/guides/installation/#visual-studio-code)
-#### [IntelliJ IDEs](https://docs.contextive.tech/ide/guides/installation/#intellij-plugin-platform)
-#### [Visual Studio](https://docs.contextive.tech/ide/guides/installation/#visual-studio-2022)
-#### [Neovim](https://docs.contextive.tech/ide/guides/installation/#neovim)
-#### [Helix](https://docs.contextive.tech/ide/guides/installation/#helix)
+#### [VsCode](https://docs.contextive.tech/community/guides/installation/#visual-studio-code)
+#### [IntelliJ IDEs](https://docs.contextive.tech/community/guides/installation/#intellij-plugin-platform)
+#### [Visual Studio](https://docs.contextive.tech/community/guides/installation/#visual-studio-2022)
+#### [Neovim](https://docs.contextive.tech/community/guides/installation/#neovim)
+#### [Helix](https://docs.contextive.tech/community/guides/installation/#helix)
 
 ## Getting Started
 
-See [setting up glossaries](https://docs.contextive.tech/ide/v/1.14.1/guides/setting-up-glossaries/) and [defining terminology](https://docs.contextive.tech/ide/v/1.14.1/guides/defining-terminology/) usage guides for details on getting started with Contextive.
+See [setting up glossaries](https://docs.contextive.tech/community/v/1.14.1/guides/setting-up-glossaries/) and [defining terminology](https://docs.contextive.tech/community/v/1.14.1/guides/defining-terminology/) usage guides for details on getting started with Contextive.
 
 ## Features
 
