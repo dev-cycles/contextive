@@ -33,7 +33,7 @@ let private defaultGlossaryFile =
         [| { Name = "Demo"
              DomainVisionStatement = "To illustrate the usage of the contextive glossary file."
              Paths = [||] |> ResizeArray
-             Meta = dict [ "owner", "Team A" ]
+             Meta = dict [ "👥 Owner:", "[Team A](https://corporate.wiki/teams/TeamA)" ]
              Terms =
                [| { Term.Default with
                       Name = "context"

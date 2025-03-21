@@ -129,7 +129,7 @@ Contextive supports defining a list of aliases for a given term.  These can be a
 
 When hovering over the word `Rule`, the definition of `Policy` will be displayed:
 
-![Example of hovering over the alias `Rule` for the term `Cargo`.](../../../assets/images/simple-term-with-alias.png)
+![Simple term with alias `Rule` for the term `Cargo`.](../../../assets/images/simple-term-with-alias.png)
 
 ### Metadata
 
@@ -153,7 +153,7 @@ For example:
 +          ✅: Approved
 ```
 
-![Example of a term with metadata.](../../../assets/images/simple-term-with-metadata.png)
+![Simple term with metadata.](../../../assets/images/simple-term-with-metadata.png)
 
 ## Finding Words in Code
 
@@ -172,14 +172,28 @@ This section describes some common patterns that make use of this.
 
 It's quite common to combine a term from your language, such as `cargo` with a suffix such as `Id` (or `service`, or `factory`, etc.).  If your code includes `cargoId`, `CargoId` or `cargo_id`, Contextive will identify the defined term `cargo` and display the definition and usage examples:
 
-![Example of hovering over a combined word containing a match.](../../../assets/images/simple-auto-complete-demo.gif)
+![Hovering over a word with a suffix.](../../../assets/images/term-found-with-suffix.png)
 
 ### Combining two (or more) terms
 
 It's also common to end up with code elements (classes, variables or methods) that combine two or more terms from your language, such as `Leg` and `Policy`.  Even if you haven't explicitly created a term for `LegPolicy`, Contextive will identify both words and show you both definitions at the same time:
 
-![Example of hovering over a combined word with multiple matches.](../../../assets/images/multi-match-auto-complete-demo.gif)
+```diff lang="yml" title="repo-root/cargo-module/cargo.glossary.yml"
+...
++    - name: Leg
+      definition: The movement of a Cargo on a specific vessel from load location to unload location.
+      examples:
+        - Operations will need to contract handling work based on the expected times for each leg
+        - For each leg we'd like to see the vessel voyage, the load and unload location, and time.
++    - name: Policy
+      definition: |
+        A set of rules that the routing service must follow
+        when evaluating legs that confirm to the desired routing specification.
+      examples:
+        - We need to configure the set of policies that will apply for a specific customer.
+```
 
+![Hovering over a word that combines two terms.](../../../assets/images/term-found-when-combined.png)
 
 ## Complex (multi-word) terms
 
@@ -198,12 +212,12 @@ Multi-word terms can be added to your glossary file in a few different ways.  Co
 :::tip[Recommendation]
 We recommend defining multi-word terms in your glossary file in natural language, e.g.:
 
-```yml
+```diff lang="yml" title="repo-root/cargo-module/cargo.glossary.yml"
 ...
-    - terms:
-      - name: Leg Magnitude Policy
-        definition: A policy that helps the routing engine select the legs with the lowest magnitude.
-
++    - name: Leg Magnitude Policy
+      definition: A policy that helps the routing engine select the legs with the lowest magnitude.
+      examples:
+        - The leg magnitude policy is selecting the fastest leg, but we need it to select the cheapest leg.
 ```
 
 The other options are supported to help folk migrating from documentation systems which must match the exact usage of the terms in code.
@@ -211,17 +225,15 @@ The other options are supported to help folk migrating from documentation system
 
 However it is defined in the glossary, the definitions of `Leg` and `Policy` will not be shown and only the 'multi-word' term will be shown.
 
+![Example of hovering over a combined word - the individual words are not shown.](../../../assets/images/multi-word-term.png)
+
 As with all combined words, it will be shown when hovering over text that matches any of the supported word combination techniques: `camelCase`, `PascalCase`, `snake_case` or `kebab-case`.
-
-![Example of hovering over a combined word in PascalCase.](../../../assets/images/leg_magnitude_policy_example.png)
-
-![Example of hovering over a combined word in snake_case.](../../../assets/images/snake-case-auto-complete-demo.gif)
 
 ## Plurals
 
 Contextive can detect a defined term even when it is defined in the singular and used in the plural.  In this example, even though defined as `Policy` the term is still shown when hovering over `PoliciesCollection`.
 
-```yml
+```diff lang="yml" title="repo-root/billing-module/billing.glossary.yml"
 ...
     - terms:
       - name: Policy
@@ -242,17 +254,15 @@ To ensure it's useful in a variety of scenarios, it includes a number of options
 * PascalCase
 * snake_case
 * UPPER_CASE
-* kebab-case
 
 The auto-complete options will adjust as you type:
 
-* After typing a single lower-case letter, only `camelCase`, `snake_case` & `kebab-case` will be included.
+* After typing a single lower-case letter, only `camelCase` & `snake_case` will be included.
 * After typing a single upper case letter, `PascalCase` and `UPPER_CASE` will be included.
 * After typing two upper case letters, single word, snake_case and combined words will all be in `UPPERCASE`.
 * After typing any case letters and an underscore, only `snake_case` will be included.
-* After typing only lower case letters and a `-`, only `kebab-case` will be included.
 
-![Example of smart auto-complete.](../../../assets/images/markdown-demo.gif)
+![Example of smart auto-complete.](../../../assets/images/auto-complete.png)
 
 ## Multiline YAML
 
@@ -266,20 +276,20 @@ The following common scenarios are more fully explored in the <Link href="https:
 
 If a definition (or domain vision statement) is quite long, and you would like to include linebreaks (but not new paragraphs), you need to use one of the yaml multi-line options that ensures at least one newline is parsed, AND to render a markdown linebreak you need to add two `<SPACE>` characters at the end of the line:
 
-```yaml "linebreak  "
+```diff lang="yml" title="linebreak-demo.glossary.yml"
 contexts:
   - name: Demo Multiline Options
     terms:
       - name: LiteralLineBreak
         definition: |
-          This definition has multiple lines with a linebreak
-          achieved using the literal block indicator, a single newline, and two spaces at the end of the first line
++          This definition has multiple lines with a linebreak  
++          achieved using the literal block indicator, a single newline, and two spaces at the end of the first line
 ```
 
 :::danger[Note:]
-We're aware of an issue with the website rendering which is stripping the critical trailing two spaces at the end of the first line.  Do not copy paste this example and expect it to work.
+There is an issue with the website rendering which is stripping the critical trailing two spaces at the end of the first line of the definition. Do not copy paste this example and expect it to work.
 
-In the <Link href="https://github.com/dev-cycles/contextive/blob/{frontmatter.contextive_version}/docs/web/src/content/docs/guides/defining-terminology.mdx?plain=1#L246">original source</Link> it _does_ have two spaces after `linebreak`
+In the <Link href="https://github.com/dev-cycles/contextive/blob/{frontmatter.contextive_version}/docs/web/src/content/docs/guides/defining-terminology.mdx?plain=1#L285">original source</Link> it _does_ have two spaces after `linebreak`
 :::
 
 Renders to:
@@ -290,15 +300,15 @@ Renders to:
 
 To achieve a new paragraph, use a yaml option that parses multiple newlines, e.g.:
 
-```yaml
+```diff lang="yml" title="linebreak-demo.glossary.yml"
 contexts:
   - name: Demo Multiline Options
     terms:
       - name: LiteralNewParagraph
         definition: |
-          This definition has multiple paragraphs
-
-          achieved using the literal block indicator and two newlines
++          This definition has multiple paragraphs
++
++          achieved using the literal block indicator and two newlines
 ```
 
 Renders to:
@@ -309,13 +319,13 @@ Renders to:
 
 Sometimes you may want to break over multiple lines to make it easier to read the raw yaml, but don't want the newlines to appear in the hover.  In this case, just don't use any Markdown linebreak or new para features.  e.g.:
 
-```yaml
+```diff lang="yml" title="linebreak-demo.glossary.yml"
 contexts:
   - name: Demo Multiline Options
       - name: LiteralMultilineNoBreak
         definition: |
-          This definition has no break in the hover panel
-          Even though it's over multiple lines, because there are neither 2 spaces (linebreak) nor two newlines (new paragraph)
++          This definition has no break in the hover panel
++          Even though it's over multiple lines, because there are neither 2 spaces (linebreak) nor two newlines (new paragraph)
 ```
 
 Renders to:

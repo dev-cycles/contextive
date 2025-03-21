@@ -14,7 +14,7 @@ contexts:
   - name: Demo
     domainVisionStatement: To illustrate the usage of the contextive glossary file.
     meta:
-      owner: Team A
+      "\U0001F465 Owner:": '[Team A](https://corporate.wiki/teams/TeamA)'
     terms:
       - name: context
         definition: A boundary within which words have specific meanings.
