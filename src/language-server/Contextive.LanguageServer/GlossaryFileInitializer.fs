@@ -10,7 +10,6 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open OmniSharp.Extensions.JsonRpc
 open Models
 open System.IO
-open Contextive.Core
 open Contextive.Core.File
 open Contextive.Core.GlossaryFile
 
@@ -34,6 +33,7 @@ let private defaultGlossaryFile =
         [| { Name = "Demo"
              DomainVisionStatement = "To illustrate the usage of the contextive glossary file."
              Paths = [||] |> ResizeArray
+             Meta = dict [ "owner", "Team A" ]
              Terms =
                [| { Term.Default with
                       Name = "context"

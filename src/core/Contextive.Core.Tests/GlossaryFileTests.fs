@@ -213,6 +213,24 @@ contexts:
                     let context = glossaryFile.Contexts[0]
                     test <@ List.ofSeq <| context.Paths = [ "path1"; "path2" ] @>
 
+
+                testCase "Can Parse Context metadata"
+                <| fun () ->
+                    let glossaryFile =
+                        unwrap
+                        <| deserialize
+                            """
+contexts:
+  - meta:
+        key1: value1
+        key2: value2
+"""
+
+                    let context = glossaryFile.Contexts[0]
+                    test <@ context.Meta.Count = 2 @>
+                    test <@ context.Meta["key1"] = "value1" @>
+                    test <@ context.Meta["key2"] = "value2" @>
+
                 testList
                     "Multi-line context name"
                     [

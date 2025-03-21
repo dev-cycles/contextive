@@ -2,6 +2,8 @@
 contexts:
   - name: Cargo
     domainVisionStatement: To manage the routing of cargo through transportation legs
+    meta:
+      "👥 Owner:": "[Team A](https://corporate.wiki/teams/TeamA)"
     terms:
     - name: Cargo
       definition: A unit of transportation that needs moving and delivery to its delivery location.
@@ -11,9 +13,8 @@ contexts:
       aliases:
         - unit
       meta:
-          "👥 Owner:": "[Team A](https://corporate.wiki/teams/TeamA \"Team A Owns This Term\")"
           "🌐 Ref:": "[Cargo Canonical Reference](https://corporate.wiki/glossary/cargo)"
-          "✅": "Approved"
+          ✅: Approved
     - name: Leg
       definition: The movement of a Cargo on a specific vessel from load location to unload location.
       examples:

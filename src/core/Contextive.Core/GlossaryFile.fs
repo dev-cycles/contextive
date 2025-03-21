@@ -52,6 +52,7 @@ type Context =
     { Name: string
       DomainVisionStatement: string
       Paths: ResizeArray<string>
+      Meta: IDictionary<string, string>
       Terms: ResizeArray<Term> }
 
 module Context =
@@ -60,7 +61,8 @@ module Context =
     let Default =
         { Name = ""
           DomainVisionStatement = ""
-          Paths = ResizeArray<string>()
+          Paths = ResizeArray()
+          Meta = dict []
           Terms = ResizeArray<Term>() }
 
     let defaultWithTerms terms = Default |> withTerms terms

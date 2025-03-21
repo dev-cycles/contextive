@@ -7,10 +7,12 @@ let private emphasise t = $"`{t}`"
 
 let private doubleBlankLine = "\n\n"
 
+let private ContextSeparator = $"{doubleBlankLine}***{doubleBlankLine}"
+
 let private renderDefinition d =
     match d with
-    | None -> "📝 _undefined_"
-    | Some(def) -> $"📝 {def}"
+    | None -> "> 📝 _undefined_"
+    | Some(def) -> $"> 📝 {def}"
 
 let private renderName name = name |> emphasise |> emojifyTerm
 
@@ -48,29 +50,26 @@ let private renderUsageExamples =
     | { GlossaryFile.Term.Examples = null } -> Seq.empty
     | t -> renderTermUsageExamples t
 
-let private renderTermMeta (t: GlossaryFile.Term) =
+let private renderTermMetadataKeyValues (t: GlossaryFile.Term) =
     t.Meta |> Seq.map (fun kvp -> $"{kvp.Key} {kvp.Value}" |> Some)
 
-let private renderMetadata =
+let private renderTermMetadata =
     function
     | { GlossaryFile.Term.Meta = null } -> Seq.empty
-    | t -> renderTermMeta t
+    | t -> renderTermMetadataKeyValues t
 
 let private renderTermDefinition (term: GlossaryFile.Term) =
     seq {
         term.Name |> renderName |> Some |> Seq.singleton
         renderDefinitionWithAlias term |> Seq.singleton
         renderUsageExamples term
-        renderMetadata term
+        renderTermMetadata term
     }
     |> Seq.collect id
     |> concatWithNewLinesIfExists
-    |> Seq.singleton
 
 let renderTerm (terms: GlossaryFile.Term seq) =
-    [ renderTermDefinition ]
-    |> Seq.collect (fun p -> terms |> Seq.collect p)
-    |> concatWithNewLinesIfExists
+    terms |> Seq.map renderTermDefinition |> concatIfExists ContextSeparator
 
 let private renderContextHeading (context: GlossaryFile.Context) =
     match context.Name with
@@ -84,20 +83,44 @@ let private renderContextDomainVisionStatement (context: GlossaryFile.Context) =
     | "" -> None
     | _ -> Some $"_Vision: {context.DomainVisionStatement.TrimEnd()}_"
 
+let private renderContextMetadataKeyValues (t: GlossaryFile.Context) =
+    t.Meta |> Seq.map (fun kvp -> $"{kvp.Key} {kvp.Value}" |> Some)
+
+let private renderContextMetadata =
+    function
+    | { GlossaryFile.Context.Meta = null } -> Seq.empty
+    | t -> renderContextMetadataKeyValues t
+
 let private renderContext (context: GlossaryFile.Context) =
     let terms = context.Terms
 
     if Seq.length terms = 0 then
         None
     else
-        [ renderTerm terms ]
-        |> Seq.append (
-            [ renderContextHeading; renderContextDomainVisionStatement ]
-            |> Seq.map (fun f -> f context)
-        )
-        |> concatWithNewLinesIfExists
+        let allTerms = renderTerm terms |> Seq.singleton
+        let metadata = renderContextMetadata context
 
-let private ContextSeparator = $"{doubleBlankLine}***{doubleBlankLine}"
+        let header =
+            seq {
+                renderContextHeading
+                renderContextDomainVisionStatement
+            }
+            |> Seq.map (fun f -> f context)
+
+        let contextHeader =
+            seq {
+                header
+                metadata
+            }
+            |> Seq.collect id
+            |> concatWithNewLinesIfExists
+
+        seq {
+            contextHeader |> Seq.singleton
+            allTerms
+        }
+        |> Seq.collect id
+        |> concatIfExists ContextSeparator
 
 let renderContexts (contexts: GlossaryFile.FindResult) =
     contexts |> Seq.map renderContext |> concatIfExists ContextSeparator

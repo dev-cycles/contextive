@@ -13,6 +13,8 @@
 contexts:
   - name: Demo
     domainVisionStatement: To illustrate the usage of the contextive glossary file.
+    meta:
+      owner: Team A
     terms:
       - name: context
         definition: A boundary within which words have specific meanings.

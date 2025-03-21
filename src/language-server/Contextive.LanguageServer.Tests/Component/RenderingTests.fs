@@ -27,14 +27,14 @@ let tests =
                   Definition = Some "The first term in our definitions list" } ],
             "### 📗 `firstTerm`
 
-📝 The first term in our definitions list"
+> 📝 The first term in our definitions list"
 
             [ { Term.Default with
                   Name = "termWithAlias"
                   Aliases = ResizeArray [ "aliasOfTerm" ] } ],
             """### 📗 `termWithAlias`
 
-📝 _undefined_  
+> 📝 _undefined_  
 _Aliases_: _aliasOfTerm_"""
 
             [ { Term.Default with
@@ -42,14 +42,14 @@ _Aliases_: _aliasOfTerm_"""
                   Aliases = ResizeArray [ "aliasOfTerm"; "anotherAlias" ] } ],
             """### 📗 `termWithAliases`
 
-📝 _undefined_  
+> 📝 _undefined_  
 _Aliases_: _aliasOfTerm_, _anotherAlias_"""
 
             [ { Term.Default with
                   Name = "SecondTerm" } ],
             "### 📗 `SecondTerm`
 
-📝 _undefined_"
+> 📝 _undefined_"
 
             [ { Term.Default with
                   Name = "ThirdTerm"
@@ -57,7 +57,7 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_"""
             "\
 ### 📗 `ThirdTerm`
 
-📝 _undefined_
+> 📝 _undefined_
 
 💬 \"Do a thing\""
 
@@ -67,7 +67,7 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_"""
             "\
 ### 📗 `ThirdTermWithTrailingNewLineInUsage`
 
-📝 _undefined_
+> 📝 _undefined_
 
 💬 \"Do a thing\""
 
@@ -77,7 +77,7 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_"""
             "\
 ### 📗 `ThirdTermWithTrailingWhitespaceInUsage`
 
-📝 _undefined_
+> 📝 _undefined_
 
 💬 \"Do a thing\""
 
@@ -87,7 +87,7 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_"""
             "\
 ### 📗 `ThirdTermWithLeadingWhitespaceInUsage`
 
-📝 _undefined_
+> 📝 _undefined_
 
 💬 \"Do a thing\""
 
@@ -97,7 +97,7 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_"""
             "\
 ### 📗 `Metadata`
 
-📝 _undefined_
+> 📝 _undefined_
 
 key value"
 
@@ -107,7 +107,7 @@ key value"
             "\
 ### 📗 `Metadata with multiple keys`
 
-📝 _undefined_
+> 📝 _undefined_
 
 key value
 
@@ -117,11 +117,13 @@ key2 value2"
             "\
 ### 📗 `Second`
 
-📝 _undefined_
+> 📝 _undefined_
+
+***
 
 ### 📗 `Term`
 
-📝 _undefined_"
+> 📝 _undefined_"
 
             [ { Term.Default with
                   Name = "First"
@@ -130,13 +132,15 @@ key2 value2"
             "\
 ### 📗 `First`
 
-📝 _undefined_
+> 📝 _undefined_
 
 💬 \"Do a thing\"
 
+***
+
 ### 📗 `Term`
 
-📝 _undefined_"
+> 📝 _undefined_"
 
             [ { Term.Default with
                   Name = "TermWithExamples"
@@ -148,15 +152,17 @@ key2 value2"
             "\
 ### 📗 `TermWithExamples`
 
-📝 _undefined_
+> 📝 _undefined_
 
 💬 \"Do a thing\"
 
 key value
 
+***
+
 ### 📗 `AnotherTermWithExamples`
 
-📝 _undefined_
+> 📝 _undefined_
 
 💬 \"Do something else\"
 
@@ -170,7 +176,8 @@ key value
                   seq {
                       { Context.Default with
                           Name = "TestContext"
-                          DomainVisionStatement = "supporting the test" }
+                          DomainVisionStatement = "supporting the test"
+                          Meta = dict [ "owner", "Team A" ] }
                   }
                   |> SubGlossaryHelper.allContextsWithTermNames [ "term" ]
 
@@ -182,9 +189,13 @@ key value
 
 _Vision: supporting the test_
 
+owner Team A
+
+***
+
 ### 📗 `term`
 
-📝 _undefined_"
+> 📝 _undefined_"
 
               test <@ rendering.Value.ReplaceLineEndings() = expectedHover @>
 
@@ -203,17 +214,21 @@ _Vision: supporting the test_
                   "\
 ## 💠 Test Context
 
+***
+
 ### 📗 `term`
 
-📝 _undefined_
+> 📝 _undefined_
 
 ***
 
 ## 💠 Other Context
 
+***
+
 ### 📗 `term`
 
-📝 _undefined_"
+> 📝 _undefined_"
 
               test <@ rendering.Value.ReplaceLineEndings() = expectedHover @>
 
@@ -235,9 +250,11 @@ _Vision: supporting the test_
 
 _Vision: vision statement should still be italic_
 
+***
+
 ### 📗 `term`
 
-📝 _undefined_"
+> 📝 _undefined_"
 
               test <@ rendering.Value.ReplaceLineEndings() = expectedHover @>
 
@@ -259,8 +276,10 @@ _Vision: vision statement should still be italic_
 
 _Vision: vision statement should still be italic_
 
+***
+
 ### 📗 `term`
 
-📝 _undefined_"
+> 📝 _undefined_"
 
               test <@ rendering.Value.ReplaceLineEndings() = expectedHover @> ]
