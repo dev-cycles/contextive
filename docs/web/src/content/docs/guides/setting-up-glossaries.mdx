@@ -7,14 +7,14 @@ sidebar:
 
 import { FileTree } from '@astrojs/starlight/components';
 
-Glossaries are files that contain lists of terms, their definitions and other attributes.
+Glossaries are files that contain lists of terms, their definitions and other attributes. You can have as many glossary files as you like in your repository.
 
-You can have as many glossary files as you like in your repository. For Contextive to find a glossary file, it must match the pattern `*.glossary.yml`. You can name the prefix whatever you like, so `project.glossary.yml` and `module.glossary.yml` are both valid filenames, but `module-glossary.yml` is not.
+For Contextive to find a glossary file, it must match the pattern `*.glossary.yml`. You can name the prefix whatever you like, so `project.glossary.yml` and `module.glossary.yml` are both valid filenames, but `module-glossary.yml` is not.
 
 When setting up a glossary file, there are two things to do:
 
 1. Define a bounded context in the header of the glossary - see [Bounded Contexts](#bounded-contexts)
-2. Decide where to put it - this affects which files are supported by the terminology in that glossary file - see [Glossary Location](#glossary-location)
+2. Decide where to put the glossary file - this affects which files are supported by its terminology - see [Glossary Location](#glossary-location)
 
 ## Bounded Contexts
 
@@ -57,7 +57,7 @@ Which would just show the term definition:
 
 See [defining terminology](../defining-terminology) for details on defining terms.
 
-Following the patterns above, it is recommended to have a single context per file, but [multiple contexts per file](#multiple-bounded-contexts) is supported.
+For flexibility, it is recommended to have a single context per file, but [multiple contexts per file](#multiple-bounded-contexts) are supported.
 
 ### Glossary File Template
 
@@ -101,7 +101,7 @@ This is fundamentally the same as the previous pattern, but is described to be e
 
 For this approach to work, each repository must deal with different domain concepts so that the terms useful in one repository are irrelevant in the others, and visa versa.
 
-This pattern is particularly useful if each repository aligns with the concept of a [Bounded Context](#bounded-contexts) from Domain-Driven Design.
+This pattern is particularly useful if each repository contains all the code associated with a [Bounded Context](#bounded-contexts).
 
 <FileTree>
 
@@ -147,7 +147,7 @@ Assuming the same definitions as before, where `shipping.glossary.yml` defines `
 * When working on `/shipping/src/Order.cs`, hovering over the word `Order` will show `A set of parcels with a common delivery destination.`
 * When working on `/payments/src/Order.cs`, hovering over the word `Order` will show `An amount to be charged to the customer and the payment method to charge.`
 
-This pattern is particularly useful if the modules in your modular monolith align with the concept of a [Bounded Context](#bounded-contexts) from Domain-Driven Design.
+This pattern is particularly useful if each module in your modular monolith contains all the code associated with a [Bounded Context](#bounded-contexts).
 
 ### Terms relevant across multiple repositories
 

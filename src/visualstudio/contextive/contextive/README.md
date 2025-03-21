@@ -32,8 +32,8 @@ See [setting up glossaries](https://docs.contextive.tech/ide/v/1.15.0/guides/set
   * Hover over elements with [suffixes & prefixes](https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#suffixes-and-prefixes)
   * Hover over usage of [multiple terms](https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#combining-two-or-more-terms) combined using camelCase, PascalCase and snake_case
   * Hover over [multi-word](https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#complex-multi-word-terms) terms
-  * Hover over [plural](https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#plural-words) of defined terms
-  * Hover over [aliases](https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#term-aliases) of defined terms
+  * Hover over [plural](https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#plurals) of defined terms
+  * Hover over [aliases](https://docs.contextive.tech/ide/v/1.15.0/guides/defining-terminology/#aliases) of defined terms
 * Put your glossaries near the code they support:
   * [Terms relevant for the whole repository](https://docs.contextive.tech/ide/v/1.15.0/guides/setting-up-glossaries/#terms-relevant-for-the-whole-repository)
   * [Different terms relevant in different repositories](https://docs.contextive.tech/ide/v/1.15.0/guides/setting-up-glossaries/#different-terms-relevant-in-different-repositories)
