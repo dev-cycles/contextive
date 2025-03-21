@@ -20,9 +20,28 @@ When setting up a glossary file, there are two things to do:
 
 In Domain-Driven Design, a Bounded Context is a logical boundary around a model of some portion of the domain. It's quite common for different Bounded Contexts to evolve their own unique 'languages' or 'dialects', so it is helpful to keep them in separate glossary files.
 
-### Defining a Bounded Context
+### A Simple Bounded Context
 
 The top level of the `*.glossary.yml` file is a list of bounded contexts. The key in the yml file is `contexts`. A file with a single context looks like:
+
+```yml
+// shipping.glossary.yml
+contexts:
+  - name: Shipping
+    terms:
+      - name: Order
+        definition: A set of parcels with a common delivery destination.
+      - % other terms %
+...
+```
+
+![Shipping Context Headers](../../../assets/images/context-simple-header.png)
+
+The `name` field is optional, but generally recommended.
+
+### Defining a Domain Vision Statement
+
+`domainVisionStatement` is an optional field that allows you to express the purpose of the context.
 
 ```yml
 // shipping.glossary.yml
@@ -35,11 +54,35 @@ contexts:
       - % other terms %
 ...
 ```
-Both the `name` and `domainVisionStatement` are optional, but if supplied, they will be shown at the top of the hover panel to provide context for the terms.
 
-![Shipping Context Headers](../../../assets/images/context-header.png)
+![Shipping Context Headers](../../../assets/images/context-header-with-vision-statement.png)
 
-If those fields are undefined, the context can be as simple as:
+### Context Metadata
+
+Contexts can have a `meta` key which allows defining an arbitrary set of key:value pairs.  The value must be a string, and they are rendered exactly as supplied with a space between them.
+
+Both the key and the value support markdown, which can allow for hyperlinks out to more thorough documentation, e.g.:
+
+```yml
+// shipping.glossary.yml
+contexts:
+  - name: Shipping
+    domainVisionStatement: To manage the shipping of orders to customers.
+    meta:
+      "👥 Owner:": "[Team A](https://corporate.wiki/teams/TeamA)"
+      "🌐 Ref:": "[Cargo Canonical Reference](https://corporate.wiki/glossary/shipping)"
+    terms:
+      - name: Order
+        definition: A set of parcels with a common delivery destination.
+      - % other terms %
+...
+```
+
+![Shipping Context Headers](../../../assets/images/context-header-with-metadata.png)
+
+### No Context definition
+
+All three fields - `name`, `domainVisionStatement` and `meta` are optional.  If none are undefined, the context can be as simple as:
 
 ```yml
 // shipping.glossary.yml
@@ -56,8 +99,6 @@ Which would just show the term definition:
 ![Shipping Context Without Headers](../../../assets/images/context-no-header.png)
 
 See [defining terminology](../defining-terminology) for details on defining terms.
-
-For flexibility, it is recommended to have a single context per file, but [multiple contexts per file](#multiple-bounded-contexts) are supported.
 
 ### Glossary File Template
 
@@ -97,7 +138,7 @@ In the example above, if `projectName.glossary.yml` contains a definition for th
 
 ### Different terms relevant in different repositories
 
-This is fundamentally the same as the previous pattern, but is described to be explicit for teams who are using multiple repositories.
+This is the same as the previous pattern, but is described to be explicit for teams who are using multiple repositories.
 
 For this approach to work, each repository must deal with different domain concepts so that the terms useful in one repository are irrelevant in the others, and visa versa.
 

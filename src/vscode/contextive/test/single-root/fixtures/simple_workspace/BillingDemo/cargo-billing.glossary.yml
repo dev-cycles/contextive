@@ -5,3 +5,10 @@ contexts:
     terms:
       - name: Policy
         definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
+        examples:
+          - The billing policy is to send to collections after 90 days in arrears.
+        aliases:
+          - Rule
+        meta:
+          "🌐 Ref:": "[Policy Wiki](https://corporate.wiki/glossary/policy)"
+          ✅: Approved

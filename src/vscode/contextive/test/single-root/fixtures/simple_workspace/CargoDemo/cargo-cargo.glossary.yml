@@ -13,7 +13,7 @@ contexts:
       aliases:
         - unit
       meta:
-          "🌐 Ref:": "[Cargo Canonical Reference](https://corporate.wiki/glossary/cargo)"
+          "🌐 Ref:": "[Cargo Wiki](https://corporate.wiki/glossary/cargo)"
           ✅: Approved
     - name: Leg
       definition: The movement of a Cargo on a specific vessel from load location to unload location.

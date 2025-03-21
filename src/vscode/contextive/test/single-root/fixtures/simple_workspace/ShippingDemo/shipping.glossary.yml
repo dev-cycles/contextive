@@ -1,6 +1,9 @@
 contexts:
   - name: Shipping
     domainVisionStatement: To manage the shipping of orders to customers.
+    meta:
+      "👥 Owner:": "[Team A](https://corporate.wiki/teams/TeamA)"
+      "🌐 Ref:": "[Shipping Wiki](https://corporate.wiki/glossary/shipping)"
     terms:
       - name: Order
         definition: A set of parcels with a common delivery destination.

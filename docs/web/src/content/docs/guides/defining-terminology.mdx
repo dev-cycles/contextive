@@ -22,6 +22,8 @@ The following Contextive Glossary files were used to generate all screenshots/sc
 contexts:
   - name: Cargo
     domainVisionStatement: To manage the routing of cargo through transportation legs
+    meta:
+      "👥 Owner:": "[Team A](https://corporate.wiki/teams/TeamA)"
     terms:
     - name: Cargo
       definition: A unit of transportation that needs moving and delivery to its delivery location.
@@ -31,9 +33,8 @@ contexts:
       aliases:
         - unit
       meta:
-          "👥 Owner:": "[Team A](https://corporate.wiki/teams/TeamA \"Team A Owns This Term\")"
-          "🌐 Ref:": "[Cargo Canonical Reference](https://corporate.wiki/glossary/cargo)"
-          "✅": "Approved"
+          "🌐 Ref:": "[Cargo Wiki](https://corporate.wiki/glossary/cargo)"
+          ✅: Approved
     - name: Leg
       definition: The movement of a Cargo on a specific vessel from load location to unload location.
       examples:
@@ -67,31 +68,29 @@ The screenshots are from VsCode, but it should look similar in any IDE.
 
 ## Simple Terms
 
-A simple term can be defined with just the name of the term.  e.g. yml like:
+A simple term can be defined with just the name of the term:
 
-```yml
+```diff lang="yml" title="repo-root/billing-module/billing.glossary.yml"
 ...
     - terms:
-      - name: Policy
++      - name: Policy
 ```
-
-with no definition or any othe fields, will display in the hover panel like:
 
 ![Simple Term with no definition](../../../assets/images/simple-term.png)
 
 The _undefined_ definition is there to prompt adding a definition.
 
-The `name` field is the ONLY required field.
+The `name` field is the only **required** field.
 
 ### Definition
 
 By adding a definition field, the hover panel becomes more useful:
 
-```yml
+```diff lang="yml" title="repo-root/billing-module/billing.glossary.yml"
 ...
     - terms:
       - name: Policy
-        definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
++        definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
 ```
 
 ![Simple Term with definition](../../../assets/images/simple-term-with-definition.png)
@@ -102,19 +101,61 @@ Usage examples are a list of statements that represent real sentences that might
 
 To define usage examples, provide the `examples` key, like so:
 
-```yml
+```diff lang="yml" title="repo-root/billing-module/billing.glossary.yml"
+...
+    - terms:
+      - name: Policy
+        definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
++        examples:
++          - The billing policy is to send to collections after 90 days in arrears.
+```
+
+![Simple Term with definition and usage examples](../../../assets/images/simple-term-with-definition-and-examples.png)
+
+### Aliases
+
+Contextive supports defining a list of aliases for a given term.  These can be acronyms or just alternative words that are sometimes used interchangeably.  For example, in the cargo domain above, `unit` is an alias of `cargo`.
+
+```diff lang="yml" title="repo-root/billing-module/billing.glossary.yml"
 ...
     - terms:
       - name: Policy
         definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
         examples:
           - The billing policy is to send to collections after 90 days in arrears.
-
++        aliases:
++          - Rule
 ```
 
-![Simple Term with definition and usage examples](../../../assets/images/simple-term-with-definition-and-examples.png)
+When hovering over the word `Rule`, the definition of `Policy` will be displayed:
 
-### Finding Words in Code
+![Example of hovering over the alias `Rule` for the term `Cargo`.](../../../assets/images/simple-term-with-alias.png)
+
+### Metadata
+
+Sometimes teams have extra data they'd like to display with the term, such as a link to a resource that might explain it in more detail, or some governance characteristics.
+
+These can be stored in the `meta` key, and will be shown underneath the definition. Both key and value can contain markdown or emoji. If you want a `:` after the key, you must add it to the text of the key as it will not be added.
+
+For example:
+
+```diff lang="yml" title="repo-root/billing-module/billing.glossary.yml"
+...
+    - terms:
+      - name: Policy
+        definition: A set of payment rules that defines when invoices are due, and actions to take when unpaid.
+        examples:
+          - The billing policy is to send to collections after 90 days in arrears.
+        aliases:
+          - Rule
++        meta:
++          "🌐 Ref:": "[Policy Wiki](https://corporate.wiki/glossary/policy)"
++          ✅: Approved
+```
+
+![Example of a term with metadata.](../../../assets/images/simple-term-with-metadata.png)
+
+## Finding Words in Code
 
 Often terms from your glossary are used in code as part of compound word, such as `PolicyEntity`, `PolicyId` or `policy_service`.
 
@@ -138,6 +179,7 @@ It's quite common to combine a term from your language, such as `cargo` with a s
 It's also common to end up with code elements (classes, variables or methods) that combine two or more terms from your language, such as `Leg` and `Policy`.  Even if you haven't explicitly created a term for `LegPolicy`, Contextive will identify both words and show you both definitions at the same time:
 
 ![Example of hovering over a combined word with multiple matches.](../../../assets/images/multi-match-auto-complete-demo.gif)
+
 
 ## Complex (multi-word) terms
 
@@ -189,42 +231,6 @@ Contextive can detect a defined term even when it is defined in the singular and
 ![Term found when plural](../../../assets/images/term-found-when-plural.png)
 
 Coming Soon: Ability to detect a defined term when it is defined in the plural and used in the singular, and when individual words in a multi-word term are pluralised or singularised.
-
-## Aliases
-
-Contextive supports defining a list of aliases for a given term.  These can be acronyms or just alternative words that are sometimes used interchangeably.  For example, in the cargo domain above, `unit` is an alias of `cargo`.
-
-```yml
-...
-    - terms:
-      - name: Cargo
-        definition: A unit of transportation that needs moving and delivery to its delivery location.
-        aliases:
-          - unit
-```
-
-When hovering over the word `unit`, the definition of `cargo` will be displayed:
-
-![Example of hovering over the alias 'unit' for the term 'cargo'.](../../../assets/images/alias.png)
-
-## Metadata
-
-Sometimes teams have extra data they'd like to display with the term, such as a link to a resource that might explain it in more detail, or some governance characteristics.
-
-These can be stored in the `meta` key, and will be shown underneath the definition. Both key and value can contain markdown. For example:
-
-```yml
-...
-    - terms:
-      - name: Cargo
-        definition: A unit of transportation that needs moving and delivery to its delivery location.
-        ...
-        meta:
-          Owner: "[Team A](https://corporate.wiki/teams/TeamA)"
-          Reference: "[Cargo Canonical Reference](https://corporate.wiki/glossary/cargo)"
-```
-
-![Example of a term with metadata.](../../../assets/images/term-meta-data.png)
 
 ## Smart Auto-Complete
 
