@@ -10,7 +10,6 @@ pkgs.mkShellNoCC {
   ];
 
   DOTNET_ROOT = "${pkgs.dotnet-sdk_8}";
-  CONTEXTIVE_DEBUG=1;
 
   shellHook = ''
     pushd src

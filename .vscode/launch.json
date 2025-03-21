@@ -15,6 +15,9 @@
             "outFiles": [
                 "${workspaceFolder}/${config:vsCodeExtensionPath}/dist/**/*.js"
             ],
+            "env": {
+                "CONTEXTIVE_DEBUG": "1"
+            },
             "preLaunchTask": "build: All"
         },
         {
@@ -48,7 +51,8 @@
                 "${workspaceFolder}/${config:vsCodeExtensionPath}/dist/**/*.js"
             ],
             "env": {
-                "MOCHA_FGREP": "Single-Root"
+                "MOCHA_FGREP": "Single-Root",
+                "CONTEXTIVE_DEBUG": "1"
             },
             "preLaunchTask": "build: All Tests"
         },
@@ -67,7 +71,8 @@
                 "${workspaceFolder}/${config:vsCodeExtensionPath}/dist/**/*.js"
             ],
             "env": {
-                "MOCHA_FGREP": "Multi-Root"
+                "MOCHA_FGREP": "Multi-Root",
+                "CONTEXTIVE_DEBUG": "1"
             },
             "preLaunchTask": "build: All Tests"
         }

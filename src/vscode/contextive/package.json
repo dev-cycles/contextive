@@ -62,7 +62,7 @@
 		"pretest": "npm run compile && npm run compile-tests",
 		"test-single-root": "cross-env MOCHA_FGREP=\"Single-Root\" node ./out/runTest.js",
 		"test-multi-root": "cross-env MOCHA_FGREP=\"Multi-Root\" node ./out/runTest.js",
-		"test": "npm run test-single-root && npm run test-multi-root"
+		"test": "export CONTEXTIVE_DEBUG=1; npm run test-single-root && npm run test-multi-root"
 	},
 	"devDependencies": {
 		"@semantic-release/changelog": "^6.0.3",
