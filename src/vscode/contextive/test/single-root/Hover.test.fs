@@ -60,7 +60,7 @@ let tests =
           testCaseAsync "Hover returns expected content"
           <| async {
               let testDocPath = Paths.inWorkspace ".contextive/definitions.yml"
-              let position = vscode.Position.Create(17, 9)
+              let position = vscode.Position.Create(19, 9)
 
               let! hoverContents = getHover testDocPath position 1
 
