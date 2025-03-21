@@ -77,10 +77,14 @@ module Context =
             withTerms (ResizeArray<Term>()) context
 
 [<CLIMutable>]
-type GlossaryFile = { Contexts: ResizeArray<Context> }
+type GlossaryFile =
+    { Imports: ResizeArray<string>
+      Contexts: ResizeArray<Context> }
 
 module GlossaryFile =
-    let Default = { Contexts = ResizeArray<Context>() }
+    let Default =
+        { Imports = ResizeArray<string>()
+          Contexts = ResizeArray<Context>() }
 
     let private replaceNullContextsWithDefaults (glossaryFile: GlossaryFile) =
         { glossaryFile with
@@ -88,7 +92,17 @@ module GlossaryFile =
 
     let private replaceNullContextListWithDefault (glossaryFile: GlossaryFile) =
         match glossaryFile.Contexts with
-        | null -> Default
+        | null ->
+            { glossaryFile with
+                Contexts = Default.Contexts }
+        | _ -> glossaryFile
+
+
+    let private replaceNullImportsListWithDefault (glossaryFile: GlossaryFile) =
+        match glossaryFile.Imports with
+        | null ->
+            { glossaryFile with
+                Imports = Default.Imports }
         | _ -> glossaryFile
 
     let private replaceNullTermsWithDefault (glossaryFile: GlossaryFile) =
@@ -98,6 +112,7 @@ module GlossaryFile =
     let fixNulls (glossaryFile: GlossaryFile) =
         glossaryFile
         |> replaceNullContextListWithDefault
+        |> replaceNullImportsListWithDefault
         |> replaceNullContextsWithDefaults
         |> replaceNullTermsWithDefault
 
@@ -114,16 +129,16 @@ let deserialize (yml: string) =
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build()
 
-        let glossary = deserializer.Deserialize<GlossaryFile>(yml)
+        let glossary = deserializer.Deserialize<GlossaryFile> yml
 
         match glossary |> box with
-        | null -> Error(ParsingError("Glossary file is empty."))
+        | null -> Error(ParsingError "Glossary file is empty.")
         | _ -> glossary |> GlossaryFile.fixNulls |> Ok
     with
     | :? YamlDotNet.Core.YamlException as e ->
         match e.InnerException with
         | :? ValidationException as ve ->
-            Error(ValidationError($"{ve.Message} See line {e.Start.Line}, column {e.Start.Column}."))
+            Error(ValidationError $"{ve.Message} See line {e.Start.Line}, column {e.Start.Column}.")
         | _ ->
             let msg =
                 if e.InnerException = null then
@@ -131,8 +146,8 @@ let deserialize (yml: string) =
                 else
                     e.InnerException.Message
 
-            Error(ParsingError($"Object starting line {e.Start.Line}, column {e.Start.Column} - {msg}"))
-    | e -> Error(ParsingError($"Unexpected parsing error: {e.ToString()}"))
+            Error(ParsingError $"Object starting line {e.Start.Line}, column {e.Start.Column} - {msg}")
+    | e -> Error(ParsingError $"Unexpected parsing error: {e.ToString()}")
 
 open YamlDotNet.Core
 open YamlDotNet.Core.Events

@@ -41,3 +41,9 @@ module Two =
 
     let expectedCompletionLabelsUPPER =
         seq [ "WORD1"; "WORD_1"; "WORD2"; "WORD_2"; "WORD3"; "WORD_3" ]
+
+module Imports =
+    let rootPath = System.IO.Path.Combine("fixtures", "import_tests")
+
+    module Main =
+        let path = System.IO.Path.Combine(rootPath, "main_folder", "main.glossary.yml")

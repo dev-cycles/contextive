@@ -29,7 +29,8 @@ let private introComments =
 """
 
 let private defaultGlossaryFile =
-    { Contexts =
+    { Imports = null
+      Contexts =
         [| { Name = "Demo"
              DomainVisionStatement = "To illustrate the usage of the contextive glossary file."
              Paths = [||] |> ResizeArray

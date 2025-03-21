@@ -179,6 +179,136 @@ let tests =
           }
 
           testList
+              "Import"
+              [ testAsync "When a subglossary has an import statement it should import the referenced file" {
+                    let awaiter = CA.create ()
+
+                    let fileToImport = "../../fileToImport.yml"
+                    let initialFilePath = "path1"
+
+                    let glossaryWithImport =
+                        $"\
+imports:
+  - {fileToImport}
+"
+
+                    let fileReader p =
+                        if p.Path = initialFilePath then
+                            Ok glossaryWithImport
+                        elif p.Path = fileToImport then
+                            CA.received awaiter p.Path
+                            Ok emptyGlossary
+                        else
+                            Error FileError.FileNotFound
+
+                    let _ = pc initialFilePath |> newStartSubGlossary |> SubGlossary.start fileReader
+
+                    do! CA.expectMessage awaiter fileToImport
+                }
+
+                testAsync
+                    "When a subglossary has an import statement it should merge imported contexts with existing contexts" {
+                    let fileToImport = "/fileToImport.yml"
+                    let initialFilePath = "/path1"
+
+                    let importedGlossary =
+                        $"\
+contexts:
+  - terms:
+    - name: importedTerm"
+
+                    let glossaryWithImport =
+                        $"\
+imports:
+  - {fileToImport}
+contexts:
+  - terms:
+    - name: originalTerm
+"
+
+                    let fileReader p =
+                        if p.Path = initialFilePath then Ok glossaryWithImport
+                        elif p.Path = fileToImport then Ok importedGlossary
+                        else Error FileError.FileNotFound
+
+                    let subGlossary =
+                        pc initialFilePath |> newStartSubGlossary |> SubGlossary.start fileReader
+
+                    let! result = SubGlossary.lookup subGlossary "" id
+
+                    let terms = FindResult.allTerms result
+
+                    test <@ result.Count() = 2 @>
+                    test <@ terms |> Seq.map _.Name |> Set.ofSeq = Set.ofList [ "importedTerm"; "originalTerm" ] @>
+                }
+
+                testAsync "When an imported subglossary has an import statement it should chain the imports" {
+                    let fileToImport n = $"/fileToImport{n}.yml"
+
+                    let importedGlossary n =
+                        $"\
+contexts:
+  - terms:
+    - name: term{n}"
+
+                    let glossaryWithImport n =
+                        $"\
+imports:
+  - {fileToImport <| n + 1}
+contexts:
+  - terms:
+    - name: term{n}"
+
+                    let fileReader p =
+                        if p.Path = fileToImport 1 then Ok <| glossaryWithImport 1
+                        elif p.Path = fileToImport 2 then Ok <| glossaryWithImport 2
+                        elif p.Path = fileToImport 3 then Ok <| importedGlossary 3
+                        else Error FileNotFound
+
+                    let subGlossary =
+                        1 |> fileToImport |> pc |> newStartSubGlossary |> SubGlossary.start fileReader
+
+                    let! result = SubGlossary.lookup subGlossary "" id
+
+                    let terms = FindResult.allTerms result
+
+                    test <@ result.Count() = 3 @>
+
+                    test <@ terms |> Seq.map _.Name |> Set.ofSeq = Set.ofList [ "term1"; "term2"; "term3" ] @>
+                }
+
+                testAsync "Circular imports should be blocked" {
+                    let fileToImport n = $"/fileToImport{n}.yml"
+
+                    let glossaryWithImport n =
+                        $"\
+imports:
+  - {fileToImport n}
+contexts:
+  - terms:
+    - name: term{n}"
+
+                    let fileReader p =
+                        if p.Path = fileToImport 1 then Ok <| glossaryWithImport 2
+                        elif p.Path = fileToImport 2 then Ok <| glossaryWithImport 1
+                        else Error FileNotFound
+
+                    let subGlossary =
+                        1 |> fileToImport |> pc |> newStartSubGlossary |> SubGlossary.start fileReader
+
+                    let! result = SubGlossary.lookup subGlossary "" id
+
+                    let terms = FindResult.allTerms result
+
+                    test <@ result.Count() = 2 @>
+
+                    test <@ terms |> Seq.map _.Name |> Set.ofSeq = Set.ofList [ "term1"; "term2" ] @>
+                }
+
+                ]
+
+
+          testList
               "Integration"
               [ testAsync "SubGlossary can collaborate with FileReader" {
                     let subGlossary =
@@ -193,6 +323,23 @@ let tests =
                     let foundNames = terms |> Seq.map getName
                     test <@ (foundNames, Fixtures.One.expectedTerms) ||> compareList = 0 @>
 
-                } ]
+                }
+
+                testAsync "SubGlossary can collaborate with FileReader with imports" {
+                    let subGlossary =
+                        pc Fixtures.Imports.Main.path
+                        |> newStartSubGlossary
+                        |> SubGlossary.start FileReader.pathReader
+
+                    let! result = SubGlossary.lookup subGlossary "" id
+
+                    let terms = FindResult.allTerms result
+
+                    let foundNames = terms |> Seq.map getName
+                    test <@ Set.ofSeq foundNames = Set.ofList [ "main"; "imported" ] @>
+
+                }
+
+                ]
 
           ]

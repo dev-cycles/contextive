@@ -5,7 +5,10 @@ open Contextive.Core.GlossaryFile
 open Expecto
 open Swensen.Unquote
 
-let unwrap = Result.defaultValue { Contexts = null }
+let unwrap =
+    function
+    | Ok(v) -> v
+    | Error(e: FileError) -> raise <| System.Exception(fileErrorMessage e)
 
 let unwrapError =
     function
@@ -38,6 +41,7 @@ let glossaryFileTests =
           <| fun () ->
               let glossaryFile = GlossaryFile.Default
               test <@ glossaryFile.Contexts.Count = 0 @>
+              test <@ glossaryFile.Imports.Count = 0 @>
 
           testCase "Context with new terms has new terms"
           <| fun () ->
@@ -53,6 +57,7 @@ let glossaryFileTests =
                 <| fun () ->
                     let result = deserialize """contexts:""" |> unwrap
                     test <@ result.Contexts.Count = 0 @>
+                    test <@ result.Imports.Count = 0 @>
 
                 testCase "Minimal parse has parse defaults"
                 <| fun () ->
@@ -387,4 +392,18 @@ contexts:
     - name:
 """
 
-                    test <@ result = Error(ValidationError "The Name field is required. See line 4, column 7.") @> ] ]
+                    test <@ result = Error(ValidationError "The Name field is required. See line 4, column 7.") @> ]
+
+          testCase "Can parse import"
+          <| fun () ->
+              let glossaryFile =
+                  unwrap
+                  <| deserialize
+                      "\
+imports:
+  - \"../../something.glossary.yml\"
+"
+
+              test <@ glossaryFile.Imports |> Seq.head = "../../something.glossary.yml" @>
+
+          ]

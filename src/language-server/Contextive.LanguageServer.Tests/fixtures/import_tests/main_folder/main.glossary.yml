@@ -1,0 +1,5 @@
+imports:
+  - ../imported_folder/imported.glossary.yml
+contexts:
+  - terms:
+    - name: main

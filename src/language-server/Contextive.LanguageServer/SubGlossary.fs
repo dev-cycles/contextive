@@ -22,12 +22,14 @@ type FileReaderFn = PathConfiguration -> Result<string, FileError>
 
 type State =
     { FileReader: FileReaderFn
+      ImportedFiles: string seq
       GlossaryFile: GlossaryFile
       Log: Logger
       Path: PathConfiguration option }
 
     static member Initial =
         { FileReader = fun _ -> Error(NotYetLoaded)
+          ImportedFiles = Seq.empty
           GlossaryFile = GlossaryFile.Default
           Log = Logger.Noop
           Path = None }
@@ -36,31 +38,66 @@ type T = MailboxProcessor<Message>
 
 module Handlers =
 
+    let private loadFile state (p: PathConfiguration) loadAndMergeImports =
+        state.Log.info $"Loading contextive from {p.Path}..."
+        let fileContents = state.FileReader p
+
+        fileContents
+        |> Result.bind deserialize
+        |> Result.map (fun r ->
+            state.Log.info "Successfully loaded."
+
+            { state with
+                GlossaryFile = r
+                ImportedFiles =
+                    seq {
+                        yield! state.ImportedFiles
+                        yield p.Path
+                    } })
+        |> Result.map (loadAndMergeImports p.Path)
+        |> Result.mapError (fun fileError ->
+            match fileError with
+            | DefaultFileNotFound -> state.Log.info "No glossary file configured, and default file not found."
+            | _ ->
+                let errorMessage = fileErrorMessage fileError
+                let msg = $"Error loading glossary: {errorMessage}"
+                state.Log.error msg
+
+            fileError)
+        |> Result.defaultValue state
+
+    let normalizePath (originalPath: string) newPath : string =
+        let originalBase = System.IO.Path.GetDirectoryName originalPath
+        System.IO.Path.Combine(originalBase, newPath)
+
+
+    let rec private loadAndMergeImports (importSource: string) (state: State) =
+        if state.GlossaryFile.Imports.Count > 0 then
+            let import = state.GlossaryFile.Imports |> Seq.head |> normalizePath importSource
+
+            if Seq.contains import state.ImportedFiles then
+                state.Log.info $"Not loading {import} as it's already been loaded (circular dependency)."
+                state
+            else
+                let newState =
+                    loadFile state { Path = import; IsDefault = false } loadAndMergeImports
+
+                { state with
+                    GlossaryFile =
+                        { state.GlossaryFile with
+                            Contexts =
+                                Seq.append state.GlossaryFile.Contexts newState.GlossaryFile.Contexts
+                                |> ResizeArray } }
+        else
+            state
+
     let reload (state: State) =
         async {
             return
                 match state.Path with
                 | None -> state
-                | Some p ->
-                    state.Log.info $"Loading contextive from {p.Path}..."
-                    let fileContents = state.FileReader p
+                | Some p -> loadFile state p loadAndMergeImports
 
-                    fileContents
-                    |> Result.bind deserialize
-                    |> Result.map (fun r ->
-                        state.Log.info "Successfully loaded."
-                        { state with GlossaryFile = r })
-                    |> Result.mapError (fun fileError ->
-                        match fileError with
-                        | DefaultFileNotFound ->
-                            state.Log.info "No glossary file configured, and default file not found."
-                        | _ ->
-                            let errorMessage = fileErrorMessage fileError
-                            let msg = $"Error loading glossary: {errorMessage}"
-                            state.Log.error msg
-
-                        fileError)
-                    |> Result.defaultValue state
         }
 
     let start (state: State) (startSubGlossary: StartSubGlossary) =
