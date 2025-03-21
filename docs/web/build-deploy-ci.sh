@@ -4,7 +4,7 @@ if [[ "$CONTEXTIVE_STAGE" != "prod" ]]; then
     export CONTEXTIVE_SHA=$(git rev-parse --short HEAD)
     CONTEXTIVE_VERSION=$CONTEXTIVE_SHA
 fi
-export BASE_URL=//community/
+export BASE_URL=/community
 
 if [[ "$CONTEXTIVE_ARCHIVE" ]]; then
     BASE_URL=$BASE_URL/v/$CONTEXTIVE_VERSION
