@@ -48,27 +48,27 @@ let private renderUsageExamples =
     | { GlossaryFile.Term.Examples = null } -> Seq.empty
     | t -> renderTermUsageExamples t
 
-let private renderTermDefinition (term: GlossaryFile.Term) =
-    let name =
-        seq {
-            term.Name |> renderName |> Some
-            renderDefinitionWithAlias term
-        }
-
-    Seq.append name <| renderUsageExamples term
-    |> concatWithNewLinesIfExists
-    |> Seq.singleton
-
 let private renderTermMeta (t: GlossaryFile.Term) =
-    t.Meta |> Seq.map (fun kvp -> $"**{kvp.Key}** {kvp.Value}" |> Some)
+    t.Meta |> Seq.map (fun kvp -> $"{kvp.Key} {kvp.Value}" |> Some)
 
 let private renderMetadata =
     function
     | { GlossaryFile.Term.Meta = null } -> Seq.empty
     | t -> renderTermMeta t
 
+let private renderTermDefinition (term: GlossaryFile.Term) =
+    seq {
+        term.Name |> renderName |> Some |> Seq.singleton
+        renderDefinitionWithAlias term |> Seq.singleton
+        renderUsageExamples term
+        renderMetadata term
+    }
+    |> Seq.collect id
+    |> concatWithNewLinesIfExists
+    |> Seq.singleton
+
 let renderTerm (terms: GlossaryFile.Term seq) =
-    [ renderTermDefinition; renderMetadata ]
+    [ renderTermDefinition ]
     |> Seq.collect (fun p -> terms |> Seq.collect p)
     |> concatWithNewLinesIfExists
 

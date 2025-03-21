@@ -99,7 +99,7 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_"""
 
 📝 _undefined_
 
-**key** value"
+key value"
 
             [ { Term.Default with
                   Name = "Metadata with multiple keys"
@@ -109,9 +109,9 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_"""
 
 📝 _undefined_
 
-**key** value
+key value
 
-**key2** value2"
+key2 value2"
 
             [ { Term.Default with Name = "Second" }; { Term.Default with Name = "Term" } ],
             "\
@@ -140,7 +140,8 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_"""
 
             [ { Term.Default with
                   Name = "TermWithExamples"
-                  Examples = ResizeArray [ "Do a thing" ] }
+                  Examples = ResizeArray [ "Do a thing" ]
+                  Meta = dict [ "key", "value" ] }
               { Term.Default with
                   Name = "AnotherTermWithExamples"
                   Examples = ResizeArray [ "Do something else"; "Do the third thing" ] } ],
@@ -150,6 +151,8 @@ _Aliases_: _aliasOfTerm_, _anotherAlias_"""
 📝 _undefined_
 
 💬 \"Do a thing\"
+
+key value
 
 ### 📗 `AnotherTermWithExamples`
 

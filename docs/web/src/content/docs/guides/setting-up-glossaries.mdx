@@ -9,17 +9,71 @@ import { FileTree } from '@astrojs/starlight/components';
 
 Glossaries are files that contain lists of terms, their definitions and other attributes.
 
-For Contextive to find your glossary file, it must match the pattern `*.glossary.yml`. You can name the prefix whatever you like, so `project.glossary.yml` and `module.glossary.yml` are both valid filenames, but `module-glossary.yml` is not.
+You can have as many glossary files as you like in your repository. For Contextive to find a glossary file, it must match the pattern `*.glossary.yml`. You can name the prefix whatever you like, so `project.glossary.yml` and `module.glossary.yml` are both valid filenames, but `module-glossary.yml` is not.
+
+When setting up a glossary file, there are two things to do:
+
+1. Define a bounded context in the header of the glossary - see [Bounded Contexts](#bounded-contexts)
+2. Decide where to put it - this affects which files are supported by the terminology in that glossary file - see [Glossary Location](#glossary-location)
+
+## Bounded Contexts
+
+In Domain-Driven Design, a Bounded Context is a logical boundary around a model of some portion of the domain. It's quite common for different Bounded Contexts to evolve their own unique 'languages' or 'dialects', so it is helpful to keep them in separate glossary files.
+
+### Defining a Bounded Context
+
+The top level of the `*.glossary.yml` file is a list of bounded contexts. The key in the yml file is `contexts`. A file with a single context looks like:
+
+```yml
+// shipping.glossary.yml
+contexts:
+  - name: Shipping
+    domainVisionStatement: To manage the shipping of orders to customers.
+    terms:
+      - name: Order
+        definition: A set of parcels with a common delivery destination.
+      - % other terms %
+...
+```
+Both the `name` and `domainVisionStatement` are optional, but if supplied, they will be shown at the top of the hover panel to provide context for the terms.
+
+![Shipping Context Headers](../../../assets/images/context-header.png)
+
+If those fields are undefined, the context can be as simple as:
+
+```yml
+// shipping.glossary.yml
+contexts:
+  - terms:
+      - name: Order
+        definition: A set of parcels with a common delivery destination.
+      - % other terms %
+...
+```
+
+Which would just show the term definition:
+
+![Shipping Context Without Headers](../../../assets/images/context-no-header.png)
+
+See [defining terminology](../defining-terminology) for details on defining terms.
+
+Following the patterns above, it is recommended to have a single context per file, but [multiple contexts per file](#multiple-bounded-contexts) is supported.
+
+### Glossary File Template
+
+import Link from '../../../components/VersionedLink.astro';
+
+When getting started, it could be helpful to copy the <Link href="https://github.com/dev-cycles/contextive/blob/{frontmatter.contextive_version}/src/language-server/Contextive.LanguageServer.Tests/E2e/GlossaryFileInitializationTests.Default%20Glossary%20File.verified.txt">default glossary file template</Link> which contains all possible fields and is used to define the terms used in the glossary file itself.
+
+It can be used as a starting point to edit and amend to incorporate your contexts and [define your terms](../defining-terminology/).
 
 ## Glossary Location
 
-The first thing to decide is how many of these files you need and where to put them.
+The following sections explore common patterns for where to place your glossary files.
 
 :::tip
 Terms in a glossary file are used by Contextive when working on any file in the same folder as the glossary or any of its child folders.
 :::
-
-The following sections explore common patterns for where to place your glossary files.
 
 ### Terms relevant for the whole repository
 
@@ -103,7 +157,7 @@ If you have multiple repositories that would benefit from access to the same ter
 A forthcoming update to Contextive will let you 'import' your glossary from a remote URL, which will make this pattern much simpler. Stay tuned!
 :::
 
-## Multi-root workspaces
+### Multi-root workspaces
 
 Some IDEs (e.g. VsCode) support multi-root workspaces. 
 
@@ -113,58 +167,6 @@ However, it will only discover glossaries by searching from each of the roots, s
 
 In this approach, it's recommended to use something like [Terms relevant only in a subfolder of the repository](#terms-relevant-only-in-a-subfolder-of-the-repository), where each subfolder is 'root' in the multi-root workspace.
 
-## Bounded Contexts
-
-Once you have determined where to put your glossary files, the next thing is to define a Bounded Context in each file.
-
-In Domain-Driven Design, a Bounded Context is a logical boundary around a model of some portion of the domain. It's quite common for different Bounded Contexts to evolve their own unique 'languages' or 'dialects'.
-
-### Defining a Bounded Context
-
-The top level of the `*.glossary.yml` file is a list of bounded contexts. The key in the yml file is `contexts`. A file with a single context looks like:
-
-```yml
-// shipping.glossary.yml
-contexts:
-  - name: Shipping
-    domainVisionStatement: To manage the shipping of orders to customers.
-    terms:
-      - name: Order
-        definition: A set of parcels with a common delivery destination.
-      - % other terms %
-...
-```
-Both the `name` and `domainVisionStatement` are optional, but if supplied, they will be shown at the top of the hover panel to provide context for the terms.
-
-![Shipping Context Headers](../../../assets/images/context-header.png)
-
-If those fields are undefined, the context can be as simple as:
-
-```yml
-// shipping.glossary.yml
-contexts:
-  - terms:
-      - name: Order
-        definition: A set of parcels with a common delivery destination.
-      - % other terms %
-...
-```
-
-Which would just show the term definition:
-
-![Shipping Context Without Headers](../../../assets/images/context-no-header.png)
-
-See [defining terminology](../defining-terminology) for details on defining terms.
-
-Following the patterns above, it is recommended to have a single context per file, but [multiple contexts per file](#multiple-bounded-contexts) is supported.
-
-### Glossary File Template
-
-import Link from '../../../components/VersionedLink.astro';
-
-When getting started, it could be helpful to copy the <Link href="https://github.com/dev-cycles/contextive/blob/{frontmatter.contextive_version}/src/language-server/Contextive.LanguageServer.Tests/E2e/GlossaryFileInitializationTests.Default%20Glossary%20File.verified.txt">default glossary file template</Link> which contains all possible fields and is used to define the terms used in the glossary file itself.
-
-It can be used as a starting point to edit and amend to incorporate your contexts and [define your terms](../defining-terminology/).
 
 ### Multiple Bounded Contexts in a Glossary File
 
