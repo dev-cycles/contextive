@@ -1,0 +1,9 @@
+contexts:
+  - name: Payments
+    domainVisionStatement: To manage payment for orders.
+    meta:
+      "👥 Owner:": "[Team B](https://corporate.wiki/teams/TeamB)"
+      "🌐 Ref:": "[Payments Wiki](https://corporate.wiki/glossary/payments)"
+    terms:
+      - name: Order
+        definition: An amount to be charged to the customer and the payment method to charge.

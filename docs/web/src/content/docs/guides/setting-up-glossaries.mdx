@@ -114,6 +114,8 @@ The following sections explore common patterns for where to place your glossary 
 
 :::tip
 Terms in a glossary file are used by Contextive when working on any file in the same folder as the glossary or any of its child folders.
+
+If you need terms from another glossary file, the [import](#terms-relevant-in-multiple-places) facility may assist.
 :::
 
 ### Terms relevant for the whole repository
@@ -160,7 +162,7 @@ This pattern is particularly useful if each repository contains all the code ass
 
 In this case, `shipping.glossary.yml` might define `Order` as `A set of parcels with a common delivery destination.`.  This definition will be shown when working on in the `shipping` repository.
 
-`payments.glossary.yml` might define `Order` as ``An amount to be charged to the customer and the payment method to charge``.  This definition will be shown when working in the `payments` repository.
+`payments.glossary.yml` might define `Order` as `An amount to be charged to the customer and the payment method to charge.`.  This definition will be shown when working in the `payments` repository.
 
 ### Terms relevant only in a subfolder of the repository
 
@@ -189,6 +191,58 @@ Assuming the same definitions as before, where `shipping.glossary.yml` defines `
 * When working on `/payments/src/Order.cs`, hovering over the word `Order` will show `An amount to be charged to the customer and the payment method to charge.`
 
 This pattern is particularly useful if each module in your modular monolith contains all the code associated with a [Bounded Context](#bounded-contexts).
+
+### Terms relevant in multiple places
+
+Sometimes even though bounded contexts have different languages and are neatly separated, it's helpful to have access to terms from another context in some parts of the code - consider code that deals with integration between the contexts.
+
+In this case, the integration folder can contain a glossary file that imports another glossary file. This makes the terminology from the _imported_ file available to files in the folder of the _importing_ file:
+
+<FileTree>
+
+- repository
+  - README.md
+  - shipping
+    - shipping.glossary.yml
+    - src
+      - Order.cs
+      - antiCorruptionLayer
+        - payments-import.glossary.yml &lt;-- will import from the payments glossary
+        - HandleOrderPaymentReceived.cs
+  - payments
+    - payments.glossary.yml
+    - src
+      - Order.cs
+
+</FileTree>
+
+```yml title="shipping/src/antiCorruptionLayer/payments-import.glossary.yml"
+imports:
+  - "../../../payments/payments.glossary.yml"
+```
+
+This will ensure that when working on `HandleOrderPaymentReceived.cs` all the terms defined in `shipping.glossary.yml` AND `payments.glossary.yml` will be available, with clear delineation between contexts, even when the same word has different meanings in each context:
+
+![Shipping Context AntiCorruption Layer with Imported Payments Terminology](../../../assets/images/context-with-imported-terms.png)
+
+When working on `shipping/src/Order.cs`, only the definition from `shipping.glossary.yml` will be shown, and when working on `payments/src/Order.cs` only the definition from `payments.glossary.yml` will be shown.
+
+Multiple files may be imported by defining a list of imports.
+
+#### Combining Imports with Terminology
+
+A glossary file can contain a list of imports _as well_ as contexts and terms - they will all be made available when working in the folder, e.g.:
+
+```diff lang="yml" title="shipping/src/antiCorruptionLayer/payments-import.glossary.yml"
+imports:
+  - "../../../payments/payments.glossary.yml"
++ contexts:
++  - name: Shipping Anti-corruption Layer
++    terms:
++      - name: Shipping Fee
+```
+
+In this case the `Shipping Fee` is a term that is relevant when integrating between `payments` and `shipping`.
 
 ### Terms relevant across multiple repositories
 
