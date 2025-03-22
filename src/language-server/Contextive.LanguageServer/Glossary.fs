@@ -73,25 +73,25 @@ module Handlers =
             let originalBase = System.IO.Path.GetDirectoryName originalPath
             System.IO.Path.Combine(originalBase, newPath)
 
-    let rec private loadAndMergeImports (importSource: string) (state: State) =
-        if state.GlossaryFile.Imports.Count > 0 then
-            let import = state.GlossaryFile.Imports |> Seq.head |> normalizePath importSource
-
-            if Seq.contains import state.ImportedFiles then
-                state.Log.info $"Not loading {import} as it's already been loaded (circular dependency)."
-                state
-            else
-                let newState =
-                    loadFile state { Path = import; IsDefault = false } loadAndMergeImports
-
-                { state with
-                    GlossaryFile =
-                        { state.GlossaryFile with
-                            Contexts =
-                                Seq.append state.GlossaryFile.Contexts newState.GlossaryFile.Contexts
-                                |> ResizeArray } }
-        else
+    let private loadAndMergeImport loadAndMergeImports (state: State) import =
+        if Seq.contains import state.ImportedFiles then
+            state.Log.info $"Not loading {import} as it's already been loaded (circular dependency)."
             state
+        else
+            let newState =
+                loadFile state { Path = import; IsDefault = false } loadAndMergeImports
+
+            { state with
+                GlossaryFile =
+                    { state.GlossaryFile with
+                        Contexts =
+                            Seq.append state.GlossaryFile.Contexts newState.GlossaryFile.Contexts
+                            |> ResizeArray } }
+
+    let rec private loadAndMergeImports (importSource: string) (state: State) =
+        state.GlossaryFile.Imports
+        |> Seq.map (normalizePath importSource)
+        |> Seq.fold (loadAndMergeImport loadAndMergeImports) state
 
     let reload (state: State) =
         async {

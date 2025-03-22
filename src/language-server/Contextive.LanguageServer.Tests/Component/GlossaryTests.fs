@@ -276,6 +276,42 @@ contexts:
                     test <@ terms |> Seq.map _.Name |> Set.ofSeq = Set.ofList [ "term1"; "term2"; "term3" ] @>
                 }
 
+                testAsync "Can import multiple files" {
+                    let fileToImport n = $"/fileToImport{n}.yml"
+
+                    let importedGlossary n =
+                        $"\
+contexts:
+  - terms:
+    - name: term{n}"
+
+                    let glossaryWithImport n =
+                        $"\
+imports:
+  - {fileToImport <| n + 1}
+  - {fileToImport <| n + 2}
+contexts:
+  - terms:
+    - name: term{n}"
+
+                    let fileReader p =
+                        if p.Path = fileToImport 1 then Ok <| glossaryWithImport 1
+                        elif p.Path = fileToImport 2 then Ok <| importedGlossary 2
+                        elif p.Path = fileToImport 3 then Ok <| importedGlossary 3
+                        else Error FileNotFound
+
+                    let glossary =
+                        1 |> fileToImport |> pc |> newStartGlossary |> Glossary.start fileReader
+
+                    let! result = Glossary.lookup glossary "/" id
+
+                    let terms = FindResult.allTerms result
+
+                    test <@ result.Count() = 3 @>
+
+                    test <@ terms |> Seq.map _.Name |> Set.ofSeq = Set.ofList [ "term1"; "term2"; "term3" ] @>
+                }
+
                 testAsync "Circular imports should be blocked" {
                     let fileToImport n = $"/fileToImport{n}.yml"
 
