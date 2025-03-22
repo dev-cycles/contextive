@@ -1,0 +1,2 @@
+imports:
+  - "https://raw.githubusercontent.com/dev-cycles/contextive/refs/heads/main/src/language-server/Contextive.LanguageServer.Tests/fixtures/import_tests/imported_folder/imported.glossary.yml"

@@ -9,6 +9,7 @@ nuget Fable.Electron
 nuget Fable.Mocha
 nuget FSharp.Control.AsyncSeq
 nuget FSharp.Core
+nuget FSharp.Data
 nuget Humanizer
 nuget Microsoft.Extensions.FileSystemGlobbing
 nuget Microsoft.NET.Test.Sdk

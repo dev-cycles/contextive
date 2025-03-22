@@ -67,9 +67,11 @@ module Handlers =
         |> Result.defaultValue state
 
     let normalizePath (originalPath: string) newPath : string =
-        let originalBase = System.IO.Path.GetDirectoryName originalPath
-        System.IO.Path.Combine(originalBase, newPath)
-
+        if System.Uri.IsWellFormedUriString(newPath, System.UriKind.Absolute) then
+            newPath
+        else
+            let originalBase = System.IO.Path.GetDirectoryName originalPath
+            System.IO.Path.Combine(originalBase, newPath)
 
     let rec private loadAndMergeImports (importSource: string) (state: State) =
         if state.GlossaryFile.Imports.Count > 0 then

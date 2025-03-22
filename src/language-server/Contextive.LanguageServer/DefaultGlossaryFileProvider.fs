@@ -65,15 +65,6 @@ let private getResolvedPathGetter (s: ILanguageServer) =
             |> Configuration.resolvedPathGetter configGetter
     }
 
-let getDefaultGlossaryFileReader (s: ILanguageServer) =
-    async {
-        let! pathGetter = getResolvedPathGetter s
-
-        initGlossaryFileInitializer s pathGetter
-
-        return pathGetter |> LocalFileReader.reader
-    }
-
 let getDefaultGlossaryFilePathResolver (s: ILanguageServer) =
     async {
         let! pathGetter = getResolvedPathGetter s

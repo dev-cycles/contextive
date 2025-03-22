@@ -30,7 +30,7 @@ let noopMailboxProcessor () =
 let noop () = ()
 let noop1 _ = ()
 
-let newCreateClossary () =
+let newCreateGlossary () =
     { GlossaryManager.GlossaryOps =
         { Start = fun _ -> noopMailboxProcessor ()
           Reload = noop1 } }
@@ -74,7 +74,7 @@ let tests =
 
                     let glossary =
                         GlossaryManager.create
-                            { newCreateClossary () with
+                            { newCreateGlossary () with
                                 GlossaryOps =
                                     { Start = mockStartGlossary
                                       Reload = noop1 } }
@@ -94,7 +94,7 @@ let tests =
                         CA.received awaiter glob
                         noop
 
-                    let glossary = newCreateClossary () |> GlossaryManager.create
+                    let glossary = newCreateGlossary () |> GlossaryManager.create
 
                     GlossaryManager.init
                         glossary
@@ -115,7 +115,7 @@ let tests =
                         CA.received awaiter glob
                         noop
 
-                    let glossary = newCreateClossary () |> GlossaryManager.create
+                    let glossary = newCreateGlossary () |> GlossaryManager.create
 
                     GlossaryManager.init
                         glossary
@@ -137,7 +137,7 @@ let tests =
 
                     let glossary =
                         GlossaryManager.create
-                            { newCreateClossary () with
+                            { newCreateGlossary () with
                                 GlossaryOps =
                                     { Start = mockStartGlossary
                                       Reload = noop1 } }
@@ -157,7 +157,7 @@ let tests =
 
                     let mockRegisterWatchedFiles _ _ = (fun () -> CA.received awaiter true)
 
-                    let glossary = newCreateClossary () |> GlossaryManager.create
+                    let glossary = newCreateGlossary () |> GlossaryManager.create
 
                     let mutable currentPath = "path1"
 
@@ -179,7 +179,7 @@ let tests =
                 testAsync "It should log and error if unable to get the path of the configured filed" {
                     let errorAwaiter = CA.create ()
 
-                    let glossary = newCreateClossary () |> GlossaryManager.create
+                    let glossary = newCreateGlossary () |> GlossaryManager.create
 
                     GlossaryManager.init
                         glossary
@@ -216,7 +216,7 @@ let tests =
 
                           let glossary =
                               GlossaryManager.create
-                                  { newCreateClossary () with
+                                  { newCreateGlossary () with
                                       GlossaryOps =
                                           { Start = mockStartGlossary
                                             Reload = noop1 } }
@@ -257,7 +257,7 @@ let tests =
 
                           let glossaryManager =
                               GlossaryManager.create
-                                  { newCreateClossary () with
+                                  { newCreateGlossary () with
                                       GlossaryOps =
                                           { Start = mockStartGlossary
                                             Reload = mockReloadGlossary } }
@@ -308,7 +308,7 @@ let tests =
 
                           let glossaryManager =
                               GlossaryManager.create
-                                  { newCreateClossary () with
+                                  { newCreateGlossary () with
                                       GlossaryOps =
                                           { Start = mockStartGlossary
                                             Reload = mockReloadGlossary } }
@@ -357,7 +357,7 @@ let tests =
 
                           let glossaryManager =
                               GlossaryManager.create
-                                  { newCreateClossary () with
+                                  { newCreateGlossary () with
                                       GlossaryOps =
                                           { Start = mockStartGlossary
                                             Reload = mockReloadGlossary } }
@@ -397,7 +397,7 @@ let tests =
 
                     let glossary =
                         GlossaryManager.create
-                            { newCreateClossary () with
+                            { newCreateGlossary () with
                                 GlossaryOps =
                                     { Start = Glossary.start fileReader
                                       Reload = Glossary.reload } }
@@ -429,7 +429,7 @@ let tests =
 
                     let glossary =
                         GlossaryManager.create
-                            { newCreateClossary () with
+                            { newCreateGlossary () with
                                 GlossaryOps =
                                     { Start = Glossary.start fileReader
                                       Reload = Glossary.reload } }
@@ -465,7 +465,7 @@ let tests =
 
                     let glossary =
                         GlossaryManager.create
-                            { newCreateClossary () with
+                            { newCreateGlossary () with
                                 GlossaryOps =
                                     { Start = Glossary.start mockFileReader
                                       Reload = Glossary.reload } }
@@ -511,9 +511,9 @@ let tests =
               [ testAsync "Can collaborate with subGlossaries" {
                     let glossary =
                         GlossaryManager.create
-                            { newCreateClossary () with
+                            { newCreateGlossary () with
                                 GlossaryOps =
-                                    { Start = Glossary.start LocalFileReader.read
+                                    { Start = Glossary.start FileReader.configuredReader
                                       Reload = Glossary.reload } }
 
                     let startupAwaiter = CA.create ()

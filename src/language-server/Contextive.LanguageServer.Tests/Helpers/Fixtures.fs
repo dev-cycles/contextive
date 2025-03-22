@@ -47,3 +47,8 @@ module Imports =
 
     module Main =
         let path = System.IO.Path.Combine(rootPath, "main_folder", "main.glossary.yml")
+
+module RemoteImports =
+    let rootPath = System.IO.Path.Combine("fixtures", "remote_import_tests")
+
+    let path = System.IO.Path.Combine(rootPath, "remote-import.glossary.yml")

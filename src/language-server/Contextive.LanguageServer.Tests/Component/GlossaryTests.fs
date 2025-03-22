@@ -231,10 +231,9 @@ contexts:
                         elif p.Path = fileToImport then Ok importedGlossary
                         else Error FileError.FileNotFound
 
-                    let glossary =
-                        pc initialFilePath |> newStartGlossary |> Glossary.start fileReader
+                    let glossary = pc initialFilePath |> newStartGlossary |> Glossary.start fileReader
 
-                    let! result = Glossary.lookup glossary "" id
+                    let! result = Glossary.lookup glossary "/" id
 
                     let terms = FindResult.allTerms result
 
@@ -268,7 +267,7 @@ contexts:
                     let glossary =
                         1 |> fileToImport |> pc |> newStartGlossary |> Glossary.start fileReader
 
-                    let! result = Glossary.lookup glossary "" id
+                    let! result = Glossary.lookup glossary "/" id
 
                     let terms = FindResult.allTerms result
 
@@ -296,7 +295,7 @@ contexts:
                     let glossary =
                         1 |> fileToImport |> pc |> newStartGlossary |> Glossary.start fileReader
 
-                    let! result = Glossary.lookup glossary "" id
+                    let! result = Glossary.lookup glossary "/" id
 
                     let terms = FindResult.allTerms result
 
@@ -314,9 +313,9 @@ contexts:
                     let glossary =
                         pc Fixtures.One.path
                         |> newStartGlossary
-                        |> Glossary.start LocalFileReader.read
+                        |> Glossary.start FileReader.configuredReader
 
-                    let! result = Glossary.lookup glossary "" id
+                    let! result = Glossary.lookup glossary "/" id
 
                     let terms = FindResult.allTerms result
 
@@ -329,15 +328,29 @@ contexts:
                     let glossary =
                         pc Fixtures.Imports.Main.path
                         |> newStartGlossary
-                        |> Glossary.start LocalFileReader.read
+                        |> Glossary.start FileReader.configuredReader
 
-                    let! result = Glossary.lookup glossary "" id
+                    let! result = Glossary.lookup glossary "/" id
 
                     let terms = FindResult.allTerms result
 
                     let foundNames = terms |> Seq.map getName
                     test <@ Set.ofSeq foundNames = Set.ofList [ "main"; "imported" ] @>
 
+                }
+
+                testAsync "Glossary can collaborate with FileReader with remote imports" {
+                    let glossary =
+                        pc Fixtures.RemoteImports.path
+                        |> newStartGlossary
+                        |> Glossary.start FileReader.configuredReader
+
+                    let! result = Glossary.lookup glossary "/" id
+
+                    let terms = FindResult.allTerms result
+
+                    let foundNames = terms |> Seq.map getName
+                    test <@ Set.ofSeq foundNames = Set.ofList [ "imported" ] @>
                 }
 
                 ]

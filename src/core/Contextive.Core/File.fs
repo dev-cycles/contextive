@@ -9,18 +9,16 @@ type FileError =
     | DefaultFileNotFound
     | FileNotFound
     | NotYetLoaded
+    | ReadingError of string
     | ParsingError of string
     | ValidationError of string
 
-type File =
-    { AbsolutePath: string
-      Contents: Result<string, FileError> }
-
 let fileErrorMessage =
     function
-    | PathInvalid(m) -> $"Invalid Path: {m}"
-    | ParsingError(m) -> $"Parsing Error: {m}"
-    | ValidationError(m) -> $"Validation Error: {m}"
+    | PathInvalid m -> $"Invalid Path: {m}"
+    | ParsingError m -> $"Parsing Error: {m}"
+    | ValidationError m -> $"Validation Error: {m}"
+    | ReadingError m -> $"Unable to read from source: {m}"
     | DefaultFileNotFound -> "Default glossary file not found."
     | FileNotFound -> "Glossary file not found."
     | NotYetLoaded -> "Should Not Be Reached"

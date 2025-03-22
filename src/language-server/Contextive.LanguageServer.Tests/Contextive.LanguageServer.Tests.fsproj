@@ -19,7 +19,9 @@
         <Compile Include="Component/FileScannerTests.fs" />
         <Compile Include="Component/GlossaryManagerTests.fs" />
         <Compile Include="Component/RenderingTests.fs" />
-        <Compile Include="Component/LocalFileLoaderTests.fs" />
+        <Compile Include="Component/LocalFileReaderTests.fs" />
+        <Compile Include="Component/RemoteFileReaderTests.fs" />
+        <Compile Include="Component/FileReaderTests.fs" />
         <Compile Include="Component/PathResolverTests.fs" />
         <Compile Include="Component/TextDocumentTests.fs" />
         <Compile Include="Component/GlossaryTests.fs" />
