@@ -192,12 +192,61 @@ Assuming the same definitions as before, where `shipping.glossary.yml` defines `
 
 This pattern is particularly useful if each module in your modular monolith contains all the code associated with a [Bounded Context](#bounded-contexts).
 
-### Terms relevant in multiple places
+### Terms defined in an external data source
+
+Some organisations already have their terms defined in an existing dataset and do not want to maintain them separately in a repository.
+
+For this purpose, you can create a glossary that _imports_ from a remote URL.  The contents of the remote URL are then treated as though they were available at the position in the folder structure of the _importing_ file.
+
+:::note
+For this to work, you will need to build your own processes (manual or automated) to extract the terminology definitions from the external dataset and map them to a Contextive glossary yml format.
+:::
+
+<FileTree>
+
+- repository
+  - README.md
+  - shipping
+    - shipping.glossary.yml &lt;-- will import from a remote URL
+    - src
+      - Order.cs
+  - payments
+    - payments.glossary.yml
+    - src
+      - Order.cs
+
+</FileTree>
+
+```yml title="shipping/shipping.glossary.yml"
+imports:
+  - "https://your.domain/path/to/shipping.glossary.yml"
+```
+
+With this setup, any terminology contained in the file located at `https://your.domain/path/to/shipping.glossary.yml` will be made available as though it had been defined in `shipping/shipping.glossary.yml`.
+
+:::note
+Multiple glossary files may be imported into the same location by defining a list of imports.
+
+```diff lang="yml" title="shipping/shipping.glossary.yml"
+imports:
+  - "https://your.domain/path/to/shipping.glossary.yml"
++  - "https://your.domain/path/to/other.glossary.yml"
+```
+:::
+
+:::caution[No Refresh]
+Remote glossary files are loaded once at startup and there is not yet any way to force a reload other than restarting your IDE
+:::
+
+:::danger
+Contextive does not support accessing authenticated remote URLs.  If it's important that your glossaries remain private, at this point it's best to try and protect them by hosting them in locations only available on a corporate LAN/VPN or restrict access to them via a proxy.
+:::
+
+### Terms relevant in multiple folder locations
 
 Sometimes even though bounded contexts have different languages and are neatly separated, it's helpful to have access to terms from another context in some parts of the code - consider code that deals with integration between the contexts.
 
-In this case, the integration folder can contain a glossary file that imports another glossary file. This makes the terminology from the _imported_ file available to files in the folder of the _importing_ file:
-
+In this case, the integration folder can contain a glossary file that imports another glossary file from a local absolute or relative path:
 <FileTree>
 
 - repository
@@ -227,8 +276,6 @@ This will ensure that when working on `HandleOrderPaymentReceived.cs` all the te
 
 When working on `shipping/src/Order.cs`, only the definition from `shipping.glossary.yml` will be shown, and when working on `payments/src/Order.cs` only the definition from `payments.glossary.yml` will be shown.
 
-Multiple files may be imported by defining a list of imports.
-
 #### Combining Imports with Terminology
 
 A glossary file can contain a list of imports _as well_ as contexts and terms - they will all be made available when working in the folder, e.g.:
@@ -246,19 +293,18 @@ In this case the `Shipping Fee` is a term that is relevant when integrating betw
 
 ### Terms relevant across multiple repositories
 
+Some organisations have adopted a distributed repository configuration, where small services (microservices, or cloud FAAS functions) are each located in their own repositories. Often in these cases, the code in the repositories share a domain language.
+
 If you have multiple repositories that would benefit from access to the same terms, then it's recommended to define the terms in one repository and publish them to a publicly accessibly URL.
 
-You can then use the [imports](#terms-relevant-in-multiple-places) feature and nominate the URL to import from:
+You can then use the [imports](#terms-defined-in-an-external-data-source) feature in the other repositories and provide the URL that you have publishd your glossary file to.
 
-```yml title="shipping/src/shipping.glossary.yml"
-imports:
-  - "https://your.domain/path/to/shipping.glossary.yml"
+:::tip
+Some git repositories offer a 'raw' URL, e.g. github as a `raw.githubusercontent.com` domain - the following URL provides raw access to one of Contextive's internal glossaries used for testing:
+
 ```
-
-Any terminology defined in the yml file found at that URL will be made available within the path structure of the _importing_ file, as it is for local file imports.
-
-:::danger
-Contextive does not support accessing authenticated remote URLs.  If it's important that your glossaries remain private, at this point it's best to try and protect them by hosting them in locations only available on a corporate LAN/VPN or restrict access to them via a proxy.
+https://raw.githubusercontent.com/dev-cycles/contextive/refs/heads/main/src/language-server/Contextive.LanguageServer.Tests/fixtures/import_tests/imported_folder/imported.glossary.yml
+```
 :::
 
 ### Multi-root workspaces
