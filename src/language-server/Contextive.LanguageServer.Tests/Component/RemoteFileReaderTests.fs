@@ -32,8 +32,11 @@ let tests =
           test "Given unknown domain, should report error" {
               let result = RemoteFileReader.read "https://httpstat.us.not.a.domain"
 
+              //macos: nodename nor servname provided, or not known (httpstat.us.not.a.domain:443)
+              //win: No such host is known. (httpstat.us.not.a.domain:443)
+              //linux: Name or service not known (httpstat.us.not.a.domain:443)
               match result with
-              | Error(ReadingError e) -> t <@ e = "Name or service not known (httpstat.us.not.a.domain:443)" @>
+              | Error(ReadingError e) -> t <@ e.Contains "known" && e.Contains "(httpstat.us.not.a.domain:443)" @>
               | _ -> failtest "Should not find content at this url"
           }
 
