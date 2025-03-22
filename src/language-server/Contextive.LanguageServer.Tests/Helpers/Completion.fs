@@ -5,8 +5,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Document
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open Contextive.LanguageServer
 
-let getLabels (result: CompletionList) =
-    result.Items |> Seq.map (_.Label)
+let getLabels (result: CompletionList) = result.Items |> Seq.map (_.Label)
 
 let getCompletionFromText (text: string) (uri: string) (position: Position) (client: ILanguageClient) =
     async {
@@ -23,15 +22,22 @@ let getCompletionFromText (text: string) (uri: string) (position: Position) (cli
             |> Async.AwaitTask
     }
 
-let getCompletion =
-    getCompletionFromText "" $"file:///{System.Guid.NewGuid().ToString()}"
+let getCompletion path =
+    getCompletionFromText "" $"file://{path}{System.Guid.NewGuid().ToString()}"
     <| Position(0, 0)
 
 let getCompletionLabels (client: ILanguageClient) =
     async {
-        let! result = getCompletion client
+        let! result = getCompletion "/" client
         return getLabels result
     }
+
+let getCompletionLabelsInPath (openFileFolder: string) (client: ILanguageClient) =
+    async {
+        let! result = getCompletion (openFileFolder + "/") client
+        return getLabels result
+    }
+
 
 let emptyTokenFinder: TextDocument.TokenFinder = fun _ _ -> None
 

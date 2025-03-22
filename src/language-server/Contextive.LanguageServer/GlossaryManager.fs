@@ -19,7 +19,8 @@ type DeRegisterWatch = unit -> unit
 
 type GlossaryOperations =
     { Start: Glossary.StartGlossary -> Glossary.T
-      Reload: Glossary.T -> unit }
+      Reload: Glossary.T -> unit
+      Stop: Glossary.T -> unit }
 
 // Create glossary with static dependencies
 type CreateGlossaryManager = { GlossaryOps: GlossaryOperations }
@@ -136,12 +137,16 @@ module private Handlers =
             return
                 pathOpt
                 |> Result.map (fun path ->
+
+                    let oldDefaultGlossaryPath = state.DefaultGlossaryPath
+                    state.DefaultGlossary |> Option.map state.GlossaryOps.Stop |> ignore
+
                     let defaultGlossary = state.GlossaryOps.Start { Path = path; Log = state.Log }
 
                     { state with
                         DefaultGlossary = defaultGlossary |> Some
                         DefaultGlossaryPath = path.Path
-                        Glossaries = state.Glossaries.Add(path.Path, defaultGlossary)
+                        Glossaries = state.Glossaries.Remove(oldDefaultGlossaryPath).Add(path.Path, defaultGlossary)
                         DeRegisterDefaultGlossaryFileWatcher = Some path.Path |> state.RegisterWatchedFiles |> Some })
                 |> Result.mapError (fun fileError ->
                     let errorMessage = fileErrorMessage fileError

@@ -17,6 +17,7 @@ type Message =
     | Start of StartGlossary
     | Reload
     | Lookup of Lookup
+    | Stop
 
 type FileReaderFn = PathConfiguration -> Result<string, FileError>
 
@@ -99,6 +100,7 @@ module Handlers =
                 match state.Path with
                 | None -> state
                 | Some p -> loadFile state p loadAndMergeImports
+                |> Some
 
         }
 
@@ -118,7 +120,7 @@ module Handlers =
             |> lookup.Filter
             |> lookup.Rc.Reply
 
-            return state
+            return Some state
         }
 
 let private handleMessage (state: State) (msg: Message) =
@@ -128,6 +130,7 @@ let private handleMessage (state: State) (msg: Message) =
             | Start startGlossary -> Handlers.start state startGlossary
             | Reload -> Handlers.reload state
             | Lookup p -> Handlers.lookup state p
+            | Stop -> async.Return None
     }
 
 let private safeFileReader fileReader p : Result<string, FileError> =
@@ -145,7 +148,10 @@ let start fileReader (startGlossary: StartGlossary) : T =
 
                     let! newState = handleMessage state msg
 
-                    return! loop newState
+                    return!
+                        match newState with
+                        | Some ns -> loop ns
+                        | None -> async.Return()
                 }
 
             loop
@@ -156,6 +162,8 @@ let start fileReader (startGlossary: StartGlossary) : T =
     Start startGlossary |> glossary.Post
 
     glossary
+
+let stop (glossary: T) = glossary.Post Stop
 
 let reload (glossary: T) = Reload |> glossary.Post
 

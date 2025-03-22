@@ -33,7 +33,8 @@ let noop1 _ = ()
 let newCreateGlossary () =
     { GlossaryManager.GlossaryOps =
         { Start = fun _ -> noopMailboxProcessor ()
-          Reload = noop1 } }
+          Reload = noop1
+          Stop = noop1 } }
 
 let newInitGlossary () =
     { GlossaryManager.FileScanner = fun _ -> []
@@ -77,7 +78,8 @@ let tests =
                             { newCreateGlossary () with
                                 GlossaryOps =
                                     { Start = mockStartGlossary
-                                      Reload = noop1 } }
+                                      Reload = noop1
+                                      Stop = noop1 } }
 
                     GlossaryManager.init glossary
                     <| { newInitGlossary () with
@@ -140,7 +142,8 @@ let tests =
                             { newCreateGlossary () with
                                 GlossaryOps =
                                     { Start = mockStartGlossary
-                                      Reload = noop1 } }
+                                      Reload = noop1
+                                      Stop = noop1 } }
 
                     GlossaryManager.init
                         glossary
@@ -219,7 +222,8 @@ let tests =
                                   { newCreateGlossary () with
                                       GlossaryOps =
                                           { Start = mockStartGlossary
-                                            Reload = noop1 } }
+                                            Reload = noop1
+                                            Stop = noop1 } }
 
                           GlossaryManager.init
                               glossary
@@ -260,7 +264,8 @@ let tests =
                                   { newCreateGlossary () with
                                       GlossaryOps =
                                           { Start = mockStartGlossary
-                                            Reload = mockReloadGlossary } }
+                                            Reload = mockReloadGlossary
+                                            Stop = noop1 } }
 
                           GlossaryManager.init
                               glossaryManager
@@ -311,7 +316,8 @@ let tests =
                                   { newCreateGlossary () with
                                       GlossaryOps =
                                           { Start = mockStartGlossary
-                                            Reload = mockReloadGlossary } }
+                                            Reload = mockReloadGlossary
+                                            Stop = noop1 } }
 
                           GlossaryManager.init
                               glossaryManager
@@ -360,7 +366,8 @@ let tests =
                                   { newCreateGlossary () with
                                       GlossaryOps =
                                           { Start = mockStartGlossary
-                                            Reload = mockReloadGlossary } }
+                                            Reload = mockReloadGlossary
+                                            Stop = noop1 } }
 
                           GlossaryManager.init
                               glossaryManager
@@ -400,7 +407,8 @@ let tests =
                             { newCreateGlossary () with
                                 GlossaryOps =
                                     { Start = Glossary.start fileReader
-                                      Reload = Glossary.reload } }
+                                      Reload = Glossary.reload
+                                      Stop = Glossary.stop } }
 
                     GlossaryManager.init
                         glossary
@@ -432,7 +440,8 @@ let tests =
                             { newCreateGlossary () with
                                 GlossaryOps =
                                     { Start = Glossary.start fileReader
-                                      Reload = Glossary.reload } }
+                                      Reload = Glossary.reload
+                                      Stop = Glossary.stop } }
 
                     GlossaryManager.init
                         glossary
@@ -468,7 +477,8 @@ let tests =
                             { newCreateGlossary () with
                                 GlossaryOps =
                                     { Start = Glossary.start mockFileReader
-                                      Reload = Glossary.reload } }
+                                      Reload = Glossary.reload
+                                      Stop = Glossary.stop } }
 
                     GlossaryManager.init
                         glossary
@@ -514,7 +524,8 @@ let tests =
                             { newCreateGlossary () with
                                 GlossaryOps =
                                     { Start = Glossary.start FileReader.configuredReader
-                                      Reload = Glossary.reload } }
+                                      Reload = Glossary.reload
+                                      Stop = Glossary.stop } }
 
                     let startupAwaiter = CA.create ()
 

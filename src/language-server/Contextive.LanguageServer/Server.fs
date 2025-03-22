@@ -49,7 +49,8 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
         GlossaryManager.create
         <| { GlossaryOps =
                { Start = Glossary.start FileReader.configuredReader
-                 Reload = Glossary.reload } }
+                 Reload = Glossary.reload
+                 Stop = Glossary.stop } }
 
     opts
         .WithInput(input)

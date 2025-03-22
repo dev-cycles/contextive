@@ -25,10 +25,13 @@ let tests =
           testAsync "Can handle configuration value changing" {
               let mutable path = "one.yml"
 
+              let basePath =
+                  Path.Combine(Directory.GetCurrentDirectory(), "fixtures", "completion_tests")
+
               let pathLoader () : obj = path
 
               let config =
-                  [ Workspace.optionsBuilder <| Path.Combine("fixtures", "completion_tests")
+                  [ Workspace.optionsBuilder <| basePath
                     ConfigurationSection.contextivePathLoaderBuilder pathLoader ]
 
               let! client, logAwaiter = TestClient(config) |> initAndGetLogAwaiter
@@ -37,7 +40,7 @@ let tests =
               path <- "two.yml"
               do! ConfigurationSection.didChangePath client path logAwaiter
 
-              let! labels = Completion.getCompletionLabels client
+              let! labels = Completion.getCompletionLabelsInPath basePath client
 
               test <@ (labels, Fixtures.Two.expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
 
