@@ -22,19 +22,26 @@ let getCompletionFromText (text: string) (uri: string) (position: Position) (cli
             |> Async.AwaitTask
     }
 
-let getCompletion path =
-    getCompletionFromText "" $"file://{path}{System.Guid.NewGuid().ToString()}"
-    <| Position(0, 0)
+let getRandomUri () =
+    $"file:///{System.Guid.NewGuid().ToString()}"
+
+let getCompletion uri =
+    getCompletionFromText "" uri <| Position(0, 0)
 
 let getCompletionLabels (client: ILanguageClient) =
     async {
-        let! result = getCompletion "/" client
+        let! result = getCompletion (getRandomUri ()) client
         return getLabels result
     }
 
+let normalizePathToUri p = System.Uri(p).AbsoluteUri
+
 let getCompletionLabelsInPath (openFileFolder: string) (client: ILanguageClient) =
     async {
-        let! result = getCompletion (openFileFolder + "/") client
+        let uri =
+            $"{openFileFolder}/{System.Guid.NewGuid().ToString()}" |> normalizePathToUri
+
+        let! result = getCompletion uri client
         return getLabels result
     }
 
