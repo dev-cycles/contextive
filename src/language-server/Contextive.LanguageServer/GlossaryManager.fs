@@ -1,9 +1,8 @@
-module Contextive.LanguageServer.Glossary
+module Contextive.LanguageServer.GlossaryManager
 
 open Contextive.Core.GlossaryFile
 open Contextive.LanguageServer.Logger
 open Contextive.Core.File
-open System.Collections.Generic
 open FSharp.Control
 
 type OnWatchedFilesEventHandlers =
@@ -23,11 +22,11 @@ type SubGlossaryOperations =
       Reload: SubGlossary.T -> unit }
 
 // Create glossary with static dependencies
-type CreateGlossary =
+type CreateGlossaryManager =
     { SubGlossaryOps: SubGlossaryOperations }
 
 // InitGlossary with dynamic dependencies that rely on the language server having already started
-type InitGlossary =
+type InitGlossaryManager =
     { Log: Logger
       FileScanner: string -> string seq
       RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string option -> DeRegisterWatch
@@ -50,7 +49,7 @@ type Lookup =
       Rc: AsyncReplyChannel<FindResult> }
 
 type Message =
-    | Init of InitGlossary * OnWatchedFilesEventHandlers
+    | Init of InitGlossaryManager * OnWatchedFilesEventHandlers
     | ReloadDefaultGlossaryFile
     | WatchedFileCreated of string
     | WatchedFileChanged of string
@@ -63,7 +62,7 @@ let private GLOSSARY_FILE_GLOB = "**/*.glossary.yml"
 
 module private Handlers =
 
-    let create (createGlossary: CreateGlossary) =
+    let create (createGlossary: CreateGlossaryManager) =
 
         let state =
             { FileScanner = fun _ -> []
@@ -78,7 +77,7 @@ module private Handlers =
 
         state
 
-    let init (state: State) (initGlossary: InitGlossary) (watchedFileshandlers: OnWatchedFilesEventHandlers) =
+    let init (state: State) (initGlossary: InitGlossaryManager) (watchedFileshandlers: OnWatchedFilesEventHandlers) =
         let state =
             { state with
                 FileScanner = initGlossary.FileScanner
@@ -152,9 +151,6 @@ module private Handlers =
                 |> Result.defaultValue state
         }
 
-    let private isDefault (subGlossary: SubGlossary.T) (defaultSubGlossary: SubGlossary.T option) =
-        defaultSubGlossary.IsSome && subGlossary = defaultSubGlossary.Value
-
     let private pathMatch (openFilePath: string) (path: string) =
         path |> System.IO.Path.GetDirectoryName |> openFilePath.StartsWith
 
@@ -209,7 +205,7 @@ let watchedFileHandlers (glossary: T) =
         OnCreated = fun p -> glossary.Post(WatchedFileCreated(p))
         OnChanged = fun p -> glossary.Post(WatchedFileChanged(p)) }
 
-let create (createGlossary: CreateGlossary) : T =
+let create (createGlossary: CreateGlossaryManager) : T =
     MailboxProcessor.Start(fun inbox ->
         let rec loop (state: State) =
             async {
@@ -222,7 +218,7 @@ let create (createGlossary: CreateGlossary) : T =
 
         loop <| Handlers.create createGlossary)
 
-let init (glossary: T) (initGlossary: InitGlossary) =
+let init (glossary: T) (initGlossary: InitGlossaryManager) =
     Init(initGlossary, watchedFileHandlers glossary) |> glossary.Post
 
 let reloadDefaultGlossaryFile (glossary: T) () =

@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.Component.GlossaryTests
+module Contextive.LanguageServer.Tests.Component.GlossaryManagerTests
 
 open Expecto
 open Swensen.Unquote
@@ -31,15 +31,15 @@ let noop () = ()
 let noop1 _ = ()
 
 let newCreateClossary () =
-    { Glossary.SubGlossaryOps =
+    { GlossaryManager.SubGlossaryOps =
         { Start = fun _ -> noopMailboxProcessor ()
           Reload = noop1 } }
 
 let newInitGlossary () =
-    { Glossary.FileScanner = fun _ -> []
-      Glossary.Log = { info = noop1; error = noop1 }
-      Glossary.DefaultSubGlossaryPathResolver = fun _ -> async.Return <| Error FileError.NotYetLoaded
-      Glossary.RegisterWatchedFiles = fun _ _ -> noop }
+    { GlossaryManager.FileScanner = fun _ -> []
+      GlossaryManager.Log = { info = noop1; error = noop1 }
+      GlossaryManager.DefaultSubGlossaryPathResolver = fun _ -> async.Return <| Error FileError.NotYetLoaded
+      GlossaryManager.RegisterWatchedFiles = fun _ _ -> noop }
 
 [<Literal>]
 let private EXPECTED_GLOSSARY_FILE_GLOB = "**/*.glossary.yml"
@@ -53,11 +53,11 @@ let tests =
     let pc p : PathConfiguration = { Path = p; IsDefault = false }
 
     testList
-        "LanguageServer.Glossary Tests"
+        "LanguageServer.GlossaryManager Tests"
         [
 
           testList
-              "When creating a glossary"
+              "When creating a glossary manager"
               [ testAsync "It should start a subglossary for each discovered file" {
 
                     let awaiter = CA.create ()
@@ -73,13 +73,13 @@ let tests =
                         noopMailboxProcessor ()
 
                     let glossary =
-                        Glossary.create
+                        GlossaryManager.create
                             { newCreateClossary () with
                                 SubGlossaryOps =
                                     { Start = mockStartSubGlossary
                                       Reload = noop1 } }
 
-                    Glossary.init glossary
+                    GlossaryManager.init glossary
                     <| { newInitGlossary () with
                            FileScanner = mockFileScanner }
 
@@ -94,9 +94,9 @@ let tests =
                         CA.received awaiter glob
                         noop
 
-                    let glossary = newCreateClossary () |> Glossary.create
+                    let glossary = newCreateClossary () |> GlossaryManager.create
 
-                    Glossary.init
+                    GlossaryManager.init
                         glossary
                         { newInitGlossary () with
                             RegisterWatchedFiles = mockRegisterWatchedFiles }
@@ -115,15 +115,15 @@ let tests =
                         CA.received awaiter glob
                         noop
 
-                    let glossary = newCreateClossary () |> Glossary.create
+                    let glossary = newCreateClossary () |> GlossaryManager.create
 
-                    Glossary.init
+                    GlossaryManager.init
                         glossary
                         { newInitGlossary () with
                             RegisterWatchedFiles = mockRegisterWatchedFiles
                             DefaultSubGlossaryPathResolver = fun () -> "path" |> pc |> Ok |> async.Return }
 
-                    Glossary.reloadDefaultGlossaryFile glossary ()
+                    GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
                     do! CA.expectMessage awaiter <| Some "path"
                 }
@@ -136,18 +136,18 @@ let tests =
                         noopMailboxProcessor ()
 
                     let glossary =
-                        Glossary.create
+                        GlossaryManager.create
                             { newCreateClossary () with
                                 SubGlossaryOps =
                                     { Start = mockStartSubGlossary
                                       Reload = noop1 } }
 
-                    Glossary.init
+                    GlossaryManager.init
                         glossary
                         { newInitGlossary () with
                             DefaultSubGlossaryPathResolver = fun () -> "path1" |> pc |> Ok |> async.Return }
 
-                    Glossary.reloadDefaultGlossaryFile glossary ()
+                    GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
                     do! CA.expectMessage awaiter "path1"
                 }
@@ -157,21 +157,21 @@ let tests =
 
                     let mockRegisterWatchedFiles _ _ = (fun () -> CA.received awaiter true)
 
-                    let glossary = newCreateClossary () |> Glossary.create
+                    let glossary = newCreateClossary () |> GlossaryManager.create
 
                     let mutable currentPath = "path1"
 
-                    Glossary.init
+                    GlossaryManager.init
                         glossary
                         { newInitGlossary () with
                             DefaultSubGlossaryPathResolver = fun () -> currentPath |> pc |> Ok |> async.Return
                             RegisterWatchedFiles = mockRegisterWatchedFiles }
 
-                    Glossary.reloadDefaultGlossaryFile glossary ()
+                    GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
                     currentPath <- "path2"
 
-                    Glossary.reloadDefaultGlossaryFile glossary ()
+                    GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
                     do! CA.expectMessage awaiter true
                 }
@@ -179,9 +179,9 @@ let tests =
                 testAsync "It should log and error if unable to get the path of the configured filed" {
                     let errorAwaiter = CA.create ()
 
-                    let glossary = newCreateClossary () |> Glossary.create
+                    let glossary = newCreateClossary () |> GlossaryManager.create
 
-                    Glossary.init
+                    GlossaryManager.init
                         glossary
                         { newInitGlossary () with
                             Log =
@@ -190,7 +190,7 @@ let tests =
                             DefaultSubGlossaryPathResolver =
                                 fun () -> Error(FileError.PathInvalid "testing error") |> async.Return }
 
-                    Glossary.reloadDefaultGlossaryFile glossary ()
+                    GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
                     do! CA.expectMessage errorAwaiter "Error loading glossary: Invalid Path: testing error"
                 }
@@ -215,13 +215,13 @@ let tests =
                               noopMailboxProcessor ()
 
                           let glossary =
-                              Glossary.create
+                              GlossaryManager.create
                                   { newCreateClossary () with
                                       SubGlossaryOps =
                                           { Start = mockStartSubGlossary
                                             Reload = noop1 } }
 
-                          Glossary.init
+                          GlossaryManager.init
                               glossary
                               { newInitGlossary () with
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
@@ -256,13 +256,13 @@ let tests =
                               ()
 
                           let glossary =
-                              Glossary.create
+                              GlossaryManager.create
                                   { newCreateClossary () with
                                       SubGlossaryOps =
                                           { Start = mockStartSubGlossary
                                             Reload = mockReloadSubGlossary } }
 
-                          Glossary.init
+                          GlossaryManager.init
                               glossary
                               { newInitGlossary () with
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
@@ -307,19 +307,19 @@ let tests =
                               ()
 
                           let glossary =
-                              Glossary.create
+                              GlossaryManager.create
                                   { newCreateClossary () with
                                       SubGlossaryOps =
                                           { Start = mockStartSubGlossary
                                             Reload = mockReloadSubGlossary } }
 
-                          Glossary.init
+                          GlossaryManager.init
                               glossary
                               { newInitGlossary () with
                                   DefaultSubGlossaryPathResolver = fun () -> "pathA" |> pc |> Ok |> async.Return
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
 
-                          Glossary.reloadDefaultGlossaryFile glossary ()
+                          GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
                           do! CA.expectMessage defaultGlossaryCreatedAwaiter "pathA"
 
@@ -356,19 +356,19 @@ let tests =
                               ()
 
                           let glossary =
-                              Glossary.create
+                              GlossaryManager.create
                                   { newCreateClossary () with
                                       SubGlossaryOps =
                                           { Start = mockStartSubGlossary
                                             Reload = mockReloadSubGlossary } }
 
-                          Glossary.init
+                          GlossaryManager.init
                               glossary
                               { newInitGlossary () with
                                   DefaultSubGlossaryPathResolver = fun () -> "pathA" |> pc |> Ok |> async.Return
                                   RegisterWatchedFiles = mockRegisterWatchedFiles }
 
-                          Glossary.reloadDefaultGlossaryFile glossary ()
+                          GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
                           do! CA.expectMessage defaultGlossaryCreatedAwaiter "pathA"
 
@@ -396,20 +396,20 @@ let tests =
 
 
                     let glossary =
-                        Glossary.create
+                        GlossaryManager.create
                             { newCreateClossary () with
                                 SubGlossaryOps =
                                     { Start = SubGlossary.start fileReader
                                       Reload = SubGlossary.reload } }
 
-                    Glossary.init
+                    GlossaryManager.init
                         glossary
                         { newInitGlossary () with
                             DefaultSubGlossaryPathResolver = fun () -> Fixtures.One.path |> pc |> Ok |> async.Return }
 
-                    Glossary.reloadDefaultGlossaryFile glossary ()
+                    GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
-                    let! result = Glossary.lookup glossary "" id
+                    let! result = GlossaryManager.lookup glossary "" id
 
                     test <@ result.Count() = 1 @>
 
@@ -428,20 +428,20 @@ let tests =
 
 
                     let glossary =
-                        Glossary.create
+                        GlossaryManager.create
                             { newCreateClossary () with
                                 SubGlossaryOps =
                                     { Start = SubGlossary.start fileReader
                                       Reload = SubGlossary.reload } }
 
-                    Glossary.init
+                    GlossaryManager.init
                         glossary
                         { newInitGlossary () with
                             DefaultSubGlossaryPathResolver = fun () -> Fixtures.One.path |> pc |> Ok |> async.Return }
 
-                    Glossary.reloadDefaultGlossaryFile glossary ()
+                    GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
-                    let! result = Glossary.lookup glossary "/some/file/anywhere" id
+                    let! result = GlossaryManager.lookup glossary "/some/file/anywhere" id
 
                     test <@ result.Count() = 1 @>
 
@@ -464,34 +464,34 @@ let tests =
                     let mockFileScanner _ = seq { "/path2/path2.contextive.yml" }
 
                     let glossary =
-                        Glossary.create
+                        GlossaryManager.create
                             { newCreateClossary () with
                                 SubGlossaryOps =
                                     { Start = SubGlossary.start mockFileReader
                                       Reload = SubGlossary.reload } }
 
-                    Glossary.init
+                    GlossaryManager.init
                         glossary
                         { newInitGlossary () with
                             FileScanner = mockFileScanner
                             DefaultSubGlossaryPathResolver =
                                 fun () -> "/default/glossary.yml" |> pc |> Ok |> async.Return }
 
-                    Glossary.reloadDefaultGlossaryFile glossary ()
+                    GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
                     let getNames (result: Contextive.Core.GlossaryFile.FindResult) =
                         result |> Seq.collect _.Terms |> Seq.map _.Name |> Set.ofSeq
 
-                    let! result = Glossary.lookup glossary "/path1/file.yml" id
+                    let! result = GlossaryManager.lookup glossary "/path1/file.yml" id
 
                     test <@ result.Count() = 1 @>
                     test <@ result |> getNames |> Set.minElement = "defaultSubGlossary" @>
 
-                    let! result = Glossary.lookup glossary "/default/pathinsamefolderasdefault.txt" id
+                    let! result = GlossaryManager.lookup glossary "/default/pathinsamefolderasdefault.txt" id
                     test <@ result.Count() = 1 @>
                     test <@ result |> getNames |> Set.minElement = "defaultSubGlossary" @>
 
-                    let! result = Glossary.lookup glossary "/path2/file.yml" id
+                    let! result = GlossaryManager.lookup glossary "/path2/file.yml" id
 
                     test <@ result.Count() = 2 @>
 
@@ -511,7 +511,7 @@ let tests =
               "Integration"
               [ testAsync "Can collaborate with subGlossaries" {
                     let glossary =
-                        Glossary.create
+                        GlossaryManager.create
                             { newCreateClossary () with
                                 SubGlossaryOps =
                                     { Start = SubGlossary.start LocalFileReader.read
@@ -521,7 +521,7 @@ let tests =
 
                     let path = Fixtures.One.path
 
-                    Glossary.init
+                    GlossaryManager.init
                         glossary
                         { newInitGlossary () with
                             Log =
@@ -529,11 +529,11 @@ let tests =
                                   error = noop1 }
                             DefaultSubGlossaryPathResolver = fun () -> path |> pc |> Ok |> async.Return }
 
-                    Glossary.reloadDefaultGlossaryFile glossary ()
+                    GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
                     do! CA.expectMessage startupAwaiter $"Loading contextive from {path}..."
 
-                    let! result = Glossary.lookup glossary "/some/file/anywhere" id
+                    let! result = GlossaryManager.lookup glossary "/some/file/anywhere" id
 
                     test <@ result.Count() = 1 @>
 

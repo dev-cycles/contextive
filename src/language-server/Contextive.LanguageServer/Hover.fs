@@ -107,4 +107,4 @@ let handler
 let private registrationOptionsProvider (_: HoverCapability) (_: ClientCapabilities) = HoverRegistrationOptions()
 
 let registrationOptions =
-    RegistrationOptionsDelegate<HoverRegistrationOptions, HoverCapability>(registrationOptionsProvider)
+    RegistrationOptionsDelegate<HoverRegistrationOptions, HoverCapability> registrationOptionsProvider

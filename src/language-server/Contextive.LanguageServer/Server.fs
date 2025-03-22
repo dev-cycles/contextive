@@ -21,9 +21,9 @@ let version =
         .InformationalVersion
 
 module private Startup =
-    open Glossary
+    open GlossaryManager
 
-    let onStartupConfigureServer (glossary: Glossary.T) =
+    let onStartupConfigureServer (glossaryManager: GlossaryManager.T) =
         OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
             async {
                 s.Window.LogInfo $"Starting {name} v{version}..."
@@ -35,18 +35,18 @@ module private Startup =
                 { FileScanner = fileScanner
                   DefaultSubGlossaryPathResolver = defaultSubGlossaryPathResolver
                   Log = Logger.forLanguageServer s
-                  RegisterWatchedFiles = WatchedFiles.nRegister s }
-                |> Glossary.init glossary
+                  RegisterWatchedFiles = WatchedFiles.register s }
+                |> init glossaryManager
 
-                Glossary.reloadDefaultGlossaryFile glossary ()
+                reloadDefaultGlossaryFile glossaryManager ()
 
             }
             |> Async.StartAsTask
             :> Task)
 
 let private configureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
-    let glossary =
-        Glossary.create
+    let glossaryManager =
+        GlossaryManager.create
         <| { SubGlossaryOps =
                { Start = SubGlossary.start LocalFileReader.read
                  Reload = SubGlossary.reload } }
@@ -55,7 +55,7 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
         .WithInput(input)
         .WithOutput(output)
 
-        .OnStarted(Startup.onStartupConfigureServer glossary)
+        .OnStarted(Startup.onStartupConfigureServer glossaryManager)
         .WithConfigurationSection(DefaultGlossaryFileProvider.ConfigSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z ->
             z
@@ -65,12 +65,12 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
             |> ignore)
         .WithServerInfo(ServerInfo(Name = name, Version = version))
 
-        .OnDidChangeConfiguration(Configuration.handler <| Glossary.reloadDefaultGlossaryFile glossary)
+        .OnDidChangeConfiguration(Configuration.handler <| GlossaryManager.reloadDefaultGlossaryFile glossaryManager)
         .OnCompletion(
-            Completion.handler <| Glossary.lookup glossary <| TextDocument.findToken,
+            Completion.handler <| GlossaryManager.lookup glossaryManager <| TextDocument.findToken,
             Completion.registrationOptions
         )
-        .OnHover(Hover.handler <| Glossary.lookup glossary <| TextDocument.findToken, Hover.registrationOptions)
+        .OnHover(Hover.handler <| GlossaryManager.lookup glossaryManager <| TextDocument.findToken, Hover.registrationOptions)
 
     |> TextDocument.onSync
 

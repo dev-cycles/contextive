@@ -180,4 +180,4 @@ let private registrationOptionsProvider (_: CompletionCapability) (_: ClientCapa
     CompletionRegistrationOptions()
 
 let registrationOptions =
-    RegistrationOptionsDelegate<CompletionRegistrationOptions, CompletionCapability>(registrationOptionsProvider)
+    RegistrationOptionsDelegate<CompletionRegistrationOptions, CompletionCapability> registrationOptionsProvider
