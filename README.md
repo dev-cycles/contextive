@@ -12,7 +12,7 @@
 
 Contextive is a suite of tools to immerse developers in the language of their users' domains.
 
-[📘 Documenation](https://docs.contextive.tech/community) | [🚀 Releases](https://github.com/dev-cycles/contextive/releases)
+[📘 Documenation](https://docs.contextive.tech/community) | [🚀 Releases](https://github.com/dev-cycles/contextive/releases) | [✉️ Subscribe for Updates](https://buttondown.com/contextive)
 
 ## Inspiration
 
