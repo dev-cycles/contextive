@@ -199,7 +199,7 @@ Some organisations already have their terms defined in an existing dataset and d
 For this purpose, you can create a glossary that _imports_ from a remote URL.  The contents of the remote URL are then treated as though they were available at the position in the folder structure of the _importing_ file.
 
 :::note
-For this to work, you will need to build your own processes (manual or automated) to extract the terminology definitions from the external dataset and map them to a Contextive glossary yml format.
+You will need to build your own processes (manual or automated) to extract the terminology definitions from the external dataset and map them to a Contextive glossary yml files and then arrange to host those files.
 :::
 
 <FileTree>
@@ -222,9 +222,8 @@ imports:
   - "https://your.domain/path/to/shipping.glossary.yml"
 ```
 
-With this setup, any terminology contained in the file located at `https://your.domain/path/to/shipping.glossary.yml` will be made available as though it had been defined in `shipping/shipping.glossary.yml`.
+With this configuration, any terminology contained in the file located at `https://your.domain/path/to/shipping.glossary.yml` will be made available as though it had been defined in `shipping/shipping.glossary.yml`.
 
-:::note
 Multiple glossary files may be imported into the same location by defining a list of imports.
 
 ```diff lang="yml" title="shipping/shipping.glossary.yml"
@@ -232,10 +231,9 @@ imports:
   - "https://your.domain/path/to/shipping.glossary.yml"
 +  - "https://your.domain/path/to/other.glossary.yml"
 ```
-:::
 
-:::caution[No Refresh]
-Remote glossary files are loaded once at startup and there is not yet any way to force a reload other than restarting your IDE
+:::note
+Remote glossary files are loaded at startup. To force a refresh, 'touch' the _importing_ file by saving it (with or without changes).
 :::
 
 :::danger
