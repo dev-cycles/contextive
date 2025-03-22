@@ -242,14 +242,23 @@ imports:
 +      - name: Shipping Fee
 ```
 
-In this case the `Shipping Fee` is a term that is relevant when integrating between `payments` and `shipping`.
+In this case the `Shipping Fee` is a term that is relevant when integrating between `payments` and `shipping`, but note that it is part of a separate Context - importing a file does not merge the contexts, rather, it acts as though all contexts were defined in the same file.
 
 ### Terms relevant across multiple repositories
 
-If you have multiple repositories that would benefit from access to the same terms, then it's recommended to define the terms in one repository and to construct a system for copying them into the other repositories.
+If you have multiple repositories that would benefit from access to the same terms, then it's recommended to define the terms in one repository and publish them to a publicly accessibly URL.
 
-:::tip[Coming Soon]
-A forthcoming update to Contextive will let you 'import' your glossary from a remote URL, which will make this pattern much simpler. Stay tuned!
+You can then use the [imports](#terms-relevant-in-multiple-places) feature and nominate the URL to import from:
+
+```yml title="shipping/src/shipping.glossary.yml"
+imports:
+  - "https://your.domain/path/to/shipping.glossary.yml"
+```
+
+Any terminology defined in the yml file found at that URL will be made available within the path structure of the _importing_ file, as it is for local file imports.
+
+:::danger
+Contextive does not support accessing authenticated remote URLs.  If it's important that your glossaries remain private, at this point it's best to try and protect them by hosting them in locations only available on a corporate LAN/VPN or restrict access to them via a proxy.
 :::
 
 ### Multi-root workspaces
