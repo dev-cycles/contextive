@@ -17,31 +17,30 @@ type OnWatchedFilesEventHandlers =
 
 type DeRegisterWatch = unit -> unit
 
-type SubGlossaryOperations =
-    { Start: SubGlossary.StartSubGlossary -> SubGlossary.T
-      Reload: SubGlossary.T -> unit }
+type GlossaryOperations =
+    { Start: Glossary.StartGlossary -> Glossary.T
+      Reload: Glossary.T -> unit }
 
 // Create glossary with static dependencies
-type CreateGlossaryManager =
-    { SubGlossaryOps: SubGlossaryOperations }
+type CreateGlossaryManager = { GlossaryOps: GlossaryOperations }
 
 // InitGlossary with dynamic dependencies that rely on the language server having already started
 type InitGlossaryManager =
     { Log: Logger
       FileScanner: string -> string seq
       RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string option -> DeRegisterWatch
-      DefaultSubGlossaryPathResolver: unit -> Async<Result<PathConfiguration, FileError>> }
+      DefaultGlossaryPathResolver: unit -> Async<Result<PathConfiguration, FileError>> }
 
 type State =
     { Log: Logger
       FileScanner: string -> string seq
       RegisterWatchedFiles: string option -> DeRegisterWatch
-      SubGlossaries: Map<string, SubGlossary.T>
-      SubGlossaryOps: SubGlossaryOperations
-      DefaultSubGlossaryPathResolver: unit -> Async<Result<PathConfiguration, FileError>>
-      DefaultSubGlossaryPath: string
-      DefaultSubGlossary: SubGlossary.T option
-      DeRegisterDefaultSubGlossaryFileWatcher: DeRegisterWatch option }
+      Glossaries: Map<string, Glossary.T>
+      GlossaryOps: GlossaryOperations
+      DefaultGlossaryPathResolver: unit -> Async<Result<PathConfiguration, FileError>>
+      DefaultGlossaryPath: string
+      DefaultGlossary: Glossary.T option
+      DeRegisterDefaultGlossaryFileWatcher: DeRegisterWatch option }
 
 type Lookup =
     { Filter: Filter
@@ -68,12 +67,12 @@ module private Handlers =
             { FileScanner = fun _ -> []
               Log = Logger.Noop
               RegisterWatchedFiles = fun _ -> fun () -> ()
-              SubGlossaries = Map []
-              SubGlossaryOps = createGlossary.SubGlossaryOps
-              DefaultSubGlossaryPathResolver = fun _ -> FileError.NotYetLoaded |> Error |> async.Return
-              DefaultSubGlossary = None
-              DefaultSubGlossaryPath = ""
-              DeRegisterDefaultSubGlossaryFileWatcher = None }
+              Glossaries = Map []
+              GlossaryOps = createGlossary.GlossaryOps
+              DefaultGlossaryPathResolver = fun _ -> FileError.NotYetLoaded |> Error |> async.Return
+              DefaultGlossary = None
+              DefaultGlossaryPath = ""
+              DeRegisterDefaultGlossaryFileWatcher = None }
 
         state
 
@@ -81,7 +80,7 @@ module private Handlers =
         let state =
             { state with
                 FileScanner = initGlossary.FileScanner
-                DefaultSubGlossaryPathResolver = initGlossary.DefaultSubGlossaryPathResolver
+                DefaultGlossaryPathResolver = initGlossary.DefaultGlossaryPathResolver
                 RegisterWatchedFiles = initGlossary.RegisterWatchedFiles watchedFileshandlers
                 Log = initGlossary.Log }
 
@@ -92,61 +91,61 @@ module private Handlers =
         let foundSubGlossaries =
             glossaryFiles
             |> Seq.map (fun p ->
-                let subGlossary =
-                    state.SubGlossaryOps.Start
+                let glossary =
+                    state.GlossaryOps.Start
                         { Path = { Path = p; IsDefault = false }
                           Log = state.Log }
 
-                p, subGlossary)
+                p, glossary)
             |> Map
 
         { state with
-            SubGlossaries = foundSubGlossaries }
+            Glossaries = foundSubGlossaries }
 
 
     let watchedFileChanged (state: State) path =
-        let subGlossary = state.SubGlossaries[path]
-        state.SubGlossaryOps.Reload subGlossary
+        let glossary = state.Glossaries[path]
+        state.GlossaryOps.Reload glossary
         state
 
     let watchedFileCreated (state: State) path =
-        let exists = state.SubGlossaries.ContainsKey(path)
+        let exists = state.Glossaries.ContainsKey(path)
 
         if exists then
             watchedFileChanged state path
         else
-            let subGlossary =
-                state.SubGlossaryOps.Start
+            let glossary =
+                state.GlossaryOps.Start
                     { Path = { Path = path; IsDefault = false }
                       Log = state.Log }
 
-            let newSubGlossaries = state.SubGlossaries.Add(path, subGlossary)
+            let newSubGlossaries = state.Glossaries.Add(path, glossary)
 
             { state with
-                SubGlossaries = newSubGlossaries }
+                Glossaries = newSubGlossaries }
 
     let reloadDefaultGlossaryFile (state: State) =
         async {
 
-            match state.DeRegisterDefaultSubGlossaryFileWatcher with
+            match state.DeRegisterDefaultGlossaryFileWatcher with
             | Some deregister -> deregister ()
             | _ -> ()
 
-            let! pathOpt = state.DefaultSubGlossaryPathResolver()
+            let! pathOpt = state.DefaultGlossaryPathResolver()
 
             return
                 pathOpt
                 |> Result.map (fun path ->
-                    let defaultSubGlossary = state.SubGlossaryOps.Start { Path = path; Log = state.Log }
+                    let defaultGlossary = state.GlossaryOps.Start { Path = path; Log = state.Log }
 
                     { state with
-                        DefaultSubGlossary = defaultSubGlossary |> Some
-                        DefaultSubGlossaryPath = path.Path
-                        SubGlossaries = state.SubGlossaries.Add(path.Path, defaultSubGlossary)
-                        DeRegisterDefaultSubGlossaryFileWatcher = Some path.Path |> state.RegisterWatchedFiles |> Some })
+                        DefaultGlossary = defaultGlossary |> Some
+                        DefaultGlossaryPath = path.Path
+                        Glossaries = state.Glossaries.Add(path.Path, defaultGlossary)
+                        DeRegisterDefaultGlossaryFileWatcher = Some path.Path |> state.RegisterWatchedFiles |> Some })
                 |> Result.mapError (fun fileError ->
                     let errorMessage = fileErrorMessage fileError
-                    let msg = $"Error loading glossary: {errorMessage}"
+                    let msg = $"Error loading glossary file: {errorMessage}"
                     state.Log.error msg)
                 |> Result.defaultValue state
         }
@@ -166,22 +165,22 @@ module private Handlers =
                 lookup.OpenFileUri |> System.IO.Path.GetDirectoryName |> normalizePath
 
             let results =
-                state.SubGlossaries.Keys
-                |> Seq.filter (fun p -> p <> state.DefaultSubGlossaryPath)
+                state.Glossaries.Keys
+                |> Seq.filter (fun p -> p <> state.DefaultGlossaryPath)
                 |> Seq.filter (pathMatch openFilePath)
-                |> Seq.map (fun p -> SubGlossary.lookup state.SubGlossaries[p] lookup.OpenFileUri lookup.Filter)
+                |> Seq.map (fun p -> Glossary.lookup state.Glossaries[p] lookup.OpenFileUri lookup.Filter)
                 |> AsyncSeq.ofSeqAsync
                 |> AsyncSeq.toListSynchronously
 
-            let defaultSubGlossaryResult =
-                match state.DefaultSubGlossary with
-                | Some subGlossary -> seq { SubGlossary.lookup subGlossary lookup.OpenFileUri lookup.Filter }
+            let defaultGlossaryResult =
+                match state.DefaultGlossary with
+                | Some glossary -> seq { Glossary.lookup glossary lookup.OpenFileUri lookup.Filter }
                 | None -> seq { Seq.empty |> async.Return }
                 |> AsyncSeq.ofSeqAsync
                 |> AsyncSeq.toListSynchronously
 
             let combined =
-                List.append results defaultSubGlossaryResult |> Seq.collect id |> List.ofSeq
+                List.append results defaultGlossaryResult |> Seq.collect id |> List.ofSeq
 
             lookup.Rc.Reply combined
 

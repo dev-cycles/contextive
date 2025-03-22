@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.Tests.Helpers.SubGlossaryHelper
+module Contextive.LanguageServer.Tests.Helpers.GlossaryHelper
 
 open Contextive.Core.GlossaryFile
 
@@ -24,5 +24,4 @@ let mockTermNamesFinder (defaultContext: Context) (termNames: string list) =
     mockMultiContextTermNamesFinder (seq { defaultContext }) termNames
 
 module FindResult =
-    let allTerms (contexts: FindResult) : Term seq =
-        contexts |> Seq.collect (_.Terms)
+    let allTerms (contexts: FindResult) : Term seq = contexts |> Seq.collect (_.Terms)

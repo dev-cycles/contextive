@@ -10,7 +10,7 @@ open Contextive.Core.GlossaryFile
 open Tests.Helpers.TestClient
 open Contextive.LanguageServer.Tests.Helpers
 
-module GlossaryFile = SubGlossaryHelper
+module GlossaryHelper = GlossaryHelper
 
 [<Tests>]
 let tests =
@@ -217,7 +217,7 @@ let tests =
 
               let hoverHandler =
                   Hover.handler
-                      (SubGlossaryHelper.mockTermNamesFinder
+                      (GlossaryHelper.mockTermNamesFinder
                           { Context.Default with
                               Name = "TestContext" }
                           terms)

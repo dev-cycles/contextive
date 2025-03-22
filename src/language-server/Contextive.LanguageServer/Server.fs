@@ -28,12 +28,12 @@ module private Startup =
             async {
                 s.Window.LogInfo $"Starting {name} v{version}..."
 
-                let! defaultSubGlossaryPathResolver = DefaultGlossaryFileProvider.getDefaultGlossaryFilePathResolver s
+                let! defaultGlossaryPathResolver = DefaultGlossaryFileProvider.getDefaultGlossaryFilePathResolver s
 
                 let fileScanner = Configuration.getWorkspaceFolders s |> FileScanner.fileScanner
 
                 { FileScanner = fileScanner
-                  DefaultSubGlossaryPathResolver = defaultSubGlossaryPathResolver
+                  DefaultGlossaryPathResolver = defaultGlossaryPathResolver
                   Log = Logger.forLanguageServer s
                   RegisterWatchedFiles = WatchedFiles.register s }
                 |> init glossaryManager
@@ -47,9 +47,9 @@ module private Startup =
 let private configureServer (input: Stream) (output: Stream) (opts: LanguageServerOptions) =
     let glossaryManager =
         GlossaryManager.create
-        <| { SubGlossaryOps =
-               { Start = SubGlossary.start LocalFileReader.read
-                 Reload = SubGlossary.reload } }
+        <| { GlossaryOps =
+               { Start = Glossary.start LocalFileReader.read
+                 Reload = Glossary.reload } }
 
     opts
         .WithInput(input)
@@ -65,12 +65,22 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
             |> ignore)
         .WithServerInfo(ServerInfo(Name = name, Version = version))
 
-        .OnDidChangeConfiguration(Configuration.handler <| GlossaryManager.reloadDefaultGlossaryFile glossaryManager)
+        .OnDidChangeConfiguration(
+            Configuration.handler
+            <| GlossaryManager.reloadDefaultGlossaryFile glossaryManager
+        )
         .OnCompletion(
-            Completion.handler <| GlossaryManager.lookup glossaryManager <| TextDocument.findToken,
+            Completion.handler
+            <| GlossaryManager.lookup glossaryManager
+            <| TextDocument.findToken,
             Completion.registrationOptions
         )
-        .OnHover(Hover.handler <| GlossaryManager.lookup glossaryManager <| TextDocument.findToken, Hover.registrationOptions)
+        .OnHover(
+            Hover.handler
+            <| GlossaryManager.lookup glossaryManager
+            <| TextDocument.findToken,
+            Hover.registrationOptions
+        )
 
     |> TextDocument.onSync
 

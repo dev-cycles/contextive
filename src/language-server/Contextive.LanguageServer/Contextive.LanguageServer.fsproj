@@ -32,7 +32,7 @@
         <TrimmerRootAssembly Include="Contextive.Core" />
         <TrimmerRootAssembly Include="FSharp.Core" />
     </ItemGroup>
-    <ItemGroup><Compile Include="FileScanner.fs" /><Compile Include="Globs.fs" /><Compile Include="Logger.fs" /><Compile Include="SubGlossary.fs" /><Compile Include="GlossaryManager.fs" />
+    <ItemGroup><Compile Include="FileScanner.fs" /><Compile Include="Globs.fs" /><Compile Include="Logger.fs" /><Compile Include="Glossary.fs" /><Compile Include="GlossaryManager.fs" />
         <Compile Include="Seq.fs" />        
         <Compile Include="Rendering.fs" />
         <Compile Include="LocalFileReader.fs" />

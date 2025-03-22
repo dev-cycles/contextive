@@ -1,10 +1,10 @@
-module Contextive.LanguageServer.Tests.Component.SubGlossaryTests
+module Contextive.LanguageServer.Tests.Component.GlossaryTests
 
 open Expecto
 open Swensen.Unquote
 open Contextive.LanguageServer
 open System.Linq
-open Tests.Helpers.SubGlossaryHelper
+open Tests.Helpers.GlossaryHelper
 open Contextive.LanguageServer.Logger
 open Contextive.Core.File
 open Contextive.LanguageServer.Tests.Helpers
@@ -21,14 +21,14 @@ let tests =
     let getName (t: Contextive.Core.GlossaryFile.Term) = t.Name
     let compareList = Seq.compareWith compare
 
-    let newStartSubGlossary path : SubGlossary.StartSubGlossary = { Path = path; Log = Logger.Noop }
+    let newStartGlossary path : Glossary.StartGlossary = { Path = path; Log = Logger.Noop }
 
     let pc p : PathConfiguration = { Path = p; IsDefault = false }
 
 
     testList
-        "LanguageServer.SubGlossary Tests"
-        [ testAsync "When starting a subglossary it should read the file at the provided path" {
+        "LanguageServer.Glossary Tests"
+        [ testAsync "When starting a glossary it should read the file at the provided path" {
               let awaiter = CA.create ()
 
               let fileReader (p: PathConfiguration) =
@@ -36,21 +36,21 @@ let tests =
                   Ok(emptyGlossary)
 
 
-              let _ = pc "path1" |> newStartSubGlossary |> SubGlossary.start fileReader
+              let _ = pc "path1" |> newStartGlossary |> Glossary.start fileReader
 
               do! CA.expectMessage awaiter "path1"
           }
 
-          testAsync "When starting a subglossary it should log the fact that it's loading the path" {
+          testAsync "When starting a glossary it should log the fact that it's loading the path" {
               let awaiter = CA.create ()
 
               let fileReader _ = Ok emptyGlossary
 
-              { SubGlossary.StartSubGlossary.Path = pc "path1"
-                SubGlossary.StartSubGlossary.Log =
+              { Glossary.StartGlossary.Path = pc "path1"
+                Glossary.StartGlossary.Log =
                   { info = CA.received awaiter
                     error = fun _ -> () } }
-              |> SubGlossary.start fileReader
+              |> Glossary.start fileReader
               |> ignore
 
 
@@ -64,34 +64,34 @@ let tests =
                   Error(FileError.ParsingError "parsing error")
 
               let _ =
-                  SubGlossary.start fileReader
+                  Glossary.start fileReader
                   <| { Path = pc "path1"
                        Log =
                          { info = fun _ -> ()
                            error = CA.received awaiter } }
 
-              do! CA.expectMessage awaiter "Error loading glossary: Parsing Error: parsing error"
+              do! CA.expectMessage awaiter "Error loading glossary file: Parsing Error: parsing error"
           }
 
-          testAsync "When reloading a subglossary it should read the file at the path provided when it was created" {
+          testAsync "When reloading a glossary it should read the file at the path provided when it was created" {
               let awaiter = CA.create ()
 
               let fileReader p =
                   CA.received awaiter p.Path
                   Ok(emptyGlossary)
 
-              let subGlossary = pc "path1" |> newStartSubGlossary |> SubGlossary.start fileReader
+              let glossary = pc "path1" |> newStartGlossary |> Glossary.start fileReader
 
               do! CA.expectMessage awaiter "path1"
 
               CA.clear awaiter
 
-              SubGlossary.reload subGlossary
+              Glossary.reload glossary
 
               do! CA.expectMessage awaiter "path1"
           }
 
-          testAsync "When looking up a term in a subglossary it should return terms" {
+          testAsync "When looking up a term in a glossary it should return terms" {
               let awaiter = CA.create ()
 
               let fileReader p =
@@ -99,20 +99,20 @@ let tests =
 
                   """contexts:
   - terms:
-    - name: subGlossary1"""
+    - name: glossary1"""
                   |> Ok
 
-              let subGlossary = pc "path1" |> newStartSubGlossary |> SubGlossary.start fileReader
+              let glossary = pc "path1" |> newStartGlossary |> Glossary.start fileReader
 
-              let! result = SubGlossary.lookup subGlossary "" id
+              let! result = Glossary.lookup glossary "" id
 
               let terms = FindResult.allTerms result
 
               test <@ result.Count() = 1 @>
-              test <@ (terms |> Seq.head).Name = "subGlossary1" @>
+              test <@ (terms |> Seq.head).Name = "glossary1" @>
           }
 
-          testAsync "SubGlossary can recover from FileReading Failure" {
+          testAsync "Glossary can recover from FileReading Failure" {
               let awaiter = CA.create ()
 
               let ErrorFileResult = Error(FileError.FileNotFound)
@@ -120,7 +120,7 @@ let tests =
               let OkFileResult =
                   """contexts:
   - terms:
-    - name: subGlossary1"""
+    - name: glossary1"""
                   |> Ok
 
               let mutable fileResult = ErrorFileResult
@@ -129,58 +129,58 @@ let tests =
                   CA.received awaiter p.Path
                   fileResult
 
-              let subGlossary = pc "path1" |> newStartSubGlossary |> SubGlossary.start fileReader
+              let glossary = pc "path1" |> newStartGlossary |> Glossary.start fileReader
 
-              let! result = SubGlossary.lookup subGlossary "" id
+              let! result = Glossary.lookup glossary "" id
 
               test <@ result.Count() = 0 @>
 
               fileResult <- OkFileResult
-              SubGlossary.reload subGlossary
+              Glossary.reload glossary
 
-              let! result = SubGlossary.lookup subGlossary "" id
+              let! result = Glossary.lookup glossary "" id
               let terms = FindResult.allTerms result
 
               test <@ result.Count() = 1 @>
-              test <@ (terms |> Seq.head).Name = "subGlossary1" @>
+              test <@ (terms |> Seq.head).Name = "glossary1" @>
           }
 
-          testAsync "SubGlossary can recover from FileReading Exception" {
+          testAsync "Glossary can recover from FileReading Exception" {
               let ErrorFileResult = Error(FileError.NotYetLoaded)
 
               let OkFileResult =
                   """contexts:
   - terms:
-    - name: subGlossary1"""
+    - name: glossary1"""
                   |> Ok
 
               let mutable fileResult = ErrorFileResult
 
               let fileReader p =
                   if fileResult.IsError then
-                      System.Exception("Unexpected error") |> raise
+                      System.Exception "Unexpected error" |> raise
                   else
                       fileResult
 
-              let subGlossary = pc "path1" |> newStartSubGlossary |> SubGlossary.start fileReader
+              let glossary = pc "path1" |> newStartGlossary |> Glossary.start fileReader
 
-              let! result = SubGlossary.lookup subGlossary "" id
+              let! result = Glossary.lookup glossary "" id
 
               test <@ result.Count() = 0 @>
 
               fileResult <- OkFileResult
-              SubGlossary.reload subGlossary
+              Glossary.reload glossary
 
-              let! result = SubGlossary.lookup subGlossary "" id
+              let! result = Glossary.lookup glossary "" id
               let terms = FindResult.allTerms result
 
               test <@ result.Count() = 1 @>
-              test <@ (terms |> Seq.head).Name = "subGlossary1" @>
+              test <@ (terms |> Seq.head).Name = "glossary1" @>
           }
 
           testList
               "Import"
-              [ testAsync "When a subglossary has an import statement it should import the referenced file" {
+              [ testAsync "When a glossary has an import statement it should import the referenced file" {
                     let awaiter = CA.create ()
 
                     let fileToImport = "../../fileToImport.yml"
@@ -201,13 +201,13 @@ imports:
                         else
                             Error FileError.FileNotFound
 
-                    let _ = pc initialFilePath |> newStartSubGlossary |> SubGlossary.start fileReader
+                    let _ = pc initialFilePath |> newStartGlossary |> Glossary.start fileReader
 
                     do! CA.expectMessage awaiter fileToImport
                 }
 
                 testAsync
-                    "When a subglossary has an import statement it should merge imported contexts with existing contexts" {
+                    "When a glossary has an import statement it should merge imported contexts with existing contexts" {
                     let fileToImport = "/fileToImport.yml"
                     let initialFilePath = "/path1"
 
@@ -231,10 +231,10 @@ contexts:
                         elif p.Path = fileToImport then Ok importedGlossary
                         else Error FileError.FileNotFound
 
-                    let subGlossary =
-                        pc initialFilePath |> newStartSubGlossary |> SubGlossary.start fileReader
+                    let glossary =
+                        pc initialFilePath |> newStartGlossary |> Glossary.start fileReader
 
-                    let! result = SubGlossary.lookup subGlossary "" id
+                    let! result = Glossary.lookup glossary "" id
 
                     let terms = FindResult.allTerms result
 
@@ -242,7 +242,7 @@ contexts:
                     test <@ terms |> Seq.map _.Name |> Set.ofSeq = Set.ofList [ "importedTerm"; "originalTerm" ] @>
                 }
 
-                testAsync "When an imported subglossary has an import statement it should chain the imports" {
+                testAsync "When an imported glossary has an import statement it should chain the imports" {
                     let fileToImport n = $"/fileToImport{n}.yml"
 
                     let importedGlossary n =
@@ -265,10 +265,10 @@ contexts:
                         elif p.Path = fileToImport 3 then Ok <| importedGlossary 3
                         else Error FileNotFound
 
-                    let subGlossary =
-                        1 |> fileToImport |> pc |> newStartSubGlossary |> SubGlossary.start fileReader
+                    let glossary =
+                        1 |> fileToImport |> pc |> newStartGlossary |> Glossary.start fileReader
 
-                    let! result = SubGlossary.lookup subGlossary "" id
+                    let! result = Glossary.lookup glossary "" id
 
                     let terms = FindResult.allTerms result
 
@@ -293,10 +293,10 @@ contexts:
                         elif p.Path = fileToImport 2 then Ok <| glossaryWithImport 1
                         else Error FileNotFound
 
-                    let subGlossary =
-                        1 |> fileToImport |> pc |> newStartSubGlossary |> SubGlossary.start fileReader
+                    let glossary =
+                        1 |> fileToImport |> pc |> newStartGlossary |> Glossary.start fileReader
 
-                    let! result = SubGlossary.lookup subGlossary "" id
+                    let! result = Glossary.lookup glossary "" id
 
                     let terms = FindResult.allTerms result
 
@@ -310,13 +310,13 @@ contexts:
 
           testList
               "Integration"
-              [ testAsync "SubGlossary can collaborate with FileReader" {
-                    let subGlossary =
+              [ testAsync "Glossary can collaborate with FileReader" {
+                    let glossary =
                         pc Fixtures.One.path
-                        |> newStartSubGlossary
-                        |> SubGlossary.start LocalFileReader.read
+                        |> newStartGlossary
+                        |> Glossary.start LocalFileReader.read
 
-                    let! result = SubGlossary.lookup subGlossary "" id
+                    let! result = Glossary.lookup glossary "" id
 
                     let terms = FindResult.allTerms result
 
@@ -325,13 +325,13 @@ contexts:
 
                 }
 
-                testAsync "SubGlossary can collaborate with FileReader with imports" {
-                    let subGlossary =
+                testAsync "Glossary can collaborate with FileReader with imports" {
+                    let glossary =
                         pc Fixtures.Imports.Main.path
-                        |> newStartSubGlossary
-                        |> SubGlossary.start LocalFileReader.read
+                        |> newStartGlossary
+                        |> Glossary.start LocalFileReader.read
 
-                    let! result = SubGlossary.lookup subGlossary "" id
+                    let! result = Glossary.lookup glossary "" id
 
                     let terms = FindResult.allTerms result
 

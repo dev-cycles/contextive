@@ -1,11 +1,11 @@
-module Contextive.LanguageServer.SubGlossary
+module Contextive.LanguageServer.Glossary
 
 open Contextive.Core.GlossaryFile
 open Contextive.Core.File
 open Logger
 open Globs
 
-type StartSubGlossary =
+type StartGlossary =
     { Path: PathConfiguration; Log: Logger }
 
 type Lookup =
@@ -14,7 +14,7 @@ type Lookup =
       Rc: AsyncReplyChannel<FindResult> }
 
 type Message =
-    | Start of StartSubGlossary
+    | Start of StartGlossary
     | Reload
     | Lookup of Lookup
 
@@ -28,7 +28,7 @@ type State =
       Path: PathConfiguration option }
 
     static member Initial =
-        { FileReader = fun _ -> Error(NotYetLoaded)
+        { FileReader = fun _ -> Error NotYetLoaded
           ImportedFiles = Seq.empty
           GlossaryFile = GlossaryFile.Default
           Log = Logger.Noop
@@ -60,7 +60,7 @@ module Handlers =
             | DefaultFileNotFound -> state.Log.info "No glossary file configured, and default file not found."
             | _ ->
                 let errorMessage = fileErrorMessage fileError
-                let msg = $"Error loading glossary: {errorMessage}"
+                let msg = $"Error loading glossary file: {errorMessage}"
                 state.Log.error msg
 
             fileError)
@@ -100,10 +100,10 @@ module Handlers =
 
         }
 
-    let start (state: State) (startSubGlossary: StartSubGlossary) =
+    let start (state: State) (startGlossary: StartGlossary) =
         { state with
-            Path = Some startSubGlossary.Path
-            Log = startSubGlossary.Log }
+            Path = Some startGlossary.Path
+            Log = startGlossary.Log }
         |> reload
 
     let lookup (state: State) (lookup: Lookup) =
@@ -123,7 +123,7 @@ let private handleMessage (state: State) (msg: Message) =
     async {
         return!
             match msg with
-            | Start startSubGlossary -> Handlers.start state startSubGlossary
+            | Start startGlossary -> Handlers.start state startGlossary
             | Reload -> Handlers.reload state
             | Lookup p -> Handlers.lookup state p
     }
@@ -134,8 +134,8 @@ let private safeFileReader fileReader p : Result<string, FileError> =
     with e ->
         $"Unexpected error reading file {p}: {e.ToString()}" |> ParsingError |> Error
 
-let start fileReader (startSubGlossary: StartSubGlossary) : T =
-    let subGlossary =
+let start fileReader (startGlossary: StartGlossary) : T =
+    let glossary =
         MailboxProcessor.Start(fun inbox ->
             let rec loop (state: State) =
                 async {
@@ -151,14 +151,14 @@ let start fileReader (startSubGlossary: StartSubGlossary) : T =
                    FileReader = safeFileReader fileReader
                    Path = None })
 
-    Start startSubGlossary |> subGlossary.Post
+    Start startGlossary |> glossary.Post
 
-    subGlossary
+    glossary
 
-let reload (subGlossary: T) = Reload |> subGlossary.Post
+let reload (glossary: T) = Reload |> glossary.Post
 
-let lookup (subGlossary: T) openFileUri (filter: Filter) =
-    subGlossary.PostAndAsyncReply(fun rc ->
+let lookup (glossary: T) openFileUri (filter: Filter) =
+    glossary.PostAndAsyncReply(fun rc ->
         Lookup(
             { Filter = filter
               OpenFileUri = openFileUri

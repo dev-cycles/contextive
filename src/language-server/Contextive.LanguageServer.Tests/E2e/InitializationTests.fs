@@ -79,7 +79,7 @@ let tests =
               test
                   <@
                       reply = Some
-                          $"Error loading glossary: Invalid Path: Unable to locate path '{pathValue}' as not in a workspace."
+                          $"Error loading glossary file: Invalid Path: Unable to locate path '{pathValue}' as not in a workspace."
                   @>
           }
 
@@ -126,7 +126,7 @@ let tests =
                     Window.showMessageHandlerBuilder
                     <| Window.notificationHandler<ShowMessageParams> showErrorAwaiter ]
 
-              let expectedResult = Some "Error loading glossary: Glossary file not found."
+              let expectedResult = Some "Error loading glossary file: Glossary file not found."
 
               let! client, reply, _ = TestClientWithCustomInitWait(config, expectedResult) |> initAndWaitForReply
               use _ = client

@@ -42,12 +42,12 @@ let tests =
                   test <@ (completionLabels, expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
               }
 
-          [ ("one", "", Position(0, 0), Fixtures.One.expectedCompletionLabels)
-            ("two", "", Position(0, 0), Fixtures.Two.expectedCompletionLabels)
-            ("two", "W", Position(0, 1), Fixtures.Two.expectedCompletionLabelsPascal)
-            ("two", "WO", Position(0, 2), Fixtures.Two.expectedCompletionLabelsUPPER) ]
+          [ "one", "", Position(0, 0), Fixtures.One.expectedCompletionLabels
+            "two", "", Position(0, 0), Fixtures.Two.expectedCompletionLabels
+            "two", "W", Position(0, 1), Fixtures.Two.expectedCompletionLabelsPascal
+            "two", "WO", Position(0, 2), Fixtures.Two.expectedCompletionLabelsUPPER ]
           |> List.map testCompletionsWithDefaultGlossary
-          |> testList "Test Completions with default subglossary only"
+          |> testList "Test Completions with default glossary only"
 
           let testCompletionsWithMultipleGlossaries (fileName: string, text, position, expectedCompletionLabels) =
               testAsync
@@ -88,7 +88,7 @@ let tests =
           let singleWordCompletion (term, tokenAtPosition: string option, expectedLabel: string) =
               testCase $"Completion of \"{term}\" with {tokenAtPosition} at position, returns \"{expectedLabel}\""
               <| fun () ->
-                  let finder: Finder = SubGlossaryHelper.mockTermNamesFinder Context.Default [ term ]
+                  let finder: Finder = GlossaryHelper.mockTermNamesFinder Context.Default [ term ]
 
                   let tokenFinder: TextDocument.TokenFinder = fun _ _ -> tokenAtPosition
 
@@ -119,7 +119,7 @@ let tests =
               testCase
                   $"Completion of \"{term}\" with {tokenAtPosition} at position, returns \"{expectedCompletionLabelsList}\""
               <| fun () ->
-                  let finder: Finder = SubGlossaryHelper.mockTermNamesFinder Context.Default [ term ]
+                  let finder: Finder = GlossaryHelper.mockTermNamesFinder Context.Default [ term ]
 
                   let tokenFinder: TextDocument.TokenFinder = fun _ _ -> tokenAtPosition
 
@@ -189,7 +189,7 @@ let tests =
               testCase $"Context \"{contextName}\" has detail \"{expectedDetail}\""
               <| fun () ->
                   let finder: Finder =
-                      SubGlossaryHelper.mockTermNamesFinder
+                      GlossaryHelper.mockTermNamesFinder
                           { Context.Default with
                               Name = contextName }
                           [ "term" ]
@@ -213,7 +213,7 @@ let tests =
                             Name = termName
                             Definition = termDefinition } ]
 
-                  let finder: Finder = SubGlossaryHelper.mockDefinitionsFinder Context.Default terms
+                  let finder: Finder = GlossaryHelper.mockDefinitionsFinder Context.Default terms
 
                   let completionItem =
                       (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null)
@@ -232,7 +232,7 @@ let tests =
           testCase "Completion Kind Is Reference"
           <| fun () ->
               let finder: Finder =
-                  SubGlossaryHelper.mockDefinitionsFinder Context.Default [ Term.Default ]
+                  GlossaryHelper.mockDefinitionsFinder Context.Default [ Term.Default ]
 
               let completionItem =
                   (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null)

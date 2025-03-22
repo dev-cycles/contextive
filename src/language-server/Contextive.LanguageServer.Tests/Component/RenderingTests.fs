@@ -179,7 +179,7 @@ key value
                           DomainVisionStatement = "supporting the test"
                           Meta = dict [ "owner", "Team A" ] }
                   }
-                  |> SubGlossaryHelper.allContextsWithTermNames [ "term" ]
+                  |> GlossaryHelper.allContextsWithTermNames [ "term" ]
 
               let rendering = Rendering.renderContexts contexts
 
@@ -206,7 +206,7 @@ owner Team A
                       { Context.Default with Name = "Test" }
                       { Context.Default with Name = "Other" }
                   }
-                  |> SubGlossaryHelper.allContextsWithTermNames [ "term" ]
+                  |> GlossaryHelper.allContextsWithTermNames [ "term" ]
 
               let rendering = Rendering.renderContexts contexts
 
@@ -240,7 +240,7 @@ owner Team A
                           Name = "Test"
                           DomainVisionStatement = "vision statement should still be italic" + System.Environment.NewLine }
                   }
-                  |> SubGlossaryHelper.allContextsWithTermNames [ "term" ]
+                  |> GlossaryHelper.allContextsWithTermNames [ "term" ]
 
               let rendering = Rendering.renderContexts contexts
 
@@ -266,7 +266,7 @@ _Vision: vision statement should still be italic_
                           Name = "Test"
                           DomainVisionStatement = "vision statement should still be italic " }
                   }
-                  |> SubGlossaryHelper.allContextsWithTermNames [ "term" ]
+                  |> GlossaryHelper.allContextsWithTermNames [ "term" ]
 
               let rendering = Rendering.renderContexts contexts
 
