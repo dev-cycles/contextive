@@ -115,7 +115,7 @@ The following sections explore common patterns for where to place your glossary 
 :::tip
 Terms in a glossary file are used by Contextive when working on any file in the same folder as the glossary or any of its child folders.
 
-If you need terms from another glossary file, the [import](#terms-relevant-in-multiple-places) facility may assist.
+If you need terms from another glossary file, the [import](#terms-defined-in-an-external-data-source) facility may assist.
 :::
 
 ### Terms relevant for the whole repository
@@ -232,8 +232,8 @@ imports:
 +  - "https://your.domain/path/to/other.glossary.yml"
 ```
 
-:::note
-Remote glossary files are loaded at startup. To force a refresh, 'touch' the _importing_ file by saving it (with or without changes).
+:::caution
+Remote glossary files are loaded at startup and changes are not automatically detected. To force a refresh, 'touch' the _importing_ file by saving it (with or without changes) or restart the IDE.
 :::
 
 :::danger
@@ -274,6 +274,10 @@ This will ensure that when working on `HandleOrderPaymentReceived.cs` all the te
 
 When working on `shipping/src/Order.cs`, only the definition from `shipping.glossary.yml` will be shown, and when working on `payments/src/Order.cs` only the definition from `payments.glossary.yml` will be shown.
 
+:::caution
+Just like remote glossary files, local imports are loaded at startup and are not reloaded even when the _imported_ file changes. Only a change to the _importing_ file will trigger a reload.  To force a refresh, 'touch' the _importing_ file by saving it (with or without changes).
+:::
+
 #### Combining Imports with Terminology
 
 A glossary file can contain a list of imports _as well_ as contexts and terms - they will all be made available when working in the folder, e.g.:
@@ -291,7 +295,7 @@ In this case the `Shipping Fee` is a term that is relevant when integrating betw
 
 ### Terms relevant across multiple repositories
 
-Some organisations have adopted a distributed repository configuration, where small services (microservices, or cloud FAAS functions) are each located in their own repositories. Often in these cases, the code in the repositories share a domain language.
+Some organisations have adopted a distributed repository configuration, where small services (microservices, or cloud FAAS functions) are each located in their own repositories. Often in these cases, the code in these repositories share a domain language.
 
 If you have multiple repositories that would benefit from access to the same terms, then it's recommended to define the terms in one repository and publish them to a publicly accessibly URL.
 
