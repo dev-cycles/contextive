@@ -12,6 +12,8 @@
 
 Contextive is a suite of tools to immerse developers in the language of their users' domains.
 
+[📘 Documenation](https://docs.contextive.tech/community) | [🚀 Releases](https://github.com/dev-cycles/contextive/releases)
+
 ## Inspiration
 
 Contextive is inspired by the concept of the [Ubiquitous Language](https://martinfowler.com/bliki/UbiquitousLanguage.html) from the practice of [Domain Driven Design (DDD)](https://martinfowler.com/bliki/DomainDrivenDesign.html) and is intended to support ubiquitous language management practices on DDD projects.
@@ -42,7 +44,7 @@ Officially supported IDEs include:
 
 ## Getting Started
 
-See [setting up glossaries](https://docs.contextive.tech/community/v/1.14.1/guides/setting-up-glossaries/) and [defining terminology](https://docs.contextive.tech/community/v/1.14.1/guides/defining-terminology/) usage guides for details on getting started with Contextive.
+See [setting up glossaries](https://docs.contextive.tech/community/guides/setting-up-glossaries/) and [defining terminology](https://docs.contextive.tech/community/guides/defining-terminology/) usage guides for details on getting started with Contextive.
 
 ## Features
 
