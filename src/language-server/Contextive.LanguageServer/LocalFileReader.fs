@@ -1,4 +1,4 @@
-module Contextive.LanguageServer.FileReader
+module Contextive.LanguageServer.LocalFileReader
 
 open System.IO
 open Contextive.Core.File
@@ -29,5 +29,5 @@ let reader pathGetter =
             return readFromPath absolutePath
         }
 
-let pathReader (path: PathConfiguration) =
+let read (path: PathConfiguration) =
     path |> Ok |> readFromPath |> Result.bind (_.Contents)

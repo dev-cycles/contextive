@@ -314,7 +314,7 @@ contexts:
                     let subGlossary =
                         pc Fixtures.One.path
                         |> newStartSubGlossary
-                        |> SubGlossary.start FileReader.pathReader
+                        |> SubGlossary.start LocalFileReader.read
 
                     let! result = SubGlossary.lookup subGlossary "" id
 
@@ -329,7 +329,7 @@ contexts:
                     let subGlossary =
                         pc Fixtures.Imports.Main.path
                         |> newStartSubGlossary
-                        |> SubGlossary.start FileReader.pathReader
+                        |> SubGlossary.start LocalFileReader.read
 
                     let! result = SubGlossary.lookup subGlossary "" id
 

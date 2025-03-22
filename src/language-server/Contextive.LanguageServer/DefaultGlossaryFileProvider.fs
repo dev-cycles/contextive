@@ -71,7 +71,7 @@ let getDefaultGlossaryFileReader (s: ILanguageServer) =
 
         initGlossaryFileInitializer s pathGetter
 
-        return pathGetter |> FileReader.reader
+        return pathGetter |> LocalFileReader.reader
     }
 
 let getDefaultGlossaryFilePathResolver (s: ILanguageServer) =

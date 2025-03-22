@@ -48,7 +48,7 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
     let glossary =
         Glossary.create
         <| { SubGlossaryOps =
-               { Start = SubGlossary.start FileReader.pathReader
+               { Start = SubGlossary.start LocalFileReader.read
                  Reload = SubGlossary.reload } }
 
     opts

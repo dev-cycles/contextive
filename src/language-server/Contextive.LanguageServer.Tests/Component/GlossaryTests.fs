@@ -514,7 +514,7 @@ let tests =
                         Glossary.create
                             { newCreateClossary () with
                                 SubGlossaryOps =
-                                    { Start = SubGlossary.start FileReader.pathReader
+                                    { Start = SubGlossary.start LocalFileReader.read
                                       Reload = SubGlossary.reload } }
 
                     let startupAwaiter = CA.create ()

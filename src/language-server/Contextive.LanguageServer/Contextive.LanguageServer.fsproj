@@ -35,7 +35,7 @@
     <ItemGroup><Compile Include="FileScanner.fs" /><Compile Include="Globs.fs" /><Compile Include="Logger.fs" /><Compile Include="SubGlossary.fs" /><Compile Include="Glossary.fs" />
         <Compile Include="Seq.fs" />        
         <Compile Include="Rendering.fs" />
-        <Compile Include="FileReader.fs" />
+        <Compile Include="LocalFileReader.fs" />
         <Compile Include="PathResolver.fs" />
         <Compile Include="Tokeniser.fs" />
         
