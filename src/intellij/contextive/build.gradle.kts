@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "tech.contextive"
-version = "1.16.0"
+version = "1.16.1"
 
 repositories {
   mavenCentral()
