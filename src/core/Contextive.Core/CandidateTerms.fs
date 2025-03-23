@@ -24,7 +24,9 @@ let private (|Regex|_|) pattern input =
     | _ -> res |> Some
 
 let private Default: CandidateTerms = Seq.empty<CandidateTerm>
-let private TokenSplitterRegex = "([A-Z]+(?![a-z])|[A-Z][a-z]+|[0-9]+|[a-z]+)"
+
+let private TokenSplitterRegex =
+    "([A-Z\\p{Lu}]+(?![a-z\\p{Ll}])|[A-Z\\p{Lu}][a-z\\p{Ll}]+|[0-9]+|[a-z\\p{Ll}]+)"
 
 let candidateTermsFromToken =
     function

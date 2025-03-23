@@ -130,58 +130,70 @@ let tests =
 
                   test <@ (completionLabels, expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
 
-          [ ("Multi Word",
-             Some "",
-             seq {
-                 "multiWord"
-                 "MultiWord"
-                 "multi_word"
-                 "multi-word"
-             })
-            ("Multi Word",
-             Some "m",
-             seq {
-                 "multiWord"
-                 "multi_word"
-             })
-            ("Multi Word",
-             Some "M",
-             seq {
-                 "MultiWord"
-                 "MULTI_WORD"
-             })
-            ("Multi Word",
-             Some "MU",
-             seq {
-                 "MULTIWORD"
-                 "MULTI_WORD"
-             })
-            ("multi word",
-             Some "",
-             seq {
-                 "multiWord"
-                 "MultiWord"
-                 "multi_word"
-                 "multi-word"
-             })
-            ("multi word",
-             Some "m",
-             seq {
-                 "multiWord"
-                 "multi_word"
-             })
-            ("multi word",
-             Some "M",
-             seq {
-                 "MultiWord"
-                 "MULTI_WORD"
-             })
-            ("multi word",
-             Some "MU",
-             seq {
-                 "MULTIWORD"
-                 "MULTI_WORD"
-             }) ]
+          [ "Multi Word",
+            Some "",
+            seq {
+                "multiWord"
+                "MultiWord"
+                "multi_word"
+                "multi-word"
+            }
+            "Multi Word",
+            Some "m",
+            seq {
+                "multiWord"
+                "multi_word"
+            }
+            "Multi Word",
+            Some "M",
+            seq {
+                "MultiWord"
+                "MULTI_WORD"
+            }
+            "Multi Word",
+            Some "MU",
+            seq {
+                "MULTIWORD"
+                "MULTI_WORD"
+            }
+            "multi word",
+            Some "",
+            seq {
+                "multiWord"
+                "MultiWord"
+                "multi_word"
+                "multi-word"
+            }
+            "multi word",
+            Some "m",
+            seq {
+                "multiWord"
+                "multi_word"
+            }
+            "multi word",
+            Some "M",
+            seq {
+                "MultiWord"
+                "MULTI_WORD"
+            }
+            "multi word",
+            Some "MU",
+            seq {
+                "MULTIWORD"
+                "MULTI_WORD"
+            }
+            "Один Два",
+            Some "О",
+            seq {
+                "ОдинДва"
+                "ОДИН_ДВА"
+            }
+            "Один Два",
+            Some "о",
+            seq {
+                "одинДва"
+                "один_два"
+            } ]
           |> List.map multiWordCompletion
           |> testList "Multi Word Completion"
 
