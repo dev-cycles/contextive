@@ -16,7 +16,9 @@
                 "${workspaceFolder}/${config:vsCodeExtensionPath}/dist/**/*.js"
             ],
             "env": {
-                "CONTEXTIVE_DEBUG": "1"
+                "CONTEXTIVE_DEBUG": "1",
+                "PATH": "${env:PATH}"
+
             },
             "preLaunchTask": "build: All"
         },
