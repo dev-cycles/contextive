@@ -10,12 +10,11 @@ export default defineConfig({
         "/guides/usage": "/guides/defining-terminology/"
     },
     integrations: [starlight({
-        title: 'Contextive - IDE Extensions',
-        description: 'IDE Extensions to help immerse developers in the language of their domains.',
+        title: 'Contextive - Community Edition',
+        description: 'Get on the same page.',
         editLink: {
             baseUrl: 'https://github.com/dev-cycles/contextive/edit/main/docs/web/',
         },
-        tagline: 'Get on the same page.',
         logo: {
             alt: 'Contextive',
             replacesTitle: true,
