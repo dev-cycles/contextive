@@ -78,6 +78,20 @@ class LanguageServerLocationResolverTest {
 
     }
 
+    @Test
+    fun shouldRestoreJnaNoClassPathNull() {
+        restoreSystemProperties {
+            System.clearProperty("jna.noclasspath")
+            mockPluginManager("", "1.10")
+
+            val resolver = LanguageServerLocationResolver()
+            resolver.path()
+
+            Assertions.assertEquals(System.getProperty("jna.noclasspath"), null)
+        }
+
+    }
+
     @ParameterizedTest
     @MethodSource("generatePathArgs")
     fun shouldGetPath(basePath: String, version: String, osName: String, expectedPath: String) {
