@@ -1,2 +1,2 @@
 > [!IMPORTANT]  
-> This page has been migrated to https://docs.contextive.tech/guides/installation/
+> This page has been migrated to https://docs.contextive.tech/community/guides/installation/

@@ -1,2 +1,2 @@
 > [!IMPORTANT]  
-> This page has been migrated to https://docs.contextive.tech/guides/setting-up-glossaries/
+> This page has been migrated to https://docs.contextive.tech/community/guides/setting-up-glossaries/

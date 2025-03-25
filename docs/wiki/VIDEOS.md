@@ -1,2 +1,2 @@
 > [!IMPORTANT]  
-> This page has been migrated to https://docs.contextive.tech/background/videos/
+> This page has been migrated to https://docs.contextive.tech/community/background/videos/
