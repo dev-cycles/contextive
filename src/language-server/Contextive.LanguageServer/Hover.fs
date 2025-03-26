@@ -98,9 +98,20 @@ let handler
             match TextDocument.getTokenAtPosition p tokenFinder with
             | None -> async { return Lsp.noHoverResult }
             | tokenAtPosition ->
+                let uriPath =
+                    try
+                        p.TextDocument.Uri.ToUri().LocalPath
+                    with _ ->
+                        let dp = p.TextDocument.Uri.ToString()
+
+                        Serilog.Log.Logger.Error
+                            $"Unable to identify local path of '{dp}', using as is, which may not match glossary locations."
+
+                        dp
+
                 tokenAtPosition
                 |> CandidateTerms.tokenToTokenAndCandidateTerms
-                |> hoverContentForToken (p.TextDocument.Uri.ToUri().LocalPath) termFinder
+                |> hoverContentForToken uriPath termFinder
     }
     |> Async.StartAsTask
 
