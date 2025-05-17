@@ -81,6 +81,11 @@ let tests =
             ("octopi", Position(0, 0), "octopus", "three")
             ("snake_word", Position(0, 0), "snake_word", "three")
             ("kebab-word", Position(0, 0), "kebab-word", "three")
+            ("auslöser", Position(0, 0), "Auslöser", "three")
+            ("ausloeser", Position(0, 0), "Auslöser", "three")
+            ("père", Position(0, 0), "père", "three")
+            ("pere", Position(0, 0), "père", "three")
+            ("strasse", Position(0, 0), "Straße", "three")
             ("single", Position(0, 0), "single", "empty_terms_list") ]
           |> List.map testHoverTermFoundWithDefaultGlossary
           |> testList "Term found when hovering in opened docs at Positions"
@@ -168,6 +173,7 @@ let tests =
             ("firstTerm NotATerm", Position(0, 10), "one")
             ("    anothernotterm", Position(0, 0), "one")
             ("", Position(0, 0), "one")
+            ("peere", Position(0, 0), "three")
             ("Something", Position(0, 0), "empty_terms_list") ]
           |> List.map testHoverTermNotFound
           |> testList "Nothing found when hovering"

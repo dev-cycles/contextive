@@ -8,3 +8,6 @@ contexts:
       - name: word
       - name: snake_word
       - name: kebab-word
+      - name: Auslöser
+      - name: Straße
+      - name: père

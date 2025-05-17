@@ -174,6 +174,53 @@ It's quite common to combine a term from your language, such as `cargo` with a s
 
 ![Hovering over a word with a suffix.](../../../assets/images/term-found-with-suffix.png)
 
+### Unicode and Diacritics
+
+Many languages have letters with diacritics, e.g. `ö`, `è` or `ç`.  If the ubiquitous language term is defined in the natural language of the domain, it would be best to define terms using those diacritics.
+
+However, in source code, it is common to not use the diacritic, and indeed in German, to substitute the diacritic with an `e`, e.g. `ö` -> `oe`.  German has another character, `ß` which is not commonly used in source code, and is instead replaced with `ss`.
+
+Contextive supports all these cases.  For example, the following table shows the source code text options that will cause a definition of a defined Term to be shown.
+
+<table>
+    <thead>
+        <tr>
+            <th>Defined Term</th>
+            <th>Source Code</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Äpfel</td>
+            <td>
+```
+äpfel
+aepfel
+apfel
+```
+            </td>           
+        </tr>     
+        <tr>
+            <td>Père</td>
+            <td>
+```
+père
+pere
+```
+            </td>           
+        </tr>
+        <tr>
+            <td>Straße</td>
+            <td>
+```
+straße
+strasse
+``` 
+            </td>           
+        </tr>
+    </tbody>
+</table>
+
 ### Combining two (or more) terms
 
 It's also common to end up with code elements (classes, variables or methods) that combine two or more terms from your language, such as `Leg` and `Policy`.  Even if you haven't explicitly created a term for `LegPolicy`, Contextive will identify both words and show you both definitions at the same time:
@@ -195,7 +242,7 @@ It's also common to end up with code elements (classes, variables or methods) th
 
 ![Hovering over a word that combines two terms.](../../../assets/images/term-found-when-combined.png)
 
-## Complex (multi-word) terms
+### Complex (multi-word) terms
 
 For terms that are phrases or compound words, just add it to your glossary file like a normal term.
 
@@ -229,7 +276,7 @@ However it is defined in the glossary, the definitions of `Leg` and `Policy` wil
 
 As with all combined words, it will be shown when hovering over text that matches any of the supported word combination techniques: `camelCase`, `PascalCase`, `snake_case` or `kebab-case`.
 
-## Plurals
+### Plurals
 
 Contextive can detect a defined term even when it is defined in the singular and used in the plural.  In this example, even though defined as `Policy` the term is still shown when hovering over `PoliciesCollection`.
 
