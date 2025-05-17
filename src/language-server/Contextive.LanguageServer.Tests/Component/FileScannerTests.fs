@@ -7,6 +7,10 @@ open System.IO
 open Contextive.LanguageServer.Tests.Helpers.Workspace
 open OmniSharp.Extensions.LanguageServer.Protocol
 
+let private EXPECTED_GLOSSARY_FILE_GLOB =
+    [| "**/*.glossary.yml"; "**/*.glossary.yaml" |]
+
+
 [<Tests>]
 let tests =
 
@@ -14,7 +18,6 @@ let tests =
 
     let reBaseLinePaths basePath (paths: string list) =
         paths |> List.map (fun p -> Path.Combine(basePath, p))
-
 
     testList
         "File Scanner Tests"
@@ -25,13 +28,13 @@ let tests =
               let basePaths = [ base1; base2 ]
 
               let scanner = FileScanner.fileScanner basePaths
-              let files = scanner "**/*.glossary.yml"
+              let files = scanner EXPECTED_GLOSSARY_FILE_GLOB
 
               let expectedFiles1 =
                   [ "root.glossary.yml"
                     "folder1/folder1.glossary.yml"
                     "folder1/nestedFolder/nested.glossary.yml"
-                    "folder2/folder2.glossary.yml" ]
+                    "folder2/folder2.glossary.yaml" ]
                   |> reBaseLinePaths base1
 
               let expectedFiles2 = [ "extra.glossary.yml" ] |> reBaseLinePaths base2

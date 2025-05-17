@@ -28,14 +28,14 @@ type CreateGlossaryManager = { GlossaryOps: GlossaryOperations }
 // InitGlossary with dynamic dependencies that rely on the language server having already started
 type InitGlossaryManager =
     { Log: Logger
-      FileScanner: string -> string seq
-      RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string option -> DeRegisterWatch
+      FileScanner: string array -> string seq
+      RegisterWatchedFiles: OnWatchedFilesEventHandlers -> string array -> DeRegisterWatch
       DefaultGlossaryPathResolver: unit -> Async<Result<PathConfiguration, FileError>> }
 
 type State =
     { Log: Logger
-      FileScanner: string -> string seq
-      RegisterWatchedFiles: string option -> DeRegisterWatch
+      FileScanner: string array -> string seq
+      RegisterWatchedFiles: string array -> DeRegisterWatch
       Glossaries: Map<string, Glossary.T>
       GlossaryOps: GlossaryOperations
       DefaultGlossaryPathResolver: unit -> Async<Result<PathConfiguration, FileError>>
@@ -57,8 +57,7 @@ type Message =
 
 type T = MailboxProcessor<Message>
 
-[<Literal>]
-let private GLOSSARY_FILE_GLOB = "**/*.glossary.yml"
+let private GLOSSARY_FILE_GLOB = [| "**/*.glossary.yml"; "**/*.glossary.yaml" |]
 
 module private Handlers =
 
@@ -85,7 +84,7 @@ module private Handlers =
                 RegisterWatchedFiles = initGlossary.RegisterWatchedFiles watchedFileshandlers
                 Log = initGlossary.Log }
 
-        Some GLOSSARY_FILE_GLOB |> state.RegisterWatchedFiles |> ignore
+        GLOSSARY_FILE_GLOB |> state.RegisterWatchedFiles |> ignore
 
         let glossaryFiles = state.FileScanner GLOSSARY_FILE_GLOB
 
@@ -147,7 +146,7 @@ module private Handlers =
                         DefaultGlossary = defaultGlossary |> Some
                         DefaultGlossaryPath = path.Path
                         Glossaries = state.Glossaries.Remove(oldDefaultGlossaryPath).Add(path.Path, defaultGlossary)
-                        DeRegisterDefaultGlossaryFileWatcher = Some path.Path |> state.RegisterWatchedFiles |> Some })
+                        DeRegisterDefaultGlossaryFileWatcher = [| path.Path |] |> state.RegisterWatchedFiles |> Some })
                 |> Result.mapError (fun fileError ->
                     let errorMessage = fileErrorMessage fileError
                     let msg = $"Error loading glossary file: {errorMessage}"

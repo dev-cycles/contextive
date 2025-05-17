@@ -42,8 +42,8 @@ let newInitGlossary () =
       GlossaryManager.DefaultGlossaryPathResolver = fun _ -> async.Return <| Error FileError.NotYetLoaded
       GlossaryManager.RegisterWatchedFiles = fun _ _ -> noop }
 
-[<Literal>]
-let private EXPECTED_GLOSSARY_FILE_GLOB = "**/*.glossary.yml"
+let private EXPECTED_GLOSSARY_FILE_GLOB =
+    [| "**/*.glossary.yml"; "**/*.glossary.yaml" |]
 
 [<Tests>]
 let tests =
@@ -103,7 +103,7 @@ let tests =
                         { newInitGlossary () with
                             RegisterWatchedFiles = mockRegisterWatchedFiles }
 
-                    do! CA.expectMessage awaiter <| Some EXPECTED_GLOSSARY_FILE_GLOB
+                    do! CA.expectMessage awaiter <| EXPECTED_GLOSSARY_FILE_GLOB
                 }
 
                 ]
@@ -127,7 +127,7 @@ let tests =
 
                     GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
-                    do! CA.expectMessage awaiter <| Some "path"
+                    do! CA.expectMessage awaiter <| [| "path" |]
                 }
 
                 testAsync "It should create a glossary at the watched location" {

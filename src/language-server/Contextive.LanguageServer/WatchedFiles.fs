@@ -7,13 +7,14 @@ open OmniSharp.Extensions.LanguageServer.Protocol.Workspace
 open OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities
 open System.Threading.Tasks
 
-let private registrationOptionsProvider (path: string option) _ _ =
-    match path with
-    | Some pathValue ->
-        DidChangeWatchedFilesRegistrationOptions(
-            Watchers = Container(FileSystemWatcher(GlobPattern = pathValue, Kind = WatchKind.Create + WatchKind.Change))
-        )
-    | None -> DidChangeWatchedFilesRegistrationOptions()
+let private registrationOptionsProvider (paths: string array) _ _ =
+    let watchers =
+        Array.map
+            (fun (pathValue: string) ->
+                FileSystemWatcher(GlobPattern = pathValue, Kind = WatchKind.Create + WatchKind.Change))
+            paths
+
+    DidChangeWatchedFilesRegistrationOptions(Watchers = Container(watchers))
 
 let registrationOptions path =
     RegistrationOptionsDelegate<DidChangeWatchedFilesRegistrationOptions, DidChangeWatchedFilesCapability>(
@@ -35,7 +36,11 @@ let handler
 
     Task.CompletedTask
 
-let register (s: ILanguageServer) (watchedFileChangedHandlers: GlossaryManager.OnWatchedFilesEventHandlers) glob =
+let register
+    (s: ILanguageServer)
+    (watchedFileChangedHandlers: GlossaryManager.OnWatchedFilesEventHandlers)
+    (glob: string array)
+    =
     let registration =
         s.Register(fun reg ->
             reg.OnDidChangeWatchedFiles(handler watchedFileChangedHandlers, registrationOptions glob)
