@@ -36,7 +36,7 @@ module Term =
     // the diacritic is split into a sparate char in the utf-16 string and can be independently replaced.
     // ß is an independent character and not a combining codepoint, so must be explicitly replaced.
     let germanNormalised (s: string) =
-        s.Replace("\u0308", "e").Replace("ß", "ss")
+        s.Replace("\u0308", "e").Replace("ß", "ss").Replace("ẞ", "ss")
 
     let equalsIgnoringPlural (candidateTerm: string) (normalisedTerm: string) =
         let singularEquals =

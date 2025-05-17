@@ -10,4 +10,5 @@ contexts:
       - name: kebab-word
       - name: Auslöser
       - name: Straße
+      - name: STRAẞE
       - name: père

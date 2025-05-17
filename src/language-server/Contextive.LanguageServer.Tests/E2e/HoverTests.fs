@@ -86,6 +86,8 @@ let tests =
             ("père", Position(0, 0), "père", "three")
             ("pere", Position(0, 0), "père", "three")
             ("strasse", Position(0, 0), "Straße", "three")
+            ("straße", Position(0, 0), "Straße", "three")
+            ("strasse", Position(0, 0), "STRAẞE", "three")
             ("single", Position(0, 0), "single", "empty_terms_list") ]
           |> List.map testHoverTermFoundWithDefaultGlossary
           |> testList "Term found when hovering in opened docs at Positions"
