@@ -1,5 +1,9 @@
 contexts:
   - terms:
-    - name: Один Два
-    - name: Рус Eng
-    - name: Eng Рус
+      - name: Один Два
+      - name: Рус Eng
+      - name: Eng Рус
+      - name: Masse
+        definition: Mass (English)
+      - name: Maße
+        definition: dimensions (English)
