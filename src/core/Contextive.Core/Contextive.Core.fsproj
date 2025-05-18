@@ -8,7 +8,7 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <DebuggerSupport>false</DebuggerSupport>
   </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup><Compile Include="Normalization.fs" />
     <Compile Include="ValidatingDeserializer.fs" />
     <Compile Include="File.fs" />
     <Compile Include="GlossaryFileSchema.fs" />

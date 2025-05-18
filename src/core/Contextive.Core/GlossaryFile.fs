@@ -6,9 +6,6 @@ open System.Linq
 open Contextive.Core.File
 open System.ComponentModel.DataAnnotations
 open System.Collections.Generic
-open System.Text
-
-open Humanizer
 
 [<CLIMutable>]
 type Term =
@@ -27,41 +24,11 @@ module Term =
           Aliases = null
           Meta = null }
 
-    // \\p{M} is the regex to match any codepoint that is a combining mark.  Since the string has already been normalised with FormKD,
-    // the diacritic is split into a separate char in the utf-16 string and can be independently removed.
-    let utfNormalised s =
-        RegularExpressions.Regex.Replace(s, "\\p{M}", "")
-
-    // \u0308 is the unicode point for the two-dots (https://codepoints.net/U+0308) Since the string has already been normalised with FormKD,
-    // the diacritic is split into a sparate char in the utf-16 string and can be independently replaced.
-    // ß is an independent character and not a combining codepoint, so must be explicitly replaced.
-    let germanNormalised (s: string) =
-        s.Replace("\u0308", "e").Replace("ß", "ss").Replace("ẞ", "ss")
-
-    let equalsIgnoringPlural (candidateTerm: string) (normalisedTerm: string) =
-        let singularEquals =
-            candidateTerm.Equals(normalisedTerm, System.StringComparison.InvariantCultureIgnoreCase)
-
-        let singularCandidate = candidateTerm.Singularize(false, false)
-
-        let pluralEquals =
-            normalisedTerm.Equals(singularCandidate, System.StringComparison.InvariantCultureIgnoreCase)
-
-        singularEquals || pluralEquals
-
     let private nameEquals (candidateTerm: string) (termName: string) =
-        let normalisedTerm =
-            termName.Replace(" ", "").Replace("_", "").Replace("-", "").Normalize NormalizationForm.FormKD
+        let normalizedCandidateTerm = Normalization.simpleNormalize candidateTerm
 
-        let eq = equalsIgnoringPlural candidateTerm
-
-        let defaultEqual = normalisedTerm |> eq
-
-        let utfBlankEqual = normalisedTerm |> utfNormalised |> eq
-
-        let utfUmlautEqual = normalisedTerm |> germanNormalised |> eq
-
-        defaultEqual || utfBlankEqual || utfUmlautEqual
+        Normalization.normalize termName
+        |> Seq.exists (fun v -> v.Equals(normalizedCandidateTerm, System.StringComparison.InvariantCulture))
 
 
     let private aliasesEqual (term: Term) (candidateTerm: string) =

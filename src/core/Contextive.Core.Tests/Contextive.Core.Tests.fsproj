@@ -5,7 +5,7 @@
         <IsPackable>false</IsPackable>
         <GenerateProgramFile>false</GenerateProgramFile>
     </PropertyGroup>
-    <ItemGroup>
+    <ItemGroup><Compile Include="NormalizationTests.fs" />
         <Compile Include="GlossaryFileTests.fs" />
         <Compile Include="CandidateTermsTests.fs" />
         <Compile Include="Program.fs" />
