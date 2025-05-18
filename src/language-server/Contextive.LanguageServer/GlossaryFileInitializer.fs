@@ -35,6 +35,7 @@ let private defaultGlossaryFile =
              DomainVisionStatement = "To illustrate the usage of the contextive glossary file."
              Paths = [||] |> ResizeArray
              Meta = dict [ "👥 Owner:", "[Team A](https://corporate.wiki/teams/TeamA)" ]
+             Index = null
              Terms =
                [| { Term.Default with
                       Name = "context"

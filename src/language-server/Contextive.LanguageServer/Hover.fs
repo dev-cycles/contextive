@@ -53,6 +53,23 @@ module private Filtering =
                  |> removeLessRelevantTerms tokenAndCandidateTerms)
                 c)
 
+    let findMatchingTermsInIndex (context: GlossaryFile.Context) =
+
+        Seq.collect (fun (tokenAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms) ->
+            let token = fst tokenAndCandidateTerms |> Normalization.simpleNormalize
+
+            if context.Index.ContainsKey token then
+                context.Index[token]
+            else
+                [])
+
+    let termFilterForCandidateTermsWithIndex tokenAndCandidateTerms =
+        Seq.map (fun (c: GlossaryFile.Context) ->
+
+            let terms = findMatchingTermsInIndex c tokenAndCandidateTerms
+
+            GlossaryFile.Context.withTerms (terms |> removeLessRelevantTerms tokenAndCandidateTerms) c)
+
 module private TextDocument =
 
     let getTokenAtPosition (p: HoverParams) (tokenFinder: TextDocument.TokenFinder) =
@@ -77,7 +94,7 @@ let private hoverContentForToken
     (tokensAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq)
     =
     async {
-        let! findResult = termFinder uri (Filtering.termFilterForCandidateTerms tokensAndCandidateTerms)
+        let! findResult = termFinder uri (Filtering.termFilterForCandidateTermsWithIndex tokensAndCandidateTerms)
 
         return
             if Seq.isEmpty findResult then

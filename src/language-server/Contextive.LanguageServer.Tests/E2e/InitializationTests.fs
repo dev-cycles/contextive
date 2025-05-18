@@ -88,12 +88,12 @@ let tests =
                   [ Workspace.optionsBuilder "fixtures/default_tests"
                     ConfigurationSection.configurationHandlerBuilder "dummySection" (fun () -> Map []) ]
 
-              let expectedResult = Some "Successfully loaded."
+              let expectedResult = "Successfully loaded from"
 
-              let! client, reply, _ = TestClientWithCustomInitWait(config, expectedResult) |> initAndWaitForReply
+              let! client, reply, _ = TestClientWithCustomInitWait(config, Some expectedResult) |> initAndWaitForReply
               use _ = client
 
-              test <@ reply = expectedResult @>
+              test <@ reply.Value.Contains expectedResult @>
           }
 
           testAsync "Server doesn't error when no configuration supplied but file doesn't exists" {

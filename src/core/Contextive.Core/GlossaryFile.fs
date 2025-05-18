@@ -45,7 +45,9 @@ type Context =
       DomainVisionStatement: string
       Paths: ResizeArray<string>
       Meta: IDictionary<string, string>
-      Terms: ResizeArray<Term> }
+      Terms: ResizeArray<Term>
+      [<YamlIgnore>]
+      Index: IDictionary<string, Term list> }
 
 module Context =
     let withTerms (terms: Term seq) (context: Context) = { context with Terms = terms.ToList() }
@@ -55,7 +57,8 @@ module Context =
           DomainVisionStatement = ""
           Paths = ResizeArray()
           Meta = dict []
-          Terms = ResizeArray<Term>() }
+          Terms = ResizeArray<Term>()
+          Index = Dictionary<string, Term list>() }
 
     let defaultWithTerms terms = Default |> withTerms terms
 
@@ -68,6 +71,32 @@ module Context =
         else
             withTerms (ResizeArray<Term>()) context
 
+    let withDefaultIndexIfNull context =
+        if context.Index <> null then
+            context
+        else
+            { context with
+                Index = Dictionary<string, Term list>() }
+
+    let fixNulls context =
+        context |> defaultIfNull |> withDefaultTermsIfNull |> withDefaultIndexIfNull
+
+    let index context =
+        Seq.iter
+            (fun (t: Term) ->
+                let normalizeVariants = Normalization.normalize t.Name
+
+                Seq.iter
+                    (fun v ->
+
+                        if not <| context.Index.TryAdd(v, [ t ]) then
+                            let l = context.Index[v]
+                            let newL = t :: l
+                            context.Index[v] <- newL)
+
+                    normalizeVariants)
+            context.Terms
+
 [<CLIMutable>]
 type GlossaryFile =
     { Imports: ResizeArray<string>
@@ -77,10 +106,6 @@ module GlossaryFile =
     let Default =
         { Imports = ResizeArray<string>()
           Contexts = ResizeArray<Context>() }
-
-    let private replaceNullContextsWithDefaults (glossaryFile: GlossaryFile) =
-        { glossaryFile with
-            Contexts = ResizeArray(glossaryFile.Contexts |> Seq.map Context.defaultIfNull) }
 
     let private replaceNullContextListWithDefault (glossaryFile: GlossaryFile) =
         match glossaryFile.Contexts with
@@ -97,21 +122,23 @@ module GlossaryFile =
                 Imports = Default.Imports }
         | _ -> glossaryFile
 
-    let private replaceNullTermsWithDefault (glossaryFile: GlossaryFile) =
+    let private fixContextNulls (glossaryFile: GlossaryFile) =
         { glossaryFile with
-            Contexts = ResizeArray(Seq.map Context.withDefaultTermsIfNull glossaryFile.Contexts) }
+            Contexts = ResizeArray(glossaryFile.Contexts |> Seq.map Context.fixNulls) }
 
     let fixNulls (glossaryFile: GlossaryFile) =
         glossaryFile
         |> replaceNullContextListWithDefault
         |> replaceNullImportsListWithDefault
-        |> replaceNullContextsWithDefaults
-        |> replaceNullTermsWithDefault
+        |> fixContextNulls
+
+    let index (glossaryFile: GlossaryFile) =
+        Seq.iter Context.index glossaryFile.Contexts
+        glossaryFile
 
 type FindResult = Context seq
 type Filter = FindResult -> FindResult
 type Finder = string -> Filter -> Async<FindResult>
-
 
 let deserialize (yml: string) =
     try
@@ -125,7 +152,7 @@ let deserialize (yml: string) =
 
         match glossary |> box with
         | null -> Error(ParsingError "Glossary file is empty.")
-        | _ -> glossary |> GlossaryFile.fixNulls |> Ok
+        | _ -> glossary |> GlossaryFile.fixNulls |> GlossaryFile.index |> Ok
     with
     | :? YamlDotNet.Core.YamlException as e ->
         match e.InnerException with

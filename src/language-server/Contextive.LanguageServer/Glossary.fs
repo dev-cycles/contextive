@@ -46,7 +46,7 @@ module Handlers =
         fileContents
         |> Result.bind deserialize
         |> Result.map (fun r ->
-            state.Log.info "Successfully loaded."
+            state.Log.info $"Successfully loaded from {p.Path}."
 
             { state with
                 GlossaryFile = r
