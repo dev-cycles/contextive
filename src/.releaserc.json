@@ -20,6 +20,10 @@
                         {
                             "type": "fix",
                             "section": "🐛 Bug Fixes"
+                        },
+                        {
+                            "type": "perf",
+                            "section": "📈 Performance Enhancement"
                         }
                     ]
                 }
