@@ -50,7 +50,30 @@ type Context =
       Index: IDictionary<string, Term list> }
 
 module Context =
-    let withTerms (terms: Term seq) (context: Context) = { context with Terms = terms.ToList() }
+
+    let index context =
+        Seq.iter
+            (fun (t: Term) ->
+                let normalizeVariants = Normalization.normalize t.Name
+
+                Seq.iter
+                    (fun v ->
+
+                        if not <| context.Index.TryAdd(v, [ t ]) then
+                            let l = context.Index[v]
+                            let newL = t :: l
+                            context.Index[v] <- newL)
+
+                    normalizeVariants)
+            context.Terms
+
+        context
+
+    let withTerms (terms: Term seq) (context: Context) =
+        { context with
+            Terms = terms.ToList()
+            Index = Dictionary<string, Term list>() }
+        |> index
 
     let Default =
         { Name = ""
@@ -80,22 +103,6 @@ module Context =
 
     let fixNulls context =
         context |> defaultIfNull |> withDefaultTermsIfNull |> withDefaultIndexIfNull
-
-    let index context =
-        Seq.iter
-            (fun (t: Term) ->
-                let normalizeVariants = Normalization.normalize t.Name
-
-                Seq.iter
-                    (fun v ->
-
-                        if not <| context.Index.TryAdd(v, [ t ]) then
-                            let l = context.Index[v]
-                            let newL = t :: l
-                            context.Index[v] <- newL)
-
-                    normalizeVariants)
-            context.Terms
 
 [<CLIMutable>]
 type GlossaryFile =
@@ -133,7 +140,7 @@ module GlossaryFile =
         |> fixContextNulls
 
     let index (glossaryFile: GlossaryFile) =
-        Seq.iter Context.index glossaryFile.Contexts
+        Seq.iter (Context.index >> ignore) glossaryFile.Contexts
         glossaryFile
 
 type FindResult = Context seq
