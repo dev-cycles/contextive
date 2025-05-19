@@ -131,15 +131,15 @@ let tests =
 
                   test <@ (completionLabels, seq { expectedLabel }) ||> Seq.compareWith compare = 0 @>
 
-          [ ("term", Some "", "term")
-            ("Term", Some "", "Term")
-            ("term", Some "t", "term")
-            ("Term", Some "t", "term")
-            ("term", Some "T", "Term")
-            ("term", Some "Te", "Term")
-            ("term", Some "TE", "TERM")
-            ("term", Some "TEr", "Term")
-            ("term", None, "term") ]
+          [ "term", Some "", "term"
+            "Term", Some "", "Term"
+            "term", Some "t", "term"
+            "Term", Some "t", "term"
+            "term", Some "T", "Term"
+            "term", Some "Te", "Term"
+            "term", Some "TE", "TERM"
+            "term", Some "TEr", "Term"
+            "term", None, "term" ]
           |> List.map singleWordCompletion
           |> testList "Single Word Completion"
 

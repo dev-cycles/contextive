@@ -63,32 +63,32 @@ let tests =
                   test <@ hover.Contents.MarkupContent.Value.Contains(expectedTerm) @>
               }
 
-          [ ("original", Position(0, 0), "original", "three")
-            ("Original", Position(0, 0), "original", "three")
-            ("original another", Position(0, 10), "another", "three")
-            ("original another word", Position(0, 11), "another", "three")
-            ("original\nanother", Position(1, 5), "another", "three")
-            ("original\nword\nanother", Position(2, 4), "another", "three")
-            ("original\r\nanother", Position(1, 5), "another", "three")
-            ("original\r\nword\r\nanother", Position(2, 5), "another", "three")
-            ("anotherWord", Position(0, 1), "another", "three")
-            ("combined_word", Position(0, 1), "CombinedWord", "three")
-            ("CombinedWordId", Position(0, 1), "CombinedWord", "three")
-            ("combined-word", Position(0, 1), "CombinedWord", "three")
-            ("AnotherCombinedWord", Position(0, 1), "another", "three")
-            ("AnotherCombinedWord", Position(0, 1), "CombinedWord", "three")
-            ("originals", Position(0, 0), "original", "three")
-            ("octopi", Position(0, 0), "octopus", "three")
-            ("snake_word", Position(0, 0), "snake_word", "three")
-            ("kebab-word", Position(0, 0), "kebab-word", "three")
-            ("auslöser", Position(0, 0), "Auslöser", "three")
-            ("ausloeser", Position(0, 0), "Auslöser", "three")
-            ("père", Position(0, 0), "père", "three")
-            ("pere", Position(0, 0), "père", "three")
-            ("strasse", Position(0, 0), "Straße", "three")
-            ("straße", Position(0, 0), "Straße", "three")
-            ("strasse", Position(0, 0), "STRAẞE", "three")
-            ("single", Position(0, 0), "single", "empty_terms_list") ]
+          [ "original", Position(0, 0), "original", "three"
+            "Original", Position(0, 0), "original", "three"
+            "original another", Position(0, 10), "another", "three"
+            "original another word", Position(0, 11), "another", "three"
+            "original\nanother", Position(1, 5), "another", "three"
+            "original\nword\nanother", Position(2, 4), "another", "three"
+            "original\r\nanother", Position(1, 5), "another", "three"
+            "original\r\nword\r\nanother", Position(2, 5), "another", "three"
+            "anotherWord", Position(0, 1), "another", "three"
+            "combined_word", Position(0, 1), "CombinedWord", "three"
+            "CombinedWordId", Position(0, 1), "CombinedWord", "three"
+            "combined-word", Position(0, 1), "CombinedWord", "three"
+            "AnotherCombinedWord", Position(0, 1), "another", "three"
+            "AnotherCombinedWord", Position(0, 1), "CombinedWord", "three"
+            "originals", Position(0, 0), "original", "three"
+            "octopi", Position(0, 0), "octopus", "three"
+            "snake_word", Position(0, 0), "snake_word", "three"
+            "kebab-word", Position(0, 0), "kebab-word", "three"
+            "auslöser", Position(0, 0), "Auslöser", "three"
+            "ausloeser", Position(0, 0), "Auslöser", "three"
+            "père", Position(0, 0), "père", "three"
+            "pere", Position(0, 0), "père", "three"
+            "strasse", Position(0, 0), "Straße", "three"
+            "straße", Position(0, 0), "Straße", "three"
+            "strasse", Position(0, 0), "STRAẞE", "three"
+            "single", Position(0, 0), "single", "empty_terms_list" ]
           |> List.map testHoverTermFoundWithDefaultGlossary
           |> testList "Term found when hovering in opened docs at Positions"
 
@@ -171,12 +171,12 @@ let tests =
                   test <@ hover = null @>
               }
 
-          [ ("NotATerm", Position(0, 0), "one")
-            ("firstTerm NotATerm", Position(0, 10), "one")
-            ("    anothernotterm", Position(0, 0), "one")
-            ("", Position(0, 0), "one")
-            ("peere", Position(0, 0), "three")
-            ("Something", Position(0, 0), "empty_terms_list") ]
+          [ "NotATerm", Position(0, 0), "one"
+            "firstTerm NotATerm", Position(0, 10), "one"
+            "    anothernotterm", Position(0, 0), "one"
+            "", Position(0, 0), "one"
+            "peere", Position(0, 0), "three"
+            "Something", Position(0, 0), "empty_terms_list" ]
           |> List.map testHoverTermNotFound
           |> testList "Nothing found when hovering"
 
@@ -214,8 +214,8 @@ let tests =
                   test <@ not <| hover.Contents.MarkupContent.Value.Contains($"`{lessRelevantTerm}`") @>
               }
 
-          [ ("CombinedWord", Position(0, 0), "combined")
-            ("CombinedWord", Position(0, 0), "word") ]
+          [ "CombinedWord", Position(0, 0), "combined"
+            "CombinedWord", Position(0, 0), "word" ]
           |> List.map testLessRelevantTermNotFound
           |> testList "Less relevant term NOT found when hovering"
 
