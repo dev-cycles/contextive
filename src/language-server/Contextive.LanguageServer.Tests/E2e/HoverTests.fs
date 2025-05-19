@@ -65,6 +65,8 @@ let tests =
 
           [ "original", Position(0, 0), "original", "three"
             "Original", Position(0, 0), "original", "three"
+            "alias", Position(0, 0), "original", "three"
+            "multi_word_alias", Position(0, 0), "original", "three"
             "original another", Position(0, 10), "another", "three"
             "original another word", Position(0, 11), "another", "three"
             "original\nanother", Position(1, 5), "another", "three"

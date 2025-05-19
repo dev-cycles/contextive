@@ -1,6 +1,9 @@
 contexts:
   - terms:
       - name: original
+        aliases:
+          - alias
+          - multi word alias
       - name: another
       - name: CombinedWord
       - name: octopus

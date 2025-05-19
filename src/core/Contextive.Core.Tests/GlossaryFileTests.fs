@@ -406,4 +406,58 @@ imports:
 
               test <@ glossaryFile.Imports |> Seq.head = "../../something.glossary.yml" @>
 
-          ]
+          testList
+              "Glossary File Index preparation"
+              [ testCase "Simple term"
+                <| fun () ->
+                    let glossaryFile =
+                        unwrap
+                        <| deserialize
+                            "\
+contexts:
+- terms:
+    - name: firstTerm
+"
+
+                    test <@ glossaryFile.Contexts[0].Index.ContainsKey "firstterm" @>
+                    test <@ glossaryFile.Contexts[0].Index["firstterm"] |> Seq.head |> _.Name = "firstTerm" @>
+
+                testCase "Colliding keys"
+                <| fun () ->
+                    let glossaryFile =
+                        unwrap
+                        <| deserialize
+                            "\
+contexts:
+- terms:
+    - name: firstTerm
+    - name: First Term
+"
+
+                    test <@ glossaryFile.Contexts[0].Index.ContainsKey "firstterm" @>
+                    let termList = glossaryFile.Contexts[0].Index["firstterm"]
+
+                    test <@ termList |> Seq.length = 2 @>
+
+                    test <@ termList |> Seq.exists (fun t -> t.Name = "firstTerm") @>
+
+                    test <@ termList |> Seq.exists (fun t -> t.Name = "First Term") @>
+
+                testCase "Aliases"
+                <| fun () ->
+                    let glossaryFile =
+                        unwrap
+                        <| deserialize
+                            "\
+contexts:
+- terms:
+    - name: firstTerm
+      aliases:
+        - aliasOfFirstTerm
+"
+
+                    test <@ glossaryFile.Contexts[0].Index.ContainsKey "firstterm" @>
+                    let primaryTerm = glossaryFile.Contexts[0].Index["firstterm"] |> Seq.exactlyOne
+                    test <@ glossaryFile.Contexts[0].Index.ContainsKey "aliasoffirstterm" @>
+                    let aliasTerm = glossaryFile.Contexts[0].Index["aliasoffirstterm"] |> Seq.exactlyOne
+                    test <@ primaryTerm.Name = aliasTerm.Name @> ] ]

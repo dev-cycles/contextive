@@ -51,21 +51,23 @@ type Context =
 
 module Context =
 
+    let private indexTermByVariant (context: Context) (term: Term) (normalizedVariant: string) =
+        if not <| context.Index.TryAdd(normalizedVariant, [ term ]) then
+            let existingTermList = context.Index[normalizedVariant]
+            let newTermList = term :: existingTermList
+            context.Index[normalizedVariant] <- newTermList
+
+    let private indexTermBy (context: Context) (term: Term) (key: string) =
+        Normalization.normalize key |> Seq.iter (indexTermByVariant context term)
+
+    let private indexTerm (context: Context) (term: Term) =
+        indexTermBy context term term.Name
+
+        if term.Aliases <> null then
+            Seq.iter (indexTermBy context term) term.Aliases
+
     let index context =
-        Seq.iter
-            (fun (t: Term) ->
-                let normalizeVariants = Normalization.normalize t.Name
-
-                Seq.iter
-                    (fun v ->
-
-                        if not <| context.Index.TryAdd(v, [ t ]) then
-                            let l = context.Index[v]
-                            let newL = t :: l
-                            context.Index[v] <- newL)
-
-                    normalizeVariants)
-            context.Terms
+        Seq.iter (indexTerm context) context.Terms
 
         context
 
