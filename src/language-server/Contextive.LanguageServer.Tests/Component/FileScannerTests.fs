@@ -20,7 +20,7 @@ let tests =
         paths |> List.map (fun p -> Path.Combine(basePath, p))
 
     testList
-        "File Scanner Tests"
+        "LanguageServer.File Scanner Tests"
         [ testAsync "When scanning folder, find matching files" {
 
               let base1 = workspaceFolderPath "fixtures/scanning_tests" |> normalizePath

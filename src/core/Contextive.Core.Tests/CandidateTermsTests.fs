@@ -15,7 +15,9 @@ let tokenAndPartsTests =
 
 
           let testCandidateTermFinding (token, expectedCandidateTerms: TokenAndCandidateTerms seq) =
-              let expectedCandidateTermsList = sprintf "%A" <| Seq.toList expectedCandidateTerms
+              let expectedCandidateTermsList =
+                  sprintf "%A" <| Seq.toList expectedCandidateTerms
+                  |> _.Replace(System.Environment.NewLine, " ")
 
               testCase $"Token {token}: finds candidates {expectedCandidateTermsList}"
               <| fun () ->
