@@ -74,40 +74,34 @@ let private (|KebabCase|_|) (ct: string) =
         None
 
 [<Literal>]
-let private MAX_TERMS_IN_COMPLETION = 15
+let private MAX_TERMS_IN_COMPLETION_PER_CONTEXT = 60
 
-let private termFilter (normalizedPrefix: string option) (c: GlossaryFile.FindResult) : GlossaryFile.FindResult =
-    let initialState: GlossaryFile.FindResult * int = Seq.empty, 0
+let private termFilter
+    (normalizedPrefix: string option)
+    (contextSeq: GlossaryFile.FindResult)
+    : GlossaryFile.FindResult =
 
-    let r =
-        Seq.fold
-            (fun ((r, countSoFar): GlossaryFile.FindResult * int) (c: GlossaryFile.Context) ->
-                let thisContextNumToTake = MAX_TERMS_IN_COMPLETION - countSoFar
+    Seq.map
+        (fun (context: GlossaryFile.Context) ->
+            let terms =
+                match normalizedPrefix with
+                | Some np ->
 
-                let terms =
-                    match normalizedPrefix with
-                    | Some np ->
+                    let candidateKeys =
+                        context.Index.Keys |> Seq.filter (fun k -> k.StartsWith np) |> Seq.toList
 
-                        let candidateKeys =
-                            c.Index.Keys |> Seq.filter (fun k -> k.StartsWith np) |> Seq.toList
+                    let candidateTerms =
+                        candidateKeys |> Seq.collect (fun k -> context.Index[k]) |> Seq.toList
 
-                        let candidateTerms =
-                            candidateKeys |> Seq.collect (fun k -> c.Index[k]) |> Seq.toList
+                    candidateTerms |> Seq.distinctBy (fun t -> t.Name)
 
-                        candidateTerms |> Seq.distinctBy (fun t -> t.Name)
+                | None -> context.Terms
 
-                    | None -> c.Terms
+                |> Seq.truncate MAX_TERMS_IN_COMPLETION_PER_CONTEXT
+                |> ResizeArray
 
-                    |> Seq.truncate thisContextNumToTake
-                    |> ResizeArray
-
-                let thisC = GlossaryFile.Context.withTerms terms c
-                Seq.append r (seq { thisC }), countSoFar + terms.Count)
-            initialState
-            c
-
-    fst r
-
+            GlossaryFile.Context.withTerms terms context)
+        contextSeq
 
 let private upper (s: string) = s.ToUpper()
 let private lower (s: string) = s.ToLower()

@@ -241,15 +241,21 @@ let tests =
               test <@ result = null @>
           }
 
+          ]
 
-          testAsync $"Hover is within performance limit with many very large glossaries" {
+[<Tests>]
+let performanceTests =
+    testSequenced
+    <| testList
+        "LanguageServer Performance.Hover"
+        [ testAsync $"Hover is within performance limit with many very large glossaries" {
               let workspaceRelative = Path.Combine("fixtures", "performance")
               let config = [ Workspace.optionsBuilder <| workspaceRelative ]
 
               use! client = TestClient config |> init
 
               // Update this if the performance test glossaries in `fixtures/performance` are updated with the `generate_perf_glossaries.fsx` script.
-              let sampleTerm = "Cake switch thunder"
+              let sampleTerm = "Disguised stinger mow"
 
               let workspaceBase =
                   Workspace.workspaceFolderPath workspaceRelative |> _.ToUri().ToString()
@@ -273,11 +279,11 @@ let tests =
 
               let sw = System.Diagnostics.Stopwatch()
               sw.Start()
-              let! hover = client.TextDocument.RequestHover(hoverParams) |> Async.AwaitTask
+              let! hover = client.TextDocument.RequestHover hoverParams |> Async.AwaitTask
               sw.Stop()
 
               test <@ hover.Contents.HasMarkupContent @>
               test <@ hover.Contents.MarkupContent.Kind = MarkupKind.Markdown @>
               test <@ hover.Contents.MarkupContent.Value.Contains sampleTerm @>
-              test <@ sw.Elapsed < System.TimeSpan.FromSeconds 6 @>
+              test <@ sw.Elapsed < System.TimeSpan.FromSeconds 5 @>
           } ]

@@ -85,38 +85,6 @@ let tests =
           |> List.map testCompletionsWithMultipleGlossaries
           |> testList "Test Completions with multiple glossaries"
 
-          let testCompletionsWithLargeGlossaries (text: string, position, expectedLength) =
-              testAsync
-                  $"""Given content '{text}' at position {position} respond with expected completion list count {expectedLength}""" {
-
-                  let workspaceRelative = Path.Combine("fixtures", "performance")
-
-                  let config = [ Workspace.optionsBuilder <| workspaceRelative ]
-
-                  let workspaceBase =
-                      Workspace.workspaceFolderPath workspaceRelative |> _.ToUri().ToString()
-
-                  use! client = TestClient(config) |> init
-
-                  let textDocumentUri = Path.Combine(workspaceBase, "test.txt")
-
-                  let sw = System.Diagnostics.Stopwatch()
-
-                  sw.Start()
-                  let! result = client |> Completion.getCompletionFromText text textDocumentUri position
-                  sw.Stop()
-
-                  let completionLabels = Completion.getLabels result
-
-                  test <@ Seq.length completionLabels = expectedLength @>
-                  test <@ sw.Elapsed < System.TimeSpan.FromSeconds 10 @>
-              }
-
-          [ "", Position(0, 0), 15 * 4 * 15 // 15 terms x 4 variations per term * 15 glossaries
-            "cake_switch", Position(0, 11), 2 ] // 1 term * 2 variations (we always return at least 2 variations and let the client do further filtering)
-          |> List.map testCompletionsWithLargeGlossaries
-          |> testList "Test Completions with large glossaries"
-
           let singleWordCompletion (term, tokenAtPosition: string option, expectedLabel: string) =
               testCase $"Completion of \"{term}\" with {tokenAtPosition} at position, returns \"{expectedLabel}\""
               <| fun () ->
@@ -284,3 +252,38 @@ let tests =
                   |> Seq.head
 
               test <@ completionItem.Kind = CompletionItemKind.Reference @> ]
+
+let private testCompletionsWithLargeGlossaries (text: string, position, expectedLength) =
+    testAsync
+        $"""Given content '{text}' at position {position} respond with expected completion list count {expectedLength}""" {
+
+        let workspaceRelative = Path.Combine("fixtures", "performance")
+
+        let config = [ Workspace.optionsBuilder <| workspaceRelative ]
+
+        let workspaceBase =
+            Workspace.workspaceFolderPath workspaceRelative |> _.ToUri().ToString()
+
+        use! client = TestClient config |> init
+
+        let textDocumentUri = Path.Combine(workspaceBase, "test.txt")
+
+        let sw = System.Diagnostics.Stopwatch()
+
+        sw.Start()
+        let! result = client |> Completion.getCompletionFromText text textDocumentUri position
+        sw.Stop()
+
+        let completionLabels = Completion.getLabels result
+
+        test <@ Seq.length completionLabels = expectedLength @>
+        test <@ sw.Elapsed < System.TimeSpan.FromSeconds 5 @>
+    }
+
+[<Tests>]
+let performanceTests =
+    [ "", Position(0, 0), 60 * 4 * 16 // 15 terms x 4 variations per term * 16 glossaries
+      "disguised_stinger", Position(0, 11), 2 ] // 1 term * 2 variations (we always return at least 2 variations and let the client do further filtering)
+    |> List.map testCompletionsWithLargeGlossaries
+    |> testList "LanguageServer Performance.Test Completions with large glossaries"
+    |> testSequenced
