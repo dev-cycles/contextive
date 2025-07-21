@@ -7,6 +7,8 @@ open System.IO
 
 let t = Swensen.Unquote.Assertions.test
 
+let mockStatusUrl = FileReaderTests.mockStatusUrl
+
 [<Tests>]
 let tests =
     testList
@@ -14,7 +16,7 @@ let tests =
         [
 
           test "Given valid URL Remote reader returns payload" {
-              let result = RemoteFileReader.read "https://httpstat.us/200"
+              let result = RemoteFileReader.read $"{mockStatusUrl}200"
 
               match result with
               | Error e -> failtest $"Should not get error, got {e}"
@@ -22,7 +24,7 @@ let tests =
           }
 
           test "Given not found URL Remote reader returns Error" {
-              let result = RemoteFileReader.read "https://httpstat.us/404"
+              let result = RemoteFileReader.read $"{mockStatusUrl}404"
 
               match result with
               | Error e -> t <@ e = FileNotFound @>
@@ -41,7 +43,7 @@ let tests =
           }
 
           test "Given other status codes, should report error" {
-              let result = RemoteFileReader.read "https://httpstat.us/401"
+              let result = RemoteFileReader.read $"{mockStatusUrl}401"
 
               match result with
               | Error(ReadingError e) -> t <@ e = "HttpStatusCode:401, payload: '401 Unauthorized'" @>

@@ -6,6 +6,8 @@ open Contextive.LanguageServer
 
 let t = Swensen.Unquote.Assertions.test
 
+let mockStatusUrl = "https://mock.httpstatus.io/"
+
 [<Tests>]
 let tests =
     testList
@@ -55,7 +57,7 @@ contexts:
           }
 
           test "Non-default remote path not found" {
-              let path = "https://httpstat.us/404" |> configuredPath
+              let path = $"{mockStatusUrl}404" |> configuredPath
               let file = FileReader.configuredReader path
 
               match file with
@@ -66,7 +68,7 @@ contexts:
           test "Default remote path not found" {
               let path =
                   { IsDefault = true
-                    Path = "https://httpstat.us/404" }
+                    Path = $"{mockStatusUrl}404" }
 
               let file = FileReader.configuredReader path
 
@@ -76,7 +78,7 @@ contexts:
           }
 
           test "Remote Path exists" {
-              let path = "https://httpstat.us/200" |> configuredPath
+              let path = $"{mockStatusUrl}200" |> configuredPath
 
 
               let file = FileReader.configuredReader path
