@@ -1,7 +1,7 @@
-## ⚡ [1.17.1](https://github.com/dev-cycles/contextive/releases/tag/v1.17.1) (2025-05-24)
+## ⚡ [1.17.2](https://github.com/dev-cycles/contextive/releases/tag/v1.17.2) (2025-07-21)
 
-[📘 Docs](https://docs.contextive.tech/community/v/1.17.1) | [📋 Compare with v1.17.0](https://github.com/dev-cycles/contextive/compare/v1.17.0...v1.17.1)
+[📘 Docs](https://docs.contextive.tech/community/v/1.17.2) | [📋 Compare with v1.17.1](https://github.com/dev-cycles/contextive/compare/v1.17.1...v1.17.2)
 
 ### 🐛 Bug Fixes
 
-* **language-server:** ensure completion list contains terms from other contexts in the same glossary file, even when the first glossary has more than 60 matching terms ([a8139c8](https://github.com/dev-cycles/contextive/commit/a8139c8d761ce002090b2b491e4dff6f9b5152fa))
+* **intellij:** remove emoji from IntelliJ Plugin README which was blocking deployment ([7254255](https://github.com/dev-cycles/contextive/commit/7254255b1e00abe69e25c8cbdd38713be3574863))
