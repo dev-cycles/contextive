@@ -1,6 +1,6 @@
 # Contextive README
 
-[📘 Documentation](https://docs.contextive.tech/community/v/1.16.0/) | [🚀 Releases](https://github.com/dev-cycles/contextive/releases) | [✉️ Subscribe for Updates](https://buttondown.com/contextive)
+[Documentation](https://docs.contextive.tech/community/v/1.16.0/) | [Releases](https://github.com/dev-cycles/contextive/releases) | [Subscribe for Updates](https://buttondown.com/contextive)
 
 Contextive is an IntelliJ Platform Plugin to assist developers in environments with a complex domain or project specific language, where words have a special meaning in the context of the project.
 
