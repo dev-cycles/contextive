@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
   id("java")
-  id("org.jetbrains.kotlin.jvm") version "2.1.10"
-  id("org.jetbrains.intellij.platform") version "2.3.0"
+  id("org.jetbrains.kotlin.jvm") version "2.2.20"
+  id("org.jetbrains.intellij.platform") version "2.9.0"
   id("com.github.ben-manes.versions") version "0.52.0"
 }
 
@@ -22,20 +22,19 @@ dependencies {
   implementation("net.harawata:appdirs:1.4.0")
   implementation("net.lingala.zip4j:zip4j:2.11.5")
   testImplementation(kotlin("test"))
-  testImplementation("org.junit.jupiter:junit-jupiter-params:5.12.0")
-  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-  testImplementation("io.mockk:mockk:1.13.17")
+  testImplementation("org.junit.jupiter:junit-jupiter-params:6.0.0-RC3")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.0-RC3")
+  testImplementation("io.mockk:mockk:1.14.5")
   testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
   intellijPlatform {
-    //intellijIdeaUltimate("251-EAP-SNAPSHOT", useInstaller = false)
-    intellijIdeaUltimate("2024.3.4.1")
+    intellijIdeaUltimate("2025.2.2")
   }
 }
 
 tasks {
   patchPluginXml {
     sinceBuild.set("241")
-    untilBuild.set("251.*")
+    untilBuild.set(provider { null })
   }
 
   withType<JavaCompile> {
@@ -67,6 +66,10 @@ tasks {
 
   test {
     useJUnitPlatform()
+    val javaToolchains = project.extensions.getByType<JavaToolchainService>()
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(24))
+    })
     testLogging {
       events("PASSED", "SKIPPED", "FAILED")
     }

@@ -2,14 +2,14 @@ name: Contextive
 on:
   push:
     paths:
-      - 'src/**'
-      - '.github/workflows/contextive.yml'
-      - '.github/workflows/contextive-runtime-build.yml'
-      - '.github/workflows/get-matrix.yml'
-      - '.github/build-matrix.yml'
-      - '.github/actions/**'
+      - "src/**"
+      - ".github/workflows/contextive.yml"
+      - ".github/workflows/contextive-runtime-build.yml"
+      - ".github/workflows/get-matrix.yml"
+      - ".github/build-matrix.yml"
+      - ".github/actions/**"
 env:
-  DOTNET_VERSION: '8.0.x'
+  DOTNET_VERSION: "8.0.x"
 
 jobs:
   get-matrix:
@@ -30,15 +30,15 @@ jobs:
 
   build-test-intellij:
     name: IntelliJ Plugin
-    runs-on: 'ubuntu-latest'
+    runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: actions/setup-java@v4
         with:
-          distribution: 'corretto'
-          java-version: '21'
+          distribution: "corretto"
+          java-version: "24"
 
       # - name: Language Server Artifact
       #   uses: actions/download-artifact@v4
@@ -60,5 +60,5 @@ jobs:
       - uses: ./.github/actions/upload-reports
         if: always()
         with:
-          name: 'Contextive IntelliJ Plugin'
+          name: "Contextive IntelliJ Plugin"
           reporter: java-junit
