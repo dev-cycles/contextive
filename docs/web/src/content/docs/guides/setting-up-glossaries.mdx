@@ -25,7 +25,7 @@ The following sections explore how to setup a glossary file from simple to more 
 
 ### A Simple Bounded Context
 
-The top level of the `*.glossary.yml` file is a list of bounded contexts. The key in the yml file is `contexts`. A file with a single context looks like:
+The top level of the glossary file is a list of bounded contexts. The key in the yml file is `contexts`. A file with a single context looks like:
 
 ```yml
 // shipping.glossary.yml
@@ -120,7 +120,7 @@ The way Contextive finds your glossary files depends on the working environment:
 
 ### Development Environments (IDEs)
 
-For Contextive to find a glossary file, it must match the pattern `*.glossary.yml` or `*.glossary.yaml` . You can name the prefix whatever you like, so `project.glossary.yml` and `module.glossary.yaml` are both valid filenames, but `module-glossary.yml` is not.
+For Contextive to find a glossary file in development environments, it must match the pattern `*.glossary.yml` or `*.glossary.yaml` . You can name the prefix whatever you like, so `project.glossary.yml` and `module.glossary.yaml` are both valid filenames, but `module-glossary.yml` is not.
 
 The following sections explore common patterns for where to place your glossary files.
 
@@ -393,13 +393,13 @@ If your glossary file must be kept private, then you must host it on a private I
 
 When you first install the extension and open it from the extension list, the welcome screen offers a few options for getting started:
 
-![Contextive Browser Extension Welcome Screen](./src/assets/images/browser-extension-welcome.png)
+![Contextive Browser Extension Welcome Screen](../../../assets/images/browser-extension-welcome.png)
 
 For self-hosted glossary yml files, click `Setup Workspaces`
 
 The next screen links you to this guide:
 
-![Contextive Browser Extension Workspaces Setup](./src/assets/images/browser-extension-empty-settings.png)
+![Contextive Browser Extension Workspaces Setup](../../../assets/images/browser-extension-empty-settings.png)
 
 Click `Add a workspaces` to get started telling Contextive where your glossary files are.
 
@@ -411,7 +411,7 @@ To that end, workspaces offer a flexible way of bringing together all glossaries
 
 A workspace is a collection of glossary file URLs, which defines the terminology included in the workspace, and a collection of url match patterns, which define the URLs on which to make the terminology from those glossary files available.
 
-![Contextive Browser Extension Workspaces Setup](./src/assets/images/browser-extension-add-workspace.png)
+![Contextive Browser Extension Workspaces Setup](../../../assets/images/browser-extension-add-workspace.png)
 
 Give your workspace a name (e.g. the name of your company, or team) and then provide the URLs at which your glossary files are located.
 
@@ -429,13 +429,13 @@ You can click `+ Add site` to add more url match patterns.
 
 Click `Add Workspace` to add your workspace - the first time you use a given domain in either the glossary URL or the Site to activate on, chrome will prompt you to grant Contextive permission to read your data on those sites.
 
-![Browser Permissions Check](./src/assets/images/browser-extension-permissions-check.png)
+![Browser Permissions Check](../../../assets/images/browser-extension-permissions-check.png)
 
 Click `Allow` or Contextive will not be able to function.
 
 Once the workspace is setup, opening the extension settings will display the workspace details:
 
-![Browser Extension Configuration](./src/assets/images/browser-extension-configured-workspace.png)
+![Browser Extension Configuration](../../../assets/images/browser-extension-configured-workspace.png)
 
 #### Separating Contexts
 
@@ -449,6 +449,6 @@ Once workspaces are setup, Contextive will start highlighting configured termino
 
 If you'd like to turn off highlighting for a workspace, open the extension and toggle the workspace off:
 
-![Deactivating a workspace](./src/assets/images/browser-extension-deactivated-workspace.png)
+![Deactivating a workspace](../../../assets/images/browser-extension-deactivated-workspace.png)
 
 Currently, each workspace must be activated and deactivated independently.
