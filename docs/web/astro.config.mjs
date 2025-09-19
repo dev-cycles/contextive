@@ -2,12 +2,28 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import versionPlugin from './src/versionPlugin';
+import rehypeExternalLinks from 'rehype-external-links';
+import { fromHtml } from 'hast-util-from-html';
+import externalLinkIcon from './src/assets/icons/external.svg?raw'
+
+const externalLinkElement = fromHtml(externalLinkIcon, { fragment: true, space: 'svg' });
 
 // https://astro.build/config
 export default defineConfig({
     base: process.env.BASE_URL,
     redirects: {
         "/guides/usage": "/guides/defining-terminology/"
+    },
+    markdown: {
+        rehypePlugins: [
+            [
+                rehypeExternalLinks,
+                {
+                    content: externalLinkElement,
+                    target: "_blank"
+                }
+            ],
+        ]
     },
     integrations: [starlight({
         title: 'Contextive - Community Edition',
@@ -49,5 +65,5 @@ export default defineConfig({
         plugins: [
             versionPlugin,
         ],
-		})],
+    })],
 });

@@ -80,3 +80,8 @@ h3 {
 		--sl-text-h5: var(--sl-text-lg);
 	}
 }
+
+svg.lucide-external-link-icon {
+	display: inline;
+	padding-left: 0.2em;
+}

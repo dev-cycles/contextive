@@ -1,24 +1,27 @@
 ---
 title: Setting up Glossaries
-description: How to setup glossary files so they're useful in the right files
+description: How to setup glossary files for use in the different Contextive working environments
 sidebar:
   order: 1
 ---
 
 import { FileTree } from '@astrojs/starlight/components';
 
-Glossaries are files that contain lists of terms, their definitions and other attributes. You can have as many glossary files as you like in your repository.
+Glossaries are [Yaml](https://en.wikipedia.org/wiki/YAML) files that contain lists of terms, their definitions and other attributes. You can have as many glossary files as you like.
 
-For Contextive to find a glossary file, it must match the pattern `*.glossary.yml` or `*.glossary.yaml` . You can name the prefix whatever you like, so `project.glossary.yml` and `module.glossary.yaml` are both valid filenames, but `module-glossary.yml` is not.
+The first part of this page will explain the high level structure of a glossary file.
 
-When setting up a glossary file, there are two things to do:
+The second part will explain how to setup to find your glossary files so that the right terminology is available at the right time.
 
-1. Define a bounded context in the header of the glossary - see [Bounded Contexts](#bounded-contexts)
-2. Decide where to put the glossary file - this affects which files are supported by its terminology - see [Glossary Location](#glossary-location)
+## Creating Glossary Files
 
-## Bounded Contexts
+The header of a glossary file defines the context within which the terminology in the file is well defined.
+
+In Contextive, the `context` is an important concept (it's in the name!) and is inspired by the Bounded Context from the field of Domain-Driven Design.
 
 In Domain-Driven Design, a Bounded Context is a logical boundary around a model of some portion of the domain. It's quite common for different Bounded Contexts to evolve their own unique 'languages' or 'dialects', so it is helpful to keep them in separate glossary files.
+
+The following sections explore how to setup a glossary file from simple to more complex.
 
 ### A Simple Bounded Context
 
@@ -37,7 +40,7 @@ contexts:
 
 ![Shipping Context Headers](../../../assets/images/context-simple-header.png)
 
-The `name` field is optional, but generally recommended.
+The `name` field of the context is optional, but strongly recommended.
 
 ### Defining a Domain Vision Statement
 
@@ -108,7 +111,16 @@ When getting started, it could be helpful to copy the <Link href="https://github
 
 It can be used as a starting point to edit and amend to incorporate your contexts and [define your terms](../defining-terminology/).
 
-## Glossary Location
+## Finding Glossary Files
+
+The way Contextive finds your glossary files depends on the working environment:
+
+1. [Development Environments (IDEs)](#development-environments-ides)
+2. [Web Browsers](#web-browsers)
+
+### Development Environments (IDEs)
+
+For Contextive to find a glossary file, it must match the pattern `*.glossary.yml` or `*.glossary.yaml` . You can name the prefix whatever you like, so `project.glossary.yml` and `module.glossary.yaml` are both valid filenames, but `module-glossary.yml` is not.
 
 The following sections explore common patterns for where to place your glossary files.
 
@@ -118,7 +130,7 @@ Terms in a glossary file are used by Contextive when working on any file in the 
 If you need terms from another glossary file, the [import](#terms-defined-in-an-external-data-source) facility may assist.
 :::
 
-### Terms relevant for the whole repository
+#### Terms relevant for the whole repository
 
 If the terms in a file are useful for all files in the repository, then you should put the glossary file in the root.
 
@@ -138,7 +150,7 @@ If the terms in a file are useful for all files in the repository, then you shou
 
 In the example above, if `projectName.glossary.yml` contains a definition for the term `Order`, then that definition will be used when editing `README.md`, `frontend\Components\SubmitOrder.ts` and `backend\domain\Order.cs`.
 
-### Different terms relevant in different repositories
+#### Different terms relevant in different repositories
 
 This is the same as the previous pattern, but is described to be explicit for teams who are using multiple repositories.
 
@@ -164,7 +176,7 @@ In this case, `shipping.glossary.yml` might define `Order` as `A set of parcels 
 
 `payments.glossary.yml` might define `Order` as `An amount to be charged to the customer and the payment method to charge.`.  This definition will be shown when working in the `payments` repository.
 
-### Terms relevant only in a subfolder of the repository
+#### Terms relevant only in a subfolder of the repository
 
 If the terms in a file are useful only in a subfolder, put the glossary file in the top-most folder that encompasses those relevant files.
 
@@ -192,7 +204,7 @@ Assuming the same definitions as before, where `shipping.glossary.yml` defines `
 
 This pattern is particularly useful if each module in your modular monolith contains all the code associated with a [Bounded Context](#bounded-contexts).
 
-### Terms defined in an external data source
+#### Terms defined in an external data source
 
 Some organisations already have their terms defined in an existing dataset and do not want to maintain them separately in a repository.
 
@@ -240,7 +252,7 @@ Remote glossary files are loaded at startup and changes are not automatically de
 Contextive does not support accessing authenticated remote URLs.  If it's important that your glossaries remain private, at this point it's best to try and protect them by hosting them in locations only available on a corporate LAN/VPN or restrict access to them via a proxy.
 :::
 
-### Terms relevant in multiple folder locations
+#### Terms relevant in multiple folder locations
 
 Sometimes even though bounded contexts have different languages and are neatly separated, it's helpful to have access to terms from another context in some parts of the code - consider code that deals with integration between the contexts.
 
@@ -278,7 +290,7 @@ When working on `shipping/src/Order.cs`, only the definition from `shipping.glos
 Just like remote glossary files, local imports are loaded at startup and are not reloaded even when the _imported_ file changes. Only a change to the _importing_ file will trigger a reload.  To force a refresh, 'touch' the _importing_ file by saving it (with or without changes).
 :::
 
-#### Combining Imports with Terminology
+##### Combining Imports with Terminology
 
 A glossary file can contain a list of imports _as well_ as contexts and terms - they will all be made available when working in the folder, e.g.:
 
@@ -293,7 +305,7 @@ imports:
 
 In this case the `Shipping Fee` is a term that is relevant when integrating between `payments` and `shipping`, but note that it is part of a separate Context - importing a file does not merge the contexts, rather, it acts as though all contexts were defined in the same file.
 
-### Terms relevant across multiple repositories
+#### Terms relevant across multiple repositories
 
 Some organisations have adopted a distributed repository configuration, where small services (microservices, or cloud FAAS functions) are each located in their own repositories. Often in these cases, the code in these repositories share a domain language.
 
@@ -309,7 +321,7 @@ https://raw.githubusercontent.com/dev-cycles/contextive/refs/heads/main/src/lang
 ```
 :::
 
-### Multi-root workspaces
+#### Multi-root workspaces
 
 Some IDEs (e.g. VsCode) support multi-root workspaces. 
 
@@ -320,7 +332,7 @@ However, it will only discover glossaries by searching from each of the roots, s
 In this approach, it's recommended to use something like [Terms relevant only in a subfolder of the repository](#terms-relevant-only-in-a-subfolder-of-the-repository), where each subfolder is 'root' in the multi-root workspace.
 
 
-### Multiple Bounded Contexts in a Glossary File
+#### Multiple Bounded Contexts in a Glossary File
 
 :::caution
 This feature is available for backwards compatibility reasons, but is not recommended.  See above for recommended patterns.
@@ -366,3 +378,77 @@ contexts:
     terms:
       - * list of terms in the payments context
 ```
+
+### Web Browsers
+
+The Contextive browser extension can only work with glossary files that are hosted at an unauthenticated url.
+
+If your glossary file must be kept private, then you must host it on a private IP address in your private network.
+
+:::note
+[Contextive Cloud](https://contextive.tech) is coming soon and will offer a hosted service for authenticated glossary files.  [Join the waitlist](https://contextive.tech/#subscribe) to find out when it is available!
+:::
+
+#### Getting started
+
+When you first install the extension and open it from the extension list, the welcome screen offers a few options for getting started:
+
+![Contextive Browser Extension Welcome Screen](./src/assets/images/browser-extension-welcome.png)
+
+For self-hosted glossary yml files, click `Setup Workspaces`
+
+The next screen links you to this guide:
+
+![Contextive Browser Extension Workspaces Setup](./src/assets/images/browser-extension-empty-settings.png)
+
+Click `Add a workspaces` to get started telling Contextive where your glossary files are.
+
+#### Workspaces
+
+Unlike in code, where it is possible to be confident that a particular file path 'belongs' to a given context, in wikis and other documentation, it's usually the case that content describes things that span across multiple context boundaries.
+
+To that end, workspaces offer a flexible way of bringing together all glossaries, or keeping them separate, as would be helpful.
+
+A workspace is a collection of glossary file URLs, which defines the terminology included in the workspace, and a collection of url match patterns, which define the URLs on which to make the terminology from those glossary files available.
+
+![Contextive Browser Extension Workspaces Setup](./src/assets/images/browser-extension-add-workspace.png)
+
+Give your workspace a name (e.g. the name of your company, or team) and then provide the URLs at which your glossary files are located.
+
+Click `+ Add file` to add more glossary files into the workspace.  The first file cannot be deleted, as there must be at least one glossary file in the workspace.
+
+To have all your terminology available all the time, add all of your glossary files here.
+
+In the section `Sites to Activate On`, you can enter a set of URL 'match patterns' to define which sites (or paths) to use these glossary files.
+
+[URL match patterns](https://developer.chrome.com/docs/extensions/develop/concepts/match-patterns) are defined by Google, and allow for wildcards for the scheme, domain portions and paths.
+
+For example, if your wiki is at `http://wiki.company.com` then enter the url match pattern `http://wiki.company.com/*` to ensure it matches all paths.  Without the `*` wildcard it would only match exactly the default index site.
+
+You can click `+ Add site` to add more url match patterns.
+
+Click `Add Workspace` to add your workspace - the first time you use a given domain in either the glossary URL or the Site to activate on, chrome will prompt you to grant Contextive permission to read your data on those sites.
+
+![Browser Permissions Check](./src/assets/images/browser-extension-permissions-check.png)
+
+Click `Allow` or Contextive will not be able to function.
+
+Once the workspace is setup, opening the extension settings will display the workspace details:
+
+![Browser Extension Configuration](./src/assets/images/browser-extension-configured-workspace.png)
+
+#### Separating Contexts
+
+To have only terminology from some contexts available at certain sites/paths, ensure each context is defined in a separate glossary file, and then setup a workspace per glossary file.
+
+Setup the `Sites to Activate On` using url match patterns that align with where each context (or group of contexts) is relevant. It is fine to use the some of the same url match patterns in different workspaces.
+
+#### Activating and Deactivating a workspace
+
+Once workspaces are setup, Contextive will start highlighting configured terminology on sites that match the url patterns.
+
+If you'd like to turn off highlighting for a workspace, open the extension and toggle the workspace off:
+
+![Deactivating a workspace](./src/assets/images/browser-extension-deactivated-workspace.png)
+
+Currently, each workspace must be activated and deactivated independently.
