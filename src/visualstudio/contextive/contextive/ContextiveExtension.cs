@@ -21,7 +21,7 @@ namespace contextive
                 InstallationTargetArchitecture = VisualStudioArchitecture.Amd64,
                 Icon = "contextive.png",
                 License = "LICENSE",
-                ReleaseNotes = "https://github.com/dev-cycles/contextive/releases/tag/v1.17.4",
+                ReleaseNotes = "https://github.com/dev-cycles/contextive/releases/tag/v1.17.5",
                 Tags = ["DDD", "Dictionary", "Domain-Driven Design", "Domain Modelling", "Knowledge Management"]
             }
         };
