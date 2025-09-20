@@ -38,13 +38,13 @@ tasks {
   }
 
   withType<JavaCompile> {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
+    sourceCompatibility = "21"
+    targetCompatibility = "21"
   }
 
   withType<KotlinJvmCompile> {
     compilerOptions {
-      jvmTarget = JvmTarget.JVM_17
+      jvmTarget = JvmTarget.JVM_21
     }
   }
 
@@ -68,7 +68,7 @@ tasks {
     useJUnitPlatform()
     val javaToolchains = project.extensions.getByType<JavaToolchainService>()
     javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(24))
+        languageVersion.set(JavaLanguageVersion.of(21))
     })
     testLogging {
       events("PASSED", "SKIPPED", "FAILED")
