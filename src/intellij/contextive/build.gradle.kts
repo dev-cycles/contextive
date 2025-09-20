@@ -27,7 +27,12 @@ dependencies {
   testImplementation("io.mockk:mockk:1.14.5")
   testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
   intellijPlatform {
-    intellijIdeaUltimate("2025.2.2")
+    intellijIdeaUltimate("2025.1.5.1")
+      // switching to 2025.2.2 started causing binary incompatibilities:
+      // `Class com.intellij.openapi.extensions.PluginId does not have member field 'com.intellij.openapi.extensions.PluginId$Companion Companion'`
+      // leaving it at 2025.1.5.1 resolves the issue, and builds a plugin that seems to work in 2025.2.2
+      // This will need updating and checking with 2025.3 as Ultimate and Community are consolidating
+      // intellijIdeaUltimate("2025.2.2")
   }
 }
 
