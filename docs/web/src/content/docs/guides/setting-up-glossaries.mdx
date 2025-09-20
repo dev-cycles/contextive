@@ -19,7 +19,13 @@ The header of a glossary file defines the context within which the terminology i
 
 In Contextive, the `context` is an important concept (it's in the name!) and is inspired by the Bounded Context from the field of Domain-Driven Design.
 
-In Domain-Driven Design, a Bounded Context is a logical boundary around a model of some portion of the domain. It's quite common for different Bounded Contexts to evolve their own unique 'languages' or 'dialects', so it is helpful to keep them in separate glossary files.
+### Bounded Contexts
+
+In Domain-Driven Design, a Bounded Context is a logical boundary around a model of some portion of the domain.
+
+Within a Bounded Context, terminology should be precisely defined, but a definition in one Bounded Context is unrelated to definitions in other Bounded Contexts - the same term may have two very different definitions in two different Bounded Contexts.
+
+It's quite common for different Bounded Contexts to evolve their own unique 'languages' or 'dialects', so it is helpful to keep them in separate glossary files.
 
 The following sections explore how to setup a glossary file from simple to more complex.
 
@@ -446,6 +452,14 @@ Setup the `Sites to Activate On` using url match patterns that align with where 
 #### Activating and Deactivating a workspace
 
 Once workspaces are setup, Contextive will start highlighting configured terminology on sites that match the url patterns.
+
+You can hover over highlighted terms to see brief definitions, like so:
+
+![Hovering over the word policy two see two definitions](../../../assets/images/browser-extension-hover.png)
+
+Click `View in glossary` to see a detailed definition in a side-panel:
+
+![Detailed policy definition in glossary sidepanel](../../../assets/images/browser-extension-sidepanel.png)
 
 If you'd like to turn off highlighting for a workspace, open the extension and toggle the workspace off:
 
