@@ -1,7 +1,7 @@
 {
   "name": "contextive-community-docs",
   "type": "module",
-  "version": "1.17.5",
+  "version": "1.17.6",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
