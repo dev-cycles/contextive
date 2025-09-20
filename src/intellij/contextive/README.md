@@ -35,7 +35,12 @@ At time of writing, it includes:
 
 ## IntelliJ Platform Compatibility
 
-Contextive relies on the [IntelliJ Platform Language Server Protocol APIs](https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html) which were marked as experimental until IntelliJ platform 2025.1.  It's recommended to use 2025.1 or later.
+Contextive relies on the [IntelliJ Platform Language Server Protocol APIs](https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html) which were marked as experimental until IntelliJ Platform 2025.1.
+
+Due to binary incompatibilities from v1.17.6, Contextive is marked as only compatible with 2025.1 onwards:
+
+* For IntelliJ Platform 2025.* or later, use Contextive's [latest release](https://plugins.jetbrains.com/plugin/23928-contextive) (**Recommended**)
+* For IntelliJ Platform 2024.* or earlier, use Contextive [v1.17.2](https://plugins.jetbrains.com/plugin/23928-contextive/versions/stable/800789)
 
 ## Features
 

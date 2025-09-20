@@ -32,13 +32,14 @@ dependencies {
       // `Class com.intellij.openapi.extensions.PluginId does not have member field 'com.intellij.openapi.extensions.PluginId$Companion Companion'`
       // leaving it at 2025.1.5.1 resolves the issue, and builds a plugin that seems to work in 2025.2.2
       // This will need updating and checking with 2025.3 as Ultimate and Community are consolidating
+      // Binary compatibility issues with 2024.* has prompted to changesinceBuild to 251
       // intellijIdeaUltimate("2025.2.2")
   }
 }
 
 tasks {
   patchPluginXml {
-    sinceBuild.set("241")
+    sinceBuild.set("251")
     untilBuild.set(provider { null })
   }
 
