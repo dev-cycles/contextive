@@ -14,13 +14,13 @@
        Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
        Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
   <description><![CDATA[<h1>Contextive README</h1>
-<p><a href="https://docs.contextive.tech/community/v/1.17.6/">Documentation</a> | <a href="https://github.com/dev-cycles/contextive/releases">Releases</a> | <a href="https://buttondown.com/contextive">Subscribe for Updates</a></p>
+<p><a href="https://docs.contextive.tech/community/v/1.17.7/">Documentation</a> | <a href="https://github.com/dev-cycles/contextive/releases">Releases</a> | <a href="https://buttondown.com/contextive">Subscribe for Updates</a></p>
 <p>Contextive is an IntelliJ Platform Plugin to assist developers in environments with a complex domain or project specific language, where words have a special meaning in the context of the project.</p>
 <p>It should help new team members get up to speed more quickly in understanding domain-specific terms. By storing the glossary in your repository, and surfacing the definitions as you work on the code, it encourages the use of the domain-specific terms in your code, and regularly updating the definitions as the team's understanding evolves.</p>
 <h2>Installation</h2>
-<p>See <a href="https://docs.contextive.tech/community/v/1.17.6/guides/installation/#intellij-plugin-platform">IntelliJ IDEs (e.g. IDEA) Installation Instructions</a>.</p>
+<p>See <a href="https://docs.contextive.tech/community/v/1.17.7/guides/installation/#intellij-plugin-platform">IntelliJ IDEs (e.g. IDEA) Installation Instructions</a>.</p>
 <h2>Getting Started</h2>
-<p>See <a href="https://docs.contextive.tech/community/v/1.17.6/guides/setting-up-glossaries/">setting up glossaries</a> and <a href="https://docs.contextive.tech/community/v/1.17.6/guides/defining-terminology/">defining terminology</a> usage guides for details on getting started with Contextive.</p>
+<p>See <a href="https://docs.contextive.tech/community/v/1.17.7/guides/setting-up-glossaries/">setting up glossaries</a> and <a href="https://docs.contextive.tech/community/v/1.17.7/guides/defining-terminology/">defining terminology</a> usage guides for details on getting started with Contextive.</p>
 <h2>Supported IDEs</h2>
 <p>The plugin uses the IntelliJ Language Server Protocol support, so it's only available in the IDEs where that feature is offered.  See the <a href="https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html#supported-ides">JetBrains LSP Documentation</a> for the latest list.</p>
 <p>At time of writing, it includes:</p>
@@ -47,7 +47,7 @@
 </ul>
 <h2>Features</h2>
 <ul>
-<li><a href="https://docs.contextive.tech/community/v/1.17.6/guides/defining-terminology/#smart-auto-complete">Auto-complete</a> from your Contextive Glossary
+<li><a href="https://docs.contextive.tech/community/v/1.17.7/guides/defining-terminology/#smart-auto-complete">Auto-complete</a> from your Contextive Glossary
 <ul>
 <li>Shows definitions in auto-complete details
 <ul>
@@ -58,19 +58,19 @@
 </li>
 <li>Hover to show definitions from your Contextive Glossary
 <ul>
-<li>Hover over elements with <a href="https://docs.contextive.tech/community/v/1.17.6/guides/defining-terminology/#suffixes-and-prefixes">suffixes &amp; prefixes</a></li>
-<li>Hover over usage of <a href="https://docs.contextive.tech/community/v/1.17.6/guides/defining-terminology/#combining-two-or-more-terms">multiple terms</a> combined using camelCase, PascalCase and snake_case</li>
-<li>Hover over <a href="https://docs.contextive.tech/community/v/1.17.6/guides/defining-terminology/#complex-multi-word-terms">multi-word</a> terms</li>
-<li>Hover over <a href="https://docs.contextive.tech/community/v/1.17.6/guides/defining-terminology/#plurals">plural</a> of defined terms</li>
-<li>Hover over <a href="https://docs.contextive.tech/community/v/1.17.6/guides/defining-terminology/#aliases">aliases</a> of defined terms</li>
+<li>Hover over elements with <a href="https://docs.contextive.tech/community/v/1.17.7/guides/defining-terminology/#suffixes-and-prefixes">suffixes &amp; prefixes</a></li>
+<li>Hover over usage of <a href="https://docs.contextive.tech/community/v/1.17.7/guides/defining-terminology/#combining-two-or-more-terms">multiple terms</a> combined using camelCase, PascalCase and snake_case</li>
+<li>Hover over <a href="https://docs.contextive.tech/community/v/1.17.7/guides/defining-terminology/#complex-multi-word-terms">multi-word</a> terms</li>
+<li>Hover over <a href="https://docs.contextive.tech/community/v/1.17.7/guides/defining-terminology/#plurals">plural</a> of defined terms</li>
+<li>Hover over <a href="https://docs.contextive.tech/community/v/1.17.7/guides/defining-terminology/#aliases">aliases</a> of defined terms</li>
 </ul>
 </li>
 <li>Put your glossaries near the code they support:
 <ul>
-<li><a href="https://docs.contextive.tech/community/v/1.17.6/guides/setting-up-glossaries/#terms-relevant-for-the-whole-repository">Terms relevant for the whole repository</a></li>
-<li><a href="https://docs.contextive.tech/community/v/1.17.6/guides/setting-up-glossaries/#different-terms-relevant-in-different-repositories">Different terms relevant in different repositories</a></li>
-<li><a href="https://docs.contextive.tech/community/v/1.17.6/guides/setting-up-glossaries/#terms-relevant-only-in-a-subfolder-of-the-repository">Terms relevant only in a subfolder of the repository</a></li>
-<li><a href="https://docs.contextive.tech/community/v/1.17.6/guides/setting-up-glossaries/#multi-root-workspaces">Multi-root workspaces</a></li>
+<li><a href="https://docs.contextive.tech/community/v/1.17.7/guides/setting-up-glossaries/#terms-relevant-for-the-whole-repository">Terms relevant for the whole repository</a></li>
+<li><a href="https://docs.contextive.tech/community/v/1.17.7/guides/setting-up-glossaries/#different-terms-relevant-in-different-repositories">Different terms relevant in different repositories</a></li>
+<li><a href="https://docs.contextive.tech/community/v/1.17.7/guides/setting-up-glossaries/#terms-relevant-only-in-a-subfolder-of-the-repository">Terms relevant only in a subfolder of the repository</a></li>
+<li><a href="https://docs.contextive.tech/community/v/1.17.7/guides/setting-up-glossaries/#multi-root-workspaces">Multi-root workspaces</a></li>
 </ul>
 </li>
 <li>Works in all files</li>
@@ -91,44 +91,51 @@
 ]]></description>
 
   <change-notes><![CDATA[<h1>Change Log</h1>
+<h2>⚡ <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.17.7">1.17.7</a> (2025-10-02)</h2>
+<p><a href="https://docs.contextive.tech/community/v/1.17.7/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.6...v1.17.7">📋 Compare with v1.17.6</a></p>
+<h3>🐛 Bug Fixes</h3>
+<ul>
+<li><strong>language-server:</strong> Avoid erroring if a watched/discovered glossary file is not found (fixes <a href="https://github.com/dev-cycles/contextive/issues/112">#112</a>) (<a href="https://github.com/dev-cycles/contextive/commit/581fb6dc41cb74ccffe9fa405cc3eace3e35d48b">581fb6d</a>)</li>
+<li><strong>language-server:</strong> respect .gitignore when scanning for glossary files (fixed <a href="https://github.com/dev-cycles/contextive/issues/109">#109</a>) (<a href="https://github.com/dev-cycles/contextive/commit/cfde98f2d908a912fddd6cfaa0bd229b995ce710">cfde98f</a>)</li>
+</ul>
 <h2>⚡ <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.17.6">1.17.6</a> (2025-09-20)</h2>
-<p><a href="https://docs.contextive.tech/community/v/1.17.6/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.5...v1.17.6">📋 Compare with v1.17.5</a></p>
+<p><a href="https://docs.contextive.tech/community/v/1.17.7/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.5...v1.17.6">📋 Compare with v1.17.5</a></p>
 <h3>🐛 Bug Fixes</h3>
 <ul>
 <li><strong>intellij:</strong> restrict to sinceBuild 251 to avoid binary incompatibilities (<a href="https://github.com/dev-cycles/contextive/commit/eeca2805c5555d5bb96d3777347bb79242fd9f05">eeca280</a>)</li>
 </ul>
 <h2>⚡ <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.17.5">1.17.5</a> (2025-09-20)</h2>
-<p><a href="https://docs.contextive.tech/community/v/1.17.6/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.4...v1.17.5">📋 Compare with v1.17.4</a></p>
+<p><a href="https://docs.contextive.tech/community/v/1.17.7/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.4...v1.17.5">📋 Compare with v1.17.4</a></p>
 <h3>🐛 Bug Fixes</h3>
 <ul>
 <li><strong>intellij:</strong> downgrade intellijPlatform dependency to 2025.1.5.1 to avoid PluginId compatibility issues (<a href="https://github.com/dev-cycles/contextive/commit/02f8a4a7d9f8349e074f368e4691b9d38d0b9145">02f8a4a</a>)</li>
 </ul>
 <h2>⚡ <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.17.4">1.17.4</a> (2025-09-20)</h2>
-<p><a href="https://docs.contextive.tech/community/v/1.17.6/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.3...v1.17.4">📋 Compare with v1.17.3</a></p>
+<p><a href="https://docs.contextive.tech/community/v/1.17.7/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.3...v1.17.4">📋 Compare with v1.17.3</a></p>
 <h3>🐛 Bug Fixes</h3>
 <ul>
 <li><strong>intellij:</strong> consolidate build and test on java 21 to match intellij platform (<a href="https://github.com/dev-cycles/contextive/commit/90b90c35d9d89cb6e911556adf2759ea943dddb4">90b90c3</a>)</li>
 </ul>
 <h2>⚡ <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.17.3">1.17.3</a> (2025-09-19)</h2>
-<p><a href="https://docs.contextive.tech/community/v/1.17.6/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.2...v1.17.3">📋 Compare with v1.17.2</a></p>
+<p><a href="https://docs.contextive.tech/community/v/1.17.7/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.2...v1.17.3">📋 Compare with v1.17.2</a></p>
 <h3>🐛 Bug Fixes</h3>
 <ul>
 <li><strong>intellij:</strong> add support for 2025.2 intellij platform (<a href="https://github.com/dev-cycles/contextive/commit/64bdd1fd2284dca983e006f5c59094a45568342b">64bdd1f</a>)</li>
 </ul>
 <h2>⚡ <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.17.2">1.17.2</a> (2025-07-21)</h2>
-<p><a href="https://docs.contextive.tech/community/v/1.17.6/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.1...v1.17.2">📋 Compare with v1.17.1</a></p>
+<p><a href="https://docs.contextive.tech/community/v/1.17.7/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.1...v1.17.2">📋 Compare with v1.17.1</a></p>
 <h3>🐛 Bug Fixes</h3>
 <ul>
 <li><strong>intellij:</strong> remove emoji from IntelliJ Plugin README which was blocking deployment (<a href="https://github.com/dev-cycles/contextive/commit/7254255b1e00abe69e25c8cbdd38713be3574863">7254255</a>)</li>
 </ul>
 <h2>⚡ <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.17.1">1.17.1</a> (2025-05-24)</h2>
-<p><a href="https://docs.contextive.tech/community/v/1.17.6/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.0...v1.17.1">📋 Compare with v1.17.0</a></p>
+<p><a href="https://docs.contextive.tech/community/v/1.17.7/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.17.0...v1.17.1">📋 Compare with v1.17.0</a></p>
 <h3>🐛 Bug Fixes</h3>
 <ul>
 <li><strong>language-server:</strong> ensure completion list contains terms from other contexts in the same glossary file, even when the first glossary has more than 60 matching terms (<a href="https://github.com/dev-cycles/contextive/commit/a8139c8d761ce002090b2b491e4dff6f9b5152fa">a8139c8</a>)</li>
 </ul>
 <h1>🚀 <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.17.0">1.17.0</a> (2025-05-19)</h1>
-<p><a href="https://docs.contextive.tech/community/v/1.17.6/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.16.2...v1.17.0">📋 Compare with v1.16.2</a></p>
+<p><a href="https://docs.contextive.tech/community/v/1.17.7/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.16.2...v1.17.0">📋 Compare with v1.16.2</a></p>
 <h3>🌟 Features</h3>
 <ul>
 <li><strong>language-server:</strong> support .yaml extension as well as .yml in glossary filenames (fixes <a href="https://github.com/dev-cycles/contextive/issues/106">#106</a>) (<a href="https://github.com/dev-cycles/contextive/commit/7128344e4c0289fdb6c39d66601064b736eb223c">7128344</a>)</li>
@@ -142,19 +149,19 @@
 <li><strong>language-server:</strong> Pre-index glossaries to improve performance with many very large glossaries (tested with 15 glossaries of 10,000 terms each) (<a href="https://github.com/dev-cycles/contextive/commit/f230f7f1a31e40cbbf6d2b54318fd5343852e47c">f230f7f</a>)</li>
 </ul>
 <h2>⚡ <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.16.2">1.16.2</a> (2025-03-24)</h2>
-<p><a href="https://docs.contextive.tech/community/v/1.17.6/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.16.1...v1.16.2">📋 Compare with v1.16.1</a></p>
+<p><a href="https://docs.contextive.tech/community/v/1.17.7/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.16.1...v1.16.2">📋 Compare with v1.16.1</a></p>
 <h3>🐛 Bug Fixes</h3>
 <ul>
 <li><strong>intellij:</strong> fix issue if system property jna.noclasspath is null (<a href="https://github.com/dev-cycles/contextive/commit/8cfacd6d23d5d591b8c38aa96f4e0cf59c6e590c">8cfacd6</a>)</li>
 </ul>
 <h2>⚡ <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.16.1">1.16.1</a> (2025-03-23)</h2>
-<p><a href="https://docs.contextive.tech/community/v/1.17.6/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.16.0...v1.16.1">📋 Compare with v1.16.0</a></p>
+<p><a href="https://docs.contextive.tech/community/v/1.17.7/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.16.0...v1.16.1">📋 Compare with v1.16.0</a></p>
 <h3>🐛 Bug Fixes</h3>
 <ul>
 <li><strong>language-server:</strong> correct handling of multi-word terms with unicode characters (fixes <a href="https://github.com/dev-cycles/contextive/issues/90">#90</a>) (<a href="https://github.com/dev-cycles/contextive/commit/6ed7bc1d7d957a9f27003fd363a53ee3f282cf10">6ed7bc1</a>)</li>
 </ul>
 <h1>🚀 <a href="https://github.com/dev-cycles/contextive/releases/tag/v1.16.0">1.16.0</a> (2025-03-22)</h1>
-<p><a href="https://docs.contextive.tech/community/v/1.17.6/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.15.0...v1.16.0">📋 Compare with v1.15.0</a></p>
+<p><a href="https://docs.contextive.tech/community/v/1.17.7/a> | <a href="https://github.com/dev-cycles/contextive/compare/v1.15.0...v1.16.0">📋 Compare with v1.15.0</a></p>
 <h3>🌟 Features</h3>
 <ul>
 <li><strong>language-server:</strong> can import local glossary files to make terms available in multiple locations (<a href="https://github.com/dev-cycles/contextive/commit/6915ef26c91587d50156c510725cbcfef0617f65">6915ef2</a>)</li>
