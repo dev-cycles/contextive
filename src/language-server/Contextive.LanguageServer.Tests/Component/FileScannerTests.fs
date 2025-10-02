@@ -42,4 +42,18 @@ let tests =
               let expectedFiles = List.append expectedFiles1 expectedFiles2
 
               test <@ Set.ofSeq expectedFiles = Set.ofSeq files @>
+          }
+
+          testAsync "When scanning folder, find matching files except for .gitignored files" {
+
+              let basePath = workspaceFolderPath "fixtures/scanning_tests_ignore" |> normalizePath
+
+              let scanner = FileScanner.fileScanner [ basePath ]
+              let files = scanner EXPECTED_GLOSSARY_FILE_GLOB
+
+              let expectedFiles =
+                  [ "test.glossary.yml"; ".nested/shouldfind.glossary.yml" ]
+                  |> reBaseLinePaths basePath
+
+              test <@ Set.ofSeq expectedFiles = Set.ofSeq files @>
           } ]
