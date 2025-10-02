@@ -51,7 +51,7 @@ let tests =
     let getName (t: Contextive.Core.GlossaryFile.Term) = t.Name
     let compareList = Seq.compareWith compare
 
-    let pc p : PathConfiguration = { Path = p; IsDefault = false }
+    let pc p : PathConfiguration = { Path = p; Source = Configured }
 
     testList
         "LanguageServer.GlossaryManager Tests"

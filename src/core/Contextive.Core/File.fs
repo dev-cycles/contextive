@@ -1,13 +1,20 @@
 module Contextive.Core.File
 
-type PathConfiguration = { Path: string; IsDefault: bool }
+type ConfigurationSource =
+    | Default
+    | Configured
+    | Discovered
+    | Imported
 
-let configuredPath p = { Path = p; IsDefault = false }
+type PathConfiguration =
+    { Path: string
+      Source: ConfigurationSource }
+
+let configuredPath p = { Path = p; Source = Configured }
 
 type FileError =
     | PathInvalid of string
-    | DefaultFileNotFound
-    | FileNotFound
+    | FileNotFound of ConfigurationSource
     | NotYetLoaded
     | ReadingError of string
     | ParsingError of string
@@ -19,6 +26,8 @@ let fileErrorMessage =
     | ParsingError m -> $"Parsing Error: {m}"
     | ValidationError m -> $"Validation Error: {m}"
     | ReadingError m -> $"Unable to read from source: {m}"
-    | DefaultFileNotFound -> "Default glossary file not found."
-    | FileNotFound -> "Glossary file not found."
+    | FileNotFound Default -> "Default glossary file not found"
+    | FileNotFound Configured -> "Glossary file not found"
+    | FileNotFound Discovered -> "Watched Glossary file not found"
+    | FileNotFound Imported -> "Imported Glossary file not found"
     | NotYetLoaded -> "Should Not Be Reached"

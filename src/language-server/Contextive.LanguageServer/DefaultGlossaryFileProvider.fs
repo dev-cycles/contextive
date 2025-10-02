@@ -32,12 +32,12 @@ let private getConfigValue (s: ILanguageServer) section key =
                 | key when key = pathKey ->
                     Some
                         { Path = defaultContextiveGlossaryFilePath
-                          IsDefault = true }
+                          Source = Default }
                 | _ -> None
             else
                 Some
                     { Path = configValue
-                      IsDefault = false }
+                      Source = Configured }
 
         Log.Logger.Information $"Got {key} {value}"
         return value

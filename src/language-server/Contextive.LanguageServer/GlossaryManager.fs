@@ -69,7 +69,7 @@ module private Handlers =
               RegisterWatchedFiles = fun _ -> fun () -> ()
               Glossaries = Map []
               GlossaryOps = createGlossary.GlossaryOps
-              DefaultGlossaryPathResolver = fun _ -> FileError.NotYetLoaded |> Error |> async.Return
+              DefaultGlossaryPathResolver = fun _ -> NotYetLoaded |> Error |> async.Return
               DefaultGlossary = None
               DefaultGlossaryPath = ""
               DeRegisterDefaultGlossaryFileWatcher = None }
@@ -93,7 +93,7 @@ module private Handlers =
             |> Seq.map (fun p ->
                 let glossary =
                     state.GlossaryOps.Start
-                        { Path = { Path = p; IsDefault = false }
+                        { Path = { Path = p; Source = Discovered }
                           Log = state.Log }
 
                 p, glossary)
@@ -116,7 +116,7 @@ module private Handlers =
         else
             let glossary =
                 state.GlossaryOps.Start
-                    { Path = { Path = path; IsDefault = false }
+                    { Path = { Path = path; Source = Discovered }
                       Log = state.Log }
 
             let newSubGlossaries = state.Glossaries.Add(path, glossary)

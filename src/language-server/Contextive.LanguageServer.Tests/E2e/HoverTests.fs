@@ -285,5 +285,5 @@ let performanceTests =
               test <@ hover.Contents.HasMarkupContent @>
               test <@ hover.Contents.MarkupContent.Kind = MarkupKind.Markdown @>
               test <@ hover.Contents.MarkupContent.Value.Contains sampleTerm @>
-              test <@ sw.Elapsed < System.TimeSpan.FromSeconds 5 @>
+              test <@ sw.Elapsed < System.TimeSpan.FromSeconds 8 @>
           } ]

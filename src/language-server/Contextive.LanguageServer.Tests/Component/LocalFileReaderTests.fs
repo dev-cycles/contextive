@@ -14,10 +14,13 @@ let tests =
         [
 
           test "Path Doesn't exist" {
-              let file = LocalFileReader.read "/file/not/found"
+              let file =
+                  LocalFileReader.read
+                      { Path = "/file/not/found"
+                        Source = Configured }
 
               match file with
-              | Error e -> t <@ e = FileNotFound @>
+              | Error e -> t <@ e = FileNotFound Configured @>
               | Ok _ -> failtest "Shouldn't received content"
           }
 
@@ -25,11 +28,11 @@ let tests =
               let path =
                   Path.Combine(Directory.GetCurrentDirectory(), "fixtures/completion_tests/two.yml")
 
-              let file = LocalFileReader.read path
+              let file = LocalFileReader.read { Path = path; Source = Configured }
 
               match file with
-              | Error(e) -> failtest <| e.ToString()
-              | Ok(c) ->
+              | Error e -> failtest <| e.ToString()
+              | Ok c ->
                   t
                       <@
                           c = "contexts:

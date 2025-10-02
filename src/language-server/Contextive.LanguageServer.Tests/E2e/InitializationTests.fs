@@ -96,7 +96,7 @@ let tests =
               test <@ reply.Value.Contains expectedResult @>
           }
 
-          testAsync "Server doesn't error when no configuration supplied but file doesn't exists" {
+          testAsync "Server doesn't error when no configuration supplied but default file doesn't exists" {
               let showErrorAwaiter = ConditionAwaiter.create ()
 
               let config =

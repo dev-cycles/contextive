@@ -3,8 +3,8 @@ module Contextive.LanguageServer.LocalFileReader
 open System.IO
 open Contextive.Core.File
 
-let read (path: string) =
-    if File.Exists path then
-        File.ReadAllText path |> Ok
+let read (path: PathConfiguration) =
+    if File.Exists path.Path then
+        File.ReadAllText path.Path |> Ok
     else
-        Error FileNotFound
+        FileNotFound path.Source |> Error

@@ -16,7 +16,10 @@ let tests =
         [
 
           test "Given valid URL Remote reader returns payload" {
-              let result = RemoteFileReader.read $"{mockStatusUrl}200"
+              let result =
+                  RemoteFileReader.read
+                      { Path = $"{mockStatusUrl}200"
+                        Source = Imported }
 
               match result with
               | Error e -> failtest $"Should not get error, got {e}"
@@ -24,15 +27,21 @@ let tests =
           }
 
           test "Given not found URL Remote reader returns Error" {
-              let result = RemoteFileReader.read $"{mockStatusUrl}404"
+              let result =
+                  RemoteFileReader.read
+                      { Path = $"{mockStatusUrl}404"
+                        Source = Imported }
 
               match result with
-              | Error e -> t <@ e = FileNotFound @>
+              | Error e -> t <@ e = FileNotFound Imported @>
               | _ -> failtest "Should not find content at this url"
           }
 
           test "Given unknown domain, should report error" {
-              let result = RemoteFileReader.read "https://httpstat.us.not.a.domain"
+              let result =
+                  RemoteFileReader.read
+                      { Path = "https://httpstat.us.not.a.domain"
+                        Source = Imported }
 
               //macos: nodename nor servname provided, or not known (httpstat.us.not.a.domain:443)
               //win: No such host is known. (httpstat.us.not.a.domain:443)
@@ -43,7 +52,7 @@ let tests =
           }
 
           test "Given other status codes, should report error" {
-              let result = RemoteFileReader.read $"{mockStatusUrl}401"
+              let result = RemoteFileReader.read {Path = $"{mockStatusUrl}401"; Source = Imported}
 
               match result with
               | Error(ReadingError e) -> t <@ e = "HttpStatusCode:401, payload: '401 Unauthorized'" @>

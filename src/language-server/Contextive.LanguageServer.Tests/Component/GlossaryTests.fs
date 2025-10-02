@@ -23,7 +23,7 @@ let tests =
 
     let newStartGlossary path : Glossary.StartGlossary = { Path = path; Log = Logger.Noop }
 
-    let pc p : PathConfiguration = { Path = p; IsDefault = false }
+    let pc p : PathConfiguration = { Path = p; Source = Configured }
 
 
     testList
@@ -60,8 +60,7 @@ let tests =
           testAsync "When if reading the file fails, it should log the error" {
               let awaiter = CA.create ()
 
-              let fileReader _ =
-                  Error(FileError.ParsingError "parsing error")
+              let fileReader _ = Error(ParsingError "parsing error")
 
               let _ =
                   Glossary.start fileReader
@@ -70,7 +69,7 @@ let tests =
                          { info = fun _ -> ()
                            error = CA.received awaiter } }
 
-              do! CA.expectMessage awaiter "Error loading glossary file: Parsing Error: parsing error"
+              do! CA.expectMessage awaiter "Error loading glossary file: Parsing Error: parsing error."
           }
 
           testAsync "When reloading a glossary it should read the file at the path provided when it was created" {
@@ -115,7 +114,7 @@ let tests =
           testAsync "Glossary can recover from FileReading Failure" {
               let awaiter = CA.create ()
 
-              let ErrorFileResult = Error(FileError.FileNotFound)
+              let ErrorFileResult = FileNotFound Configured |> Error
 
               let OkFileResult =
                   """contexts:
@@ -146,7 +145,7 @@ let tests =
           }
 
           testAsync "Glossary can recover from FileReading Exception" {
-              let ErrorFileResult = Error(FileError.NotYetLoaded)
+              let ErrorFileResult = Error NotYetLoaded
 
               let OkFileResult =
                   """contexts:
@@ -199,7 +198,7 @@ imports:
                             CA.received awaiter p.Path
                             Ok emptyGlossary
                         else
-                            Error FileError.FileNotFound
+                            FileNotFound Configured |> Error
 
                     let _ = pc initialFilePath |> newStartGlossary |> Glossary.start fileReader
 
@@ -229,7 +228,7 @@ contexts:
                     let fileReader p =
                         if p.Path = initialFilePath then Ok glossaryWithImport
                         elif p.Path = fileToImport then Ok importedGlossary
-                        else Error FileError.FileNotFound
+                        else FileNotFound Configured |> Error
 
                     let glossary = pc initialFilePath |> newStartGlossary |> Glossary.start fileReader
 
@@ -262,7 +261,7 @@ contexts:
                         if p.Path = fileToImport 1 then Ok <| glossaryWithImport 1
                         elif p.Path = fileToImport 2 then Ok <| glossaryWithImport 2
                         elif p.Path = fileToImport 3 then Ok <| importedGlossary 3
-                        else Error FileNotFound
+                        else FileNotFound Configured |> Error
 
                     let glossary =
                         1 |> fileToImport |> pc |> newStartGlossary |> Glossary.start fileReader
@@ -298,7 +297,7 @@ contexts:
                         if p.Path = fileToImport 1 then Ok <| glossaryWithImport 1
                         elif p.Path = fileToImport 2 then Ok <| importedGlossary 2
                         elif p.Path = fileToImport 3 then Ok <| importedGlossary 3
-                        else Error FileNotFound
+                        else FileNotFound Configured |> Error
 
                     let glossary =
                         1 |> fileToImport |> pc |> newStartGlossary |> Glossary.start fileReader
@@ -326,7 +325,7 @@ contexts:
                     let fileReader p =
                         if p.Path = fileToImport 1 then Ok <| glossaryWithImport 2
                         elif p.Path = fileToImport 2 then Ok <| glossaryWithImport 1
-                        else Error FileNotFound
+                        else FileNotFound Configured |> Error
 
                     let glossary =
                         1 |> fileToImport |> pc |> newStartGlossary |> Glossary.start fileReader

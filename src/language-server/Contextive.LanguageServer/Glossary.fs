@@ -58,11 +58,15 @@ module Handlers =
         |> Result.map (loadAndMergeImports p.Path)
         |> Result.mapError (fun fileError ->
             match fileError with
-            | DefaultFileNotFound -> state.Log.info "No glossary file configured, and default file not found."
+            | FileNotFound Default -> state.Log.info "No glossary file configured, and default file not found."
             | _ ->
                 let errorMessage = fileErrorMessage fileError
-                let msg = $"Error loading glossary file: {errorMessage}"
-                state.Log.error msg
+                let msg = $"Error loading glossary file: {errorMessage}."
+                state.Log.info msg
+
+                match fileError with
+                | FileNotFound Discovered -> ()
+                | _ -> state.Log.error msg
 
             fileError)
         |> Result.defaultValue state
@@ -80,7 +84,7 @@ module Handlers =
             state
         else
             let newState =
-                loadFile state { Path = import; IsDefault = false } loadAndMergeImports
+                loadFile state { Path = import; Source = Imported } loadAndMergeImports
 
             { state with
                 GlossaryFile =

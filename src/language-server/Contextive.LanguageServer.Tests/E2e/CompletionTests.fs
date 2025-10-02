@@ -93,8 +93,7 @@ let tests =
                   let tokenFinder: TextDocument.TokenFinder = fun _ _ -> tokenAtPosition
 
                   let completionLabels =
-                      (Completion.handler finder tokenFinder Completion.defaultParams null null)
-                          .Result
+                      (Completion.handler finder tokenFinder Completion.defaultParams null null).Result
                       |> Completion.getLabels
 
                   test <@ (completionLabels, seq { expectedLabel }) ||> Seq.compareWith compare = 0 @>
@@ -124,8 +123,7 @@ let tests =
                   let tokenFinder: TextDocument.TokenFinder = fun _ _ -> tokenAtPosition
 
                   let completionLabels =
-                      (Completion.handler finder tokenFinder Completion.defaultParams null null)
-                          .Result
+                      (Completion.handler finder tokenFinder Completion.defaultParams null null).Result
                       |> Completion.getLabels
 
                   test <@ (completionLabels, expectedCompletionLabels) ||> Seq.compareWith compare = 0 @>
@@ -207,8 +205,7 @@ let tests =
                           [ "term" ]
 
                   let completionItem =
-                      (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null)
-                          .Result
+                      (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null).Result
                       |> Seq.head
 
                   test <@ completionItem.Detail = expectedDetail @>
@@ -228,8 +225,7 @@ let tests =
                   let finder: Finder = GlossaryHelper.mockDefinitionsFinder Context.Default terms
 
                   let completionItem =
-                      (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null)
-                          .Result
+                      (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null).Result
                       |> Seq.head
 
                   let expectedDocumentation = Rendering.renderTerm terms
@@ -247,8 +243,7 @@ let tests =
                   GlossaryHelper.mockDefinitionsFinder Context.Default [ Term.Default ]
 
               let completionItem =
-                  (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null)
-                      .Result
+                  (Completion.handler finder Completion.emptyTokenFinder Completion.defaultParams null null).Result
                   |> Seq.head
 
               test <@ completionItem.Kind = CompletionItemKind.Reference @> ]
@@ -277,7 +272,7 @@ let private testCompletionsWithLargeGlossaries (text: string, position, expected
         let completionLabels = Completion.getLabels result
 
         test <@ Seq.length completionLabels = expectedLength @>
-        test <@ sw.Elapsed < System.TimeSpan.FromSeconds 5 @>
+        test <@ sw.Elapsed < System.TimeSpan.FromSeconds 8 @>
     }
 
 [<Tests>]

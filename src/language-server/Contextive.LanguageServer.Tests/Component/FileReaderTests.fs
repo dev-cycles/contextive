@@ -8,6 +8,8 @@ let t = Swensen.Unquote.Assertions.test
 
 let mockStatusUrl = "https://mock.httpstatus.io/"
 
+let importedPath path = { Path = path; Source = Imported }
+
 [<Tests>]
 let tests =
     testList
@@ -17,19 +19,19 @@ let tests =
               let file = FileReader.configuredReader path
 
               match file with
-              | Error e -> t <@ e = FileNotFound @>
+              | Error e -> t <@ e = FileNotFound Configured @>
               | _ -> failtest "Should not receive Ok"
           }
 
           test "Default local path not found" {
               let path =
-                  { IsDefault = true
+                  { Source = Default
                     Path = "/file/not/found" }
 
               let file = FileReader.configuredReader path
 
               match file with
-              | Error e -> t <@ e = DefaultFileNotFound @>
+              | Error e -> t <@ e = FileNotFound Default @>
               | _ -> failtest "Should not receive Ok"
           }
 
@@ -57,28 +59,26 @@ contexts:
           }
 
           test "Non-default remote path not found" {
-              let path = $"{mockStatusUrl}404" |> configuredPath
+              let path = $"{mockStatusUrl}404" |> importedPath
               let file = FileReader.configuredReader path
 
               match file with
-              | Error e -> t <@ e = FileNotFound @>
+              | Error e -> t <@ e = FileNotFound Imported @>
               | _ -> failtest "Should not receive Ok"
           }
 
           test "Default remote path not found" {
-              let path =
-                  { IsDefault = true
-                    Path = $"{mockStatusUrl}404" }
+              let path = importedPath $"{mockStatusUrl}404"
 
               let file = FileReader.configuredReader path
 
               match file with
-              | Error e -> t <@ e = DefaultFileNotFound @>
+              | Error e -> t <@ e = FileNotFound Imported @>
               | _ -> failtest "Should not receive Ok"
           }
 
           test "Remote Path exists" {
-              let path = $"{mockStatusUrl}200" |> configuredPath
+              let path = $"{mockStatusUrl}200" |> importedPath
 
 
               let file = FileReader.configuredReader path
