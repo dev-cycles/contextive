@@ -30,7 +30,7 @@ module private Startup =
 
                 let! defaultGlossaryPathResolver = DefaultGlossaryFileProvider.getDefaultGlossaryFilePathResolver s
 
-                let fileScanner = Configuration.getWorkspaceFolders s |> FileScanner.fileScanner
+                let fileScanner = Configuration.getWorkspaceFolders s |> FileScanner.fileScanner s.Window.LogInfo
 
                 { FileScanner = fileScanner
                   DefaultGlossaryPathResolver = defaultGlossaryPathResolver

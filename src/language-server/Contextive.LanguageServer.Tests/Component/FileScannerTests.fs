@@ -10,6 +10,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol
 let private EXPECTED_GLOSSARY_FILE_GLOB =
     [| "**/*.glossary.yml"; "**/*.glossary.yaml" |]
 
+let private fileScanner = FileScanner.fileScanner ignore
 
 [<Tests>]
 let tests =
@@ -27,7 +28,7 @@ let tests =
               let base2 = workspaceFolderPath "fixtures/scanning_tests2" |> normalizePath
               let basePaths = [ base1; base2 ]
 
-              let scanner = FileScanner.fileScanner basePaths
+              let scanner = fileScanner basePaths
               let files = scanner EXPECTED_GLOSSARY_FILE_GLOB
 
               let expectedFiles1 =
@@ -48,7 +49,7 @@ let tests =
 
               let basePath = workspaceFolderPath "fixtures/scanning_tests_ignore" |> normalizePath
 
-              let scanner = FileScanner.fileScanner [ basePath ]
+              let scanner = fileScanner [ basePath ]
               let files = scanner EXPECTED_GLOSSARY_FILE_GLOB
 
               let expectedFiles =

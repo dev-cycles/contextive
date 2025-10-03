@@ -26,11 +26,15 @@ let fileScanPathsWithIgnore (globs: string seq) (basePath: string) (ignoreList: 
     matcher.Execute(DirectoryInfoWrapper(DirectoryInfo basePath)).Files
     |> Seq.map (fun m -> Path.Combine(basePath, m.Path))
 
-let private fileScanPath (globs: string array) (basePath: string) =
+let private fileScanPath (logger: string -> unit) (globs: string array) (basePath: string) =
     let excludePatterns = Path.Combine(basePath, ".gitignore") |> loadGitIgnore basePath
+
+    logger $"""Found initial exclude patterns in the root .gitignore {sprintf "%A" (List.ofSeq excludePatterns)}"""
 
     let gitIgnoreFiles =
         fileScanPathsWithIgnore [| """**/\.gitignore""" |] basePath excludePatterns
+
+    logger $"""Found more gitIgnore files: {sprintf "%A" (List.ofSeq gitIgnoreFiles)}"""
 
     let excludePatterns =
         gitIgnoreFiles
@@ -38,7 +42,12 @@ let private fileScanPath (globs: string array) (basePath: string) =
         |> Seq.append excludePatterns
         |> Array.ofSeq
 
-    fileScanPathsWithIgnore globs basePath excludePatterns
+    logger $"""Full list of exclude patterns from all gitIgnores {sprintf "%A" (List.ofSeq excludePatterns)}"""
 
-let fileScanner (basePaths: string seq) glob =
-    basePaths |> Seq.collect (fileScanPath glob)
+    logger "Starting scan..."
+    let files = fileScanPathsWithIgnore globs basePath excludePatterns
+    logger $"""Found files {sprintf "%A" (List.ofSeq files)}"""
+    files
+
+let fileScanner (logger: string -> unit) (basePaths: string seq) glob =
+    basePaths |> Seq.collect (fileScanPath logger glob)
