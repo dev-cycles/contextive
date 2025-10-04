@@ -53,7 +53,7 @@ let tests =
               let files = scanner EXPECTED_GLOSSARY_FILE_GLOB
 
               let expectedFiles =
-                  [ "test.glossary.yml"; ".nested/shouldfind.glossary.yml" ]
+                  [ "test.glossary.yml"; "nested/shouldfind.glossary.yml" ]
                   |> reBaseLinePaths basePath
 
               test <@ Set.ofSeq expectedFiles = Set.ofSeq files @>

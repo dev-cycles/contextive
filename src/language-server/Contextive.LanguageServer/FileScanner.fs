@@ -3,6 +3,13 @@ module Contextive.LanguageServer.FileScanner
 open Microsoft.Extensions.FileSystemGlobbing
 open Microsoft.Extensions.FileSystemGlobbing.Abstractions
 open System.IO
+open System
+
+let private stripComments (ignorePattern: string) =
+    ignorePattern.Split "#" |> Seq.head |> _.Trim()
+
+let private matchAnywhereInSubFolders (gitIgnoreBasePath: string) (ignorePattern: string) =
+    $"{gitIgnoreBasePath}/**/{ignorePattern}"
 
 let private loadGitIgnore (basePath: string) (gitIgnorePath: string) =
     let gitIgnoreBasePath =
@@ -10,9 +17,9 @@ let private loadGitIgnore (basePath: string) (gitIgnorePath: string) =
 
     if File.Exists gitIgnorePath then
         File.ReadAllLines gitIgnorePath
-        |> Seq.collect (fun ignorePattern ->
-            [ $"{gitIgnoreBasePath}/**/{ignorePattern}"
-              $"{gitIgnoreBasePath}/{ignorePattern}" ])
+        |> Seq.map stripComments
+        |> Seq.filter (not << String.IsNullOrEmpty)
+        |> Seq.map (matchAnywhereInSubFolders gitIgnoreBasePath)
     else
         [||]
 
