@@ -10,7 +10,7 @@ let private stripComments (ignorePattern: string) =
     ignorePattern.Split "#" |> Seq.head |> _.Trim()
 
 let private matchAnywhereInSubFolders (gitIgnoreBasePath: string) (ignorePattern: string) =
-    $"{gitIgnoreBasePath}/**/{ignorePattern}"
+    $"{gitIgnoreBasePath}/**/{ignorePattern.TrimStart '/'}"
 
 let private loadGitIgnore (basePath: string) (gitIgnorePath: string) =
     let gitIgnoreBasePath =
