@@ -16,9 +16,7 @@ let assembly = Assembly.GetExecutingAssembly()
 let name = assembly.GetName().Name
 
 let version =
-    assembly
-        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-        .InformationalVersion
+    assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion
 
 module private Startup =
     open GlossaryManager
@@ -26,15 +24,16 @@ module private Startup =
     let onStartupConfigureServer (glossaryManager: GlossaryManager.T) =
         OnLanguageServerStartedDelegate(fun (s: ILanguageServer) _cancellationToken ->
             async {
-                s.Window.LogInfo $"Starting {name} v{version}..."
+                let log = Logger.forLanguageServer s
+                log.info $"Starting {name} v{version}..."
 
                 let! defaultGlossaryPathResolver = DefaultGlossaryFileProvider.getDefaultGlossaryFilePathResolver s
 
-                let fileScanner = Configuration.getWorkspaceFolders s |> FileScanner.fileScanner s.Window.LogInfo
+                let fileScanner = Configuration.getWorkspaceFolders s |> FileScanner.fileScanner log
 
                 { FileScanner = fileScanner
                   DefaultGlossaryPathResolver = defaultGlossaryPathResolver
-                  Log = Logger.forLanguageServer s
+                  Log = log
                   RegisterWatchedFiles = WatchedFiles.register s }
                 |> init glossaryManager
 
@@ -59,10 +58,7 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
         .OnStarted(Startup.onStartupConfigureServer glossaryManager)
         .WithConfigurationSection(DefaultGlossaryFileProvider.ConfigSection) // Add back in when implementing didConfigurationChanged handling
         .ConfigureLogging(fun z ->
-            z
-                .AddLanguageProtocolLogging()
-                .AddSerilog(Log.Logger)
-                .SetMinimumLevel(LogLevel.Trace)
+            z.AddLanguageProtocolLogging().AddSerilog(Log.Logger).SetMinimumLevel(LogLevel.Trace)
             |> ignore)
         .WithServerInfo(ServerInfo(Name = name, Version = version))
 

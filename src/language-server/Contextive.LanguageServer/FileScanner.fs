@@ -4,6 +4,7 @@ open Microsoft.Extensions.FileSystemGlobbing
 open Microsoft.Extensions.FileSystemGlobbing.Abstractions
 open System.IO
 open System
+open Contextive.LanguageServer.Logger
 
 let private stripComments (ignorePattern: string) =
     ignorePattern.Split "#" |> Seq.head |> _.Trim()
@@ -33,15 +34,16 @@ let fileScanPathsWithIgnore (globs: string seq) (basePath: string) (ignoreList: 
     matcher.Execute(DirectoryInfoWrapper(DirectoryInfo basePath)).Files
     |> Seq.map (fun m -> Path.Combine(basePath, m.Path))
 
-let private fileScanPath (logger: string -> unit) (globs: string array) (basePath: string) =
+let private fileScanPath (logger: Logger) (globs: string array) (basePath: string) =
     let excludePatterns = Path.Combine(basePath, ".gitignore") |> loadGitIgnore basePath
 
-    logger $"""Found initial exclude patterns in the root .gitignore {sprintf "%A" (List.ofSeq excludePatterns)}"""
+    logger.debug
+        $"""Found initial exclude patterns in the root .gitignore {sprintf "%A" (List.ofSeq excludePatterns)}"""
 
     let gitIgnoreFiles =
         fileScanPathsWithIgnore [| """**/\.gitignore""" |] basePath excludePatterns
 
-    logger $"""Found more gitIgnore files: {sprintf "%A" (List.ofSeq gitIgnoreFiles)}"""
+    logger.debug $"""Found more gitIgnore files: {sprintf "%A" (List.ofSeq gitIgnoreFiles)}"""
 
     let excludePatterns =
         gitIgnoreFiles
@@ -49,12 +51,12 @@ let private fileScanPath (logger: string -> unit) (globs: string array) (basePat
         |> Seq.append excludePatterns
         |> Array.ofSeq
 
-    logger $"""Full list of exclude patterns from all gitIgnores {sprintf "%A" (List.ofSeq excludePatterns)}"""
+    logger.debug $"""Full list of exclude patterns from all gitIgnores {sprintf "%A" (List.ofSeq excludePatterns)}"""
 
-    logger "Starting scan..."
+    logger.info "Starting scan..."
     let files = fileScanPathsWithIgnore globs basePath excludePatterns
-    logger $"""Found files {sprintf "%A" (List.ofSeq files)}"""
+    logger.info $"""Found files {sprintf "%A" (List.ofSeq files)}"""
     files
 
-let fileScanner (logger: string -> unit) (basePaths: string seq) glob =
+let fileScanner (logger: Logger) (basePaths: string seq) glob =
     basePaths |> Seq.collect (fileScanPath logger glob)

@@ -191,11 +191,12 @@ let tests =
               let definitionsFileUri =
                   Path.Combine(Directory.GetCurrentDirectory(), relativePath, Guid.NewGuid().ToString())
 
-              let expectedResult = "Error loading glossary file: Watched Glossary file not found."
+              let expectedResult =
+                  $"Error loading glossary file '{definitionsFileUri}': Watched Glossary file not found."
 
               didChangeWatchedFiles client definitionsFileUri
 
-              let! reply = expectedResult |> ServerLog.waitForLogMessage logAwaiter.Value
+              let! reply = "Error loading glossary file" |> ServerLog.waitForLogMessage logAwaiter.Value
               let! receivedMessage = ConditionAwaiter.waitForAnyTimeout 100 showErrorAwaiter
 
               test <@ reply.Value = expectedResult @>

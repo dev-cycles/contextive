@@ -48,8 +48,8 @@ let tests =
 
               { Glossary.StartGlossary.Path = pc "path1"
                 Glossary.StartGlossary.Log =
-                  { info = CA.received awaiter
-                    error = fun _ -> () } }
+                  { Logger.Noop with
+                      info = CA.received awaiter } }
               |> Glossary.start fileReader
               |> ignore
 
@@ -66,10 +66,10 @@ let tests =
                   Glossary.start fileReader
                   <| { Path = pc "path1"
                        Log =
-                         { info = fun _ -> ()
-                           error = CA.received awaiter } }
+                         { Logger.Noop with
+                             error = CA.received awaiter } }
 
-              do! CA.expectMessage awaiter "Error loading glossary file: Parsing Error: parsing error."
+              do! CA.expectMessage awaiter $"Error loading glossary file 'path1': Parsing Error: parsing error."
           }
 
           testAsync "When reloading a glossary it should read the file at the path provided when it was created" {
