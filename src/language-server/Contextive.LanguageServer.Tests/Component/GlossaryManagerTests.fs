@@ -16,11 +16,11 @@ let newTestLogger () =
 
     {| loggedMessages = loggedMessagesStore
        logger =
-        { Logger.info =
-            fun msg ->
-                loggedMessagesStore.Add(msg)
-                CA.received awaiter msg
-          Logger.error = fun _ -> () } |},
+        { Logger.Logger.Noop with
+            info =
+                fun msg ->
+                    loggedMessagesStore.Add(msg)
+                    CA.received awaiter msg } |},
     awaiter
 
 
@@ -38,7 +38,7 @@ let newCreateGlossary () =
 
 let newInitGlossary () =
     { GlossaryManager.FileScanner = fun _ -> []
-      GlossaryManager.Log = { info = noop1; error = noop1 }
+      GlossaryManager.Log = Logger.Logger.Noop
       GlossaryManager.DefaultGlossaryPathResolver = fun _ -> async.Return <| Error FileError.NotYetLoaded
       GlossaryManager.RegisterWatchedFiles = fun _ _ -> noop }
 
@@ -188,8 +188,8 @@ let tests =
                         glossary
                         { newInitGlossary () with
                             Log =
-                                { info = noop1
-                                  error = CA.received errorAwaiter }
+                                { Logger.Logger.Noop with
+                                    error = CA.received errorAwaiter }
                             DefaultGlossaryPathResolver =
                                 fun () -> Error(FileError.PathInvalid "testing error") |> async.Return }
 
@@ -535,8 +535,8 @@ let tests =
                         glossary
                         { newInitGlossary () with
                             Log =
-                                { info = CA.received startupAwaiter
-                                  error = noop1 }
+                                { Logger.Logger.Noop with
+                                    info = CA.received startupAwaiter }
                             DefaultGlossaryPathResolver = fun () -> path |> pc |> Ok |> async.Return }
 
                     GlossaryManager.reloadDefaultGlossaryFile glossary ()

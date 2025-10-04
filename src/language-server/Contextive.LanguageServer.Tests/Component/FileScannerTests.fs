@@ -10,7 +10,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol
 let private EXPECTED_GLOSSARY_FILE_GLOB =
     [| "**/*.glossary.yml"; "**/*.glossary.yaml" |]
 
-let private fileScanner = FileScanner.fileScanner ignore
+let private fileScanner = FileScanner.fileScanner Logger.Logger.Noop
 
 [<Tests>]
 let tests =

@@ -126,9 +126,14 @@ let tests =
                     Window.showMessageHandlerBuilder
                     <| Window.notificationHandler<ShowMessageParams> showErrorAwaiter ]
 
-              let expectedResult = Some "Error loading glossary file: Glossary file not found."
+              let expectedResult =
+                  Some
+                      $"""Error loading glossary file '{IO.Path.Combine(IO.Directory.GetCurrentDirectory(), "fixtures/non_existent_folder_tests", pathValue)}': Glossary file not found."""
 
-              let! client, reply, _ = TestClientWithCustomInitWait(config, expectedResult) |> initAndWaitForReply
+              let! client, reply, _ =
+                  TestClientWithCustomInitWait(config, Some "Error loading glossary file")
+                  |> initAndWaitForReply
+
               use _ = client
 
               let! receivedMessage = ConditionAwaiter.waitForAny showErrorAwaiter
