@@ -1,3 +1,4 @@
 # Blank lines shouldn't cause it to ignore everything
 
 ignored # comments shouldn't prevent it from ignoring this entry
+/alsoignored
