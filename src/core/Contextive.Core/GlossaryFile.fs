@@ -160,13 +160,13 @@ let deserialize (yml: string) =
         let glossary = deserializer.Deserialize<GlossaryFile> yml
 
         match glossary |> box with
-        | null -> Error(ParsingError "Glossary file is empty.")
+        | null -> Error(ParsingError "Glossary file is empty")
         | _ -> glossary |> GlossaryFile.fixNulls |> GlossaryFile.index |> Ok
     with
     | :? YamlDotNet.Core.YamlException as e ->
         match e.InnerException with
         | :? ValidationException as ve ->
-            Error(ValidationError $"{ve.Message} See line {e.Start.Line}, column {e.Start.Column}.")
+            Error(ValidationError $"{ve.Message} See line {e.Start.Line}, column {e.Start.Column}")
         | _ ->
             let msg =
                 if e.InnerException = null then

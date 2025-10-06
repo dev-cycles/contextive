@@ -128,7 +128,7 @@ let tests =
 
               let expectedResult =
                   Some
-                      $"""Error loading glossary file '{IO.Path.Combine(IO.Directory.GetCurrentDirectory(), "fixtures/non_existent_folder_tests", pathValue)}': Glossary file not found."""
+                      $"""Error loading glossary file '{IO.Path.Combine(IO.Directory.GetCurrentDirectory(), "fixtures", "non_existent_folder_tests", pathValue)}': Glossary file not found."""
 
               let! client, reply, _ =
                   TestClientWithCustomInitWait(config, Some "Error loading glossary file")

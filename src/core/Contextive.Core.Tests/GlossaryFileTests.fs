@@ -332,7 +332,7 @@ contexts:
                 testCase "Error when file is empty"
                 <| fun () ->
                     let result = deserialize ""
-                    test <@ result = Error(ParsingError "Glossary file is empty.") @>
+                    test <@ result = Error(ParsingError "Glossary file is empty") @>
 
                 testCase "Success with null context"
                 <| fun () ->

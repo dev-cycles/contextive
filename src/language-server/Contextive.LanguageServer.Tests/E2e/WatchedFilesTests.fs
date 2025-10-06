@@ -175,7 +175,7 @@ let tests =
           }
 
           // Workaround for IntelliJ bug https://github.com/dev-cycles/contextive/issues/112
-          testAsync "Service doesn't error when a didChangedWatchedFiles occurs for a non-existent file" {
+          testAsync "Server doesn't error when a didChangedWatchedFiles occurs for a non-existent file" {
               let showErrorAwaiter = ConditionAwaiter.create ()
 
               let relativePath = Path.Combine("fixtures", "completion_tests")
@@ -190,6 +190,9 @@ let tests =
 
               let definitionsFileUri =
                   Path.Combine(Directory.GetCurrentDirectory(), relativePath, Guid.NewGuid().ToString())
+                  |> DocumentUri.FromFileSystemPath
+                  |> _.ToUri()
+                  |> _.LocalPath
 
               let expectedResult =
                   $"Error loading glossary file '{definitionsFileUri}': Watched Glossary file not found."
