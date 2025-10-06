@@ -3,6 +3,7 @@ module Contextive.LanguageServer.Tests.E2e.InitializationTests
 open System
 open Expecto
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
+open OmniSharp.Extensions.LanguageServer.Protocol
 open Swensen.Unquote
 open Contextive.LanguageServer.Tests.Helpers
 open Contextive.LanguageServer.Tests.Helpers.TestClient
@@ -116,7 +117,7 @@ let tests =
               test <@ receivedMessage.IsNone @>
           }
 
-          testAsync "Server errors when configuration supplied and file doesn't exists" {
+          testAsync "Server errors when configuration supplied and file doesn't exist" {
               let showErrorAwaiter = ConditionAwaiter.create ()
               let pathValue = Guid.NewGuid().ToString()
 
@@ -126,15 +127,22 @@ let tests =
                     Window.showMessageHandlerBuilder
                     <| Window.notificationHandler<ShowMessageParams> showErrorAwaiter ]
 
-              let expectedResult =
-                  Some
-                      $"""Error loading glossary file '{IO.Path.Combine(IO.Directory.GetCurrentDirectory(), "fixtures", "non_existent_folder_tests", pathValue)}': Glossary file not found."""
-
               let! client, reply, _ =
                   TestClientWithCustomInitWait(config, Some "Error loading glossary file")
                   |> initAndWaitForReply
 
               use _ = client
+
+              let glossaryFilePath =
+                  IO.Path.Combine(
+                      client.WorkspaceFoldersManager.CurrentWorkspaceFolders
+                      |> Seq.head
+                      |> _.Uri.ToUri().LocalPath,
+                      pathValue
+                  )
+
+              let expectedResult =
+                  Some $"""Error loading glossary file '{glossaryFilePath}': Glossary file not found."""
 
               let! receivedMessage = ConditionAwaiter.waitForAny showErrorAwaiter
 

@@ -188,16 +188,18 @@ let tests =
               let! client, logAwaiter = TestClient config |> initAndGetLogAwaiter
               use _ = client
 
-              let definitionsFileUri =
-                  Path.Combine(Directory.GetCurrentDirectory(), relativePath, Guid.NewGuid().ToString())
-                  |> DocumentUri.FromFileSystemPath
-                  |> _.ToUri()
-                  |> _.LocalPath
+              let glossaryFilePath =
+                  Path.Combine(
+                      client.WorkspaceFoldersManager.CurrentWorkspaceFolders
+                      |> Seq.head
+                      |> _.Uri.ToUri().LocalPath,
+                      Guid.NewGuid().ToString()
+                  )
 
               let expectedResult =
-                  $"Error loading glossary file '{definitionsFileUri}': Watched Glossary file not found."
+                  $"Error loading glossary file '{glossaryFilePath}': Watched Glossary file not found."
 
-              didChangeWatchedFiles client definitionsFileUri
+              didChangeWatchedFiles client glossaryFilePath
 
               let! reply = "Error loading glossary file" |> ServerLog.waitForLogMessage logAwaiter.Value
               let! receivedMessage = ConditionAwaiter.waitForAnyTimeout 100 showErrorAwaiter
