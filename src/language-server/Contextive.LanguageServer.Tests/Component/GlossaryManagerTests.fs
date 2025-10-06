@@ -191,11 +191,11 @@ let tests =
                                 { Logger.Logger.Noop with
                                     error = CA.received errorAwaiter }
                             DefaultGlossaryPathResolver =
-                                fun () -> Error(FileError.PathInvalid "testing error") |> async.Return }
+                                fun () -> Error(FileError.PathInvalid "testing error.") |> async.Return }
 
                     GlossaryManager.reloadDefaultGlossaryFile glossary ()
 
-                    do! CA.expectMessage errorAwaiter "Error loading glossary file: Invalid Path: testing error"
+                    do! CA.expectMessage errorAwaiter "Error loading glossary file: Invalid Path: testing error."
                 }
 
                 ]

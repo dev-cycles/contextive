@@ -60,7 +60,7 @@ let tests =
           testAsync "When if reading the file fails, it should log the error" {
               let awaiter = CA.create ()
 
-              let fileReader _ = Error(ParsingError "parsing error")
+              let fileReader _ = Error(ParsingError "parsing error.")
 
               let _ =
                   Glossary.start fileReader

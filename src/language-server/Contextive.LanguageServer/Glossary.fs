@@ -61,7 +61,7 @@ module Handlers =
             | FileNotFound Default -> state.Log.info "No glossary file configured, and default file not found."
             | _ ->
                 let errorMessage = fileErrorMessage fileError
-                let msg = $"Error loading glossary file '{p.Path}': {errorMessage}."
+                let msg = $"Error loading glossary file '{p.Path}': {errorMessage}"
                 state.Log.info msg
 
                 match fileError with

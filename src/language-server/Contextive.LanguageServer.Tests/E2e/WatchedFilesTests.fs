@@ -69,7 +69,7 @@ let tests =
                         ConfigurationSection.contextivePathLoaderBuilder pathLoader
                         WatchedFiles.optionsBuilder registrationAwaiter ]
 
-                  let! client, logAwaiter = TestClient(config) |> initAndGetLogAwaiter
+                  let! client, logAwaiter = TestClient config |> initAndGetLogAwaiter
                   use client = client
 
                   let! initialRegistrationMsg = ConditionAwaiter.waitFor registrationAwaiter isAbsoluteRegistration
