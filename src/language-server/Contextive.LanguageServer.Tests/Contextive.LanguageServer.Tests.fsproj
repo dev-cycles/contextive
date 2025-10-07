@@ -1,51 +1,52 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <IsPackable>false</IsPackable>
-        <GenerateProgramFile>false</GenerateProgramFile>
-    </PropertyGroup>
-    <ItemGroup>
-        <Compile Include="Helpers/Fixtures.fs" />
-        <Compile Include="Helpers/GlossaryHelper.fs" />
-        <Compile Include="Helpers/Completion.fs" />
-        <Compile Include="Helpers/ConditionAwaiter.fs" />
-        <Compile Include="Helpers/WatchedFiles.fs" />
-        <Compile Include="Helpers/ServerLog.fs" />
-        <Compile Include="Helpers/Window.fs" />
-        <Compile Include="Helpers/Workspace.fs" />
-        <Compile Include="Helpers/TestClient.fs" />
-        <Compile Include="Helpers/ConfigurationSection.fs" />
-        <Compile Include="Component/FileScannerTests.fs" />
-        <Compile Include="Component/GlossaryManagerTests.fs" />
-        <Compile Include="Component/RenderingTests.fs" />
-        <Compile Include="Component/LocalFileReaderTests.fs" />
-        <Compile Include="Component/FileReaderTests.fs" />
-        <Compile Include="Component/RemoteFileReaderTests.fs" />
-        <Compile Include="Component/PathResolverTests.fs" />
-        <Compile Include="Component/TextDocumentTests.fs" />
-        <Compile Include="Component/GlossaryTests.fs" />
-        <Compile Include="E2e/ConfigurationTests.fs" />
-        <Compile Include="E2e/GlossaryFileInitializationTests.fs" />
-        <Compile Include="E2e/WatchedFilesTests.fs" />
-        <Compile Include="E2e/CompletionTests.fs" />
-        <Compile Include="E2e/HoverTests.fs" />
-        <Compile Include="E2e/InitializationTests.fs" />
-        <Compile Include="Program.fs" />
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="fixtures/**/*">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.0">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Contextive.LanguageServer\Contextive.LanguageServer.fsproj" />
-    </ItemGroup>
-    <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Helpers/PathExtensions.fs" />
+    <Compile Include="Helpers/Fixtures.fs" />
+    <Compile Include="Helpers/GlossaryHelper.fs" />
+    <Compile Include="Helpers/Completion.fs" />
+    <Compile Include="Helpers/ConditionAwaiter.fs" />
+    <Compile Include="Helpers/WatchedFiles.fs" />
+    <Compile Include="Helpers/ServerLog.fs" />
+    <Compile Include="Helpers/Window.fs" />
+    <Compile Include="Helpers/Workspace.fs" />
+    <Compile Include="Helpers/TestClient.fs" />
+    <Compile Include="Helpers/ConfigurationSection.fs" />
+    <Compile Include="Component/FileScannerTests.fs" />
+    <Compile Include="Component/GlossaryManagerTests.fs" />
+    <Compile Include="Component/RenderingTests.fs" />
+    <Compile Include="Component/LocalFileReaderTests.fs" />
+    <Compile Include="Component/FileReaderTests.fs" />
+    <Compile Include="Component/RemoteFileReaderTests.fs" />
+    <Compile Include="Component/PathResolverTests.fs" />
+    <Compile Include="Component/TextDocumentTests.fs" />
+    <Compile Include="Component/GlossaryTests.fs" />
+    <Compile Include="E2e/ConfigurationTests.fs" />
+    <Compile Include="E2e/GlossaryFileInitializationTests.fs" />
+    <Compile Include="E2e/WatchedFilesTests.fs" />
+    <Compile Include="E2e/CompletionTests.fs" />
+    <Compile Include="E2e/HoverTests.fs" />
+    <Compile Include="E2e/InitializationTests.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fixtures/**/*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Contextive.LanguageServer\Contextive.LanguageServer.fsproj" />
+  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

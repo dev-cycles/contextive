@@ -11,6 +11,7 @@ open OmniSharp.Extensions.LanguageServer.Protocol
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
 open Contextive.LanguageServer.Tests.Helpers
 open Contextive.LanguageServer.Tests.Helpers.TestClient
+open Contextive.LanguageServer.Tests.Helpers.PathExtensions
 
 let didChangeWatchedFiles (client: ILanguageClient) (uri: string) =
     client.SendNotification(
@@ -188,13 +189,12 @@ let tests =
               let! client, logAwaiter = TestClient config |> initAndGetLogAwaiter
               use _ = client
 
-              let glossaryFilePath =
-                  Path.Combine(
-                      client.WorkspaceFoldersManager.CurrentWorkspaceFolders
-                      |> Seq.head
-                      |> _.Uri.ToUri().LocalPath,
-                      Guid.NewGuid().ToString()
-                  )
+              let defaultWorkspaceBase =
+                  client.WorkspaceFoldersManager.CurrentWorkspaceFolders
+                  |> Seq.head
+                  |> _.Uri.ToUri().LocalPath
+
+              let glossaryFilePath = Path.Combine(defaultWorkspaceBase, Guid.NewGuid().ToString())
 
               let expectedResult =
                   $"Error loading glossary file '{glossaryFilePath}': Watched Glossary file not found."
@@ -204,6 +204,6 @@ let tests =
               let! reply = "Error loading glossary file" |> ServerLog.waitForLogMessage logAwaiter.Value
               let! receivedMessage = ConditionAwaiter.waitForAnyTimeout 100 showErrorAwaiter
 
-              test <@ reply.Value = expectedResult @>
+              test <@ Path.OSSafeCompare reply.Value expectedResult @>
               test <@ receivedMessage.IsNone @>
           } ]

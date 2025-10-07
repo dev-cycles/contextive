@@ -3,9 +3,9 @@ module Contextive.LanguageServer.Tests.E2e.InitializationTests
 open System
 open Expecto
 open OmniSharp.Extensions.LanguageServer.Protocol.Models
-open OmniSharp.Extensions.LanguageServer.Protocol
 open Swensen.Unquote
 open Contextive.LanguageServer.Tests.Helpers
+open Contextive.LanguageServer.Tests.Helpers.PathExtensions
 open Contextive.LanguageServer.Tests.Helpers.TestClient
 
 [<Tests>]
@@ -133,22 +133,21 @@ let tests =
 
               use _ = client
 
-              let glossaryFilePath =
-                  IO.Path.Combine(
-                      client.WorkspaceFoldersManager.CurrentWorkspaceFolders
-                      |> Seq.head
-                      |> _.Uri.ToUri().LocalPath,
-                      pathValue
-                  )
+              let defaultWorkspaceBase =
+                  client.WorkspaceFoldersManager.CurrentWorkspaceFolders
+                  |> Seq.head
+                  |> _.Uri.ToUri().LocalPath
+
+              let glossaryFilePath = IO.Path.Combine(defaultWorkspaceBase, pathValue)
 
               let expectedResult =
-                  Some $"""Error loading glossary file '{glossaryFilePath}': Glossary file not found."""
+                  $"""Error loading glossary file '{glossaryFilePath}': Glossary file not found."""
 
               let! receivedMessage = ConditionAwaiter.waitForAny showErrorAwaiter
 
-              test <@ reply = expectedResult @>
+              test <@ IO.Path.OSSafeCompare reply.Value expectedResult @>
               test <@ receivedMessage.Value.Type = MessageType.Warning @>
-              test <@ receivedMessage.Value.Message = expectedResult.Value @>
+              test <@ receivedMessage.Value.Message = expectedResult @>
           }
 
           ]
