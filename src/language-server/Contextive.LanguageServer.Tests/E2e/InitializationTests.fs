@@ -147,7 +147,7 @@ let tests =
 
               test <@ IO.Path.OSSafeCompare reply.Value expectedResult @>
               test <@ receivedMessage.Value.Type = MessageType.Warning @>
-              test <@ receivedMessage.Value.Message = expectedResult @>
+              test <@ IO.Path.OSSafeCompare receivedMessage.Value.Message expectedResult @>
           }
 
           ]
