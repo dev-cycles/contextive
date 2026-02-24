@@ -63,10 +63,24 @@ module private Filtering =
             else
                 [])
 
+    let findMatchingTermsBySubstring (context: GlossaryFile.Context) (token: string) =
+        let normalizedToken = Normalization.simpleNormalize token
+
+        context.Index.Keys
+        |> Seq.filter (fun key -> normalizedToken.Contains(key))
+        |> Seq.collect (fun key -> context.Index[key])
+        |> Seq.distinctBy (fun t -> t.Name)
+
     let termFilterForCandidateTermsWithIndex tokenAndCandidateTerms =
         Seq.map (fun (c: GlossaryFile.Context) ->
 
-            let terms = findMatchingTermsInIndex c tokenAndCandidateTerms
+            let token = tokenAndCandidateTerms |> Seq.head |> fst
+
+            let terms =
+                if CandidateTerms.containsCJK token then
+                    findMatchingTermsBySubstring c token
+                else
+                    findMatchingTermsInIndex c tokenAndCandidateTerms
 
             GlossaryFile.Context.withTerms (terms |> removeLessRelevantTerms tokenAndCandidateTerms) c)
 

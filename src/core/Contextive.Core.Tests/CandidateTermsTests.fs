@@ -29,6 +29,32 @@ let tokenAndPartsTests =
                           ||> Seq.compareWith compareTokenAndCandidateTerms = 0
                       @>
 
+          testList
+              "CJK Detection Tests"
+              [ testCase "English text is not CJK"
+                <| fun () -> test <@ containsCJK "reverseAuction" = false @>
+
+                testCase "Japanese kanji is CJK"
+                <| fun () -> test <@ containsCJK "注文が届く" = true @>
+
+                testCase "Japanese katakana is CJK"
+                <| fun () -> test <@ containsCJK "カテゴリ" = true @>
+
+                testCase "Chinese text is CJK"
+                <| fun () -> test <@ containsCJK "购物车" = true @>
+
+                testCase "Korean text is CJK"
+                <| fun () -> test <@ containsCJK "사용자" = true @>
+
+                testCase "Mixed English and Japanese is CJK"
+                <| fun () -> test <@ containsCJK "Orderマッピング" = true @>
+
+                testCase "Empty string is not CJK"
+                <| fun () -> test <@ containsCJK "" = false @>
+
+                testCase "Cyrillic is not CJK"
+                <| fun () -> test <@ containsCJK "ОдинДва" = false @> ]
+
           [ ("firstword", seq { ("firstword", seq { "firstword" }) })
             ("camelCase",
              seq {

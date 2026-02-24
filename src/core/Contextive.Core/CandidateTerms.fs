@@ -28,9 +28,18 @@ let private Default: CandidateTerms = Seq.empty<CandidateTerm>
 let private TokenSplitterRegex =
     "([A-Z\\p{Lu}]+(?![a-z\\p{Ll}])|[A-Z\\p{Lu}][a-z\\p{Ll}]+|[0-9]+|[a-z\\p{Ll}]+)"
 
+let containsCJK (token: string) =
+    token |> Seq.exists (fun c ->
+        let cp = int c
+        (cp >= 0x3000 && cp <= 0x9FFF)    // CJK main ranges (kana, CJK unified ideographs, etc.)
+        || (cp >= 0xAC00 && cp <= 0xD7AF) // Hangul syllables
+        || (cp >= 0xF900 && cp <= 0xFAFF) // CJK compatibility ideographs
+    )
+
 let candidateTermsFromToken =
     function
     | None -> Default
+    | Some(token) when containsCJK token -> seq { token }
     | Some(Regex TokenSplitterRegex tokens) -> tokens
     | Some(token) -> seq { token }
 
