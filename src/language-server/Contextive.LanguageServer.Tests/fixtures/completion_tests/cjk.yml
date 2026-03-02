@@ -1,0 +1,14 @@
+contexts:
+  - terms:
+      - name: 注文
+        definition: An order placed by a customer
+        aliases:
+          - オーダー
+      - name: 購入
+        definition: A purchase transaction
+      - name: 配送
+        definition: Delivery of goods
+      - name: 사용자
+        definition: A user of the system
+      - name: 购物车
+        definition: Shopping cart

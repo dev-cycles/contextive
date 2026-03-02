@@ -94,6 +94,18 @@ let tests =
           |> List.map testHoverTermFoundWithDefaultGlossary
           |> testList "Term found when hovering in opened docs at Positions"
 
+          [ "注文", Position(0, 0), "注文", "cjk"
+            "注文が届く", Position(0, 0), "注文", "cjk"
+            "購入する", Position(0, 0), "購入", "cjk"
+            "配送についての質問", Position(0, 0), "配送", "cjk"
+            "注文と配送", Position(0, 0), "注文", "cjk"
+            "注文と配送", Position(0, 0), "配送", "cjk"
+            "オーダー", Position(0, 0), "注文", "cjk"
+            "购物车", Position(0, 0), "购物车", "cjk"
+            "사용자", Position(0, 0), "사용자", "cjk" ]
+          |> List.map testHoverTermFoundWithDefaultGlossary
+          |> testList "CJK term found when hovering via substring matching"
+
           let testHoverTermFoundWithMultipleGlossaries
               (fileName: string, text, position: Position, expectedTerm: string)
               =
@@ -178,7 +190,9 @@ let tests =
             "    anothernotterm", Position(0, 0), "one"
             "", Position(0, 0), "one"
             "peere", Position(0, 0), "three"
-            "Something", Position(0, 0), "empty_terms_list" ]
+            "Something", Position(0, 0), "empty_terms_list"
+            "料理", Position(0, 0), "cjk"
+            "ユーザー", Position(0, 0), "cjk" ]
           |> List.map testHoverTermNotFound
           |> testList "Nothing found when hovering"
 
