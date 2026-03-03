@@ -63,6 +63,10 @@ module private Filtering =
             else
                 [])
 
+    // For CJK tokens, find terms whose index key is a substring of the token.
+    // Both token and keys are normalised with simpleNormalize (NFKD + lowercase +
+    // Singularize). Singularize is a no-op for CJK text in Humanizer, so the
+    // normalisation is effectively NFKD + lowercase on both sides.
     let findMatchingTermsBySubstring (context: GlossaryFile.Context) (token: string) =
         let normalizedToken = Normalization.simpleNormalize token
 
@@ -82,6 +86,8 @@ module private Filtering =
                 else
                     findMatchingTermsInIndex c tokenAndCandidateTerms
 
+            // For CJK substring matches, no term exactly equals the full token,
+            // so removeLessRelevantTerms falls through to returning all matched terms.
             GlossaryFile.Context.withTerms (terms |> removeLessRelevantTerms tokenAndCandidateTerms) c)
 
 module private TextDocument =
