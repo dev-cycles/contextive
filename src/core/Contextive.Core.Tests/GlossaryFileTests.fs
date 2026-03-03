@@ -2,6 +2,7 @@ module Contextive.Core.Tests.GlossaryFileTests
 
 open Contextive.Core.File
 open Contextive.Core.GlossaryFile
+open Contextive.Core.Normalization
 open Expecto
 open Swensen.Unquote
 
@@ -460,4 +461,49 @@ contexts:
                     let primaryTerm = glossaryFile.Contexts[0].Index["firstterm"] |> Seq.exactlyOne
                     test <@ glossaryFile.Contexts[0].Index.ContainsKey "aliasoffirstterm" @>
                     let aliasTerm = glossaryFile.Contexts[0].Index["aliasoffirstterm"] |> Seq.exactlyOne
-                    test <@ primaryTerm.Name = aliasTerm.Name @> ] ]
+                    test <@ primaryTerm.Name = aliasTerm.Name @>
+
+                testCase "Japanese alias is indexed"
+                <| fun () ->
+                    let glossaryFile =
+                        unwrap
+                        <| deserialize
+                            "\
+contexts:
+- terms:
+    - name: Order
+      aliases:
+        - 注文
+"
+
+                    test <@ glossaryFile.Contexts[0].Index.ContainsKey "注文" @>
+                    let term = glossaryFile.Contexts[0].Index["注文"] |> Seq.exactlyOne
+                    test <@ term.Name = "Order" @>
+
+                testCase "Chinese term is indexed"
+                <| fun () ->
+                    let glossaryFile =
+                        unwrap
+                        <| deserialize
+                            "\
+contexts:
+- terms:
+    - name: 购物车
+"
+
+                    test <@ glossaryFile.Contexts[0].Index.ContainsKey "购物车" @>
+
+                testCase "Korean term is indexed"
+                <| fun () ->
+                    let glossaryFile =
+                        unwrap
+                        <| deserialize
+                            "\
+contexts:
+- terms:
+    - name: 주문
+"
+                    // Korean Hangul syllables decompose under NFKD normalization (used by simpleNormalize),
+                    // so we must look up the key using the same normalization as the index builder.
+                    let normalizedKey = simpleNormalize "주문"
+                    test <@ glossaryFile.Contexts[0].Index.ContainsKey normalizedKey @> ] ]
