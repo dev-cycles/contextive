@@ -99,10 +99,12 @@ let tests =
             "購入する", Position(0, 0), "購入", "cjk"
             "配送についての質問", Position(0, 0), "配送", "cjk"
             "注文と配送", Position(0, 0), "注文", "cjk"
-            "注文と配送", Position(0, 0), "配送", "cjk"
+            "注文と配送", Position(0, 3), "配送", "cjk"
             "オーダー", Position(0, 0), "注文", "cjk"
             "购物车", Position(0, 0), "购物车", "cjk"
-            "사용자", Position(0, 0), "사용자", "cjk" ]
+            "사용자", Position(0, 0), "사용자", "cjk"
+            "注文が届く", Position(0, 1), "注文", "cjk"
+            "注文と配送", Position(0, 4), "配送", "cjk" ]
           |> List.map testHoverTermFoundWithDefaultGlossary
           |> testList "CJK term found when hovering via substring matching"
 
@@ -192,7 +194,10 @@ let tests =
             "peere", Position(0, 0), "three"
             "Something", Position(0, 0), "empty_terms_list"
             "料理", Position(0, 0), "cjk"
-            "ユーザー", Position(0, 0), "cjk" ]
+            "ユーザー", Position(0, 0), "cjk"
+            "注文が届く", Position(0, 2), "cjk"
+            "注文が届く", Position(0, 3), "cjk"
+            "注文と配送", Position(0, 2), "cjk" ]
           |> List.map testHoverTermNotFound
           |> testList "Nothing found when hovering"
 
@@ -237,7 +242,7 @@ let tests =
 
           testAsync "Test hover with context info and no match" {
               let terms = []
-              let foundToken = Some "term"
+              let foundToken = Some("term", 0)
 
               let hoverHandler =
                   Hover.handler
@@ -248,7 +253,7 @@ let tests =
                       (fun _ _ -> foundToken)
 
               let hoverParams =
-                  HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")))
+                  HoverParams(TextDocument = TextDocumentItem(Uri = System.Uri("file:///blah")), Position = Position(0, 0))
 
               let! result = hoverHandler hoverParams null null |> Async.AwaitTask
 

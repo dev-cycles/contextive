@@ -67,22 +67,25 @@ module private Filtering =
     // Both token and keys are normalised with simpleNormalize (NFKD + lowercase +
     // Singularize). Singularize is a no-op for CJK text in Humanizer, so the
     // normalisation is effectively NFKD + lowercase on both sides.
-    let findMatchingTermsBySubstring (context: GlossaryFile.Context) (token: string) =
+    // cursorOffsetInToken restricts matches to keys that span the cursor position.
+    let findMatchingTermsBySubstring (context: GlossaryFile.Context) (token: string) (cursorOffsetInToken: int) =
         let normalizedToken = Normalization.simpleNormalize token
 
         context.Index.Keys
-        |> Seq.filter (fun key -> normalizedToken.Contains(key))
+        |> Seq.filter (fun key ->
+            let idx = normalizedToken.IndexOf(key)
+            idx >= 0 && cursorOffsetInToken >= idx && cursorOffsetInToken < idx + key.Length)
         |> Seq.collect (fun key -> context.Index[key])
         |> Seq.distinctBy (fun t -> t.Name)
 
-    let termFilterForCandidateTermsWithIndex tokenAndCandidateTerms =
+    let termFilterForCandidateTermsWithIndex cursorOffsetInToken tokenAndCandidateTerms =
         Seq.map (fun (c: GlossaryFile.Context) ->
 
             let token = tokenAndCandidateTerms |> Seq.head |> fst
 
             let terms =
                 if CandidateTerms.containsCJK token then
-                    findMatchingTermsBySubstring c token
+                    findMatchingTermsBySubstring c token cursorOffsetInToken
                 else
                     findMatchingTermsInIndex c tokenAndCandidateTerms
 
@@ -92,7 +95,7 @@ module private Filtering =
 
 module private TextDocument =
 
-    let getTokenAtPosition (p: HoverParams) (tokenFinder: TextDocument.TokenFinder) =
+    let getTokenWithStartAtPosition (p: HoverParams) (tokenFinder: DocumentUri -> Position -> (string * int) option) =
         match p.TextDocument with
         | null -> None
         | document -> tokenFinder document.Uri p.Position
@@ -111,10 +114,11 @@ let private hoverResult (contexts: GlossaryFile.FindResult) =
 let private hoverContentForToken
     (uri: string)
     (termFinder: GlossaryFile.Finder)
+    (cursorOffsetInToken: int)
     (tokensAndCandidateTerms: CandidateTerms.TokenAndCandidateTerms seq)
     =
     async {
-        let! findResult = termFinder uri (Filtering.termFilterForCandidateTermsWithIndex tokensAndCandidateTerms)
+        let! findResult = termFinder uri (Filtering.termFilterForCandidateTermsWithIndex cursorOffsetInToken tokensAndCandidateTerms)
 
         return
             if Seq.isEmpty findResult then
@@ -125,16 +129,18 @@ let private hoverContentForToken
 
 let handler
     (termFinder: GlossaryFile.Finder)
-    (tokenFinder: TextDocument.TokenFinder)
+    (tokenFinder: DocumentUri -> Position -> (string * int) option)
     (p: HoverParams)
     (_: HoverCapability)
     _
     =
     async {
         return!
-            match TextDocument.getTokenAtPosition p tokenFinder with
+            match TextDocument.getTokenWithStartAtPosition p tokenFinder with
             | None -> async { return Lsp.noHoverResult }
-            | tokenAtPosition ->
+            | Some(token, tokenStart) ->
+                let cursorOffsetInToken = p.Position.Character - tokenStart
+
                 let uriPath =
                     try
                         p.TextDocument.Uri.ToUri().LocalPath
@@ -146,9 +152,9 @@ let handler
 
                         dp
 
-                tokenAtPosition
+                Some token
                 |> CandidateTerms.tokenToTokenAndCandidateTerms
-                |> hoverContentForToken uriPath termFinder
+                |> hoverContentForToken uriPath termFinder cursorOffsetInToken
     }
     |> Async.StartAsTask
 

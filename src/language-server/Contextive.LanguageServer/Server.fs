@@ -75,7 +75,7 @@ let private configureServer (input: Stream) (output: Stream) (opts: LanguageServ
         .OnHover(
             Hover.handler
             <| GlossaryManager.lookup glossaryManager
-            <| TextDocument.findToken,
+            <| TextDocument.findTokenWithStart,
             Hover.registrationOptions
         )
 
