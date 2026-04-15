@@ -36,6 +36,14 @@ If your PR or proposal includes major architectural changes, please prepare a dr
 
 ## Development Environment
 
-The default development environment is [Visual Studio Code Dev Containers](https://code.visualstudio.com/docs/remote/containers). After cloning the repository and opening in Visual Studio Code, choose the "Reopen in Container" option to work in the dev environment. See the Visual Studio Code documentation for more details on setting up your docker environment.
+The default development environment uses [devenv](https://devenv.sh), an environment management tool based on nix.
 
-If you'd like to setup your own environment, consult the [devcontainer.json](./.devcontainer/devcontainer.json) and [Dockerfile](./.devcontainer/Dockerfile) for details on installed dependencies.
+The simplest way to get started is to ensure `devenv` is [installed](https://devenv.sh/getting-started/) (Note: the instructions say to install Nix first - [Determinate Nix](https://docs.determinate.systems/determinate-nix/) is also a valid option that works well for the Contextive maintainers).
+
+Then, run:
+
+`./start.sh` in the root of the repo.
+
+Once the environment is available you'll be in a shell with all necessary dependencies.  Launch your favourite IDE within that shell and get started.
+
+README.md within each component provides guidance on building and testing each component.
