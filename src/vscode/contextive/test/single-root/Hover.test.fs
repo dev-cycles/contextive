@@ -39,7 +39,12 @@ let private getHover path position expectedResultCount =
             <| fun () ->
                 promise {
                     let! hoverContents = getHoverResults ()
-                    return (Seq.length hoverContents) = expectedResultCount
+
+                    if Seq.length hoverContents = expectedResultCount then
+                        return true
+                    else
+                        logInspect hoverContents
+                        return false
                 }
 
         do! getDocUri path |> closeDocument
