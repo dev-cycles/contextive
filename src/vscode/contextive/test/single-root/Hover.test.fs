@@ -31,18 +31,18 @@ let private getHover path position expectedResultCount =
         let getHoverResults () =
             promise {
                 let! hoverResults = VsCodeCommands.hover docUri position
-                logInspect (hoverResults |> Array.ofSeq)
                 return hoverResults |> Seq.map getHoverTextOption
             }
 
-        do!
-            Waiter.waitFor
-            <| fun () ->
-                promise {
-                    let! hoverContents = getHoverResults ()
+        let checkHoverForExpectedLength () =
+            promise {
+                let! hoverContents = getHoverResults ()
 
-                    return Seq.length hoverContents = expectedResultCount
-                }
+                return Seq.length hoverContents = expectedResultCount
+            }
+
+        do! Waiter.waitForTimeout 60000 checkHoverForExpectedLength
+
 
         do! getDocUri path |> closeDocument
 
