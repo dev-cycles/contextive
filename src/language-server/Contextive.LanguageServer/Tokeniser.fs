@@ -72,3 +72,9 @@ type Lexer =
         function
         | Token(line, start, _) as t when t.HasLength -> line.Substring(start, t.Length.Value) |> trim |> Some
         | _ -> None
+
+    static member getWithStart =
+        function
+        | Token(line, start, _) as t when t.HasLength ->
+            line.Substring(start, t.Length.Value) |> trim |> fun s -> Some(s, start)
+        | _ -> None

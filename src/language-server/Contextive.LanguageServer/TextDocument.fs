@@ -27,12 +27,23 @@ let getTokenAtPosition (lines: IList<string>) (position: Position) =
     |> Lexer.getEnd position.Character
     |> Lexer.get
 
+let getTokenWithStartAtPosition (lines: IList<string>) (position: Position) =
+    Lexer.ofLine lines position.Line
+    |> Lexer.getStart position.Character
+    |> Lexer.getEnd position.Character
+    |> Lexer.getWithStart
+
 type TokenFinder = DocumentUri -> Position -> string option
 
 let findToken (documentUri: DocumentUri) (position: Position) =
     match getDocument documentUri with
     | None -> None
     | Some(documentLines) -> getTokenAtPosition documentLines position
+
+let findTokenWithStart (documentUri: DocumentUri) (position: Position) =
+    match getDocument documentUri with
+    | None -> None
+    | Some(documentLines) -> getTokenWithStartAtPosition documentLines position
 
 let private linesFromText (document: string) : IList<string> =
     document.ReplaceLineEndings().Split(System.Environment.NewLine)
