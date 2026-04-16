@@ -43,7 +43,8 @@ let private getHover path position expectedResultCount =
                     if Seq.length hoverContents = expectedResultCount then
                         return true
                     else
-                        logInspect hoverContents
+                        let contents = Seq.toArray hoverContents
+                        logInspect contents
                         return false
                 }
 
