@@ -31,6 +31,7 @@ let private getHover path position expectedResultCount =
         let getHoverResults () =
             promise {
                 let! hoverResults = VsCodeCommands.hover docUri position
+                logInspect (hoverResults |> Array.ofSeq)
                 return hoverResults |> Seq.map getHoverTextOption
             }
 
@@ -40,12 +41,7 @@ let private getHover path position expectedResultCount =
                 promise {
                     let! hoverContents = getHoverResults ()
 
-                    if Seq.length hoverContents = expectedResultCount then
-                        return true
-                    else
-                        let contents = Seq.toArray hoverContents
-                        logInspect contents
-                        return false
+                    return Seq.length hoverContents = expectedResultCount
                 }
 
         do! getDocUri path |> closeDocument
