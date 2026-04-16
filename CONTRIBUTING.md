@@ -20,7 +20,7 @@ Although contributors are not required to use Test-Driven Development, we do req
 
 ### Formatting
 
-All F# code should be formatted with [Fantomas](https://github.com/fsprojects/fantomas).  If you use Visual Studio Code with the DevContainer (see below) this should happen automatically on save.
+All F# code should be formatted with [Fantomas](https://github.com/fsprojects/fantomas).  If you use Visual Studio Code with the [devenv](#development-environment) environment (see below) and install the recommended extensions, this should happen automatically on save.
 
 ## Documentation
 
@@ -36,7 +36,7 @@ If your PR or proposal includes major architectural changes, please prepare a dr
 
 ## Development Environment
 
-The default development environment uses [devenv](https://devenv.sh), an environment management tool based on nix.
+The default development environment uses [devenv](https://devenv.sh), an environment management tool based on Nix.
 
 The simplest way to get started is to ensure `devenv` is [installed](https://devenv.sh/getting-started/) (Note: the instructions say to install Nix first - [Determinate Nix](https://docs.determinate.systems/determinate-nix/) is also a valid option that works well for the Contextive maintainers).
 
@@ -46,4 +46,4 @@ Then, run:
 
 Once the environment is available you'll be in a shell with all necessary dependencies.  Launch your favourite IDE within that shell and get started.
 
-README.md within each component provides guidance on building and testing each component.
+A list of recommended extensions for Visual Studio Code is provided in `.vscode/extensions.json`, and you should be prompted to install them when this repository is opened.
